@@ -1,0 +1,243 @@
+/* Extend the existing standard modal, semantic palette and editorial rhythm. */
+
+.health-calculator-inline :where(input:not([type=checkbox]):not([type=radio]):not([type=range]),select) { box-sizing:border-box; min-width:0; width:100%; min-height:44px; height:44px; font:400 16px/1.4 var(--font-ui); color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:8px 10px; }
+.calculator-fields,.calculator-result-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; }
+.calculator-fields label { display:flex; flex-direction:column; margin:0; min-width:0; }
+.calculator-full { grid-column:1/-1; }
+.calculator-number-unit { display:flex; align-items:center; gap:7px; min-width:0; }
+.calculator-number-unit > input { flex:1; }
+.calculator-number-unit > small { flex:none; font:400 12px/1.4 var(--font-ui); color:var(--muted); }
+.calculator-unit-field { grid-column:1/-1; display:grid; gap:5px; min-width:0; }
+.calculator-unit-controls { display:grid; grid-template-columns:minmax(0,1fr) 80px; gap:8px; align-items:center; min-width:0; }
+.health-calculator-inline .calculator-unit-controls > select[name] { padding-inline:2px; }
+.calculator-activity { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 12px; border:0; border-top:1px solid var(--line); margin:14px 0 12px; padding:8px 0 0; min-width:0; }
+.calculator-activity legend { padding:0 6px 0 0; font:500 12px/1.5 var(--font-ui); color:var(--ink); }
+.calculator-activity label,.calculator-exclusion { display:flex; align-items:center; gap:8px; min-height:44px; margin:0; }
+.health-calculator-inline :is(.calculator-activity label,.calculator-exclusion) { flex-direction:row; justify-content:flex-start; align-items:center; }
+.health-calculator-inline :is(input[type=checkbox],input[type=radio]) { flex:none; width:17px; height:17px; accent-color:var(--action); }
+.calculator-sex { display:grid; gap:4px; }
+.calculator-label,.calculator-result-heading { display:flex; align-items:center; gap:4px; color:var(--muted); font:500 12px/1.5 var(--font-ui); }
+.calculator-exclusion { margin-top:8px; color:var(--muted); }
+.calculator-info { display:inline-flex; flex:none; }
+.health-calculator-inline .calculator-info > button { display:grid; place-items:center; min-width:32px; min-height:32px; width:32px; height:32px; padding:0; margin:0; border:0; background:transparent; color:var(--muted); }
+.calculator-popover { position:fixed; inset:auto; box-sizing:border-box; margin:0; padding:12px 14px; max-width:calc(100vw - 32px); overflow-y:auto; border:1px solid var(--line); border-radius:8px; color:var(--ink); background:var(--surface); font:400 13px/1.65 var(--font-ui); box-shadow:0 4px 16px color-mix(in srgb,var(--ink) 12%,transparent); }
+.calculator-info-fallback { min-width:0; }
+.calculator-info-fallback summary { display:grid; place-items:center; width:32px; min-height:32px; cursor:pointer; list-style:none; }
+.calculator-info-fallback summary::-webkit-details-marker { display:none; }
+.calculator-info-fallback[open] { flex-basis:100%; }
+.calculator-label:has(.calculator-info-fallback[open]),.calculator-result-heading:has(.calculator-info-fallback[open]) { flex-wrap:wrap; }
+.calculator-info-fallback p { margin:4px 0 8px; font:400 12px/1.65 var(--font-ui); color:var(--muted); overflow-wrap:anywhere; }
+.calculator-primary-value { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin:2px 0 16px; color:var(--ink); font:400 clamp(38px,8vw,52px)/1.15 var(--font-editorial); font-variant-numeric:lining-nums tabular-nums; }
+.calculator-primary-value small { font:400 13px/1.5 var(--font-ui); color:var(--muted); }
+.calculator-result-grid { padding-top:12px; border-top:1px solid var(--line); gap:12px 16px; }
+.calculator-result-grid > div { min-width:0; }
+.calculator-result-grid .calculator-label { min-height:32px; }
+.calculator-result-grid strong { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; font:500 19px/1.4 var(--font-ui); font-variant-numeric:tabular-nums; color:var(--ink); }
+.calculator-result-grid strong small { color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.calculator-footnote,.calculator-unavailable,.calculator-messages p,.calculator-error { margin:10px 0 0; font:400 12px/1.65 var(--font-ui); color:var(--muted); }
+.calculator-messages { padding-top:4px; margin-top:10px; border-top:1px solid var(--line); }
+.calculator-messages p { margin-top:6px; color:var(--ink); }
+.calculator-unavailable { margin:4px 0 12px; }
+.calculator-error { color:var(--ink); }
+.calculator-references { margin-top:12px; font:400 12px/1.6 var(--font-ui); color:var(--muted); }
+.calculator-references summary { cursor:pointer; min-height:36px; display:flex; align-items:center; }
+.calculator-references a { display:block; margin:4px 0; color:var(--action); }
+.calculator-preview dl { margin:0; }
+.calculator-preview dl > div { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 12px; padding:12px 0; border-bottom:1px solid var(--line); }
+.calculator-preview dt { font:500 13px/1.5 var(--font-ui); color:var(--muted); }
+.calculator-preview dd { margin:0; font:500 19px/1.4 var(--font-ui); font-variant-numeric:tabular-nums; color:var(--ink); }
+.calculator-preview dd :is(small,span) { font:400 12px/1.5 var(--font-ui); color:var(--muted); }
+.calculator-preview dd span { display:block; margin-top:3px; }
+.health-calculator-inline .form-actions { flex-wrap:wrap; }
+.health-calculator-inline .form-actions button { max-width:100%; white-space:normal; }
+@media(max-width:360px){ .calculator-fields,.calculator-result-grid { column-gap:10px; } .calculator-result-grid strong { font-size:17px; } }
+
+/* Recorded BMI is always available; it does not depend on a goal calculation. */
+.persistent-bmi { padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid var(--line); }
+.bmi-heading-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.health-calculator-inline :is(.bmi-heading-row h3,.calculator-goal-heading) { margin:0; font:600 14px/1.5 var(--font-ui); color:var(--ink); }
+.health-calculator-inline .calculator-goal-heading { margin:0 0 10px; }
+.bmi-reading { display:flex; align-items:baseline; gap:12px; margin:4px 0 12px; color:var(--ink); }
+.bmi-reading strong { font:400 44px/1.1 var(--font-editorial); font-variant-numeric:lining-nums tabular-nums; }
+.bmi-reading > span { font:500 13px/1.5 var(--font-ui); color:var(--action); }
+.bmi-setup { margin:6px 0 12px; color:var(--muted); font:400 13px/1.6 var(--font-ui); }
+.bmi-height-setting { min-width:0; }
+.health-calculator-inline .bmi-height-setting label { display:flex; flex-direction:column; align-items:stretch; margin:0; }
+.bmi-height-feedback { display:block; margin-top:4px; color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.bmi-category-indicator { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin:14px 0 8px; }
+.bmi-category-indicator > span { height:4px; border-radius:2px; background:var(--line); }
+.bmi-category-indicator > span[data-active=true] { background:var(--action); }
+.health-calculator-inline .bmi-category-table { width:100%; border-collapse:collapse; font:400 12px/1.6 var(--font-ui); color:var(--muted); margin:0; }
+.health-calculator-inline .bmi-category-table :is(th,td) { padding:3px 0; border:0; border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent); background:transparent; text-align:left; font-weight:400; }
+.health-calculator-inline .bmi-category-table tr > :last-child { text-align:right; font-variant-numeric:tabular-nums; }
+.health-calculator-inline .bmi-category-table thead th { color:var(--muted); font-size:11px; padding-bottom:5px; }
+.health-calculator-inline .bmi-category-table tr[data-current=true] > * { color:var(--action); font-weight:600; }
+.bmi-reference { margin:8px 0 0; font:400 11px/1.6 var(--font-ui); }
+.bmi-reference a { color:var(--muted); text-decoration:none; }
+.bmi-reference a:hover { text-decoration:underline; }
+
+/* Permanent journal content: document scrolling, no dialog frame or fixed footer. */
+.health-calculator-inline { width:100%; max-width:760px; min-width:0; padding:0 0 20px; color:var(--ink); }
+.health-calculator-inline .bmi-heading-row h2 { margin:0; font:400 28px/1.3 var(--font-editorial); color:var(--ink); }
+:lang(zh) .health-calculator-inline .bmi-heading-row h2 { font:600 18px/1.5 var(--font-ui); }
+.health-calculator-inline .bmi-reading { margin:6px 0 14px; flex-wrap:wrap; }
+.health-calculator-inline .bmi-reading strong { font-size:64px; min-width:0; overflow-wrap:anywhere; }
+.health-calculator-inline .bmi-setup p { margin:0; }
+.health-calculator-inline .bmi-categories summary { display:block; padding:8px 0 0; cursor:pointer; list-style:none; }
+.health-calculator-inline summary::-webkit-details-marker { display:none; }
+.bmi-categories-title { display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:32px; font:500 12px/1.5 var(--font-ui); color:var(--muted); }
+.health-calculator-inline .bmi-category-indicator { position:relative; grid-template-columns:6.5fr 6.5fr 5fr 10fr; gap:1px; margin:6px 0 0; }
+.bmi-current-marker { position:absolute; top:-3px; width:2px; height:10px; background:var(--ink); transform:translateX(-1px); }
+.bmi-scale-labels { display:block; position:relative; height:24px; margin-top:4px; color:var(--muted); font:400 10px/1.4 var(--font-ui); font-variant-numeric:tabular-nums; }
+.bmi-scale-labels > span { position:absolute; transform:translateX(-50%); }
+.calculator-input-section > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; cursor:pointer; list-style:none; font:600 16px/1.5 var(--font-ui); color:var(--ink); }
+:is(.calculator-input-section > summary,.bmi-categories-title) > .calculator-chevron { display:grid; place-items:center; flex:none; width:28px; height:28px; color:var(--muted); }
+.calculator-chevron > svg { transition:transform .16s ease; }
+.calculator-input-section[open] > summary > .calculator-chevron > svg,.bmi-categories[open] .bmi-categories-title > .calculator-chevron > svg { transform:rotate(180deg); }
+.health-calculator-inline .calculator-input-section > form { padding:0; margin:0; border:0; background:transparent; }
+.calculator-subsection { border-top:1px solid var(--line); margin:0; padding:14px 0; }
+.calculator-subsection:first-child { border:0; padding-top:8px; }
+.calculator-subsection h3,.health-calculator-inline .calculator-preview h3 { margin:0 0 10px; font:600 13px/1.5 var(--font-ui); color:var(--ink); }
+.calculator-required { margin:0 0 12px; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+.health-calculator-inline label { font:500 12px/1.5 var(--font-ui); }
+.health-calculator-inline .calculator-fields { align-items:start; }
+.health-calculator-inline .calculator-fields label { gap:5px; }
+.health-calculator-inline .calculator-primary-value { font-size:38px; }
+.health-calculator-inline .calculator-activity { margin:0; padding-block:10px; }
+.health-calculator-inline .calculator-content { padding:0; overflow:visible; }
+.health-calculator-inline .form-actions { display:flex; justify-content:flex-end; gap:8px; margin:12px 0 0; padding:12px 0; border-top:1px solid var(--line); background:transparent; }
+.health-calculator-inline .form-actions button { min-height:44px; }
+.health-calculator-inline .form-actions button:not(.primary) { border-color:transparent; background:transparent; color:var(--muted); }
+.health-calculator-inline .calculator-results { margin-top:12px; }
+@media(max-width:480px){ .health-calculator-inline .bmi-reading strong { font-size:56px; } }
+@media(prefers-reduced-motion:reduce){ .calculator-chevron > svg { transition:none; } }
+
+.health-calculator-inline :is(input,select,.form-actions button,.plan-adopt) { scroll-margin-block:20px calc(110px + env(safe-area-inset-bottom)); }
+.calculator-target-options { display:grid; gap:6px; border:0; border-top:1px solid var(--line); padding:10px 0 0; margin:14px 0 0; min-width:0; }
+.calculator-target-options legend { padding:0 6px 0 0; font:600 12px/1.5 var(--font-ui); color:var(--ink); }
+.calculator-target-options legend > span { display:inline-flex; align-items:center; gap:4px; }
+.health-calculator-inline .calculator-target-options label { display:grid; grid-template-columns:17px minmax(0,1fr) auto; align-items:center; gap:8px; min-height:56px; padding:8px 10px; margin:0; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
+.calculator-target-options label:has(input:checked) { background:color-mix(in srgb,var(--action) 8%,var(--surface)); border-color:color-mix(in srgb,var(--action) 55%,var(--line)); }
+.calculator-target-options label:has(input:focus-visible) { outline:2px solid var(--action); outline-offset:2px; }
+.calculator-target-options label > span { min-width:0; }
+.calculator-option-name { color:var(--ink); font:500 13px/1.45 var(--font-ui); }
+.calculator-option-value { display:flex; align-items:baseline; justify-content:flex-end; flex-wrap:wrap; gap:2px 5px; max-width:130px; text-align:right; font-variant-numeric:tabular-nums; }
+.calculator-target-options strong { font:500 13px/1.5 var(--font-ui); color:var(--ink); }
+.calculator-target-options small { font:400 12px/1.5 var(--font-ui); color:var(--muted); }
+.calculator-target-options label:has(input:disabled) { opacity:.7; }
+.calculator-apply-preview { margin-top:8px; color:var(--muted); font:400 12px/1.65 var(--font-ui); }
+.calculator-apply-preview p { margin:4px 0; }
+.calculator-apply-preview dl { margin:0 0 6px; }
+.calculator-apply-preview dl > div { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:2px 12px; margin:5px 0; }
+.calculator-apply-preview dt { color:var(--muted); }
+.calculator-apply-preview dd { margin:0; color:var(--ink); font:500 13px/1.6 var(--font-ui); font-variant-numeric:tabular-nums; }
+.calculator-apply-preview dd small { color:var(--muted); font:400 11px/1.6 var(--font-ui); }
+.calculator-result-grid .calculator-label { min-height:32px; }
+.calculator-result-grid .calculator-highlight strong { font:400 24px/1.3 var(--font-editorial); }
+.calculator-result-grid .calculator-metric strong { font-size:17px; }
+.calculator-result-grid .calculator-metric:nth-child(3),.calculator-result-grid .calculator-metric:nth-child(4) { border-top:1px solid var(--line); padding-top:10px; }
+.calculator-result-status { margin:0 0 10px; padding:6px 0; border-bottom:1px solid var(--line); color:var(--action); font:500 12px/1.6 var(--font-ui); }
+.health-calculator-inline .form-actions .calculator-apply-secondary { border:1px solid var(--line); color:var(--ink); background:transparent; }
+.health-calculator-inline .calculator-error { scroll-margin-block:20px calc(110px + env(safe-area-inset-bottom)); }
+
+
+.bmi-comment { margin:-6px 0 12px; max-width:44ch; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+
+.calculator-theory-warning { margin:6px 0 12px; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+.calculator-theory-status { display:inline-block; border:1px solid var(--line); border-radius:4px; padding:1px 6px; color:var(--ink); font:500 11px/1.5 var(--font-ui); }
+.calculator-theory-warning p { margin:5px 0 0; }
+
+.bmi-current-weight { display:flex; flex-wrap:wrap; align-items:baseline; gap:0 4px; margin:0 0 8px; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+.bmi-current-weight-value { color:var(--ink); font-variant-numeric:tabular-nums; }
+/* Interactive planner: native range gestures, one precise edit per control. */
+.planner-control { min-width:0; padding:8px 0 6px; }
+.planner-control-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:44px; }
+.health-calculator-inline .planner-control-heading > label { margin:0; color:var(--ink); font:500 13px/1.5 var(--font-ui); }
+.planner-value-edit { display:flex; align-items:center; gap:6px; flex:none; min-width:0; max-width:65%; }
+.health-calculator-inline .planner-value-edit > input { width:100px; text-align:right; font-variant-numeric:tabular-nums; }
+.health-calculator-inline .planner-value-edit > select { width:76px; flex:none; padding-inline:3px; }
+.planner-value-edit small { white-space:nowrap; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.health-calculator-inline input.planner-slider { appearance:none; -webkit-appearance:none; display:block; box-sizing:border-box; width:100%; min-width:0; height:44px; padding:0; margin:0; background:transparent; border:0; border-radius:0; accent-color:var(--action); touch-action:pan-y; cursor:pointer; }
+.planner-slider::-webkit-slider-runnable-track { height:3px; border-radius:2px; background:linear-gradient(to right,var(--action) var(--planner-progress),var(--line) var(--planner-progress)); }
+.planner-slider::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:22px; height:22px; border-radius:50%; border:2px solid var(--action); background:var(--bg); margin-top:-9.5px; }
+.planner-slider::-moz-range-track { height:3px; background:var(--line); }
+.planner-slider::-moz-range-progress { height:3px; background:var(--action); }
+.planner-slider::-moz-range-thumb { width:18px; height:18px; border:2px solid var(--action); border-radius:50%; background:var(--bg); }
+.planner-slider:focus-visible { outline:2px solid var(--action); outline-offset:2px; }
+.health-calculator-inline .planner-exercise-toggle { margin:2px 0; color:var(--ink); }
+.planner-exercise-fields { padding-left:12px; border-left:1px solid var(--line); margin:0 0 8px; }
+.planner-exercise-fields > .calculator-footnote { margin-top:2px; }
+.health-calculator-inline .planner-text-action { display:inline-flex; align-items:center; min-height:44px; padding:5px 0; margin:0; color:var(--action); background:transparent; border:0; font:500 12px/1.5 var(--font-ui); text-align:left; }
+.planner-live-summary { border-top:1px solid var(--line); padding-top:14px; }
+.health-calculator-inline .planner-live-summary .calculator-primary-value { margin:4px 0 6px; font-size:clamp(36px,8vw,48px); overflow-wrap:anywhere; }
+.planner-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; margin:14px 0; }
+.planner-summary-grid > div { min-width:0; }
+.planner-summary-grid dt { color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.planner-summary-grid dd { color:var(--ink); font:500 13px/1.6 var(--font-ui); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; margin:3px 0 0; }
+.health-calculator-inline .form-actions button.calculator-apply-secondary { border:1px solid var(--line); color:var(--ink); padding-inline:12px; }
+@media(max-width:390px) { .health-calculator-inline .planner-value-edit > input { width:80px; } .planner-value-edit { gap:5px; } .health-calculator-inline .planner-control-heading > label { font-size:12px; } }
+/* Calculated outputs are journal typography, never disabled form controls. */
+.planner-calculated-label { margin-left:auto; color:var(--muted); font:400 11px/1.5 var(--font-ui); white-space:nowrap; }
+.planner-exercise-result { margin-top:14px; }
+.calculator-secondary-value { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin:4px 0 6px; color:var(--ink); font:400 30px/1.2 var(--font-editorial); font-variant-numeric:lining-nums tabular-nums; }
+.calculator-secondary-value small { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+
+/* Risk review uses the shared viewport-aware dialog, with one Apply Plan action. */
+.modal.calculator-risk-modal { width:min(420px,calc(100% - 24px)); background:var(--bg); }
+.calculator-risk-body { color:var(--ink); font:400 13px/1.6 var(--font-ui); }
+.calculator-risk-body p { margin:6px 0 12px; }
+.calculator-risk-actions { flex-direction:column; align-items:stretch; gap:6px; }
+.calculator-risk-actions button { min-height:44px; white-space:normal; }
+.calculator-risk-modal .form-actions > button.calculator-risk-secondary { border:1px solid var(--line); color:var(--ink); background:transparent; }
+
+.planner-review-summary { display:grid; gap:6px; margin:12px 0; }
+.planner-review-summary > div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; }
+.planner-review-summary dt { color:var(--muted); }
+.planner-review-summary dd { margin:0; overflow-wrap:anywhere; }
+
+/* Body estimates and progressive professional guidance share journal spacing. */
+.calculator-body-bmr { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+.calculator-body-bmr .calculator-secondary-value { margin:4px 0 0; font-size:26px; }
+.calculator-guidance { margin:0 0 12px; padding-left:12px; border-left:1px solid var(--line); min-width:0; }
+.health-calculator-inline .calculator-guidance .calculator-exclusion { margin:0; min-height:44px; }
+.calculator-guidance-entry { padding-block:8px 0; }
+.calculator-guidance-entry h3 { margin:0 0 8px; }
+.calculator-guidance-entry .calculator-number-unit { max-width:260px; }
+.calculator-guided-choice { margin:12px 0; padding:8px 0; border:0; border-block:1px solid var(--line); min-width:0; }
+.calculator-guided-choice legend { color:var(--muted); font:500 12px/1.5 var(--font-ui); padding-right:6px; }
+.health-calculator-inline .calculator-guided-choice label { display:flex; align-items:center; gap:8px; min-height:44px; margin:0; font:500 13px/1.5 var(--font-ui); flex-wrap:wrap; }
+.calculator-guided-choice input { flex:none; }
+.calculator-guided-choice small { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+
+/* Four editorial sections; occasional settings disclose in place. */
+.calculator-body-section .calculator-fields { gap:8px 12px; }
+.calculator-body-section .calculator-unit-field { grid-column:auto; }
+.calculator-body-section .calculator-unit-controls { grid-template-columns:minmax(0,1fr) 62px; gap:5px; }
+.calculator-body-section .calculator-sex { gap:0; }
+.calculator-body-section .calculator-sex .calculator-label { min-height:32px; }
+.calculator-body-section .calculator-body-bmr { margin-top:8px; padding-top:6px; }
+.calculator-setting-row { border-top:1px solid var(--line); }
+.calculator-setting-row > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; padding:2px 0; list-style:none; cursor:pointer; color:var(--ink); font:500 13px/1.5 var(--font-ui); }
+.calculator-setting-row > summary::-webkit-details-marker { display:none; }
+.calculator-setting-value { display:flex; align-items:center; gap:8px; color:var(--muted); text-align:right; }
+.calculator-setting-value svg { flex:none; transition:transform .15s; }
+.calculator-setting-row[open] > summary svg { transform:rotate(180deg); }
+.calculator-setting-row .calculator-activity { margin:0 0 6px; padding:0; border:0; }
+.calculator-setting-row .calculator-guidance { margin:0 0 8px; }
+.calculator-manual-guidance > summary { min-height:44px; display:flex; align-items:center; cursor:pointer; color:var(--action); font:500 12px/1.5 var(--font-ui); }
+.calculator-manual-guidance .calculator-guidance-entry { padding-top:0; }
+.health-calculator-inline .planner-live-summary > h3 { margin:0 0 8px; }
+.calculator-unavailable-value { margin:6px 0; color:var(--ink); font:500 20px/1.5 var(--font-ui); }
+.planner-compact-plan { display:flex; flex-wrap:wrap; gap:0 6px; margin:8px 0; color:var(--muted); font:400 12px/1.6 var(--font-ui); font-variant-numeric:tabular-nums; }
+.planner-compact-plan > span + span::before { content:'·'; margin-right:6px; }
+.calculator-theory-warning > summary { min-height:44px; display:flex; justify-content:space-between; align-items:center; gap:8px; cursor:pointer; list-style:none; font:500 12px/1.5 var(--font-ui); color:var(--ink); }
+.calculator-theory-warning > summary::-webkit-details-marker { display:none; }
+.calculator-theory-warning > summary > span:last-child { display:flex; align-items:center; gap:3px; flex:none; color:var(--muted); }
+.health-calculator-inline .calculator-guided-choice { border:0; padding:0; margin:6px 0; font:500 12px/1.5 var(--font-ui); }
+.health-calculator-inline .calculator-references { margin:0; border-top:1px solid var(--line); }
+.health-calculator-inline .calculator-references > summary { display:flex; align-items:center; justify-content:space-between; min-height:44px; padding:0; }
+@media(prefers-reduced-motion:reduce){ .calculator-setting-value svg { transition:none; } }
+
+.calculator-body-section .calculator-unit-field { display:flex; flex-direction:column; gap:0; }
+.calculator-body-section .calculator-unit-field > .calculator-label { min-height:32px; }
+.health-calculator-inline .calculator-body-section label.calculator-unit-field { gap:0; }

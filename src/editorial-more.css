@@ -1,0 +1,32 @@
+/* Main More is a contents page; editing remains in Today > More. */
+.page-more { padding-top: 18px; }
+.page-more .more-directory { max-width: none; margin: 0; }
+.page-more .settings-group { margin: 0; border: 0; }
+.page-more .settings-group > h2 { margin: 4px 0 8px; font: 600 11px/1.5 var(--font-ui); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+:lang(zh) .page-more .settings-group > h2 { letter-spacing: 0; }
+.page-more .settings-row { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; margin: 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; color: var(--ink); }
+.page-more .settings-row > span { font: 500 14px/1.5 var(--font-ui); min-width: 0; overflow-wrap: anywhere; }
+.page-more .settings-row small { margin-top: 2px; color: var(--muted); font: 400 11px/1.5 var(--font-ui); }
+.page-more .settings-row > svg { color: var(--muted); }
+.page-more .settings-row:hover,.page-more .settings-row:active { background: color-mix(in srgb,var(--action) 5%,transparent); }
+.page-more .settings-row:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.page-more .goal-history-section { margin: 16px 0 0; padding: 0; }
+.page-more .goal-history { margin: 0; padding: 0; border: 0; }
+.page-more .goal-history > summary { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 6px 0; list-style: none; cursor: pointer; border-bottom: 1px solid var(--line); font: 600 14px/1.5 var(--font-ui); }
+.page-more .goal-history > summary::-webkit-details-marker { display: none; }
+.page-more .goal-history > summary > span { flex: 1; }
+.page-more .goal-history > summary > small { color: var(--muted); font: 400 12px/1.5 var(--font-ui); font-variant-numeric: tabular-nums; }
+.page-more .goal-history > summary > svg { color: var(--muted); flex: none; }
+.page-more .goal-history[open] > summary > svg { transform: rotate(180deg); }
+.page-more .goal-history > summary:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.page-more .goal-history-row { padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; }
+.page-more .goal-history-row > strong { font: 500 12px/1.5 var(--font-ui); }
+.page-more .goal-history-periods { display: grid; gap: 2px; font: 400 11px/1.5 var(--font-ui); color: var(--muted); }
+.page-more .goal-history-periods strong { color: var(--ink); font-weight: 500; }
+.page-more .goal-history-enabled { margin: 4px 0 6px; color: var(--muted); font: 400 10px/1.5 var(--font-ui); }
+.page-more .goal-values { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px 12px; }
+.page-more .goal-values > div { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; padding: 0; border: 0; }
+.page-more .goal-values span { font: 400 10px/1.5 var(--font-ui); color: var(--muted); }
+.page-more .goal-values strong { font: 500 12px/1.5 var(--font-ui); font-variant-numeric: tabular-nums; }
+.page-more .goal-values strong small { font-size: 10px; font-weight: 400; }
+@media(max-width:600px){ .page-more { padding-inline: 22px; padding-top: 12px; } }

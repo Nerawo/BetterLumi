@@ -1,0 +1,37 @@
+import {test,expect,type Page} from '@playwright/test';
+const output='./work/screenshots/';
+test.use({isMobile:true,hasTouch:true});
+async function seed(page:Page){
+ await page.clock.install({time:new Date('2026-10-18T12:00:00-04:00')});await page.goto('/today');
+ return page.evaluate(async()=>{
+  const d=await import('/src/domain.ts'),c=await import('/src/categories.ts');
+  const category={...d.stamp(),name:'早餐'};await c.categories.put(category);
+  const canvas=document.createElement('canvas');canvas.width=400;canvas.height=250;const ctx=canvas.getContext('2d')!;ctx.fillStyle='#c4b198';ctx.fillRect(0,0,400,250);
+  const recipe={...d.stamp(),name:'晨间燕麦',categoryIds:[category.id],servings:1,lines:[],instructions:'保留步骤',stickyNote:'保留便签',photo:canvas.toDataURL()};await d.recipes.put(recipe);
+  await d.db.supplements.bulkPut(['维生素 D3','Omega-3'].map(name=>({...d.stamp(),name,dosage:1,unit:'粒',schedule:'daily',days:[]})));
+  await d.foodLogs.put({...d.stamp(),date:'2026-10-17',name:'历史早餐',category:'breakfast',source:'quick',sourceId:null,quantity:1,unit:'entry',nutrition:{calories:500,protein:null,carbs:null,fat:null},lines:[],cookingNote:''});
+  await d.foodLogs.put({...d.stamp(),date:'2026-10-18',name:'今日早餐',category:'breakfast',source:'quick',sourceId:null,quantity:1,unit:'entry',nutrition:{calories:420,protein:null,carbs:null,fat:null},lines:[],cookingNote:''});
+  return recipe.id;
+ });
+}
+for(const [width,language,theme] of [[390,'zh','misty'],[430,'zh','apricot'],[390,'en','lavender'],[430,'en','olive']] as const)test(`custom date jump ${width} ${language} ${theme}`,async({page})=>{
+ await page.setViewportSize({width,height:844});await seed(page);await page.evaluate(async({language,theme})=>{const d=await import('/src/domain.ts');await d.db.settings.put({key:'language',value:language});const th=await import('/src/themes.ts');await th.chooseTheme(theme)},{language,theme});
+ const trigger=page.locator('.date-jump-trigger'),panel=page.locator('.date-jump-panel');await trigger.scrollIntoViewIfNeeded();const calendarY=(await page.locator('.compact-calendar').boundingBox())!.y;
+ await trigger.click();await expect(panel).toBeVisible();await expect(panel.locator('[data-jump-date="2026-10-18"]')).toBeFocused();await expect(panel.locator('[aria-current=date]')).toHaveAttribute('data-jump-date','2026-10-18');await expect(panel.locator('h3')).toHaveText(language==='zh'?'2026年10月':'October 2026');await expect(page.locator('.calendar-card input[type=date]')).toHaveCount(0);
+ const box=(await panel.boundingBox())!;expect(box.x).toBeGreaterThanOrEqual(11);expect(box.x+box.width).toBeLessThanOrEqual(width-11);expect(box.y).toBeGreaterThanOrEqual(11);expect(box.y+box.height).toBeLessThanOrEqual(833);
+ await page.screenshot({path:output+`最终精修-日期选择-${width}-${language}.png`,animations:'disabled'});
+ await page.keyboard.press('ArrowLeft');await expect(panel.locator('[data-jump-date="2026-10-17"]')).toBeFocused();await page.keyboard.press('PageUp');await expect(panel).toHaveAttribute('data-month','2026-09');await page.keyboard.press('PageDown');await page.keyboard.press('Home');await expect(panel.locator('[data-jump-date="2026-10-12"]')).toBeFocused();await page.keyboard.press('End');await expect(panel.locator('[data-jump-date="2026-10-18"]')).toBeFocused();await page.keyboard.press('ArrowLeft');await page.keyboard.press('Enter');
+ await expect(panel).toHaveCount(0);await expect(page.getByTestId('selected-day')).toHaveAttribute('datetime','2026-10-17');await expect(page.getByTestId('food-progress')).toContainText('500');await expect(trigger).toBeFocused();expect(Math.abs((await page.locator('.compact-calendar').boundingBox())!.y-calendarY)).toBeLessThan(8);
+ await trigger.click();await page.keyboard.press('Escape');await expect(panel).toHaveCount(0);await expect(trigger).toBeFocused();await trigger.click();await page.mouse.click(2,2);await expect(panel).toHaveCount(0);
+ await trigger.click();await page.keyboard.press('Tab');await expect(panel).toHaveCount(0);await expect(page.locator('.calendar-controls > button').nth(1)).toBeFocused();
+ await page.locator('.calendar-controls > button').last().click();await expect(page.locator('.calendar-grid [data-date]')).toHaveCount(31);await trigger.click();await panel.locator('.date-jump-heading > button').first().click();await panel.locator('[data-jump-date="2026-09-30"]').click();await expect(page.getByTestId('selected-day')).toHaveAttribute('datetime','2026-09-30');await expect(page.locator('.compact-calendar')).toHaveClass(/is-expanded/);await expect(page.locator('.calendar-grid [data-date]')).toHaveCount(30);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+for(const width of [390,430])test(`inline category and supplement composition at ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:844});const id=await seed(page);const section=page.locator('.supplement-section');await section.scrollIntoViewIfNeeded();
+ const title=(await section.locator('.supplement-title').boundingBox())!,controls=(await section.locator('.inline-actions').boundingBox())!;expect(Math.abs(title.y+title.height/2-controls.y-controls.height/2)).toBeLessThan(2);await expect(section.locator('.supplement-row small').first()).toContainText('每天');
+ const select=section.locator('.supplement-status').first();expect(await select.evaluate(e=>getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');await select.selectOption('taken');await expect(section.locator('.supplement-disclosure')).toContainText('1/2');await page.reload();await expect(select).toHaveValue('taken');await select.selectOption('skipped');await select.selectOption('unconfirmed');await section.locator('.supplement-chevron').click();await expect(section.locator('.supplement-row')).toHaveCount(0);await section.locator('.supplement-chevron').click();await expect(section.locator('.supplement-row')).toHaveCount(2);await section.screenshot({path:output+`最终精修-补充剂-${width}.png`});
+ await page.goto('/recipes/'+id);const picker=page.locator('.detail-category-row');const image=page.locator('.detail-photo');const before=(await image.boundingBox())!.y;await picker.getByRole('button',{name:'选择分类',exact:true}).click();const panel=picker.locator('.category-picker-panel');await expect(panel).toBeVisible();expect(await panel.evaluate(e=>getComputedStyle(e).position)).toBe('static');const panelBox=(await panel.boundingBox())!,imageBox=(await image.boundingBox())!;expect(panelBox.y+panelBox.height).toBeLessThanOrEqual(imageBox.y);expect(imageBox.y).toBeGreaterThan(before);
+ await picker.getByRole('button',{name:'新建分类',exact:true}).click();await picker.getByLabel('分类名称',{exact:true}).fill('清淡');await picker.getByRole('button',{name:'创建并添加',exact:true}).click();await expect(picker.locator('.recipe-category-chip')).toHaveCount(2);expect((await picker.locator('.recipe-category-chip').allTextContents()).sort()).toEqual(['早餐','清淡'].sort());await expect(panel).toHaveAttribute('aria-busy','false');await picker.getByRole('checkbox',{name:'早餐',exact:true}).uncheck();await expect(picker.locator('.recipe-category-chip')).toHaveText(['清淡']);await page.screenshot({path:output+`最终精修-分类面板-${width}.png`,animations:'disabled'});await picker.locator('.category-picker-done').click();await page.reload();await expect(picker.locator('.recipe-category-chip')).toHaveText(['清淡']);
+ expect(await page.locator('.recipe-detail-modal').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+});

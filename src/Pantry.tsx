@@ -1,0 +1,297 @@
+import {DirectoryListHeader} from './DirectoryListHeader';
+import {IngredientTagNavigation,IngredientTagAssignment,IngredientTagManager,useIngredientTags} from "./IngredientTags";
+import {filterIngredients,putTaggedIngredient} from "./ingredient-tags";
+import {NumberInput} from "./NumberInput";
+import { validConsumptionUnit, ingredientBaseUnit } from "./consumption-units";
+import { nutritionReference } from "./db";
+import {Fragment} from "react";
+import {NumberUnit} from "./NumberUnit";
+import {confirmDelete} from "./DeleteConfirmation";
+import { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+import { Search, Plus } from "lucide-react";
+import {
+  ingredientSecondaryNames,
+  ingredientAliases,
+  splitAliases,
+} from "./pantry-names";
+import { PantrySortMenu, type PantrySort } from "./PantrySortMenu";
+import {
+  db,
+  stamp,
+  softDelete,
+  unknownNutrition,
+  type PantryItem,
+  type Nutrition,
+} from "./domain";
+import {
+  Modal,
+  NutritionFields,
+  Empty,
+  Actions,
+  changed,
+  type Notice,
+} from "./ui";
+export function Pantry({
+  items,
+  notice,
+}: {
+  items: PantryItem[];
+  notice: Notice;
+}) {
+  const { t, i18n } = useTranslation();
+  const [search, setSearch] = useState("");
+  const tags=useIngredientTags();
+  const [tag,setTag]=useState(''),[tagPanel,setTagPanel]=useState<'manage'|null>(null);
+  const activeTag=tags.some(item=>item.id===tag)?tag:'';
+  const [sort, setSort] = useState<PantrySort>("name-asc");
+  const filtered = filterIngredients(items,search,activeTag,tags)
+    .sort((a, b) => {
+      const direction = sort.endsWith("desc") ? -1 : 1;
+      if (sort.startsWith("calories")) {
+        // Unknown calories stay last in both directions; keep the recorded basis.
+        if (a.calories == null) return b.calories == null ? 0 : 1;
+        if (b.calories == null) return -1;
+        const difference = (a.calories - b.calories) * direction;
+        if (difference) return difference;
+      }
+      return (
+        a.name.localeCompare(b.name, i18n.language, {
+          numeric: true,
+          sensitivity: "base",
+        }) * (sort.startsWith("name") ? direction : 1)
+      );
+    });
+  const [editing, setEditing] = useState<PantryItem | null | undefined>();
+  return (
+    <>
+      <div className="search">
+        <Search size={18} />
+        <input
+          placeholder={t("searchPantry")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+      </div>
+      <IngredientTagNavigation items={tags} active={activeTag} onChange={setTag} manage={()=>setTagPanel("manage")}/>
+      {tagPanel==="manage"&&<IngredientTagManager close={()=>setTagPanel(null)} onDeleted={id=>{if(tag===id)setTag("")}}/>}
+      <DirectoryListHeader count={t('ingredientCount',{count:filtered.length})}><PantrySortMenu value={sort} onChange={setSort}/></DirectoryListHeader>
+      <button type="button" className="primary pantry-fab directory-fab" onClick={() => setEditing(null)} aria-label={t("directoryAddIngredient")}><Plus size={18} aria-hidden="true"/><span>{t("directoryAddIngredient")}</span></button>
+      <div className="pantry-list">
+        {filtered.map((i) => {
+          const secondary=ingredientSecondaryNames(i);
+          return (
+          <article
+            className="pantry-row"
+            key={i.id}
+            onClick={(e) => {
+              if (!(e.target as HTMLElement).closest("button")) setEditing(i);
+            }}
+          >
+            <div className="grow">
+              <div className="ingredient-title-line"><h3 title={[i.name,...secondary].join(" · ")}><button type="button" className="ingredient-name" onClick={()=>setEditing(i)}><span className="ingredient-primary">{i.name}</span>{secondary.length>0&&<> <small className="ingredient-secondary">{secondary.join(" · ")}</small></>}</button></h3><span className="ingredient-energy">{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==="serving"?t("servingUnit"): <NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==="serving"&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??"g"}/>)</>}</span></div>
+              <p className="macro-summary">{(["protein","carbs","fat"] as const).some(k=>i[k]!=null)?(["protein","carbs","fat"] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&" · "}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t("nutritionNotRecorded")}</p>
+            </div>
+            <Actions
+              edit={() => setEditing(i)}
+              remove={async () => {
+                await confirmDelete("ingredient",i.name,async()=>{await softDelete(db.ingredients, i.id)});
+              }}
+            />
+          </article>
+        );})}
+      </div>
+      {!items.length && (
+        <Empty heading={t("noIngredientsYet")} />
+      )}
+      {!!items.length && !filtered.length && <p className="collection-empty">{t("emptySearch")}</p>}
+      {editing !== undefined && (
+        <PantryEditor
+          item={editing}
+          close={() => setEditing(undefined)}
+          notice={notice}
+        />
+      )}
+    </>
+  );
+}
+function PantryEditor({
+  item,
+  close,
+  notice,
+}: {
+  item: PantryItem | null;
+  close: () => void;
+  notice: Notice;
+}) {
+  const { t, i18n } = useTranslation();
+  const [nutrition, setNutrition] = useState<Nutrition>(
+    item
+      ? {
+          calories: item.calories,
+          protein: item.protein,
+          carbs: item.carbs,
+          fat: item.fat,
+        }
+      : unknownNutrition(),
+  );
+  const [tagIds,setTagIds]=useState<string[]>(item?.tagIds??[]);
+  const [basis, setBasis] = useState<"100g" | "serving">(item?.basis ?? "100g");
+  const [referenceAmount,setReferenceAmount]=useState<number|null>(item?.referenceAmount??100);
+  const [referenceUnit,setReferenceUnit]=useState<"g"|"mL">(item?.referenceUnit??"g");
+  const [servingUnit,setServingUnit]=useState<"g"|"mL">(item?.servingUnit??"g");
+  const [servingGrams, setServingGrams] = useState<number | null>(
+    item?.servingGrams ?? null,
+  );
+  const [nutritionSource, setNutritionSource] = useState<
+    PantryItem["nutritionSource"]
+  >(item?.nutritionSource ?? "manual");
+  const [recognition, setRecognition] = useState(item?.labelRecognition);
+  const [conversionEnabled,setConversionEnabled]=useState(!!item?.consumptionUnit);
+  const [conversionQuantity,setConversionQuantity]=useState<number|null>(item?.consumptionUnit?.quantity??null);
+  const [conversionName,setConversionName]=useState(item?.consumptionUnit?.name??"");
+  const [conversionAmount,setConversionAmount]=useState<number|null>(item?.consumptionUnit?.amount??null);
+  const [conversionUnit,setConversionUnit]=useState<"g"|"mL">(item?.consumptionUnit?.unit??ingredientBaseUnit({basis,referenceUnit,servingUnit}));
+  const conversion={quantity:conversionQuantity!,name:conversionName.trim(),amount:conversionAmount!,unit:conversionUnit};
+  const [busy, setBusy] = useState(false);
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const name = String(f.get("name")).trim();
+    if (!name) {
+      notice(t("requiredName"));
+      return;
+    }
+    if (basis === "100g" && (referenceAmount == null || !Number.isFinite(referenceAmount) || referenceAmount <= 0)) { notice(t("invalidReferenceAmount")); return; }
+    if (servingGrams != null && (!Number.isFinite(servingGrams) || servingGrams <= 0)) { notice(t("invalidReferenceAmount")); return; }
+    if (conversionEnabled && (!validConsumptionUnit(conversion) || conversion.unit !== ingredientBaseUnit({basis,referenceUnit,servingUnit}))) { notice(t("invalidConsumptionUnit")); return; }
+    setBusy(true);
+    try {
+      const row: PantryItem = {
+        ...(item ? changed(item) : stamp()),
+        ...nutrition,
+        name,
+        nameZh: String(f.get("nameZh")).trim(),
+        aliases: splitAliases(String(f.get("nameZh"))),
+        brand: String(f.get("brand")).trim(),
+        tagIds,
+        basis,
+        servingGrams,
+        referenceAmount: referenceAmount ?? undefined, referenceUnit, servingUnit,
+        consumptionUnit: conversionEnabled ? conversion : null,
+        nutritionSource,
+        labelRecognition: recognition,
+      };
+      await putTaggedIngredient(row);
+      close();
+      notice(t("savedMessage"));
+    } catch {
+      notice(t("failedMessage"));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal title={t(item ? "edit" : "newItem")} close={close} className="pantry-editor-modal">
+      <form onSubmit={submit}>
+        <div className="pantry-editor-body"><section className="ingredient-form-section"><h3>{t("basicInformation")}</h3>
+        <div className="form-grid">
+          <label>
+            {t("name")}
+            <input name="name" required defaultValue={item?.name} />
+          </label>
+          <label>
+            {t("nameZh")}
+            <input
+              name="nameZh"
+              defaultValue={item ? ingredientAliases(item).join("、") : ""}
+            />
+          </label>
+          <label>
+            {t("brand")}
+            <input name="brand" defaultValue={item?.brand} />
+          </label>
+        </div></section><IngredientTagAssignment value={tagIds} onChange={setTagIds}/><section className="ingredient-form-section"><h3>{t("basis")}</h3><div className="form-grid ingredient-basis-grid">
+          <label>
+            <span className="sr-only">{t("basis")}</span>
+            <select
+              name="basis"
+              aria-label={t("basis")}
+              value={basis}
+              onChange={(e) => setBasis(e.target.value as typeof basis)}
+            >
+              <option value="100g">{t("customNutritionReference")}</option>
+              <option value="serving">{t("serving")}</option>
+            </select>
+          </label>
+          {basis === "100g" && <><label>{t("perReference")}<NumberInput aria-label={t("referenceAmount")} name="referenceAmount" type="number" required min="0" step="any" value={referenceAmount??""} onChange={e=>setReferenceAmount(e.target.value===""?null:Number(e.target.value))}/></label><label>{t("unit")}<select name="referenceUnit" value={referenceUnit} onChange={e=>setReferenceUnit(e.target.value as "g"|"mL")}><option value="g">g</option><option value="mL">mL</option></select></label></>}
+          {basis === "serving" && <label
+            className={
+              "serving-weight " +
+              (basis === "serving" ? "emphasized" : "secondary-field")
+            }
+          >
+            {t("servingSizeOptional")}
+            <NumberInput
+              type="number"
+              min="0"
+              step="any"
+              name="servingGrams"
+              value={servingGrams ?? ""}
+              onChange={(e) =>
+                setServingGrams(e.target.value ? Number(e.target.value) : null)
+              }
+            />
+          </label>}
+          {basis === "serving" && <label>{t("unit")}<select name="servingUnit" value={servingUnit} onChange={e=>setServingUnit(e.target.value as "g"|"mL")}><option value="g">g</option><option value="mL">mL</option></select></label>}
+        </div>
+        </section><section className="ingredient-form-section"><h3>{t("ingredientNutrition")}</h3>
+        {nutritionSource === "package-label-ocr" && (
+          <p className="source-badge">
+            {t("ocrReviewedSource")}
+            {recognition?.appliedFields?.length
+              ? " · " + recognition.appliedFields.map((k) => t(k)).join("、")
+              : ""}
+          </p>
+        )}
+        <NutritionFields
+          value={nutrition}
+          onChange={(next) => {
+            if (recognition?.appliedFields) {
+              const fields = recognition.appliedFields.filter(
+                (k) => next[k] === nutrition[k],
+              );
+              setRecognition({ ...recognition, appliedFields: fields });
+              if (!fields.length) setNutritionSource("manual");
+            }
+            setNutrition(next);
+          }}
+        />
+        </section>
+        <details className="ingredient-form-section consumption-unit-editor">
+          <summary>{t("consumptionUnitConversion")}</summary>
+          <label className="checkbox-label"><input type="checkbox" checked={conversionEnabled} onChange={e=>setConversionEnabled(e.target.checked)}/>{t("enableConsumptionUnit")}</label>
+          {conversionEnabled && <>
+            <div className="form-grid">
+              <label>{t("quantity")}<NumberInput name="conversionQuantity" type="number" required min="0" step="any" value={conversionQuantity??""} onChange={e=>setConversionQuantity(e.target.value===""?null:Number(e.target.value))}/></label>
+              <label>{t("customUnitName")}<input name="conversionName" required maxLength={40} value={conversionName} onChange={e=>setConversionName(e.target.value)}/></label>
+              <label>{t("equivalentAmount")}<NumberInput name="conversionAmount" type="number" required min="0" step="any" value={conversionAmount??""} onChange={e=>setConversionAmount(e.target.value===""?null:Number(e.target.value))}/></label>
+              <label>{t("unit")}<select name="conversionUnit" value={conversionUnit} onChange={e=>setConversionUnit(e.target.value as "g"|"mL")}><option value="g">g</option><option value="mL">mL</option></select></label>
+            </div>
+            {validConsumptionUnit(conversion) && <p className="text-small muted" aria-live="polite">1 {conversion.name} ≈ {(conversion.amount/conversion.quantity).toLocaleString(i18n.language==="zh"?"zh-CN":"en-US",{maximumFractionDigits:2})} {conversion.unit}</p>}
+          </>}
+        </details>
+        </div>
+        <div className="form-actions">
+          <button type="button" onClick={close}>
+            {t("cancel")}
+          </button>
+          <button className="primary" disabled={busy}>
+            {t("save")}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}

@@ -1,0 +1,105 @@
+/* Shared refinements extend the existing editorial tokens and components. */
+:root { --journal-gutter: 32px; --journal-gap: 12px; --journal-section-gap: 18px; --journal-rule: color-mix(in srgb,var(--ink) 22%,var(--bg)); --journal-forest: var(--ink); }
+:is(.page-today,.page-recipes,.page-pantry,.page-more) { max-width: 1040px; padding-inline: var(--journal-gutter); }
+.journal-masthead,.page-today .journal-masthead { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: var(--journal-gap); padding: 0 0 9px; margin: 0; border-bottom: 1px solid var(--journal-rule); }
+.journal-masthead > .journal-wordmark,.page-today .journal-masthead > .journal-wordmark { font: 400 28px/1.1 var(--font-editorial); letter-spacing: -.045em; color: var(--ink); }
+.journal-masthead .language-toggle { display: inline-flex; align-items: center; justify-content: flex-end; min-width: 64px; min-height: 44px; padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; font: 500 11px/1.4 var(--font-ui); letter-spacing: 0; color: var(--muted); }
+.journal-masthead .language-toggle:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+:is(.page-recipes,.page-pantry,.page-more) .page-title { padding: var(--journal-section-gap) 0 20px; margin: 0; }
+:is(.page-recipes,.page-pantry,.page-more) .page-title h1 { margin: 0; font: 800 clamp(96px,13vw,148px)/.88 'Lumi Condensed','Noto Sans SC',sans-serif; letter-spacing: -.025em; text-transform: uppercase; color: var(--journal-forest); font-synthesis: none; }
+:is(.page-recipes,.page-pantry) > .search { margin: 0 0 var(--journal-gap); border-color: var(--journal-rule); }
+:is(.page-recipes,.page-pantry) .directory-list-heading { gap: var(--journal-gap); margin-top: var(--journal-gap); border-color: var(--journal-rule); }
+:is(.page-recipes,.page-pantry) .directory-list-heading > .muted,.page-pantry .pantry-controls > span { color: var(--muted); font: 500 12px/1.5 var(--font-ui); font-variant-numeric: tabular-nums; }
+:is(.page-recipes,.page-pantry) :is(.recipe-list h3,.pantry-row h3) { font: 600 16px/1.45 var(--font-ui); }
+:is(.page-recipes,.page-pantry) :is(.recipe-list-row,.pantry-row) { min-height: 60px; box-sizing: border-box; }
+:is(.page-recipes,.page-pantry) :is(.recipe-list-row,.pantry-row):hover { background: color-mix(in srgb,var(--action) 3%,transparent); }
+:is(.page-recipes,.page-pantry) .actions svg { width: 16px; height: 16px; }
+.page-pantry .directory-list-heading { flex-wrap: wrap; }
+.page-pantry .pantry-controls { flex: 1 1 150px; gap: 8px; flex-wrap: wrap; }
+.page-pantry .ingredient-energy { color: color-mix(in srgb,var(--action) 65%,var(--muted)); }
+:is(.page-recipes,.page-pantry) .empty,.collection-empty { display: block; min-height: 0; padding: 16px 0; margin: 0; text-align: left; border: 0; background: transparent; color: var(--muted); font: 400 13px/1.6 var(--font-ui); }
+:is(.page-recipes,.page-pantry) .empty h3 { margin: 0; font: inherit; color: inherit; }
+.page-more .goal-history > summary { font: 400 22px/1.3 var(--font-editorial); }
+:lang(zh) .page-more .goal-history > summary { font: 600 16px/1.5 var(--font-ui); }
+.page-more .goal-history-row .goal-values strong { font-variant-numeric: lining-nums tabular-nums; }
+@media(max-width:767px){ :root { --journal-gutter: 22px; } :is(.page-recipes,.page-pantry,.page-more) .page-title h1 { font-size: clamp(82px,25vw,112px); } }
+
+/* Real variable CJK weights; Latin cover typography remains unchanged. */
+:root:lang(zh) { --font-ui: 'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif; font-synthesis-weight: none; }
+:lang(zh) :is(h2,h3,label,button,summary,p,small,.eyebrow) { letter-spacing: 0; }
+:is(.page-recipes,.page-pantry,.page-more) .page-title { padding-top: 20px; padding-bottom: 22px; }
+:is(.page-recipes,.page-pantry) .directory-list-heading > .muted { letter-spacing: .015em; }
+.page-more .settings-group > h2 { color: var(--journal-forest); font-weight: 600; letter-spacing: .14em; }
+.page-more .settings-row > span { font-size: 15px; font-weight: 500; }
+.page-more .settings-row > svg:first-child { width: 20px; height: 20px; }
+:lang(zh) :is(.page-more .settings-group > h2,.directory-list-heading > .muted) { letter-spacing: 0; }
+
+/* Olive retains the approved editorial ink; other themes use their heading token. */
+[data-theme="olive"] { --journal-forest: color-mix(in srgb,#183d30 82%,var(--action)); }
+
+[data-theme]:not([data-theme="olive"]) :is(.page-today,.page-recipes,.page-pantry,.recipe-editor-modal,.pantry-editor-modal,.recipe-detail-modal) .primary:hover { background: var(--ink); color: var(--on-accent); }
+
+[data-theme]:not([data-theme="olive"]) input:is([type="checkbox"],[type="radio"]) { accent-color: var(--action); }
+/* Goal targets and related settings keep the existing editorial hierarchy. */
+.goal-metric-label { display:flex; align-items:center; gap:3px; position:relative; }
+.goal-info { display:inline-flex; position:static; }
+.goal-info > button { display:inline-flex; align-items:center; justify-content:center; width:36px; min-height:36px; padding:0; color:var(--muted); }
+.goal-info-popover { display:flex; flex-direction:column; position:absolute; top:100%; left:0; z-index:65; width:min(280px,calc(100vw - 60px)); padding:10px 12px; gap:6px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); box-shadow:0 4px 16px var(--shadow); font:400 12px/1.5 var(--font-ui); }
+.goal-info-popover > span { display:block; }
+.page-today .goal-editor-inline .goal-info-popover .goal-tooltip-title { font:600 13px/1.5 var(--font-ui); color:var(--ink); }
+.goal-tooltip-values > span { display:block; }
+.goal-info-popover .goal-tooltip-footer { padding-top:8px; margin-top:2px; border-top:1px solid var(--line); color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.goal-target-field { display:flex; flex-direction:column; gap:4px; margin-top:4px; }
+.goal-target-field > label { max-width:220px; }
+.goal-target-field input { width:100%; }
+.goal-settings-modal { width:min(540px,calc(100% - 24px)); }
+.goal-tolerance-form { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+.goal-tolerance-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.goal-tolerance-fields label { min-width:0; font:500 13px/1.5 var(--font-ui); }
+.goal-tolerance-fields input { width:100%; font-size:16px; min-height:44px; }
+.goal-tolerance-note { color:var(--muted); font:400 12px/1.5 var(--font-ui); margin:12px 0 4px; }
+.tolerance-restore { min-height:44px; padding-inline:0; font:500 12px/1.5 var(--font-ui); }
+.goal-tolerance-reset-modal { width:min(360px,calc(100% - 28px)); }
+.goal-tolerance-reset-modal > p { padding:0 16px; font:400 13px/1.6 var(--font-ui); }
+.goal-settings-modal .goal-history-section { margin:0; }
+.goal-settings-modal .goal-history-row { padding:12px 0; border-bottom:1px solid var(--line); }
+.goal-settings-modal .goal-history-row > strong { font:500 13px/1.5 var(--font-ui); }
+.goal-settings-modal .goal-values { margin-top:6px; }
+.goal-info-popover.above { top:auto; bottom:100%; }
+.goal-info-popover { overflow-y:auto; overscroll-behavior:contain; }
+/* Compact target controls, with units belonging to their inputs. */
+.page-today .goal-editor-inline .nutrition-goal-control { padding-block:4px; }
+.goal-target-input-line { display:flex; align-items:center; gap:8px; min-width:0; }
+.goal-target-input-line input { flex:1; width:0; min-width:0; }
+.goal-input-unit { flex:none; color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+.page-today .goal-editor-inline .goal-target-field { gap:0; margin-top:0; }
+.page-today .goal-editor-inline .nutrition-goal-fields > .goal-mode-selector { margin:6px 0 8px; }
+.goal-exercise-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
+.goal-exercise-fields > label { min-width:0; }
+.goal-date-limitation { margin-top:8px; }
+.goal-editor-inline .goal-date-toggle { display:flex; flex-direction:row; justify-content:flex-start; align-items:center; gap:7px; min-height:44px; width:fit-content; font:400 12px/1.5 var(--font-ui); }
+.goal-editor-inline .goal-date-toggle input { width:18px; height:18px; min-height:18px; margin:0; }
+.page-today .goal-editor-inline .goal-date-limitation .goal-effective-dates { padding-top:0; margin-top:0; }
+.macro-weekly-summary { color:var(--muted); font:400 9px/1.4 var(--font-ui); text-align:center; }
+.page-today .goal-editor-inline .goal-target-field > label { max-width:250px; }
+.page-today .goal-editor-inline .advanced-nutrition { padding:0; margin:4px 0 6px; border:0; border-top:1px solid var(--line); }
+.advanced-nutrition-heading { display:flex; align-items:center; gap:4px; position:relative; min-height:44px; }
+.advanced-nutrition-toggle { display:flex; align-items:center; justify-content:flex-start; gap:6px; min-height:44px; padding:4px 0; color:var(--ink); text-align:left; }
+.advanced-nutrition-toggle strong { font:500 12px/1.5 var(--font-ui); }
+.page-today .goal-editor-inline .nutrition-settings-row { display:flex; align-items:center; min-height:44px; padding:0; margin:0; gap:4px; position:relative; }
+.nutrition-settings-row > .goal-metric-label { flex:1; min-width:0; }
+.page-today .goal-editor-inline .nutrition-settings-row :is(.goal-metric-label > strong,.advanced-nutrition-toggle > strong) { font:500 12px/1.5 var(--font-ui); }
+.nutrition-settings-row .nutrition-goal-enable { flex:none; min-width:44px; min-height:44px; justify-content:center; }
+.page-today .goal-editor-inline [data-goal-metric=calories] { padding:0; margin:4px 0 6px; border-top:1px solid var(--line); }
+.advanced-nutrition-heading { cursor:pointer; }
+.advanced-nutrition-chevron { flex:none; width:44px; height:44px; padding:14px; color:var(--muted); }
+.advanced-nutrition-chevron.expanded { transform:rotate(180deg); }
+.page-today .goal-editor-inline .advanced-nutrition > .goal-macro-grid { border-top:0; }
+.goal-macro-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; align-content:start; gap:4px 12px; max-width:600px; }
+.goal-macro-grid[hidden] { display:none; }
+.goal-macro-grid > div { min-width:0; align-self:start; }
+.page-today .goal-editor-inline .goal-macro-grid .nutrition-goal-control { display:flex; flex-direction:column; padding:0; min-width:0; }
+.goal-macro-grid .nutrition-goal-heading { min-height:44px; }
+.goal-macro-grid .goal-metric-label { flex:1; min-width:0; overflow-wrap:anywhere; }
+.goal-macro-grid .nutrition-goal-enable { flex:none; min-height:44px; }
+.page-today .goal-editor-inline .goal-macro-grid .goal-target-field > label { max-width:none; }

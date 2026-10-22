@@ -1,0 +1,12 @@
+import 'fake-indexeddb/auto';
+import {it,expect,afterEach} from 'vitest';
+import {db,stamp,exportAll,restoreAll} from './domain';
+import {nutritionGoals,validGoalConfig,type Goal} from './goal-model';
+import {goalTable,saveGoalVersion} from './goals';
+import {weeklyStatistics} from './weekly-goals';
+const goal=():Goal=>({...stamp(),startDate:'2026-10-01',endDate:'2026-12-31',calorieMin:1500,calorieMax:1900,exerciseMinutes:30,exerciseKcal:100,exerciseMode:'weekly',nutritionGoals:{calories:{mode:'weekly',min:1500,max:1900},protein:{mode:'weekly',min:80,max:100},carbs:{mode:'daily',min:100,max:200},fat:{mode:'off',min:20,max:60}}});
+afterEach(async()=>{for(const table of db.tables)await table.clear()});
+it('preserves legacy mixed periods without normalizing or rewriting records',()=>{const raw=goal();expect(nutritionGoals(raw)).toEqual(raw.nutritionGoals);expect(Object.keys(weeklyStatistics([raw],'2026-10-18',[],[]).nutrients)).toEqual(['calories','protein','carbs','fat'])});
+it('accepts weekly macros and enforces a new section frequency consistently',async()=>{const raw=goal();expect(validGoalConfig(raw)).toBe(true);await saveGoalVersion(raw);expect(validGoalConfig({...raw,nutritionFrequency:'weekly'})).toBe(false);const configured={...raw,nutritionFrequency:'weekly' as const,nutritionGoals:{...raw.nutritionGoals!,carbs:{mode:'weekly' as const,min:100,max:200}}};expect(validGoalConfig(configured)).toBe(true);const {id,createdAt,updatedAt,deletedAt,revision,...values}=configured;await saveGoalVersion(values);expect(await goalTable.count()).toBe(2)});
+it('opening storage never clears weekly macros or unrelated exercise records',async()=>{const raw=goal();await goalTable.put(raw);const activity={...stamp(),date:'2026-10-18',type:'other' as const,duration:20,distance:null,caloriesBurned:40,notes:'Keep'};await db.activities.put(activity);expect(await goalTable.get(raw.id)).toEqual(raw);expect(await db.activities.get(activity.id)).toEqual(activity)});
+it('restores legacy weekly configurations exactly without deleting goal fields',async()=>{const raw=goal();await goalTable.put(raw);await db.settings.put({key:'language',value:'zh'});await db.supplements.put({...stamp(),name:'Keep',dosage:1,unit:'tablet',schedule:'daily'});const before=await exportAll();await restoreAll(before);expect((await exportAll()).tables).toEqual(before.tables)});

@@ -1,0 +1,408 @@
+@font-face {
+  font-family: 'Lumi Condensed';
+  src: url('/fonts/barlow-condensed-latin-800.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+/* Graphic Editorial is deliberately scoped to Today. Other pages keep v1.0.1. */
+.page-today {
+  --graphic-forest: var(--action);
+  --graphic-orange: color-mix(in srgb, #b64d24 86%, var(--action));
+  --graphic-gold: color-mix(in srgb, #dfac3e 87%, var(--warm));
+  --graphic-peach: color-mix(in srgb, #e7b99d 76%, var(--soft));
+  --graphic-rule: color-mix(in srgb, var(--ink) 22%, var(--bg));
+  --graphic-protein: color-mix(in srgb,#183d30 82%,var(--action));
+  --graphic-carbs: color-mix(in srgb, #9a6818 85%, var(--action));
+  --graphic-fat: var(--graphic-orange);
+  max-width: 1040px;
+  padding-top: 18px;
+}
+.page-today .graphic-introduction { display: block; height: auto; padding: 0; border: 0; margin: 0 0 10px; }
+.page-today .graphic-masthead { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--graphic-rule); padding: 0 0 9px; }
+.page-today .graphic-masthead > span { font: 400 28px/1.1 var(--font-editorial); letter-spacing: -.045em; }
+.page-today .graphic-date { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0 0; font: 500 10px/1.5 var(--font-ui); letter-spacing: .07em; text-transform: uppercase; }
+.page-today .graphic-date > span { color: var(--muted); }
+.page-today .graphic-cover-composition {
+  --cover-accent: color-mix(in srgb, var(--warm) 75%, var(--action));
+  --cover-gold: color-mix(in srgb, var(--warm) 75%, var(--olive));
+  --cover-dark: var(--action);
+  --cover-peach: color-mix(in srgb, var(--warm) 45%, var(--soft));
+  color: var(--ink);
+  position: relative; padding: 17px 0 18px; overflow: hidden; }
+/* Preserve the approved Olive cover palette; other themes use their own tokens. */
+[data-theme="olive"] .page-today .graphic-cover-composition {
+  --cover-accent: var(--graphic-orange);
+  --cover-gold: var(--graphic-gold);
+  --cover-dark: var(--graphic-forest);
+  --cover-peach: var(--graphic-peach);
+}
+.page-today .graphic-headline { position: relative; z-index: 1; width: 68%; margin: 0; font: 800 clamp(78px,10vw,124px)/.82 'Lumi Condensed','Arial Narrow',sans-serif; letter-spacing: -.025em; text-transform: uppercase; }
+.page-today .graphic-headline > :is(span,em) { display: block; font: inherit; }
+.page-today .graphic-headline > span:empty { display: none; }
+.page-today .graphic-headline > em { margin-top: 9px; color: var(--cover-accent); }
+.page-today .graphic-cover-art { position: absolute; right: 0; bottom: 16px; width: 32%; height: calc(100% - 32px); overflow: visible; }
+.page-today .graphic-art-rule { fill: none; stroke: var(--graphic-rule); stroke-width: 1; }
+.page-today .graphic-art-gold { fill: var(--cover-gold); }
+.page-today .graphic-art-forest { fill: var(--cover-dark); }
+.page-today .graphic-art-peach { fill: var(--cover-peach); }
+/* Readings remain two columns, with a shared baseline and quiet units. */
+.page-today .unified-overview { margin: 0; padding: 14px 0 18px; border-top: 1px solid var(--graphic-rule); border-bottom: 1px solid var(--graphic-rule); }
+.page-today .unified-overview > h2 { font: 500 10px/1.5 var(--font-ui); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0 0 18px; }
+.page-today .unified-overview .progress-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 24px; padding: 0; }
+.page-today .unified-overview .progress-area { display: flex; flex-direction: column; gap: 8px; min-width: 0; border: 0; padding: 0; }
+.page-today .unified-overview .progress-area > h3 { font: 600 11px/1.5 var(--font-ui); text-transform: uppercase; letter-spacing: .14em; gap: 6px; color: var(--ink); }
+.page-today .unified-overview .progress-area > h3 > svg { display: none; }
+.page-today .unified-overview .overview-readings { display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.page-today .unified-overview .progress-number { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; font: 400 clamp(36px,10.8vw,60px)/1 var(--font-editorial); letter-spacing: -.055em; font-variant-numeric: lining-nums tabular-nums; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.page-today .unified-overview .progress-number small { font: 400 12px/1.3 var(--font-ui); letter-spacing: 0; }
+.page-today .unified-overview .food-macros { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 0; margin: 0; }
+.page-today .unified-overview .food-macros dt { font: 500 9px/1.4 var(--font-ui); color: var(--muted); margin: 0 0 2px; }
+.page-today .unified-overview .food-macros dd { font: 600 12px/1.4 var(--font-ui); margin: 0; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.page-today .unified-overview .food-macros dd small { font-size: 9px; font-weight: 400; margin-left: 2px; }
+.page-today .unified-overview .movement-duration { align-self: center; margin: 0; font: 400 24px/1.2 var(--font-editorial); display: flex; gap: 5px; align-items: baseline; }
+.page-today .unified-overview .movement-duration small { font: 400 10px/1.5 var(--font-ui); color: var(--muted); }
+.page-today .unified-overview .overview-empty { padding: 10px 0; align-self: start; }
+.page-today .unified-overview .overview-empty strong { font: 400 12px/1.6 var(--font-ui); color: var(--muted); }
+.page-today .unified-overview .food-goal-region { grid-template-rows: minmax(0,auto) auto; align-content: start; }
+.page-today .unified-overview .exercise-goal-region { grid-template-rows: auto auto; align-content: start; gap: 18px; }
+.page-today .unified-overview .overview-goal-progress { display: grid; grid-template-rows: auto auto 4px auto; row-gap: 5px; align-content: start; }
+.page-today .unified-overview .overview-goal-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 5px; }
+.page-today .unified-overview .overview-goal-label { font: 500 10px/1.5 var(--font-ui); }
+.page-today .unified-overview .overview-goal-comparison { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 3px; min-height: 0; height: auto; }
+.page-today .unified-overview .overview-goal-comparison strong { font: 500 14px/1.3 var(--font-ui); }
+.page-today .unified-overview .progress-track { height: 4px; margin: 0; border-radius: 1px; background: color-mix(in srgb,var(--ink) 10%,var(--bg)); }
+.page-today .unified-overview .progress-track > span { background: var(--graphic-forest); border-radius: 1px; }
+.page-today .unified-overview .progress-track.above > span { background: var(--graphic-orange); }
+.page-today .unified-overview .progress-message { margin: 0; font: 400 9px/1.45 var(--font-ui); color: var(--muted); }
+/* A single calorie ring reuses the existing daily/weekly presentation calculation. */
+.page-today .unified-overview .graphic-calorie-goal { grid-template-columns: minmax(0,1fr); grid-template-rows: auto 92px auto; justify-items: stretch; gap: 4px; }
+.page-today .graphic-calorie-goal .overview-goal-heading { grid-row: 1; grid-column: 1; }
+.page-today .graphic-calorie-ring { width: 92px; height: 92px; grid-row: 2; grid-column: 1; justify-self: center; }
+.page-today .graphic-calorie-ring circle { fill: none; stroke-width: 5; }
+.page-today .graphic-calorie-track { stroke: color-mix(in srgb,var(--graphic-forest) 12%,var(--bg)); }
+.page-today .graphic-calorie-fill { stroke: var(--graphic-forest); stroke-linecap: butt; }
+.page-today .graphic-calorie-ring[data-status=above] .graphic-calorie-fill { stroke: var(--graphic-orange); }
+.page-today .unified-overview .graphic-calorie-goal .overview-goal-comparison { grid-row: 2; grid-column: 1; align-self: center; justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 88px; text-align: center; z-index: 1; }
+.page-today .unified-overview .graphic-calorie-goal .overview-goal-comparison strong { font: 400 25px/1.1 var(--font-editorial); letter-spacing: -.04em; }
+.page-today .graphic-calorie-goal .goal-comparison-slash { display: none; }
+.page-today .unified-overview .graphic-calorie-goal .goal-comparison-target { font-size: 9px; line-height: 1.4; }
+.page-today .unified-overview .graphic-calorie-goal .overview-goal-comparison small { font-size: 8px; line-height: 1.4; }
+.page-today .graphic-calorie-goal .progress-message { grid-row: 3; grid-column: 1; text-align: center; min-height: 26px; }
+.page-today .macronutrient-goals { min-height: 68px; padding: 0; gap: 4px; }
+.page-today [data-macro-slot=protein] { --nutrient-color: var(--graphic-protein); }
+.page-today [data-macro-slot=carbs] { --nutrient-color: var(--graphic-carbs); }
+.page-today [data-macro-slot=fat] { --nutrient-color: var(--graphic-fat); }
+.page-today .macro-goal-slot { gap: 4px; }
+.page-today .macro-goal-name { color: var(--nutrient-color); font-weight: 600; }
+.page-today .macro-goal-ring { width: 32px; height: 32px; }
+.page-today .macro-ring-fill { stroke: var(--nutrient-color); stroke-width: 2; }
+.page-today .macro-goal-range { font-size: 9px; }
+/* Fine rules and compact journal rows, without new card surfaces. */
+.page-today .compact-calendar { border: 0; padding: 8px 0 6px !important; margin: 0; }
+.page-today .compact-calendar .section-heading { margin: 0 0 6px; }
+.page-today .compact-calendar h2 { font: 400 21px/1.3 var(--font-editorial); letter-spacing: -.03em; }
+.page-today .calendar-controls { gap: 0; }
+.page-today .calendar-controls > button { padding: 0; min-width: 36px; min-height: 44px; }
+.page-today .calendar-date-number { font-variant-numeric: tabular-nums; }
+.page-today .today-journal { gap: 24px; }
+.page-today .today-journal :is(.today-layout,.today-support) { gap: 24px; }
+.page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini) > .section-heading { margin: 0 0 10px; min-height: 44px; border-bottom: 1px solid var(--graphic-rule); padding: 0 0 8px; gap: 6px; }
+.page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini) > .section-heading :is(h2,h3) { font: 400 25px/1.2 var(--font-editorial); letter-spacing: -.035em; gap: 0; }
+.page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini) > .section-heading :is(h2,h3) > svg { display: none; }
+.page-today .section-heading .primary { border-radius: 3px; background: var(--graphic-forest); color: #fff; border-color: transparent; min-height: 40px; padding: 8px 10px; font-size: 11px; }
+.page-today .section-heading .primary svg { width: 15px; height: 15px; }
+.page-today .section-totals { font-size: 11px; margin: 0 0 9px; color: var(--muted); }
+.page-today .meal-group > .eyebrow { display: block; padding: 6px 8px; margin: 14px 0 0; color: var(--graphic-forest); background: color-mix(in srgb,var(--graphic-forest) 6%,transparent); font: 600 10px/1.4 var(--font-ui); letter-spacing: .12em; text-transform: uppercase; }
+.page-today .meal-group:first-child > .eyebrow { margin-top: 0; }
+.page-today .meal-row { position: relative; display: grid; grid-template-columns: 65px minmax(0,1fr) auto; gap: 8px; padding: 12px 0 12px 11px; min-height: 72px; border-bottom: 1px solid var(--line); }
+.page-today .meal-row::before { position: absolute; content: ''; width: 3px; height: 36px; background: var(--graphic-orange); left: 0; top: 50%; transform: translateY(-50%); }
+.page-today .meal-row > .grow { grid-column: 2; grid-row: 1; }
+.page-today .meal-row h3 { font: 600 13px/1.45 var(--font-ui); margin: 0; overflow-wrap: anywhere; }
+.page-today .meal-row .meal-ingredients,.page-today .meal-row .cooking-note { border: 0; padding: 0; font: 400 10px/1.5 var(--font-ui); margin: 3px 0 0; }
+.page-today .meal-row .meal-amount-summary { grid-column: 1; grid-row: 1; align-self: center; }
+.page-today .meal-row .meal-amount-summary strong { font: 400 30px/1 var(--font-editorial); letter-spacing: -.045em; color: var(--ink); overflow-wrap: anywhere; }
+.page-today .meal-row .meal-amount-summary strong:not(:has(small)) { font: 400 10px/1.5 var(--font-ui); color: var(--muted); letter-spacing: 0; }
+.page-today .meal-row .meal-amount-summary strong small { display: block; font: 400 9px/1.5 var(--font-ui); color: var(--muted); letter-spacing: 0; }
+.page-today .meal-row .meal-amount-summary > span { font-size: 9px; margin-top: 4px; }
+.page-today .meal-row .actions { grid-column: 3; grid-row: 1; gap: 0; }
+.page-today .meal-row .actions button { min-width: 40px; width: 40px; min-height: 44px; }
+.page-today .exercise-card .section-totals { display: flex; gap: 12px; margin: 0 0 7px; font-size: 12px; }
+.page-today .exercise-card .exercise-group-heading { font: 600 11px/1.5 var(--font-ui); color: var(--graphic-forest); text-transform: uppercase; letter-spacing: .08em; }
+.page-today .exercise-card .daily-plan-group > summary { padding-block: 7px; }
+.page-today .exercise-card :is(.activity-row,.planned-movement-row) { border-bottom: 1px solid var(--line); padding-block: 9px; }
+.page-today .exercise-card .activity-row { border-left: 3px solid var(--graphic-gold); padding-left: 9px; }
+.page-today .exercise-card :is(.planned-exercise-label strong,.simple-row .grow > strong) { font: 600 13px/1.5 var(--font-ui); }
+.page-today .exercise-card .exercise-tags > span { border: 0; background: color-mix(in srgb,var(--graphic-forest) 7%,var(--bg)); color: var(--graphic-forest); border-radius: 3px; padding: 2px 5px; }
+.page-today .exercise-plans-section { margin-top: 26px; padding: 0; box-shadow: none; background: transparent; }
+.page-today .exercise-plans-section .weekly-plan-schedule { padding: 0; }
+.page-today .exercise-plans-section .weekly-plan-schedule :is(th,th:first-child) { background: transparent; }
+.page-today .weekly-plan-schedule .planner-row { border-color: var(--line); }
+.page-today .weekly-plan-schedule .planner-name { font-weight: 600; }
+.page-today .weekly-plan-schedule .weekly-dot { background: transparent; border-color: color-mix(in srgb,var(--graphic-forest) 45%,var(--bg)); }
+.page-today .weekly-plan-schedule [data-scheduled=true] .weekly-dot { background: var(--graphic-forest); border-color: var(--graphic-forest); }
+.page-today .weight-content { background: transparent; border-radius: 0; padding: 0; }
+.page-today .weight-record { border-left: 3px solid var(--graphic-orange); padding: 6px 0 6px 12px; }
+.page-today .weight-mini .weight-diary-row { margin-top: 7px; border-top: 1px solid var(--line); }
+.page-today .today-utilities { border-top: 1px solid var(--graphic-rule); margin-top: 22px; }
+.page-today .today-utilities .goal-settings-row > strong { font-weight: 600; }
+/* CJK body/display type stays readable and never uses the condensed Latin face. */
+:lang(zh) .page-today :is(.graphic-date,.unified-overview > h2,.progress-area > h3,.meal-group > .eyebrow,.exercise-group-heading) { letter-spacing: .025em; }
+:lang(zh) .page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini) > .section-heading :is(h2,h3) { font: 600 20px/1.4 var(--font-ui); letter-spacing: 0; }
+@media (max-width: 600px) {
+  .page-today { padding-inline: 22px; padding-top: 12px; }
+  .page-today .graphic-headline { font-size: clamp(66px,18.5vw,78px); }
+  .page-today .graphic-date { font-size: 9px; }
+  .page-today .unified-overview .progress-columns { column-gap: 20px; }
+  .page-today .unified-overview .progress-number { font-size: clamp(34px,10.8vw,46px); }
+  .page-today .unified-overview .food-macros dt { font-size: 8px; }
+  .page-today .unified-overview .food-macros dd { font-size: 11px; }
+  .page-today .unified-overview .overview-goal-comparison .goal-comparison-target { font-size: 10px; }
+  .page-today .unified-overview .graphic-calorie-goal .overview-goal-comparison .goal-comparison-target { font-size: 9px; }
+  .page-today .meal-row { grid-template-columns: 53px minmax(0,1fr) auto; gap: 7px; padding-left: 9px; }
+  .page-today .meal-row .meal-amount-summary strong { font-size: 27px; }
+  .page-today .meal-row .actions button { min-width: 40px; width: 40px; min-height: 44px; }
+  .page-today .supplement-heading .inline-actions { gap: 0; }
+}
+@media (min-width: 760px) {
+  .page-today .graphic-cover-composition { max-width: 740px; margin-inline: auto; }
+  .page-today .graphic-headline { font-size: 112px; }
+  .page-today .graphic-cover-art { width: 40%; }
+}
+
+/* Today category tabs keep the journal compact without unmounting its workflows. */
+.page-today .today-tabs { display: block; }
+.page-today .today-navigation-strip { display: flex; align-items: center; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding: 4px 0 6px; margin: 0 0 12px; border-bottom: 1px solid var(--line); scroll-padding-inline: 3px; }
+.page-today .today-navigation-strip > .today-tab-bar { flex: none; width: auto; flex-wrap: nowrap; overflow: visible; padding: 0; margin: 0; }
+:is(.page-today .today-tab-bar,.editorial-pill-nav) { display: flex; align-items: center; gap: 4px; width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding: 4px 4px 10px; margin: 0 0 18px; scroll-padding-inline: 3px; }
+:is(.page-today .today-tab-bar,.editorial-pill-nav) > button { flex: none; min-height: 44px; margin: 0; padding: 8px 13px; border: 0; border-radius: 24px; background: transparent; color: var(--muted); font: 600 13px/1.4 var(--font-ui); white-space: nowrap; letter-spacing: .015em; }
+:is(.page-today .today-tab-bar,.editorial-pill-nav) > button[aria-selected=true] { background: var(--graphic-forest,var(--directory-forest)); color: var(--on-accent); }
+/* A 40px visual pill inside the unchanged 44px touch target. */
+.page-today .today-navigation-strip .today-tab-bar > button { padding-block: 6px; border-block: 2px solid transparent; background-clip: padding-box; }
+:is(.page-today .today-tab-bar,.editorial-pill-nav) > button:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.page-today .today-tab-panel { min-width: 0; }
+.page-today .today-tab-panel[hidden] { display: none !important; }
+.page-today .today-tab-panel:focus-visible { outline: 2px solid var(--action); outline-offset: 5px; }
+.page-today .today-tab-panel .today-layout > div { min-width: 0; }
+.page-today .today-tab-panel .today-layout { margin-top: 0; }
+.page-today .today-tab-panel .exercise-plans-section { margin-top: 24px; }
+.page-today .today-tab-panel .today-utilities { margin-top: 0; }
+.page-today .compact-daily-overview .food-goal-region { grid-template-rows: auto; gap: 0; }
+.page-today .compact-daily-overview .exercise-goal-region { grid-template-rows: 62px 62px; gap: 12px; }
+.page-today .compact-daily-overview .overview-goal-progress { grid-template-rows: 16px 20px 4px auto; row-gap: 3px; }
+.page-today .compact-daily-overview .overview-goal-heading { flex-wrap: nowrap; }
+.page-today .compact-daily-overview .overview-goal-label { font-size: 9px; }
+.page-today .compact-daily-overview .overview-goal-heading > small { font-size: 8px; white-space: nowrap; }
+.page-today .compact-daily-overview .overview-goal-comparison { flex-wrap: wrap; }
+:lang(zh) :is(.page-today .today-tab-bar,.editorial-pill-nav) > button { letter-spacing: 0; }
+@media (max-width: 375px) {
+ :is(.page-today .today-tab-bar,.editorial-pill-nav) > button { padding-inline: 11px; }
+ .page-today .compact-daily-overview .overview-goal-heading { flex-wrap: wrap; }
+}
+.page-today .supplement-status-menu[data-placement=above] .supplement-status-options { top: auto; bottom: 100%; }
+.page-today .supplement-status-options { z-index: 60; }
+
+/* Nutrition belongs to the overview; both columns share goal rhythm, not forced heights. */
+.page-today .compact-daily-overview .food-goal-region { grid-template-rows: auto auto; gap: 12px; }
+.page-today .compact-daily-overview .exercise-goal-region { grid-template-rows: auto auto; gap: 14px; }
+.page-today .compact-daily-overview .overview-goal-progress { grid-template-rows: auto auto 4px auto; gap: 4px; }
+.page-today .compact-daily-overview .overview-goal-heading { flex-wrap: wrap; }
+.page-today .compact-daily-overview .overview-goal-label,
+.page-today .compact-daily-overview .overview-goal-heading > small,
+.page-today .compact-daily-overview .progress-message { font-size: 10px; }
+.page-today .compact-daily-overview .macronutrient-goals { margin: 0; min-height: 0; align-items: start; }
+.page-today .compact-daily-overview .macro-goal-slot { min-width: 0; gap: 5px; text-align: center; }
+.page-today .macro-actual { margin: 0; width: 100%; }
+.page-today .macro-actual dt { font: 600 10px/1.5 var(--font-ui); color: var(--nutrient-color); margin-bottom: 3px; }
+.page-today .macro-actual dd { margin: 0; font: 600 14px/1.4 var(--font-ui); font-variant-numeric: tabular-nums; }
+.page-today .macro-actual .number-unit { justify-content: center; gap: 2px; }
+.page-today .macro-actual dd small { font-size: 10px; font-weight: 400; }
+.page-today .macro-actual .overview-unknown { font: 400 10px/1.4 var(--font-ui); color: var(--muted); }
+.page-today .compact-daily-overview .macro-goal-range { font: 400 10px/1.5 var(--font-ui); width: 100%; }
+.page-today .macro-goal-range .number-unit { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+.page-today .exercise-card :is(.activity-row,.planned-movement-row) { min-height: 64px; padding-block: 10px; }
+.page-today .exercise-card .activity-row .actions button { width: 40px; min-width: 40px; min-height: 44px; }
+.page-today .exercise-card :is(.simple-row .grow > small,.exercise-row-values,.exercise-notes) { font-size: 11px; line-height: 1.5; }
+.page-today .exercise-card .daily-plan-group { background: transparent; border-radius: 0; }
+.page-today .supplement-toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: -6px; }
+.page-today .supplement-count { font: 500 12px/1.5 var(--font-ui); color: var(--muted); font-variant-numeric: tabular-nums; }
+.page-today .supplement-toolbar .inline-actions { gap: 0; }
+.page-today .supplement-toolbar .icon-button { min-width: 40px; min-height: 40px; }
+.page-today .supplement-row { padding: 10px 0; min-height: 64px; border-bottom: 1px solid var(--line); gap: 6px; }
+.page-today .supplement-row .grow { min-width: 0; }
+.page-today .supplement-row .grow strong { font: 600 13px/1.45 var(--font-ui); overflow-wrap: anywhere; }
+.page-today .supplement-row .grow small { font: 400 11px/1.5 var(--font-ui); margin-top: 3px; }
+.page-today .supplement-row .actions { gap: 0; }
+.page-today .supplement-row .actions button { width: 40px; min-width: 40px; min-height: 44px; }
+
+/* Shared journal headers; goal configuration uses the same editorial rhythm. */
+.page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini,.goal-summary) > .section-heading { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 0 8px; margin: 0 0 10px; gap: 8px; border-bottom: 1px solid var(--graphic-rule); }
+.page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini,.goal-summary) > .section-heading :is(h2,h3) { margin: 0; min-width: 0; font: 400 25px/1.2 var(--font-editorial); letter-spacing: -.035em; }
+:lang(zh) .page-today :is(.meal-card,.exercise-card,.exercise-plans-section,.supplement-section,.weight-mini,.goal-summary) > .section-heading :is(h2,h3) { font: 600 20px/1.4 var(--font-ui); letter-spacing: 0; }
+.page-today .section-heading .primary { flex: none; min-height: 44px; }
+.page-today .graphic-masthead { padding-block: 4px 10px; }
+.page-today .compact-daily-overview .progress-columns { align-items: start; }
+.page-today .compact-daily-overview .food-goal-region { gap: 16px; }
+.page-today .compact-daily-overview .macro-goal-slot { display: grid; grid-template-rows: 44px 32px auto; justify-items: center; align-items: start; gap: 5px; }
+.page-today .macro-actual { display: grid; grid-template-rows: 16px 24px; gap: 4px; }
+.page-today .macro-actual dt { margin: 0; }
+.page-today .macro-actual dd { min-width: 0; line-height: 24px; }
+.page-today .macro-actual .overview-unknown { display: inline-block; vertical-align: middle; line-height: 12px; }
+.page-today .macro-goal-ring { grid-row: 2; }
+.page-today :is(.macro-goal-range,.macro-goal-disabled) { grid-row: 3; margin: 0; font: 400 10px/1.5 var(--font-ui); }
+.page-today .macro-goal-disabled { color: var(--muted); }
+.page-today .compact-daily-overview .overview-supplement { margin-top: 14px; }
+.page-today .exercise-card .daily-plans-heading { min-height: 40px; }
+.page-today .exercise-card .daily-plans-summary { padding-bottom: 3px; }
+.page-today .exercise-card .daily-plan-group > summary { padding-block: 3px; }
+.page-today .exercise-card .actual-movement-heading { margin: 4px 0 0; min-height: 40px; }
+.page-today .today-tab-panel .exercise-plans-section { margin-top: 20px; }
+.page-today .today-utilities { border-top: 0; }
+.page-today .goal-summary .goal-settings-row { width: auto; border: 0; margin: 0; padding: 8px 10px; justify-content: center; font-weight: 500; }
+.page-today .goal-summary-values { display: block; margin: 0 0 14px; }
+.page-today .goal-summary-values > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; min-height: 48px; border-bottom: 1px solid var(--line); }
+.page-today .goal-summary-values > div > span { min-width: 0; font: 500 13px/1.4 var(--font-ui); }
+.page-today .goal-summary-values > div > span small { display: block; margin-top: 2px; color: var(--muted); font: 400 10px/1.4 var(--font-ui); }
+.page-today .goal-summary-values strong { text-align: right; font: 500 14px/1.4 var(--font-ui); font-variant-numeric: tabular-nums; }
+.page-today .goal-summary-values strong small { font-size: 10px; font-weight: 400; }
+.page-today .goal-summary-values [data-enabled=false] strong { color: var(--muted); font: 400 11px/1.4 var(--font-ui); }
+
+.page-today .macronutrient-goals:not(:has(.macro-goal-ring)) .macro-goal-slot { grid-template-rows: 44px auto; }
+.page-today .macronutrient-goals:not(:has(.macro-goal-ring)) .macro-goal-disabled { grid-row: 2; }
+
+/* Each overview column follows its own content, without reserved vertical space. */
+.page-today .compact-daily-overview .overview-goals,
+.page-today .compact-daily-overview.has-goal-history .overview-goals,
+.page-today .compact-daily-overview.has-macro-goal-history .overview-goals { display: flex; flex-direction: column; height: auto; min-height: 0; padding-top: 0; }
+.page-today .compact-daily-overview .overview-goals:empty { display: none; }
+.page-today .compact-daily-overview .movement-duration { margin: 0; align-self: start; }
+.page-today .macro-goal-disabled { grid-row: 2; align-self: center; }
+.page-today .exercise-card .exercise-journal-row { display: block; min-height: 64px; padding: 10px 0 10px 9px; border: 0; border-left: 3px solid var(--graphic-gold); border-bottom: 1px solid var(--line); }
+.page-today .exercise-card .exercise-row-main { display: flex; align-items: center; gap: 8px; padding: 0; margin: 0; }
+.page-today .exercise-row-main > .grow { flex: 1; min-width: 0; }
+.page-today .exercise-card .exercise-row-name { display: block; margin: 0; font: 600 13px/1.5 var(--font-ui); overflow-wrap: anywhere; }
+.page-today .exercise-card .exercise-row-name label { font: inherit; display: inline; min-height: 0; margin: 0; }
+.page-today .exercise-card .exercise-row-values { display: block; margin: 2px 0 0; font: 400 11px/1.5 var(--font-ui); color: var(--muted); }
+.page-today .exercise-row-actions { display: flex; flex: none; align-items: center; gap: 0; }
+.page-today .exercise-row-actions :is(button,.exercise-completion) { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; padding: 4px; margin: 0; }
+.page-today .exercise-row-actions .actions { display: flex; gap: 0; }
+.page-today .exercise-completion input { margin: 0; }
+.page-today .goal-editor-inline { margin: 0; display: block; }
+.page-today .goal-editor-inline .goal-editor-scroll { overflow: visible; padding: 0; }
+.page-today .goal-editor-inline .form-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 0; margin: 10px 0; border-top: 1px solid var(--line); background: transparent; }
+.page-today .goal-editor-inline .form-actions button { min-height: 44px; }
+.page-today .goal-editor-inline .advanced-nutrition > summary { min-height: 48px; }
+.page-today .goal-editor-inline .nutrition-goal-control { padding-block: 8px; }
+.page-today .other-daily-plans { position: relative; }
+.page-today .other-daily-plans > summary { min-height: 44px; padding-block: 6px; }
+.page-today .other-daily-plans[open] > summary { padding-right: 88px; }
+.page-today .other-daily-plans .todo-list > .section-heading { position: absolute; right: 0; top: 0; min-height: 44px; margin: 0; padding: 0; }
+.page-today .todo-list { margin: 0; padding: 0; background: transparent; }
+.page-today .todo-list .todo-row { min-height: 54px; padding: 5px 0; gap: 6px; }
+.page-today .todo-content h3 { margin: 0; font: 500 13px/1.4 var(--font-ui); }
+.page-today .todo-content p { margin: 2px 0 0; font: 400 10px/1.4 var(--font-ui); }
+.page-today .todo-count { font: 400 11px/1.4 var(--font-ui); font-variant-numeric: tabular-nums; }
+
+/* Independent exercise goals use the same control pattern as nutrition. */
+.page-today .exercise-goal-heading h3 { flex: 1; margin: 0; }
+.page-today .exercise-goal-fields { min-width: 0; border: 0; padding: 0; margin: 0; }
+.page-today .exercise-goal-fields:disabled { opacity: .55; }
+.page-today .other-exercise { border: 0; padding: 0; margin: 4px 0 0; }
+.page-today .other-exercise > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 0; list-style: none; cursor: pointer; }
+.page-today .other-exercise > summary::-webkit-details-marker { display: none; }
+.page-today .other-exercise-summary { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 8px; min-width: 0; color: var(--muted); font: 400 11px/1.4 var(--font-ui); }
+.page-today .other-exercise-summary small { font: inherit; }
+.page-today .other-exercise[open] > summary > svg { transform: rotate(180deg); }
+.page-today .other-exercise > summary > svg { flex: none; color: var(--muted); }
+.page-today .unified-overview :is([data-status=partial],[data-status=unknown]) .progress-track { border-top: 1px dashed var(--muted); background: transparent; }
+.page-today .unified-overview [data-incomplete] .progress-track > span { opacity: .55; }
+.page-today .macro-goal-slot[data-status=partial] .macro-ring-track { stroke-dasharray: 2 3; }
+.page-today .macro-goal-slot[data-status=partial] .macro-ring-fill { opacity: .45; }
+.page-today .macro-goal-slot[data-status=above] .macro-ring-fill { stroke: var(--graphic-orange); }
+
+.page-today .other-exercise > summary:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; border-radius: 2px; }
+
+/* Primary readings and all goal tracks share their column’s left edge. */
+.page-today .compact-daily-overview .progress-number { align-self: flex-start; justify-content: flex-start; }
+.page-today .compact-daily-overview .overview-goal-progress { align-self: stretch; width: 100%; min-width: 0; box-sizing: border-box; justify-items: stretch; }
+.page-today .compact-daily-overview .progress-track { width: 100%; box-sizing: border-box; justify-self: stretch; }
+/* Equal-level master headings collapse to just their accessible controls. */
+.page-today .goal-editor-inline :is(.nutrition-goal-controls,.exercise-goal-controls) { padding: 0; margin: 0; }
+.page-today .goal-editor-inline .goal-master-heading { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 8px; margin: 0; }
+.page-today .goal-editor-inline .goal-master-heading h3 { margin: 0; font: 600 14px/1.5 var(--font-ui); }
+.page-today .goal-editor-inline :is(.nutrition-goal-fields,.exercise-goal-fields) { min-width: 0; border: 0; margin: 0; padding: 0 0 8px; }
+.page-today .goal-editor-inline fieldset[hidden] { display: none; }
+
+/* Sibling exercise disclosures share one compact title / totals / chevron row. */
+.page-today .exercise-card .exercise-disclosure-heading { display: grid; grid-template-columns: minmax(0,1fr) fit-content(62%) 16px; align-items: center; gap: 8px; min-height: 44px; padding: 4px 0; list-style: none; cursor: pointer; }
+.page-today .exercise-card .exercise-disclosure-heading > .exercise-group-heading { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.page-today .exercise-card .exercise-disclosure-stats { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 6px; min-width: 0; padding: 0; margin: 0; color: var(--muted); font: 400 11px/1.4 var(--font-ui); text-align: right; }
+.page-today .exercise-disclosure-stats :is(.daily-completion,small) { font: inherit; color: inherit; margin: 0; }
+.page-today .exercise-disclosure-stats .summary-stat { white-space: nowrap; }
+.page-today .exercise-disclosure-stats .summary-stat:not(:first-child)::before { content: '·'; margin-right: 6px; }
+.page-today .exercise-disclosure-stats .number-value { color: inherit; font-weight: inherit; }
+.page-today .exercise-disclosure-stats > small { flex-basis: 100%; }
+.page-today .exercise-disclosure-heading > svg { justify-self: end; color: var(--muted); }
+.page-today details[open] > .exercise-disclosure-heading > svg { transform: rotate(180deg); }
+
+/* Personal Goals: editorial title, peer family headings, then indented settings. */
+.page-today .goal-summary > .section-heading h2 { font-family: var(--font-editorial); font-weight: 400; }
+.page-today .goal-editor-inline .goal-master-heading h3 { font-size: 16px; font-weight: 600; }
+.page-today .goal-editor-inline .exercise-goal-controls { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
+.page-today .goal-editor-inline :is(.nutrition-goal-fields,.exercise-goal-fields) { padding-left: 10px; }
+.page-today .goal-editor-inline :is(.nutrition-goal-heading strong,.advanced-nutrition summary strong) { font: 500 12px/1.5 var(--font-ui); }
+.page-today .goal-editor-inline .goal-effective-dates { padding-top: 10px; margin-top: 10px; }
+.page-today .goal-editor-inline .goal-effective-dates label { font-size: 11px; font-weight: 400; }
+
+/* Keep the original Olive appearance without tinting other themes green. */
+[data-theme="olive"] .page-today { --graphic-forest: color-mix(in srgb,#183d30 82%,var(--action)); }
+
+/* Empty days show compact targets and quiet, unfilled nutrient rings. */
+.overview-compact-targets { min-width:0; color:var(--ink); font:400 12px/1.6 var(--font-ui); }
+.overview-compact-targets:empty { display:none; }
+.overview-compact-targets p { margin:0; }
+.overview-compact-targets .overview-compact-label { margin-bottom:3px; color:var(--muted); font:500 11px/1.6 var(--font-ui); }
+.overview-compact-targets small { font-size:11px; color:var(--muted); }
+.overview-compact-calories > p:last-child,.overview-compact-exercise { font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+/* The default goals view contains live saved results, never editable draft fields. */
+.current-goals-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; }
+.current-goals-heading h3 { margin:0; font:600 14px/1.5 var(--font-ui); }
+.current-goals-heading button,.current-goals-empty button { min-height:44px; padding:6px 0; border:0; background:transparent; color:var(--action); font:500 13px/1.5 var(--font-ui); }
+.current-goal-section { padding:10px 0 14px; }
+.current-goal-section + .current-goal-section { border-top:1px solid var(--line); }
+.current-goal-section h4 { margin:0 0 6px; color:var(--muted); font:500 12px/1.5 var(--font-ui); }
+.current-goal-number { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px; margin:0; color:var(--ink); font:400 clamp(28px,7vw,36px)/1.2 var(--font-editorial); font-variant-numeric:tabular-nums; }
+.current-goal-number small { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+.current-goal-caption,.current-goal-range,.current-goals-updated { margin:5px 0 0; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+.current-goal-range,.current-goals-updated { font-size:11px; }
+.current-exercise-targets { display:flex; flex-wrap:wrap; gap:12px 24px; }
+.current-goal-macros { margin:8px 0 0; }
+.current-goal-macros:empty { display:none; }
+.current-goal-macros > div { display:flex; flex-wrap:wrap; gap:4px 12px; margin:4px 0; font:400 12px/1.6 var(--font-ui); }
+.current-goal-macros dd { margin:0; color:var(--muted); }
+.current-goals-empty > p:first-child { font:400 22px/1.5 var(--font-editorial); }
+/* Operation feedback stays above the mobile navigation and outside document flow. */
+@media(max-width:1150px){ .toast { bottom:calc(100px + env(safe-area-inset-bottom)); } }
+
+.current-goal-number { min-width:0; overflow-wrap:anywhere; }
+
+/* Empty days retain the shared ring geometry without implying a recorded zero. */
+.page-today .macro-goal-slot[data-empty=true] .macro-ring-track { stroke: color-mix(in srgb,var(--action) 55%,var(--soft)); stroke-dasharray: none; }
+
+/* Empty overview: editorial question, quiet invitation, then target data. */
+.page-today .overview-journal-empty p { margin:0; color:var(--ink); font:400 19px/1.25 var(--font-editorial); letter-spacing:-.015em; text-wrap:balance; }
+.page-today .overview-journal-empty p + p { margin-top:7px; color:var(--muted); font:400 11px/1.7 var(--font-ui); letter-spacing:0; text-wrap:pretty; }
+:lang(zh) .page-today .overview-journal-empty p:first-child { font:500 16px/1.5 var(--font-ui); letter-spacing:0; }
+:lang(zh) .page-today .overview-journal-empty p + p { font-size:11px; line-height:1.75; text-wrap:balance; }
+.page-today .overview-compact-targets { margin-top:10px; }
+.page-today :is(.overview-compact-target-line,.overview-compact-exercise) { display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+.page-today :is(.overview-compact-target-line,.overview-compact-exercise) .overview-compact-label { margin:0; font:500 9px/1.5 var(--font-ui); color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+:lang(zh) .page-today :is(.overview-compact-target-line,.overview-compact-exercise) .overview-compact-label { font-size:10px; letter-spacing:0; }
+.page-today .overview-target-value { font:400 22px/1.3 var(--font-editorial); letter-spacing:-.025em; font-variant-numeric:lining-nums tabular-nums; }
+.page-today .overview-target-value .number-unit { display:inline-flex; align-items:baseline; gap:3px; white-space:nowrap; }
+.page-today .overview-target-value .number-unit-label { font:400 10px/1.5 var(--font-ui); color:var(--muted); letter-spacing:0; }
+.page-today .food-goal-region[data-empty=true] { gap:22px; }
+.page-today .compact-daily-overview .macro-goal-slot[data-empty=true] { grid-template-rows:auto 32px auto; gap:7px; }
+.page-today .macro-goal-slot[data-empty=true] .macro-actual { grid-template-rows:auto; gap:0; }
+.page-today .macro-goal-slot[data-empty=true] .macro-goal-name { font-weight:500; }
+.page-today .macro-goal-slot[data-empty=true] .macro-goal-range { color:var(--muted); font-size:9px; }

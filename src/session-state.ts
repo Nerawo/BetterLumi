@@ -1,0 +1,20 @@
+import {validLocalDate} from './routing';
+import type {NutritionGoals} from './goal-model';
+import type {NutritionTargets} from './goal-tolerance-model';
+export const pageSessionKey='betterlumi.page-session.v1';
+export const lifecycleSessionKey='betterlumi.lifecycle.v1';
+export const goalDraftKey=(date:string)=>'betterlumi.goal-draft.v1:'+date;
+export interface GoalDraftState {nutrition:NutritionGoals;targets:NutritionTargets;nutritionEnabled:boolean;exerciseEnabled:boolean;exerciseMode:'daily'|'weekly';minutes:number|null;kcal:number|null;nutritionStart:string;nutritionEnd:string;exerciseStart:string;exerciseEnd:string;advanced:boolean;calorieFrequency:'daily'|'weekly';nutritionLimited?:boolean;exerciseLimited?:boolean}
+export interface PageSession {route:string;tab:string;todayDate:string;scrollY:number;positions?:Record<string,number>}
+export function readSession<T>(key:string,valid:(value:unknown)=>value is T):T|null{try{const raw=sessionStorage.getItem(key);if(!raw)return null;const value=JSON.parse(raw);return valid(value)?value:null}catch{return null}}
+export function writeSession(key:string,value:unknown){try{sessionStorage.setItem(key,JSON.stringify(value))}catch{/* Private/storage-limited contexts keep their in-memory state. */}}
+export function removeSession(key:string){try{sessionStorage.removeItem(key)}catch{/* Best effort only. */}}
+export function validPageSession(value:unknown):value is PageSession{const x=value as PageSession;return !!x&&typeof x.route==='string'&&/^\/(today|recipes|pantry|more|weight)(\/[^?#]+)?(\?[^#]*)?$/.test(x.route)&&['food','activity','supplements','weight','more','calculator'].includes(x.tab)&&validLocalDate(x.todayDate)&&Number.isFinite(x.scrollY)&&x.scrollY>=0&&(x.positions===undefined||!!x.positions&&typeof x.positions==='object'&&Object.entries(x.positions).every(([route,y])=>route.startsWith('/')&&!route.startsWith('//')&&Number.isFinite(y)&&y>=0))}
+export function validGoalDraft(value:unknown):value is GoalDraftState{
+ const x=value as GoalDraftState,number=(v:unknown)=>v===null||typeof v==='number'&&Number.isFinite(v),date=(v:unknown)=>v===''||typeof v==='string'&&validLocalDate(v);
+ return !!x&&['nutritionEnabled','exerciseEnabled','advanced'].every(k=>typeof x[k as keyof GoalDraftState]==='boolean')&&['daily','weekly'].includes(x.exerciseMode)&&['daily','weekly'].includes(x.calorieFrequency)&&['nutritionLimited','exerciseLimited'].every(k=>x[k as keyof GoalDraftState]===undefined||typeof x[k as keyof GoalDraftState]==='boolean')&&number(x.minutes)&&number(x.kcal)&&[x.nutritionStart,x.nutritionEnd,x.exerciseStart,x.exerciseEnd].every(date)&&(['calories','protein','carbs','fat'] as const).every(k=>{const n=x.nutrition?.[k];return !!n&&['off','daily','weekly'].includes(n.mode)&&number(n.min)&&number(n.max)&&number(x.targets?.[k])});
+}
+export function readGoalDraft(date:string,baseline:string){const x=readSession<{baseline:string;value:GoalDraftState}>(goalDraftKey(date),(value):value is {baseline:string;value:GoalDraftState}=>!!value&&typeof value==='object'&&typeof (value as any).baseline==='string'&&validGoalDraft((value as any).value));return x?.baseline===baseline?x.value:null}
+/** Same timeOrigin means the same document, even through BFCache or development remounts. */
+export function recordLifecycle(event:string,persisted?:boolean){try{const old=JSON.parse(sessionStorage.getItem(lifecycleSessionKey)??'[]');const rows=Array.isArray(old)?old:[];rows.push({event,document:String(performance.timeOrigin),navigation:(performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming|undefined)?.type??'unknown',visibility:document.visibilityState,persisted,at:Date.now()});writeSession(lifecycleSessionKey,rows.slice(-20))}catch{/* Diagnostics never block normal use. */}}
+export function restoreInitialPage(){const saved=readSession(pageSessionKey,validPageSession);if(saved&&location.pathname==='/')history.replaceState(history.state,'',saved.route);return saved}
