@@ -129,7 +129,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
     "还差 340 kcal",
   );
   await expect(
-    page.locator("[data-testid=exercise-progress] .progress-number"),
+    page.locator("[data-testid=exercise-progress] .movement-duration"),
   ).toContainText("25");
   await expect(page.getByTestId("exercise-progress")).toContainText("未记录");
   const foodNumber = (await page
@@ -139,7 +139,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
     .locator("[data-testid=exercise-progress] .progress-number")
     .boundingBox())!;
   expect(Math.abs(foodNumber.y - movementNumber.y)).toBeLessThan(1);
-  const cover = (await page.locator(".today-cover").boundingBox())!,
+  const cover = (await page.locator(".graphic-introduction").boundingBox())!,
     progress = (await page.locator(".today-progress").boundingBox())!,
     nav = (await page.locator(".mobile-nav").boundingBox())!;
   expect(cover.height).toBeLessThan(480);
@@ -148,7 +148,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
   await expect(page.locator(".meal-totals")).toHaveCount(0);
   await page.screenshot({ path: output + "精修-Today-手机.png" });
   await page.goto("/pantry");
-  await expect(page.locator(".pantry-row")).toHaveCount(4);
+  await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(4);
   await expect(page.locator(".pantry-controls select")).toHaveCount(0);
   await expect(page.locator(".pantry-sort-trigger")).toBeVisible();
   await expect(page.locator(".pantry-list img")).toHaveCount(0);
@@ -158,7 +158,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
   );
   await page.screenshot({ path: output + "精修-Pantry-手机.png" });
   await page.goto("/more");
-  await expect(page.locator(".settings-row")).toHaveCount(5);
+  await expect(page.locator(".settings-row")).toHaveCount(7);
   await page.screenshot({ path: output + "精修-More-手机.png" });
   await page.goto("/recipes/" + recipe);
   const modal = page.locator(".recipe-detail-modal");
@@ -194,7 +194,7 @@ test("Pantry has four compact sort orders, search and unknown-last calories in b
     await expect(page.getByRole("menuitemradio")).toHaveCount(4);
     await page.locator(`[data-sort="${sort}"]`).click();
   };
-  const names = () => page.locator(".pantry-row h3").allTextContents();
+  const names = () => page.locator(".pantry-row[data-user-food-id] h3").allTextContents();
   await choose("name-asc");
   expect((await names()).map((s) => s.trim().split(" ")[0])).toEqual([
     "Greek",
@@ -205,16 +205,16 @@ test("Pantry has four compact sort orders, search and unknown-last calories in b
   await choose("name-desc");
   expect((await names())[0]).toContain("Unknown");
   await choose("calories-asc");
-  await expect(page.locator(".pantry-row").first()).toContainText("Spinach");
-  await expect(page.locator(".pantry-row").last()).toContainText("Unknown");
+  await expect(page.locator(".pantry-row[data-user-food-id]").first()).toContainText("Spinach");
+  await expect(page.locator(".pantry-row[data-user-food-id]").last()).toContainText("Unknown");
   await choose("calories-desc");
-  await expect(page.locator(".pantry-row").first()).toContainText(
+  await expect(page.locator(".pantry-row[data-user-food-id]").first()).toContainText(
     "Rolled oats",
   );
-  await expect(page.locator(".pantry-row").last()).toContainText("Unknown");
+  await expect(page.locator(".pantry-row[data-user-food-id]").last()).toContainText("Unknown");
   await page.locator(".search input").fill("希腊");
-  await expect(page.locator(".pantry-row")).toHaveCount(1);
-  await expect(page.locator(".pantry-row")).toContainText("Greek yogurt");
+  await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(1);
+  await expect(page.locator(".pantry-row[data-user-food-id]")).toContainText("Greek yogurt");
   expect(
     await page.evaluate(async () => {
       const d = await import("/src/domain.ts");

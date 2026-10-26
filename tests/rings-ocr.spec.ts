@@ -82,7 +82,7 @@ test("required calorie examples and missing exercise metric render independent r
     "距目标下限还差 940 kcal",
   );
   await expect(page.getByTestId("exercise-progress")).toContainText(
-    "已达到时长目标",
+    "已达标",
   );
   await expect(page.getByTestId("exercise-progress")).toContainText("未记录");
   await page.goto("/journal?date=2026-10-17");
@@ -145,14 +145,14 @@ test("legacy aliases stay searchable and nutrition basis remains explicit on mob
   await page.goto("/pantry");
   for (const q of ["Salmon", "salMON", "三文鱼", "鲑鱼"]) {
     await page.locator(".search input").fill(q);
-    await expect(page.locator(".pantry-row")).toHaveCount(1);
+    await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(1);
   }
   await page
     .locator(".pantry-row")
     .getByRole("button", { name: "编辑", exact: true })
     .click();
   const form = page.getByRole("dialog");
-  await form.locator(".pantry-photo-import > summary").click();
+  await expect(form.locator("input[type=file]")).toHaveCount(0);
   await expect(form.getByLabel("其他名称（可选）")).toHaveValue("三文鱼、鲑鱼");
   await form.getByLabel("其他名称（可选）").fill("三文鱼、鲑鱼,red fish");
   await form
@@ -163,10 +163,10 @@ test("legacy aliases stay searchable and nutrition basis remains explicit on mob
   expect(await form.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
     true,
   );
-  await form.getByRole("button", { name: "保存", exact: true }).click();
+  await form.getByRole("button", { name: "保存", exact: true }).click();await expect(form).toHaveCount(0);
   await page.reload();
   await page.locator(".search input").fill("RED FISH");
-  await expect(page.locator(".pantry-row")).toHaveCount(1);
+  await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(1);
   const stored = await page.evaluate(async () => {
     const d = await import("/src/domain.ts");
     return (await d.db.ingredients.toArray())[0];
@@ -175,117 +175,18 @@ test("legacy aliases stay searchable and nutrition basis remains explicit on mob
   expect(stored.servingGrams).toBeNull();
   expect(stored.basis).toBe("serving");
 });
-test("real English image OCR requires editable review and explicit apply, preserves both photos, and never uploads", async ({
-  page,
-  context,
-}) => {
-  test.setTimeout(90000);
-  const remote: string[] = [];
-  context.on("request", (r) => {
-    if (
-      /^https?:/.test(r.url()) &&
-      !r.url().startsWith("http://127.0.0.1:5190/")
-    )
-      remote.push(r.url());
-  });
-  await page.goto("/pantry");
-  await page.getByRole("button", { name: "添加食材", exact: true }).click();
-  const form = page.getByRole("dialog");
-  await form.locator(".pantry-photo-import > summary").click();
-  await form.locator("input[name=name]").fill("OCR label test");
-  await form.locator("input[name=nameZh]").fill("标签测试,Label alias");
-  await form.locator("form .pantry-editor-body>.nutrition-fields input").first().fill("111");
-  await form.locator("form .pantry-editor-body>.nutrition-fields input").nth(1).fill("7");
-  const file = await fixture(page);
-  await form
-    .locator("[data-photo-kind=photo] input[type=file]")
-    .first()
-    .setInputFiles(file);
-  await form
-    .locator("[data-photo-kind=labelPhoto] input[type=file]")
-    .first()
-    .setInputFiles(file);
-  await form.getByRole("button", { name: "识别营养标签", exact: true }).click();
-  const review = form.locator(".ocr-review");
-  await expect(review).toBeVisible({ timeout: 60000 });
-  await expect(review.locator(".nutrition-fields input").nth(0)).toHaveValue(
-    "230",
-  );
-  await expect(review.locator(".nutrition-fields input").nth(1)).toHaveValue(
-    "3",
-  );
-  await expect(review.locator(".nutrition-fields input").nth(2)).toHaveValue(
-    "37",
-  );
-  await expect(review.locator(".nutrition-fields input").nth(3)).toHaveValue(
-    "8",
-  );
-  await expect(
-    form.locator("form .pantry-editor-body>.nutrition-fields input").first(),
-  ).toHaveValue("111");
-  expect(
-    await page.evaluate(async () => {
-      const d = await import("/src/domain.ts");
-      return d.db.ingredients.count();
-    }),
-  ).toBe(0);
-  await review.locator(".nutrition-fields input").nth(1).fill("");
-  await expect(review.locator(".ocr-apply")).toBeDisabled();
-  await review.locator(".nutrition-fields input").nth(1).fill("3");
-  await expect(review.locator(".ocr-apply")).toBeEnabled();
-  page.once("dialog", (d) => d.accept());
-  await review
-    .getByRole("button", { name: "确认并应用到表单", exact: true })
-    .click();
-  await expect(
-    form.locator("form .pantry-editor-body>.nutrition-fields input").first(),
-  ).toHaveValue("230");
-  await expect(form.locator("select[name=basis]")).toHaveValue("serving");
-  await expect(form.locator("input[name=servingGrams]")).toHaveValue("40");
-  expect(
-    await page.evaluate(async () => {
-      const d = await import("/src/domain.ts");
-      return d.db.ingredients.count();
-    }),
-  ).toBe(0);
-  await form.getByRole("button", { name: "保存", exact: true }).click();
-  await page.reload();
-  const item = await page.evaluate(async () => {
-    const d = await import("/src/domain.ts");
-    return (await d.db.ingredients.toArray())[0];
-  });
-  expect(item.photo).toContain("data:image/png;base64,");
-  expect(item.labelPhoto).toBe(item.photo);
-  expect(item.nutritionSource).toBe("package-label-ocr");
-  expect(item.labelRecognition.text).toContain("Calories 230");
-  expect(item.aliases).toEqual(["标签测试", "Label alias"]);
-  expect(remote).toEqual([]);
+// Pantry OCR/photo import was intentionally retired. Existing metadata must survive manual edits.
+for(const hasRecognition of [true,false])test('legacy label/photo metadata survives manual nutrition editing '+hasRecognition,async({page,context})=>{
+ const remote:string[]=[];const origin=new URL(page.url()).origin;context.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==origin)remote.push(r.url())});
+ const file=await fixture(page,!hasRecognition),photo='data:image/png;base64,'+file.buffer.toString('base64');
+ const original=await page.evaluate(async({photo,hasRecognition})=>{const d=await import('/src/domain.ts');const row={...d.stamp(),name:'Synthetic legacy label',nameZh:'标签测试',brand:'',basis:'serving',servingGrams:40,calories:hasRecognition?230:null,protein:3,carbs:37,fat:8,photo,labelPhoto:photo,nutritionSource:'package-label-ocr',labelRecognition:{text:hasRecognition?'Synthetic label: Calories 230':'',status:hasRecognition?'reviewed':'failed'}};await d.db.ingredients.put(row);return row},{photo,hasRecognition});
+ await page.goto('/pantry');await page.locator('.pantry-row[data-user-food-id] .actions button').first().click();const form=page.locator('.pantry-editor-modal'),fields=form.locator('.nutrition-fields input');await expect(form.locator('.pantry-photo-import,input[type=file],.ocr-review')).toHaveCount(0);
+ await fields.first().fill('');await expect(fields.first()).toHaveValue('');expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return d.db.ingredients.get(id)},original.id)).toEqual(original);
+ await fields.first().fill('123');await fields.nth(1).fill('7');await form.getByRole('button',{name:'保存',exact:true}).click();await expect(form).toHaveCount(0);await page.reload();
+ const after=await page.evaluate(async id=>{const d=await import('/src/domain.ts');return {item:await d.db.ingredients.get(id),count:await d.db.ingredients.count()}},original.id);
+ expect(after.count).toBe(1);expect(after.item).toMatchObject({id:original.id,calories:123,protein:7,carbs:37,fat:8,servingGrams:40,photo,labelPhoto:photo,labelRecognition:original.labelRecognition});expect(remote).toEqual([]);await expect(page.locator('.pantry-row[data-user-food-id]')).toContainText('123 kcal');
 });
-test("a real OCR failure leaves manual entry and reference photo saving usable", async ({
-  page,
-}) => {
-  test.setTimeout(90000);
-  await page.goto("/pantry");
-  await page.getByRole("button", { name: "添加食材", exact: true }).click();
-  const form = page.getByRole("dialog");
-  await form.locator(".pantry-photo-import > summary").click();
-  await form.locator("input[name=name]").fill("Manual fallback");
-  await form
-    .locator("[data-photo-kind=labelPhoto] input[type=file]")
-    .first()
-    .setInputFiles(await fixture(page, true));
-  await form.getByRole("button", { name: "识别营养标签", exact: true }).click();
-  await expect(form.getByRole("alert")).toBeVisible({ timeout: 60000 });
-  await form.locator("form .pantry-editor-body>.nutrition-fields input").first().fill("123");
-  await form.getByRole("button", { name: "保存", exact: true }).click();
-  await page.reload();
-  await expect(page.locator(".pantry-row")).toContainText("123 kcal");
-  const photo = await page.evaluate(async () => {
-    const d = await import("/src/domain.ts");
-    return (await d.db.ingredients.toArray())[0].labelPhoto;
-  });
-  expect(photo).toContain("data:image/png;base64,");
-});
+
 test("consumption above 100% is saved, displayed, editable and used in progress", async ({
   page,
 }) => {
@@ -294,7 +195,7 @@ test("consumption above 100% is saved, displayed, editable and used in progress"
   await page.locator("input[name=consumptionPercent]").fill("150");
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
   await expect(page.getByTestId("food-progress")).toContainText("90kcal");
-  await expect(page.locator(".meal-card .meal-row")).toContainText("150%");
+  await expect(page.locator(".meal-card .meal-row")).toContainText("150");
   await page.reload();
   await page
     .locator(".meal-row")

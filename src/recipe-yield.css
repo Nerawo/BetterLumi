@@ -1,0 +1,15 @@
+.recipe-serving-input{display:flex;align-items:center;gap:8px;min-width:0}.recipe-serving-input input{width:100%;min-width:0;max-width:120px}.recipe-serving-input>span{font-size:13px;color:var(--muted)}.recipe-serving-input button{min-width:44px;min-height:44px;padding:6px}.recipe-yield-editor{max-width:320px;margin-bottom:14px}.recipe-yield-editor small{font-size:12px}.recipe-yield-detail{display:grid;gap:6px;margin:0 0 18px}.recipe-yield-detail label{display:grid;gap:8px}.recipe-yield-detail input{max-width:90px}.recipe-cooking-nutrition{margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}.recipe-cooking-nutrition .nutrition-strip{margin-top:8px}
+.recipe-reference-badge{font-size:11px;color:var(--muted);margin:3px 0}.recipe-reference-detail{font-size:12px;color:var(--muted);padding:8px 0 12px}.recipe-detail-modal .recipe-hero img.detail-photo.built-in-recipe-photo{display:block;width:auto;height:auto;max-width:100%;max-height:260px;aspect-ratio:1;object-fit:contain;object-position:center;margin:auto}
+
+:is(.recipe-reference-badge,.recipe-reference-detail) .reference-info-trigger{position:relative;min-width:14px;min-height:14px;width:14px;height:14px;padding:0;margin:0 15px 0 3px;vertical-align:middle}:is(.recipe-reference-badge,.recipe-reference-detail) .reference-info-trigger::before{content:'';position:absolute;width:44px;height:44px;left:50%;top:50%;transform:translate(-50%,-50%)}
+
+/* Keep final recipe numbers and their units together without changing display sizes. */
+:is(.recipe-detail-modal,.recipe-editor-modal,.add-food-modal) .nutrition-strip.recipe-nutrition-strip > div > strong.recipe-nutrition-value{white-space:nowrap;flex-wrap:nowrap}
+:is(.recipe-detail-modal,.recipe-editor-modal,.add-food-modal) .recipe-nutrition-strip strong.recipe-nutrition-value > small{display:inline;flex:none}
+.recipe-yield-detail .recipe-serving-input{justify-content:flex-start;gap:8px}
+.recipe-yield-detail .recipe-serving-stepper{display:inline-flex;align-items:center;gap:4px;flex:none}
+.recipe-yield-detail .recipe-serving-stepper input{flex:none;width:64px;max-width:64px;min-height:44px;text-align:center;appearance:textfield}
+.recipe-yield-detail .recipe-serving-stepper input::-webkit-inner-spin-button,.recipe-yield-detail .recipe-serving-stepper input::-webkit-outer-spin-button{appearance:none;margin:0}
+.recipe-yield-detail .recipe-serving-stepper button{flex:none;width:44px;min-height:44px;padding:6px}
+
+:is(.recipe-detail-modal,.recipe-editor-modal,.add-food-modal) .nutrition-strip.recipe-nutrition-strip{grid-template-columns:minmax(max-content,1.25fr) repeat(3,minmax(0,1fr))}

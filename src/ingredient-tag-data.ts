@@ -1,3 +1,4 @@
+import {builtInTagIds} from './data/builtInTags';
 import {validOrder} from './collection-order';
 import type {RecordBase} from './db';
 import {normalizeUserName} from './user-names';
@@ -7,7 +8,7 @@ export function reconcileIngredientTags(tables:Record<string,unknown[]>) {
  for(const row of [...(tables.recipeCategories??[]),...(tables.ingredientTags??[])])if(!validOrder(row as {sortOrder?:unknown}))throw Error('Invalid collection order');
  const tags=tables.ingredientTags??[];
  if(!Array.isArray(tags))throw Error('Invalid ingredient tags');
- const active=new Set<string>(),names=new Set<string>();
+ const active=new Set<string>(builtInTagIds),names=new Set<string>();
  for(const value of tags){
   const tag=value as IngredientTag;
   if(typeof tag.name!=='string'||!normalizeUserName(tag.name)||tag.name.length>100)throw Error('Invalid ingredient tag name');

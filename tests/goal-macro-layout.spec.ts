@@ -1,3 +1,4 @@
+import {openPersonalGoalEditor} from './current-ui';
 import {test,expect} from '@playwright/test';
 const keys=['protein','carbs','fat'] as const;
 const states=[[],['protein'],['carbs'],['fat'],['protein','carbs'],['carbs','fat'],[...keys]];
@@ -5,7 +6,7 @@ const out='./work/screenshots/';
 for(const width of [320,390,430])for(const language of ['zh','en'])test(`fixed macro positions ${width} ${language}`,async({page},info)=>{
  test.setTimeout(90000);await page.setViewportSize({width,height:844});await page.goto('/today?date=2026-10-19');await expect(page.locator('#today-tab-more')).toBeVisible();
  const original=await page.evaluate(async language=>{const d=await import('/src/domain.ts'),{goalTable}=await import('/src/goals.ts');await d.db.settings.put({key:'language',value:language});const g={...d.stamp(),startDate:'2026-10-01',endDate:null,calorieMin:null,calorieMax:null,exerciseMinutes:null,exerciseKcal:null,nutritionGoals:{calories:{mode:'off',min:null,max:null},protein:{mode:'off',min:70,max:90},carbs:{mode:'off',min:85,max:115},fat:{mode:'off',min:15,max:25}}};await goalTable.put(g);return g},language);
- await page.reload();await expect(page.locator('html')).toHaveAttribute('lang',language);await page.locator('#today-tab-more').click();const form=page.locator('.goal-editor-inline'),toggle=form.locator('.advanced-nutrition-toggle'),grid=form.locator('.goal-macro-grid');await toggle.click();await expect(toggle.locator('small')).toHaveCount(0);await expect(toggle).toHaveText(language==='en'?'Detailed Nutrition Planning':'详细营养规划');
+ await page.reload();await expect(page.locator('html')).toHaveAttribute('lang',language);await openPersonalGoalEditor(page);const form=page.locator('.goal-editor-inline'),toggle=form.locator('.advanced-nutrition-toggle'),grid=form.locator('.goal-macro-grid');await toggle.click();await expect(toggle.locator('small')).toHaveCount(0);await expect(toggle).toHaveText(language==='en'?'Detailed Nutrition Planning':'详细营养规划');
  const initial=await grid.locator('[data-goal-metric]').evaluateAll(rows=>rows.map(e=>{const b=e.getBoundingClientRect();return {x:b.x,width:b.width}}));
  for(const enabled of states){
   for(const key of keys)await grid.locator(`[data-goal-metric=${key}] input[type=checkbox]`).setChecked(enabled.includes(key));

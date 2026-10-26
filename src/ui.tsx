@@ -18,7 +18,7 @@ export function Modal({
 }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLDialogElement>(null);
-  const standard=["calculator-risk-modal","weight-entry-modal","goal-settings-modal","goal-tolerance-reset-modal","ingredient-picker-modal","recipe-detail-modal","recipe-editor-modal","category-manager-modal","category-recipes-modal","pantry-editor-modal","exercise-record-editor","exercise-plan-editor","goal-editor-modal"].some(name=>className.split(" ").includes(name));
+  const standard=["reference-source-modal","calculator-risk-modal","weight-entry-modal","goal-settings-modal","goal-tolerance-reset-modal","ingredient-picker-modal","recipe-detail-modal","recipe-editor-modal","category-manager-modal","category-recipes-modal","pantry-editor-modal","exercise-record-editor","exercise-plan-editor","goal-editor-modal"].some(name=>className.split(" ").includes(name));
   useEffect(() => {
     ref.current?.showModal();
   }, []);

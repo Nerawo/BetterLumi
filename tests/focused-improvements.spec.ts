@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+test.use({hasTouch:true});
 const output='./work/screenshots/';
 test.use({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-10-18T12:00:00-04:00')});await page.goto('/today')});
 test('exercise entries share a compact list, keep inline tags and preserve manual calories',async({page})=>{
  const before=await page.evaluate(async()=>{const d=await import('/src/domain.ts');const rows=[{...d.stamp(),date:d.localDate(),name:'午间散步',type:'walking',duration:20,distance:1.2,caloriesBurned:null,trainingTags:['cardio','other'],bodyParts:['preset:calves'],notes:'轻松步行'},{...d.stamp(),date:d.localDate(),name:'力量练习',type:'other',duration:25,distance:null,caloriesBurned:81,trainingTags:['strength'],bodyParts:[],notes:''}];await d.db.activities.bulkPut(rows);return d.db.activities.toArray()});
- const card=page.locator('.today-layout > div').nth(1).locator('.exercise-card');
+ await page.locator('#today-tab-activity').click();const card=page.locator('#today-panel-activity .exercise-card');
  await expect(card.locator('.section-heading h2')).toHaveCount(1);
  await expect(card.locator('.exercise-record-list > .activity-row')).toHaveCount(2);
  const first=card.locator('.activity-row').filter({hasText:'午间散步'});
@@ -16,7 +17,7 @@ test('exercise entries share a compact list, keep inline tags and preserve manua
  await card.screenshot({path:output+'局部改进-运动列表.png'});
  const after=await page.evaluate(async()=>{const d=await import('/src/domain.ts');return d.db.activities.toArray()});expect(after).toEqual(before);
  await first.getByRole('button',{name:'编辑',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');
- page.once('dialog',d=>d.accept());await card.locator('.activity-row').last().getByRole('button',{name:'删除',exact:true}).click();await expect(card.locator('.activity-row')).toHaveCount(1);
+ await card.locator('.activity-row').last().getByRole('button',{name:'删除',exact:true}).click();await page.locator('.delete-destructive').click();await expect(card.locator('.activity-row')).toHaveCount(1);
  expect(await page.evaluate(async()=>{const d=await import('/src/domain.ts');return(await d.db.activities.toArray()).find(a=>a.name==='午间散步')!.caloriesBurned})).toBeNull();
 });
 test('recipe editor and category bulk manager persist multiple assignments without tab writes',async({page})=>{

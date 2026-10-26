@@ -1,3 +1,9 @@
+import {BuiltInExerciseSelector} from './BuiltInExerciseSelector';
+import {builtInExercises} from './data/builtInExercises';
+import {exerciseEstimateSnapshot} from './exercise-estimate';
+import {useWeightData} from './WeightData';
+import {ReferenceSourceInfo} from './ReferenceSourceInfo';
+import {referenceName} from './reference-library';
 import {NumberInput} from "./NumberInput";
 import {ExerciseJournalRow} from "./ExerciseJournalRow";
 import {NumberUnit} from "./NumberUnit";
@@ -93,10 +99,46 @@ export function ActivityEditor({
   close: () => void;
   notice: Notice;
 }) {
-  const { t } = useTranslation();
+  const { t,i18n } = useTranslation();
   const old = draft.item;
+  const initialPreset=builtInExercises.find(item=>item.id===old?.exerciseEstimate?.builtInId);
+  const [preset,setPreset]=useState(old?.exerciseEstimate?.builtInId??'');
+  const [presetName,setPresetName]=useState(initialPreset?old?.name??'':'');
+  // Only user-authored custom data belongs to this draft, never a preset label or estimate.
+  const [customDraft,setCustomDraft]=useState(()=>({
+    name:initialPreset?'':old?.name??draft.prefill?.name??(old?t(old.type):''),
+    kcal:initialPreset?'':String(old?old.caloriesBurned??'':draft.prefill?.caloriesBurned??''),
+    tags:initialPreset?[] as string[]:old?.trainingTags??draft.prefill?.trainingTags??[],
+    parts:initialPreset?[] as string[]:old?.bodyParts??draft.prefill?.bodyParts??[],
+  }));
+  const weightState=useWeightData();
+  const [duration,setDuration]=useState(String(old?old.duration??'':draft.prefill?.duration??''));
+  // Opening a saved log never refreshes its snapshot; explicit input edits can opt in.
+  const [manual,setManual]=useState(!!old||draft.prefill?.caloriesBurned!=null);
+  const [manualEdited,setManualEdited]=useState(old?.calorieSource!=='automatic');
+  const [manualKcal,setManualKcal]=useState(String(old?old.caloriesBurned??'':draft.prefill?.caloriesBurned??''));
+  const selectedPreset=builtInExercises.find(item=>item.id===preset);
+  const name=selectedPreset?presetName||referenceName(selectedPreset,i18n.language):customDraft.name;
+  const savedEstimate=old?.exerciseEstimate?.builtInId===preset?old.exerciseEstimate:undefined;
+  const estimate=selectedPreset&&weightState?exerciseEstimateSnapshot(selectedPreset,duration===''?null:Number(duration),weightState.latestWeight):undefined;
+  const kcal=!selectedPreset?customDraft.kcal:manual?manualKcal:estimate?.estimatedKcal??'';
   const [tags, setTags] = useState(old ? old.trainingTags ?? [] : draft.prefill?.trainingTags ?? []);
   const [parts, setParts] = useState(old ? old.bodyParts ?? [] : draft.prefill?.bodyParts ?? []);
+  const source=selectedPreset?{...selectedPreset,...(manual?savedEstimate??estimate:estimate),historical:!!(manual&&savedEstimate),finalKcal:kcal===''?null:Number(kcal),calorieSource:(manual&&manualEdited?'manual':'automatic') as 'manual'|'automatic'}:undefined;
+  const selectPreset=(item:typeof selectedPreset|null)=>{
+    // Only an explicit exercise-type change loads defaults; intensity and rerenders never do.
+    if(!item){
+      setPreset('');setTags([...customDraft.tags]);setParts([...customDraft.parts]);
+      setManual(true);setManualEdited(true);setManualKcal('');
+      return;
+    }
+    if(item.category!==selectedPreset?.category){setTags([...item.defaultTrainingTags]);setParts([...item.defaultBodyParts])}
+    setPreset(item.id);setPresetName(referenceName(item,i18n.language));
+    if(!selectedPreset){setManual(false);setManualEdited(false);setManualKcal('')}
+    else if(!manualEdited)setManual(false);
+  };
+  const editKcal=()=>{setManualKcal(kcal===''?'':String(Number(Number(kcal).toFixed(2))));setManual(true);setManualEdited(true)};
+  const editableKcal=!selectedPreset||manual&&manualEdited;
   const [busy, setBusy] = useState(false);
   const saving=useRef(false);
   return (
@@ -109,6 +151,7 @@ export function ActivityEditor({
           const name = String(f.get("name")).trim();
           const date = String(f.get("date"));
           if (!name) return;
+          if(selectedPreset&&!manual&&!estimate){notice(t('exerciseEstimateUnavailable'));return;}
           if (date > localDate()) {
             notice(t("errorDate"));
             return;
@@ -123,8 +166,10 @@ export function ActivityEditor({
               if(!old&&draft.plannedKey){let id=plannedActivityId(draft.plannedKey),suffix=0;while(await db.activities.get(id))id=plannedActivityId(draft.plannedKey)+":generated:"+(++suffix);metadata.id=id;}
               await saveActivity({
                 ...metadata,
+                calorieSource:(manual&&manualEdited)||(!selectedPreset&&!savedEstimate)?'manual':'automatic',
+                exerciseEstimate:manual&&savedEstimate?savedEstimate:selectedPreset?estimate:undefined,
                 name,
-                type: old?.type ?? "other",
+                type: !selectedPreset&&old?.exerciseEstimate&&preset!==old.exerciseEstimate.builtInId?'other':old?.type??"other",
                 date,
                 duration: f.get("duration")===""?null:Number(f.get("duration")),
                 distance: f.get("distance") ? Number(f.get("distance")) : null,
@@ -132,9 +177,9 @@ export function ActivityEditor({
                 trainingTags: tags,
                 bodyParts: parts,
                 caloriesBurned:
-                  f.get("caloriesBurned") === ""
+                  kcal === ""
                     ? null
-                    : Number(f.get("caloriesBurned")),
+                    : Number(kcal),
               },draft.plannedKey,!old);
               await draft.onSaved?.();
             });
@@ -148,20 +193,16 @@ export function ActivityEditor({
         }}
       >
         <div className="exercise-editor-scroll">
-        <label>
-          {t("exerciseName")}
+        <BuiltInExerciseSelector value={preset} source={source} onChange={selectPreset}/>
+        {!selectedPreset?<label>
+          {t("customExerciseName")}
           <input
             name="name"
             required
-            list="exercise-presets"
-            defaultValue={old?.name ?? draft.prefill?.name ?? (old ? t(old.type) : "")}
+            placeholder={t('customExercisePlaceholder')}
+            value={customDraft.name} onChange={event=>setCustomDraft(previous=>({...previous,name:event.target.value}))}
           />
-          <datalist id="exercise-presets">
-            {["walking", "swimming", "badminton"].map((k) => (
-              <option key={k} value={t(k)} />
-            ))}
-          </datalist>
-        </label>
+        </label>:<input type="hidden" name="name" value={name}/>}
         <div className="form-grid">
           <label>
             {t("date")}
@@ -179,19 +220,21 @@ export function ActivityEditor({
               type="number"
               min="0"
               step="any"
-              defaultValue={old ? old.duration ?? "" : draft.prefill?.duration ?? ""}
+              required={!!selectedPreset}
+              value={duration} onChange={event=>{setDuration(event.target.value);if(!manualEdited)setManual(false)}}
             />
           </label>
-          <label>
+          {editableKcal?<label>
             {t("caloriesBurned")}
             <NumberInput
               name="caloriesBurned"
               type="number"
               min="0"
               step="any"
-              defaultValue={old ? old.caloriesBurned ?? "" : draft.prefill?.caloriesBurned ?? ""}
+              value={kcal===''?'':manual||!selectedPreset?kcal:Math.round(Number(kcal))}
+              onChange={event=>{const value=event.target.value;if(!selectedPreset)setCustomDraft(previous=>({...previous,kcal:value}));else{setManual(true);setManualEdited(true);setManualKcal(value)}}}
             />
-          </label>
+          </label>:<input type="hidden" name="caloriesBurned" value={kcal===''?'':manual?kcal:Math.round(Number(kcal))}/>}
           <label>
             {t("distance")}
             <NumberInput
@@ -203,7 +246,13 @@ export function ActivityEditor({
             />
           </label>
         </div>
-        <ExerciseMetadataEditor value={{trainingTags:tags,bodyParts:parts}} onChange={v=>{setTags(v.trainingTags??[]);setParts(v.bodyParts??[])}}/>
+        {selectedPreset&&<div className="exercise-estimate-note" aria-live="polite">
+         {!editableKcal&&(kcal===''?<p className="exercise-estimate-prompt">{t('exerciseEnterDuration')}</p>:<><span className="exercise-reference-result-label">{t('exerciseEstimate')}</span><p className="exercise-reference-result" data-testid="exercise-estimated-kcal">≈ {Math.round(Number(kcal))}<small>kcal</small></p></>)}
+         {source?.weightKg!==undefined&&<span className="exercise-weight-source">{source.weightSource==='reference'?t(source.historical?'exerciseSnapshotFallback':'exerciseFallback'):t(source.historical?'exerciseSnapshotWeight':'exerciseRecordedWeight',{weight:source.weightKg.toLocaleString(i18n.language,{maximumFractionDigits:1})})}<ReferenceSourceInfo iconOnly label={t('exerciseCalculationDetails')} source={source}/></span>}
+         {manual&&<small>{t(manualEdited?'exerciseManual':'exerciseSavedEstimate')}</small>}
+         <div className="exercise-estimate-actions">{!editableKcal&&<button type="button" onClick={editKcal}>{t('exerciseEditManually')}</button>}{manual&&<button type="button" onClick={()=>{setManual(false);setManualEdited(false)}}>{t('exerciseRestore')}</button>}</div>
+        </div>}
+        <ExerciseMetadataEditor value={{trainingTags:tags,bodyParts:parts}} onChange={v=>{setTags(v.trainingTags??[]);setParts(v.bodyParts??[]);if(!selectedPreset)setCustomDraft(previous=>({...previous,tags:v.trainingTags??[],parts:v.bodyParts??[]}))}}/>
         <label>
           {t("notes")}
           <textarea name="notes" rows={2} defaultValue={old?.notes ?? draft.prefill?.notes ?? draft.notes} />

@@ -38,7 +38,7 @@ export default defineConfig({
             },
           },
         ],
-        globPatterns: ["**/*.{js,css,html,png,jpg,svg,woff2}"],
+        globPatterns: ["**/*.{js,css,html,png,jpg,webp,svg,woff2}"],
         navigateFallback: "/index.html",
       },
     }),

@@ -35,7 +35,7 @@ test("four icon-only destinations, four real themes, text pantry and two-column 
   for (const button of await page.locator(".mobile-nav button").all())
     expect(await button.innerText()).toBe("");
   await page.goto("/more");
-  await page.getByRole("button", { name: /外观与主题/ }).click();
+  await page.locator("[data-setting=appearance]").click();
   for (const name of ["杏桃陶土", "灰调薰衣草", "原版橄榄", "雾蓝 / 奶油"]) {
     await page
       .locator(".theme-choices")
@@ -51,7 +51,7 @@ test("four icon-only destinations, four real themes, text pantry and two-column 
     .locator(".theme-choices")
     .getByRole("button", { name: "杏桃陶土", exact: false })
     .click();
-  await page.reload();
+  await expect.poll(()=>page.evaluate(async()=>{const d=await import("/src/domain.ts");return (await d.db.settings.get("theme"))?.value})).toBe("apricot");await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "apricot");
   expect(
     await page.evaluate(() =>
@@ -95,19 +95,19 @@ test("four icon-only destinations, four real themes, text pantry and two-column 
       });
   });
   await page.goto("/pantry");
-  await expect(page.locator(".pantry-row")).toHaveCount(1);
+  await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(1);
   await expect(
     page.locator(".pantry-list img,.pantry-list .ingredient-photo"),
   ).toHaveCount(0);
   await page.locator(".search input").fill("别名");
   await expect(page.locator(".pantry-row")).toHaveCount(1);
   await page.goto("/recipes");
-  await expect(page.locator(".recipe-card")).toHaveCount(3);
-  const cards = page.locator(".recipe-card");
+  await expect(page.locator(".recipe-list-row:has(.actions)")).toHaveCount(3);
+  const cards = page.locator(".recipe-list-row:has(.actions)");
   const a = await cards.nth(0).boundingBox(),
     b = await cards.nth(1).boundingBox();
-  expect(Math.abs(a!.y - b!.y)).toBeLessThan(2);
-  expect(b!.x).toBeGreaterThan(a!.x);
+  expect(b!.y).toBeGreaterThan(a!.y);
+  expect(b!.x).toBe(a!.x);
   await expect(page.getByText("FEATURED", { exact: true })).toHaveCount(0);
   expect(
     await page.evaluate(

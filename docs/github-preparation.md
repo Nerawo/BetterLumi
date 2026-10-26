@@ -2,7 +2,9 @@
 
 ## Public source and private development history
 
-Publish only the separately prepared, sanitized source snapshot. Its main branch has one initial commit and no ancestry from the private development repository. It has no remote configured until publication is explicitly approved.
+Publish only the separately prepared, sanitized source snapshot. Its main branch has one initial commit and no ancestry from the private development repository. An origin remote is already configured for Nerawo/BetterLumi; a configured remote does not establish whether a push has happened previously. This release-preparation run performed no fetch, push, repository creation or deployment.
+
+The publication copy now includes the current application source, static reference catalogs, recipe image and tests. The earlier full browser validation failed; targeted repair now passes all affected families, but one final full release validation is still pending. No final release commit was created. Review [publication validation](publication-validation.md) before any upload; do not publish the older committed tree as though it contained the newly tested source.
 
 The original development repository, its commits, backup branches and historical tags remain local and private. A verified Git bundle and a pre-publication backup branch protect the original checkpoint. Do not push that repository, use a mirror push, or copy its .git directory into the public snapshot. Cleaning a current file does not remove earlier versions from Git history.
 
@@ -26,10 +28,15 @@ Ignore patterns do not protect already tracked files and cannot identify every a
 
 ## Validation and deployment
 
-Run npm ci, npm run typecheck, npm test and npm run build. Browser tests use a fresh isolated context on 127.0.0.1:5190, never the user's everyday browser profile or localhost:5173 storage. Do not seed tests from a personal browser or export. Existing old visual tests can describe retired layouts; do not change unrelated application behavior to satisfy them.
+Run npm ci, npm run typecheck, npm test and npm run build. Browser tests use fresh isolated contexts, never the user's everyday browser profile or localhost:5173 storage. This run served the public source on isolated ports 5192/5194 and the production build on 5193. The default test configuration uses 5190; ensure it is serving the intended checkout rather than reusing another development server. Touch-dependent suites require hasTouch: true. Do not seed tests from a personal browser or export. Existing old visual tests can describe retired layouts; investigate them without changing unrelated application behavior to satisfy them.
+
+The database remains BetterLumi schema 6 and the primary JSON backup format remains version 9. Built-in food/exercise/recipe definitions remain static references, not seeded user records. Logged nutrition and exercise values remain independent snapshots. This publication sync adds no schema migration and changes neither the normal development port nor the user's browser storage.
 
 Future static deployment uses npm run build and publishes dist over HTTPS. Paths currently assume a domain root; a GitHub Pages repository subpath needs separate validation. A new domain is a different browser-storage origin; transfer private data only through explicit local backup/import if desired.
 
 Review image redistribution rights before distribution and select a project license intentionally. Existing font license files remain included. A public repository does not automatically grant a project-wide open-source license.
 
 No GitHub creation, push, public upload or deployment is part of local preparation. Publish only after explicit approval.
+
+
+See [browser triage and targeted repair](browser-triage.md) for the October 26 follow-up: 259 targeted development cases, one production-preview case and 27 overlapping touch cases passed. These targeted results do not replace the final complete release gate.

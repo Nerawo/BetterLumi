@@ -28,6 +28,8 @@ export interface Ingredient extends RecordBase {
   fat: number | null;
 }
 export interface Activity extends RecordBase {
+  calorieSource?: 'automatic' | 'manual';
+  exerciseEstimate?: import('./exercise-estimate').ExerciseEstimateSnapshot;
   type: "walking" | "swimming" | "badminton" | "other";
   date: string;
   duration: number | null;

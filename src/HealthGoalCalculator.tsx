@@ -1,4 +1,6 @@
 import {professionalCalorieTarget,specialCircumstances} from './professional-guidance';
+import {calculateMacroPlan,type NutritionPlan} from './macro-planner';
+import './macro-planner-locale';
 import './professional-locale';
 import './goal-presentation-locale';
 import {calculatorSettingsKey,parseCalculatorDraft,saveCalculatorDraft,initialCalculatorDraft,calculatorWeightKg,type CalculatorDraft} from './calculator-settings';
@@ -86,6 +88,8 @@ function CalculatorContent({profile,initialDraft,notice}:{profile:BmiProfile;ini
  const durationValue=draft.duration;
  const guidedTarget=professionalCalorieTarget(draft),useProfessional=special.active;
  const appliedTarget=useProfessional?guidedTarget:plan.targetKcal;
+ const nutritionPlan=draft.nutritionPlan??'balanced';
+ const macros=!special.active&&plan.bodyValid?calculateMacroPlan(kg,plan.targetKcal,nutritionPlan):null;
  const calorieRange=acceptableRange(appliedTarget,tolerance.values.calories);
  const bmrValue=plan.energy&&draft.sex?plan.energy.bmr.min:null;
  const explain=(reason:Parameters<typeof planReasonMessage>[0])=>{if(reason==='excluded')return specialMessage;const message=planReasonMessage(reason,plan.assessment);return t(message.key,Object.fromEntries(Object.entries(message.values).map(([key,value])=>[key,format(value,1)])))};
@@ -138,6 +142,11 @@ function CalculatorContent({profile,initialDraft,notice}:{profile:BmiProfile;ini
      <p className={special.active?'calculator-unavailable-value':'calculator-primary-value'} data-testid="planner-intake">{special.active?(guidedTarget===null?t('compactNoAutomatic'):format(guidedTarget)):plan.intake?range(plan.intake):t('plannerNotRecorded')}{(special.active?guidedTarget!==null:plan.intake!==null)&&<small>{t('calcPerDay')}</small>}</p>
      {special.active&&<p className="calculator-footnote">{specialMessage}</p>}
      {settings.exerciseEnabled&&<div className="planner-exercise-result"><div className="calculator-result-heading">{t('plannerBurn')}<small className="planner-calculated-label">{t('plannerCalculated')}</small></div><p className="calculator-secondary-value" data-testid="planner-exercise-calories">{plan.exerciseKcal===null?t('plannerNotRecorded'):format(plan.exerciseKcal)}<small>{t('plannerWeeklyBurn')}</small></p></div>}
+     {special.active?<p className="calculator-footnote calculator-macro-manual">{t('macroManualMode')}</p>:<section className="calculator-macro-plan" aria-label={t('macroScheme')}>
+      <div className="calculator-macro-heading"><span className="calculator-result-heading">{t('macroScheme')}</span><div className="calculator-macro-options" role="group" aria-label={t('macroScheme')}>{(['balanced','highProtein'] as const).map((scheme:NutritionPlan)=><button type="button" key={scheme} aria-pressed={nutritionPlan===scheme} onClick={()=>edit({nutritionPlan:scheme})}>{t(scheme==='balanced'?'macroBalanced':'macroHighProtein')}</button>)}</div></div>
+      <details className="calculator-macro-details"><summary>{t('macroAbout')}<ChevronDown size={14}/></summary><p>{t(nutritionPlan==='balanced'?'macroBalancedDescription':'macroHighProteinDescription')}</p></details>
+      {macros?<><dl className="calculator-macro-values">{(['protein','carbs','fat'] as const).map(key=><div key={key}><dt>{t(key)}</dt><dd data-testid={'macro-'+key}>{format(macros[key])}<small>g</small></dd></div>)}</dl>{macros.cautions.length>0&&<details className="calculator-macro-details calculator-macro-caution"><summary>{t('macroCaution')}<ChevronDown size={14}/></summary>{macros.cautions.map(item=><p key={item.nutrient}>{t('macroProportion',{nutrient:t(item.nutrient),percent:format(item.percent,1),min:item.min,max:item.max})}</p>)}</details>}</>:<p className="calculator-footnote">{t(plan.targetKcal!==null&&plan.targetKcal>0&&kg!==null?'macroCannotAllocate':'macroNeedInputs')}</p>}
+     </section>}
      <p className="planner-compact-plan"><span>{draft.targetWeight===null?t('plannerNotRecorded'):format(draft.targetWeight,2)+' '+(draft.weightUnit==='jin'?t('calcJinUnit'):draft.weightUnit)}</span><span data-testid="planner-duration">{durationValue===null?t('plannerNotRecorded'):format(durationValue,2)+' '+t(draft.durationUnit==='weeks'?'calcWeeks':'calcMonths')}</span>{settings.exerciseEnabled&&<span>{plan.exerciseMinutes===null?t('plannerNotRecorded'):format(plan.exerciseMinutes!,1)+' '+t('calcMinutesWeek')}</span>}</p>
      {!special.active&&(unavailable||caution)&&<details id="planner-apply-status" className="calculator-theory-warning"><summary><span>{t(plan.intake?(plan.assessment.status==='attention'?'planStatus_attention':'compactPlanWarning'):'compactNeedInputs')}</span><span>{t('compactViewReason')}<ChevronDown size={14}/></span></summary><p>{unavailable||caution}</p>{!plan.nutritionApplicable&&suggested?.adopt!=null&&<button type="button" className="planner-text-action" onClick={()=>edit({duration:suggested.adopt})}>{t('planUseTimeline')} · {format(suggested.adopt,1)} {t(draft.durationUnit==='weeks'?'calcWeeks':'calcMonths')}</button>}</details>}
      <div className="form-actions"><button className="primary" type="button" disabled={busy||!tolerance.ready} aria-describedby={!special.active&&(unavailable||caution)?'planner-apply-status':undefined} onClick={requestPlan}>{t('plannerApplyPlan')}</button></div>
@@ -148,7 +157,9 @@ function CalculatorContent({profile,initialDraft,notice}:{profile:BmiProfile;ini
       <p>{t('plannerUnifiedNote')}</p>{plan.assessment.intakeFloor!==null&&!special.active&&<p>{t('planIntakeBoundary',{value:format(plan.assessment.intakeFloor)})}</p>}
       <p>{t('plannerFormula')}</p><p>{t('plannerMethod')}</p><p>{t('planScreeningNote')}</p>
       {plan.assessment.reasons.map(reason=><p key={reason}>{explain(reason)}</p>)}
+      <h4>{t('macroReferenceTitle')}</h4><p>{t('macroReferenceText')}</p><p>{t('macroReferenceAmdr')}</p>
       <a href="https://pacompendium.com/" target="_blank" rel="noreferrer">2024 Adult Compendium · MET</a><a href="https://www.niddk.nih.gov/health-information/weight-management/body-weight-planner" target="_blank" rel="noreferrer">NIDDK · Body Weight Planner</a>
+      <a href="https://cdn.realfood.gov/DGA_508.pdf" target="_blank" rel="noreferrer">Dietary Guidelines for Americans 2025–2030 · Protein</a><a href="https://nap.nationalacademies.org/catalog/10490/dietary-reference-intakes-for-energy-carbohydrate-fiber-fat-fatty-acids-cholesterol-protein-and-amino-acids" target="_blank" rel="noreferrer">National Academies · Dietary Reference Intakes / AMDR</a>
      </details>
     </section>
    </form>

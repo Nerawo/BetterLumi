@@ -14,6 +14,8 @@ export function goalPeriod(goal:Goal,section:GoalSection):GoalPeriod {return goa
 export interface Goal extends RecordBase {
  /** Additive dated override; legacy versions continue to cover both sections. */
  scope?:'calories'|'exercise';
+ /** An additive full-nutrition version never participates in exercise selection. */
+ nutritionOnly?:boolean;
  /** Provenance only: never treats an entered professional target as an app recommendation. */
  calorieSource?:'automatic'|'professional';
  nutritionTargets?:NutritionTargets;nutritionTolerances?:GoalTolerances;nutritionToleranceRevision?:string;
@@ -44,6 +46,8 @@ export function configuredNutritionGoals(goal:Goal|null|undefined):NutritionGoal
 }
 export function validGoalConfig(value:unknown) {
  const g=value as Goal;if(!g||![g.calorieMin,g.calorieMax,g.exerciseMinutes,g.exerciseKcal].every(v=>v===null||validMeasure(v)))return false;
+ if(g.nutritionOnly!==undefined&&typeof g.nutritionOnly!=='boolean')return false;
+ if(g.nutritionOnly&&(g.scope!==undefined||g.nutritionEnabled!==true||g.exerciseEnabled!==false||g.exerciseMinutes!==null||g.exerciseKcal!==null))return false;
  if(g.calorieSource!==undefined&&(!['automatic','professional'].includes(g.calorieSource)||g.scope!=='calories'))return false;
  if(g.scope!==undefined&&g.scope!=='calories'&&g.scope!=='exercise')return false;
  if(g.scope==='exercise'&&(g.nutritionEnabled!==false||g.exerciseEnabled!==true||g.exerciseMode!=='weekly'||g.calorieMin!==null||g.calorieMax!==null||g.nutritionTargets!==undefined||g.nutritionGoals!==undefined))return false;

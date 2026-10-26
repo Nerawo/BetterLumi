@@ -96,9 +96,9 @@ test("calendar above meals synchronizes the selected day while old links and his
   await expect(page.locator(".meal-card")).toContainText("已编辑历史");
   await page.locator('[data-date="2026-10-15"]').click();
   await page.goBack();
-  await expect(page.getByTestId("selected-day")).toHaveAttribute("datetime", "2026-10-16");
+  await expect(page.locator(".calendar-grid [aria-pressed=true]")).toHaveAttribute("data-date", "2026-10-16");
   await page.goForward();
-  await expect(page.getByTestId("selected-day")).toHaveAttribute("datetime", "2026-10-15");
+  await expect(page.locator(".calendar-grid [aria-pressed=true]")).toHaveAttribute("data-date", "2026-10-15");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -136,11 +136,11 @@ test("category manager, multi assignments, modal state, touch-visible nutrition,
   await page.getByRole("button", { name: "管理分类", exact: true }).click();
   let dialog = page.getByRole("dialog").last();
   await dialog.getByLabel("分类名称").fill("晚餐");
-  await dialog.getByRole("button", { name: "创建分类", exact: true }).click();
+  await dialog.locator(".category-create-inline button").click();
   await expect(dialog).toContainText("晚餐");
-  const row = dialog.locator(".simple-row").filter({ hasText: "晚餐" });
+  const row = dialog.locator(".managed-category-row").filter({ hasText: "晚餐" });
   await row.getByRole("button", { name: "编辑", exact: true }).click();
-  await dialog.getByLabel("分类名称").fill("晚间");
+  await dialog.locator("[name=renameCategory]").fill("晚间");
   await dialog.getByRole("button", { name: "保存", exact: true }).click();
   await expect(dialog).toContainText("晚间");
   await page.keyboard.press("Escape");
@@ -156,19 +156,19 @@ test("category manager, multi assignments, modal state, touch-visible nutrition,
   await dialog.locator(".category-picker-done").click();
   await dialog.getByRole("button", { name: "保存", exact: true }).click();
   await page.getByRole("tab", { name: "晚间", exact: true }).click();
-  await expect(page.locator(".recipe-card")).toHaveCount(1);
+  await expect(page.locator(".recipe-card:has(.actions)")).toHaveCount(1);
   await page.getByRole("button", { name: "管理分类", exact: true }).click();
   dialog = page.getByRole("dialog");
-  page.once("dialog", (d) => d.accept());
+
   await dialog
-    .locator(".simple-row")
+    .locator(".managed-category-row")
     .filter({ hasText: "晚间" })
     .getByRole("button", { name: "删除", exact: true })
-    .click();
+    .click();await page.locator(".delete-destructive").click();
   await page.keyboard.press("Escape");
-  await expect(page.locator(".recipe-card")).toHaveCount(1);
+  await expect(page.locator(".recipe-card:has(.actions)")).toHaveCount(1);
   await page.reload();
-  await expect(page.locator(".recipe-card")).toHaveCount(1);
+  await expect(page.locator(".recipe-card:has(.actions)")).toHaveCount(1);
   await page.goto("/recipes/" + data.recipe);
   await expect(modal).toBeVisible();
   await modal
@@ -187,8 +187,8 @@ test("category manager, multi assignments, modal state, touch-visible nutrition,
   await dialog.getByRole("button", { name: "保存", exact: true }).click();
   const note = modal.locator(".paper-note").filter({ hasText: "修改纸条" });
   await note.locator("summary").click();
-  page.once("dialog", (d) => d.accept());
-  await note.getByRole("button", { name: "删除", exact: true }).click();
+
+  await note.getByRole("button", { name: "删除", exact: true }).click();await page.locator(".delete-destructive").click();
   await expect(note).toHaveCount(0);
   await expect(
     modal.locator(".note-text").filter({ hasText: "原有便签" }),
@@ -200,12 +200,12 @@ test("More removes exercise history and switches all four persistent palettes", 
   await seed(page);
   await page.goto("/more");
   await expect(page.locator(".activity-history")).toHaveCount(0);
-  await page.getByRole("button", { name: /外观与主题/ }).click();
+  await page.locator("[data-setting=appearance]").click();
   const swatches = page.locator(".theme-choices>button");
   await expect(swatches).toHaveCount(4);
   await swatches.nth(1).click();
   await expect(swatches.nth(1)).toHaveAttribute("aria-pressed", "true");
-  await page.reload();
+  await expect.poll(()=>page.evaluate(async()=>{const d=await import("/src/domain.ts");return (await d.db.settings.get("theme"))?.value})).toBe("apricot");await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "apricot");
   expect(
     await page.evaluate(async () => {

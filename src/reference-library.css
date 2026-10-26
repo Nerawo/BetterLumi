@@ -1,0 +1,66 @@
+.reference-origin { display:inline-flex; align-items:center; gap:3px; font:400 10px/1.5 var(--font-ui); color:var(--muted); }
+.reference-info-trigger { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:6px; border:0; background:transparent; color:var(--muted); }
+.reference-picker-row { display:flex; flex-direction:column; align-items:stretch; padding:8px 0 4px; border-bottom:1px solid var(--line); }
+.reference-picker-row > .ingredient-picker-result { display:flex; flex-direction:column; align-items:flex-start; gap:3px; min-width:0; padding:4px 0; border:0; text-align:left; }
+.reference-picker-row > .reference-origin { align-self:flex-start; }
+.reference-picker-row strong,.reference-picker-row small { max-width:100%; overflow-wrap:anywhere; }
+.reference-picker-row .reference-nutrition { font-size:11px; line-height:1.6; }
+.reference-source-modal { width:min(420px,calc(100vw - 24px)); }
+.reference-source-content { padding:16px 20px; overflow:auto; font:400 13px/1.6 var(--font-ui); }
+.reference-source-content dl { margin:0; }
+.reference-source-content dl > div { margin-bottom:8px; }
+.reference-source-content dt { font-size:11px; color:var(--muted); }
+.reference-source-content dd { margin:0; overflow-wrap:anywhere; }
+.reference-source-content a { color:var(--action); }
+.reference-source-content p { color:var(--muted); }
+.reference-food-identity > strong,.reference-food-identity > span,.reference-food-identity > small { display:block; }
+.reference-food-identity > strong { color:var(--ink); font-size:13px; }
+.reference-food-identity > small { margin-top:4px; font-size:11px; line-height:1.5; }
+.reference-info-trigger:focus-visible { outline:2px solid var(--action); outline-offset:2px; }
+.pantry-list .pantry-source-line { margin:2px 0; font:400 11px/1.5 var(--font-ui); color:var(--muted); overflow-wrap:anywhere; }
+.pantry-list .pantry-row-content .ingredient-title-line { align-items:flex-start; }
+.pantry-list .pantry-row-content .ingredient-title-line h3 { min-height:28px; }
+.pantry-list .pantry-row-content .ingredient-energy { flex:none; white-space:nowrap; padding-top:5px; }
+.pantry-list .pantry-secondary-line { position:relative; }
+.pantry-list .has-secondary-actions :is(.pantry-source-line,.macro-summary) { padding-right:88px; }
+.pantry-list .pantry-secondary-line > .actions { position:absolute; top:0; right:0; }
+/* Put glyphs on the metadata line; their existing touch targets extend downward
+   within the secondary content and row padding, without adding another row. */
+.pantry-list .pantry-secondary-line > .actions > button { display:flex; align-items:flex-start; justify-content:center; padding:2px 0 0; }
+.pantry-list .pantry-reference-row .reference-origin { font:inherit; white-space:nowrap; vertical-align:baseline; }
+.pantry-list .pantry-reference-row .reference-info-trigger { position:relative; width:14px; height:14px; min-width:14px; min-height:14px; padding:0; margin:0 15px 0 3px; }
+/* Keep a touch-sized target out of normal flow, so attribution stays one text line. */
+.pantry-list .pantry-reference-row .reference-info-trigger::before { content:''; position:absolute; width:44px; height:44px; left:50%; top:50%; transform:translate(-50%,-50%); }
+.ingredient-tag-manager.standard-modal .compact-category-manager { min-height:0; overflow:hidden; }
+.ingredient-tag-manager .category-create-inline,.ingredient-tag-manager .category-list-heading { flex:none; }
+.ingredient-tag-manager .managed-category-list { min-height:0; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+.ingredient-tag-manager .managed-category-origin { display:block; color:var(--muted); font:400 10px/1.4 var(--font-ui); }
+.ingredient-tag-manager .managed-category-row .actions > button { width:40px; min-width:40px; }
+
+.exercise-reference-variants { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.exercise-reference-variants button { min-height:40px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--ink); font:inherit; font-size:12px; }
+.exercise-reference-variants button[aria-pressed=true] { background:var(--action); color:var(--on-accent); border-color:var(--action); }
+.exercise-estimate-note { margin:8px 0 12px; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+.exercise-estimate-note small { display:block; }
+.exercise-estimate-note button { background:transparent; color:var(--action); min-height:44px; padding:4px 0; border:0; }
+.reference-exercise-selector { min-width:0; }
+.reference-exercise-selector input,.reference-exercise-selector select { width:100%; min-width:0; }
+
+.exercise-reference-intensity-label { display:block; margin-top:8px; color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+.exercise-reference-variants { margin:4px 0 6px; }
+.exercise-source-inline .reference-origin { font:inherit; }
+.exercise-source-inline .reference-info-trigger,.exercise-weight-source .reference-info-trigger { position:relative; width:16px; height:16px; min-width:16px; min-height:16px; padding:0; margin:0 14px 0 3px; vertical-align:middle; }
+.exercise-source-inline .reference-info-trigger::before,.exercise-weight-source .reference-info-trigger::before { content:''; position:absolute; width:44px; height:44px; top:50%; left:50%; transform:translate(-50%,-50%); }
+.exercise-source-inline { display:inline-flex; align-items:center; gap:4px; margin:4px 0; font:400 11px/1.6 var(--font-ui); color:var(--muted); }
+.exercise-record-editor .exercise-reference-result-label { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
+.exercise-record-editor .exercise-reference-result { margin:2px 0 4px; font:400 32px/1.2 var(--font-editorial); color:var(--ink); }
+.exercise-record-editor .exercise-reference-result small { margin-left:5px; font:400 12px/1.5 var(--font-ui); color:var(--muted); }
+.exercise-weight-source { display:flex; align-items:center; flex-wrap:wrap; gap:3px; font-size:11px; }
+.exercise-estimate-actions { display:flex; align-items:center; gap:16px; }
+.exercise-row-values .exercise-source-inline { margin:0 0 0 5px; }
+.reference-exercise-identity { overflow-wrap:anywhere; }
+
+.exercise-record-editor .exercise-estimate-prompt { margin:0; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
+
+/* The hidden body-area legend must not inherit the visible full-width legend rule. */
+.exercise-record-editor .exercise-body-parts legend.visually-hidden { width:1px; margin:0; }

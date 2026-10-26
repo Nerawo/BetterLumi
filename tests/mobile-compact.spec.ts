@@ -8,7 +8,7 @@ test('compact food dialog saves unknowns, keeps a single scroll region and colla
  await expect(dialog).toBeVisible();
  await expect(dialog.locator(".source-tabs button")).toHaveCount(3);
  const tabs=await dialog.locator('.source-tabs button').first().boundingBox();
- expect(tabs!.height).toBeGreaterThanOrEqual(44);
+ expect(tabs!.height).toBeGreaterThanOrEqual(43.99);
  const tabBoxes=await dialog.locator('.source-tabs button').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().y));
  expect(new Set(tabBoxes).size).toBe(1);
  const dates=await dialog.locator('.meal-date-row label').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().y));

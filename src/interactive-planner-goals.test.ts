@@ -48,7 +48,7 @@ const draft={age:30,targetWeight:80,weightUnit:'kg' as const,duration:20,duratio
 it('unified application is atomic, idempotent and preserves unrelated history',async()=>{
  const original=await goalTable.toArray();const result=await applyCalculatorPlan(draft,input,'plan',date);expect(result).toMatchObject({nutrition:true,exercise:true});expect(await goalTable.count()).toBe(3);
  await applyCalculatorPlan(draft,input,'plan',date);expect(await goalTable.count()).toBe(3);expect(await goalTable.get(original[0].id)).toEqual(original[0]);
- const g=activeGoal(await goalTable.toArray(),date)!;expect(g.exerciseMode).toBe('weekly');expect(g.calorieMin).toBe(2239);expect(g.nutritionGoals!.protein.min).toBe(70);
+ const g=activeGoal(await goalTable.toArray(),date)!;expect(g.exerciseMode).toBe('weekly');expect(g.calorieMin).toBe(2239);expect(g.nutritionGoals!.protein.min).toBeCloseTo(109,9);
 });
 it('flagged plan saves only eligible exercise and cannot substitute a maintenance goal',async()=>{
  const risky={...input,duration:1},preferences={...draft,duration:1};await expect(applyCalculatorPlan(preferences,risky,'plan',date)).rejects.toThrow();expect(await goalTable.count()).toBe(1);
@@ -76,11 +76,11 @@ it('nutrition tolerance failures cannot block an exercise-only eligible save',as
 it('applies a cautionary 1284 kcal plan normally and preserves original history and unrelated goals',async()=>{
  await db.settings.put({key:'heightCm',value:'165'});const before=await goalTable.toArray();const currentWeight=56.65,targetWeight=currentWeight-(1466.1-1284)*10/1100;
  const body={...input,age:43,heightCm:165,currentWeight,targetWeight,duration:10,sex:'female' as const,activity:'sedentary' as const},preferences={...draft,age:43,targetWeight,duration:10,sex:'female' as const,activity:'sedentary' as const,exerciseEnabled:false};
- await applyCalculatorPlan(preferences,body,'plan',date);const rows=await goalTable.toArray(),current=activeGoal(rows,date)!;expect(rows).toHaveLength(2);expect(current.calorieMin).toBe(1234);expect(current.calorieMax).toBe(1334);expect(current.exerciseMinutes).toBe(30);expect(current.nutritionGoals!.protein.min).toBe(70);expect(await goalTable.get(before[0].id)).toEqual(before[0]);expect(rows.find(g=>g.scope==='calories')!.nutritionTargets!.calories).toBe(1284);
+ await applyCalculatorPlan(preferences,body,'plan',date);const rows=await goalTable.toArray(),current=activeGoal(rows,date)!;expect(rows).toHaveLength(2);expect(current.calorieMin).toBe(1234);expect(current.calorieMax).toBe(1334);expect(current.exerciseMinutes).toBe(30);expect(current.nutritionGoals!.protein.min).toBeCloseTo(body.currentWeight!*1.4-10,9);expect(await goalTable.get(before[0].id)).toEqual(before[0]);expect(rows.find(g=>g.nutritionTargets?.carbs!=null)!.nutritionTargets!.calories).toBe(1284);
 });
 
 it.each([19.8,20.2])('unified apply saves nutrition and exercise at BMI %s without rewriting history',async currentBmi=>{
  await db.settings.put({key:'heightCm',value:'166'});const before=await goalTable.toArray(),targetWeight=(currentBmi-.2)*1.66**2;
  const body={...input,age:43,heightCm:166,currentWeight:currentBmi*1.66**2,targetWeight,duration:12,sex:'female' as const},preferences={...draft,age:43,targetWeight,duration:12,sex:'female' as const};
- await applyCalculatorPlan(preferences,body,'plan',date);const rows=await goalTable.toArray(),current=activeGoal(rows,date)!;expect(rows).toHaveLength(3);expect(rows.find(r=>r.id===before[0].id)).toEqual(before[0]);expect(current.nutritionGoals!.protein.min).toBe(70);expect(current.exerciseMode).toBe('weekly');expect(current.exerciseMinutes).toBe(150);expect(rows.find(r=>r.scope==='calories')!.nutritionTargets!.calories).toBeGreaterThan(1200);await applyCalculatorPlan(preferences,body,'plan',date);expect(await goalTable.count()).toBe(3);
+ await applyCalculatorPlan(preferences,body,'plan',date);const rows=await goalTable.toArray(),current=activeGoal(rows,date)!;expect(rows).toHaveLength(3);expect(rows.find(r=>r.id===before[0].id)).toEqual(before[0]);expect(current.nutritionGoals!.protein.min).toBeCloseTo(body.currentWeight!*1.4-10,9);expect(current.exerciseMode).toBe('weekly');expect(current.exerciseMinutes).toBe(150);expect(rows.find(r=>r.nutritionTargets?.carbs!=null)!.nutritionTargets!.calories).toBeGreaterThan(1200);await applyCalculatorPlan(preferences,body,'plan',date);expect(await goalTable.count()).toBe(3);
 });

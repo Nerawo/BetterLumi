@@ -5,8 +5,8 @@ test('one daily summary preserves unknowns, real zero, dates and reactive editin
  await page.clock.install({time:new Date('2026-10-18T12:00:00-04:00')});
  await page.goto('/today');
  const food=page.getByTestId('food-progress');
- await expect(food).toContainText('暂无记录');
- await expect(food.locator('.food-macros')).toHaveCount(0);
+ await expect(food).toContainText('今天还没有吃饭吗？');
+ await expect(food.locator('.macro-actual dd')).toHaveCount(0);
  await expect(food.locator('.progress-number')).toHaveCount(0);
  const ids=await page.evaluate(async()=>{
    const d=await import('/src/domain.ts');
@@ -17,23 +17,26 @@ test('one daily summary preserves unknowns, real zero, dates and reactive editin
    return {a:a.id,b:b.id};
  });
  await expect(food.locator('.progress-number')).toHaveText('300kcal');
- await expect(food.locator('[data-nutrient=protein] dd')).toHaveText('15g');
- await expect(food.locator('[data-nutrient=carbs] dd')).toHaveText('20g');
- await expect(food.locator('[data-nutrient=fat] dd')).toHaveAttribute('data-missing','true');
- await expect(food.locator('[data-nutrient=fat] dd')).not.toContainText('0');
- await expect(food.locator('[data-status]')).toHaveCount(0);
+ await expect(food.locator('[data-nutrient=protein] dd')).toHaveText('15 g');
+ await expect(food.locator('[data-nutrient=carbs] dd')).toHaveText('20 g');
+ // A recorded zero remains a known partial sum, rather than becoming an unknown.
+ await expect(food.locator('[data-nutrient=fat] dd')).toHaveText('0 g');
+ const fat=await page.evaluate(async()=>{const d=await import('/src/domain.ts'),a=await import('/src/aggregation.ts');return a.dailyAggregation(d.localDate(),await d.foodLogs.toArray(),[]).nutrients.fat});
+ expect(fat).toMatchObject({value:0,complete:false,known:1,missing:1});
+ await expect(food.locator('[data-goal-metric]')).toHaveCount(0);
  await expect(page.locator('.meal-totals,.meal-card .nutrition-strip')).toHaveCount(0);
  await page.screenshot({path:'./work/screenshots/营养合并-Today-手机.png'});
  const first=page.locator('.meal-row').filter({hasText:'第一餐'});
  await first.getByRole('button',{name:'编辑',exact:true}).click();
  await page.locator('.add-food .nutrition-fields input').nth(3).fill('8');
  await page.locator('.add-food-footer .primary').click();
- await expect(food.locator('[data-nutrient=fat] dd')).toHaveText('8g');
- page.once('dialog',dialog=>dialog.accept());
+ await expect(food.locator('[data-nutrient=fat] dd')).toHaveText('8 g');
+
  await first.getByRole('button',{name:'删除',exact:true}).click();
+ await page.locator('.delete-destructive').click();
  await expect(food.locator('.progress-number')).toHaveText('100kcal');
- await expect(food.locator('[data-nutrient=carbs] dd')).toHaveText('0g');
- await expect(food.locator('[data-nutrient=fat] dd')).toHaveText('0g');
+ await expect(food.locator('[data-nutrient=carbs] dd')).toHaveText('0 g');
+ await expect(food.locator('[data-nutrient=fat] dd')).toHaveText('0 g');
  await page.reload();
  await expect(food.locator('.progress-number')).toHaveText('100kcal');
  await page.locator('[data-date="2026-10-17"]').click();
@@ -41,12 +44,12 @@ test('one daily summary preserves unknowns, real zero, dates and reactive editin
  await expect(food.locator('.progress-number')).toHaveText('900kcal');
  await jumpToDate(page,'2026-10-18');
  await page.evaluate(async ids=>{const d=await import('/src/domain.ts');await d.softDelete(d.foodLogs,ids.b)},ids);
- await expect(food).toContainText('暂无记录');
- await expect(food.locator('.food-macros')).toHaveCount(0);
+ await expect(food).toContainText('今天还没有吃饭吗？');
+ await expect(food.locator('.macro-actual dd')).toHaveCount(0);
  await page.goto('/more');
- await page.getByRole('button',{name:/语言/}).click();
- await page.getByRole('button',{name:'English',exact:true}).click();
+ await page.locator('[data-setting=language]').click();
+ await page.getByRole('button',{name:'English',exact:true}).click();await expect.poll(()=>page.evaluate(async()=>{const d=await import('/src/domain.ts');return (await d.db.settings.get('language'))?.value})).toBe('en');
  await page.goto('/today');
- await expect(food).toContainText('No entries');
- await expect(food.locator('.food-macros')).toHaveCount(0);
+ await expect(food).toContainText('No meals logged yet today?');
+ await expect(food.locator('.macro-actual dd')).toHaveCount(0);
 });

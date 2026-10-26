@@ -1,9 +1,16 @@
+import {builtInFoods} from './data/builtInFoods';
+import {RecipeNutritionStrip} from './RecipeNutritionStrip';
+import {isBuiltInRecipe} from './data/builtInRecipes';
+import {builtInFoodNutrition,referenceName,referencePreparation} from './reference-library';
+import {IngredientPicker} from './IngredientPicker';
+import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {defaultIngredientQuantity} from "./consumption-units";
 import {NumberInput} from "./NumberInput";
 import { nutritionReference } from "./db";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
-import {retainedRecipeNutrition} from "./recipe-nutrition";
+import {retainedRecipeNutrition,recipeServingLines,recipeYield,scaleRecipeLines} from "./recipe-nutrition";
+import './recipe-yield-locale';
 import { DateInput } from "./DateInput";
 import { readLocalImage } from "./images";
 import { useState, type FormEvent } from "react";
@@ -64,7 +71,8 @@ export function AddFood({
   close: () => void;
   notice: Notice;
 }) {
-  const { t } = useTranslation();
+  const { t,i18n } = useTranslation();
+  const [ingredientPicking,setIngredientPicking]=useState(false);
   const [message, setMessage] = useState("");
   const notice: Notice = message => { setMessage(message); };
   const initial = draft.log;
@@ -76,8 +84,9 @@ export function AddFood({
   const [ingredientId, setIngredientId] = useState(
     initial?.source === "pantry" ? (initial.sourceId ?? "") : "",
   );
-  const [recipeBasis,setRecipeBasis]=useState<"recipe"|"snapshot">(initial?.source==="recipe"&&initial.unit!=="recipe"?"snapshot":"recipe");
+  const [recipeBasis,setRecipeBasis]=useState<"recipe"|"snapshot">(initial?.source==="recipe"?"snapshot":"recipe");
   const [quantity, setQuantity] = useState(initial?.quantity ?? 1);
+  const [lineServings,setLineServings]=useState(1);
   const [unit, setUnit] = useState<string>(
     initial?.unit ?? "serving",
   );
@@ -86,7 +95,7 @@ export function AddFood({
   );
   const [lines, setLines] = useState<RecipeLine[]>(
     initial?.lines ??
-      r?.lines.map(line=>({...line,nutrition:{...line.nutrition}})) ??
+      (r?recipeServingLines(r):undefined) ??
       [],
   );
   const [name, setName] = useState(initial?.name ?? r?.name ?? "");
@@ -98,7 +107,9 @@ export function AddFood({
   );
   const [renaming, setRenaming] = useState(false);
   const [estimated, setEstimated] = useState(initial?.estimated ?? false);
+  const NutritionPreview=source==='recipe'?RecipeNutritionStrip:NutritionStrip;
   const saveRecipeVersion = async (update: boolean) => {
+    if(isBuiltInRecipe({id:recipeId}))return;
     if (!lines.length || quantity <= 0) {
       notice(t("emptyLines"));
       return;
@@ -114,8 +125,8 @@ export function AddFood({
         ...(original ?? { ...stamp(), instructions: "", stickyNote: "" }),
         ...(update ? changed(original!) : stamp()),
         name: variationName.trim(),
-        servings: update?original!.servings:1,
-        lines: structuredClone(lines),
+        servings: update?recipeYield(original!):recipeBasis==='recipe'?lineServings:1,
+        lines: structuredClone(update&&recipeBasis==='recipe'?scaleRecipeLines(lines,recipeYield(original!)/lineServings):lines),
       });
       notice(t(update ? "originalUpdated" : "variationSaved"));
     } catch {
@@ -130,13 +141,17 @@ export function AddFood({
       setName(recipe.name);
       setPhoto(recipe.photo ?? "");
       setQuantity(1);
+      setLineServings(1);
       setLines(
-        recipe.lines.map(line=>({...line,nutrition:{...line.nutrition}})),
+        recipeServingLines(recipe),
       );
     }
   };
   const chooseIngredient = (id: string) => {
     setIngredientId(id);
+    setIngredientPicking(false);
+    const reference=builtInFoods.find(item=>item.id===id);
+    if(reference){setName(referenceName(reference,i18n.language));setUnit('g');setQuantity(100);return}
     const item = pantry.find((i) => i.id === id);
     if (item) {
       setName(item.name);
@@ -144,12 +159,12 @@ export function AddFood({
       setQuantity(item.basis === "100g" ? nutritionReference(item).amount : 1);
     }
   };
-  const ingredient = pantry.find((i) => i.id === ingredientId);
+  const ingredient = pantry.find((i) => i.id === ingredientId),builtIn=builtInFoods.find(item=>item.id===ingredientId);
   const totals =
     source === "quick"
       ? nutrition
       : source === "recipe"
-        ? sumNutrition(lines.map((l) => l.nutrition))
+        ? recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)?unknownNutrition():sumNutrition(lines.map((l) => l.nutrition))
         : initial?.source === "pantry" &&
             initial.sourceId === ingredientId &&
             unit === initial.unit
@@ -157,7 +172,7 @@ export function AddFood({
               initial.baseNutrition ?? initial.nutrition,
               quantity / initial.quantity,
             )
-          : ingredient
+          : builtIn?builtInFoodNutrition(builtIn,quantity,unit):ingredient
             ? ingredientNutrition(ingredient, quantity, unit)
             : unknownNutrition();
   const retained=source==="recipe"&&recipeBasis==="snapshot"&&initial&&lines===initial.lines;
@@ -176,8 +191,9 @@ export function AddFood({
       return;
     }
     if (
+      (source==='recipe'&&recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)) ||
       (source === "recipe" && !lines.length && !retained) ||
-      (source === "pantry" && !ingredient && !initial)
+      (source === "pantry" && !ingredient && !builtIn && !initial)
     ) {
       notice(t("invalid"));
       return;
@@ -197,10 +213,10 @@ export function AddFood({
               : source === "pantry"
                 ? ingredientId
                 : null,
-          quantity:source==="recipe"&&recipeBasis==="recipe"?1:quantity,
+          quantity,
           unit:
             source === "recipe"
-              ? recipeBasis==="snapshot"?initial?.unit??"serving":"recipe"
+              ? recipeBasis==="snapshot"?initial?.unit??"serving":"serving"
               : source === "quick"
                 ? "entry"
                 : unit,
@@ -238,6 +254,7 @@ export function AddFood({
               setSource(key);
               setName("");
               setQuantity(1);
+              setLineServings(1);
               setConsumptionPercent(100);
               setLines([]);
               setRecipeId("");
@@ -296,6 +313,7 @@ export function AddFood({
             )}
             {source === "pantry" && (
               <>
+                {builtInFoods.length===0?<>
                 <label>
                   {t("selectIngredient")}
                   <select
@@ -311,6 +329,7 @@ export function AddFood({
                   </select>
                 </label>
                 {!pantry.length && <p>{t("noIngredients")}</p>}
+                </>:<><button type="button" className="secondary ingredient-pick-trigger" onClick={()=>setIngredientPicking(true)}>{name||t('ingredientPickerTitle')}</button>{builtIn&&<><small>{referencePreparation(builtIn,i18n.language)}</small><ReferenceSourceInfo source={builtIn}/></>}{ingredientPicking&&<IngredientPicker items={pantry} close={()=>setIngredientPicking(false)} onSelect={item=>chooseIngredient(item.id)} onSelectBuiltIn={item=>chooseIngredient(item.id)}/>}</>}
               </>
             )}
             {source === "recipe" ? (
@@ -348,6 +367,7 @@ export function AddFood({
             ) : (
               <>
                 <div className={"meal-amounts " + (source === "recipe" ? "recipe-amounts" : "")}>
+                {source==='recipe'&&recipeBasis==='recipe'&&<label>{t('recipeConsumedServings')}<span className="recipe-serving-input"><input name="consumedServings" type="number" inputMode="decimal" required min="0.01" step="any" value={Number.isFinite(quantity)?quantity:''} onChange={e=>{const amount=e.target.value===''?NaN:Number(e.target.value);setQuantity(amount);if(Number.isFinite(amount)&&amount>0){setLines(scaleRecipeLines(lines,amount/lineServings));setLineServings(amount)}}}/><span>{t('recipeYieldUnit')}</span></span></label>}
                 {source!=="recipe"&&<>
                 <div className="form-grid">
                   <label>
@@ -379,8 +399,8 @@ export function AddFood({
                           setQuantity(defaultIngredientQuantity(ingredient,nextUnit));
                         }}
                       >
-                        <option value="g">{t("gramsUnit")}</option><option value="mL">mL</option>
-                        <option value="serving">{t("servingUnit")}</option>
+                        <option value="g">{t("gramsUnit")}</option>{!builtIn&&<option value="mL">mL</option>}
+                        {!builtIn&&<option value="serving">{t("servingUnit")}</option>}
                         {ingredient?.consumptionUnit && <option value={ingredient.consumptionUnit.name}>{ingredient.consumptionUnit.name}</option>}
                         {!["g","mL","serving",ingredient?.consumptionUnit?.name].includes(unit) && <option value={unit}>{unit}</option>}
                       </select>
@@ -405,7 +425,7 @@ export function AddFood({
             </label>
                 </div>
                 <div className="meal-nutrition-preview">
-                <NutritionStrip
+                <NutritionPreview
                   value={preview}
                 />
                 </div>
@@ -421,7 +441,7 @@ export function AddFood({
                       setLines={setLines}
                       pantry={pantry}
                     />
-                    <div className="explicit-recipe-actions">
+                    {!isBuiltInRecipe({id:recipeId})&&<div className="explicit-recipe-actions">
                       <button
                         type="button"
                         className="secondary"
@@ -437,7 +457,7 @@ export function AddFood({
                       >
                         {t("updateOriginal")}
                       </button>
-                    </div>
+                    </div>}
                   </details>
                 )}
 

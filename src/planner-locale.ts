@@ -1,7 +1,7 @@
 import i18n from './locale';
 const en={
  plannerNoEligible:'No eligible goals can be applied. Nothing was saved as an active goal; return to edit the plan.',plannerNotEnabled:'Not enabled',plannerExerciseWillApply:'Applies eligible weekly exercise goals; the unsupported nutrition estimate will not change your existing nutrition goal.',plannerNutritionOnly:'Applies the eligible nutrition target; exercise goals remain unchanged.',
- plannerApplyPlan:'Apply Plan',plannerSavedBoth:'Nutrition and weekly exercise goals saved',plannerSavedExerciseOnly:'Weekly exercise goal saved; nutrition retained as an estimate',plannerUnifiedNote:'Applies eligible calorie and enabled weekly exercise goals together. Other nutrients and existing history remain unchanged.',plannerEstimateRetained:'Your weight, duration and activity preferences stay unchanged. Theoretical intake is not a recommended diet target.',plannerReviewNutrition:'Nutrition',plannerReviewExercise:'Exercise',plannerReviewApply:'Apply calculated target',plannerReviewEstimate:'Estimate only · existing goal unchanged',plannerReviewUnchanged:'Existing goal unchanged',
+ plannerApplyPlan:'Apply Plan',plannerSavedBoth:'Nutrition and weekly exercise goals saved',plannerSavedExerciseOnly:'Weekly exercise goal saved; nutrition retained as an estimate',plannerUnifiedNote:'Applies eligible nutrition targets and enabled weekly exercise goals together, preserving existing history.',plannerEstimateRetained:'Your weight, duration and activity preferences stay unchanged. Theoretical intake is not a recommended diet target.',plannerReviewNutrition:'Nutrition',plannerReviewExercise:'Exercise',plannerReviewApply:'Apply calculated target',plannerReviewEstimate:'Estimate only · existing goal unchanged',plannerReviewUnchanged:'Existing goal unchanged',
 
  plannerRiskTitle:'Review Plan',plannerTheoretical:'Theoretical daily intake',plannerRiskExplanation:'This theoretical result is outside conservative planning limits. It is not a recommended intake or medical advice.',plannerReturnEdit:'Back to Edit',
 
@@ -9,7 +9,7 @@ const en={
 };
 const zh:Record<keyof typeof en,string>={
  plannerNoEligible:'当前没有可应用的目标，未保存任何生效目标；请返回调整计划。',plannerNotEnabled:'未启用',plannerExerciseWillApply:'将应用有效的每周运动目标；不支持的营养估算不会改变已有营养目标。',plannerNutritionOnly:'将应用有效的营养目标，运动目标保持不变。',
- plannerApplyPlan:'一键应用计划',plannerSavedBoth:'营养与每周运动目标已保存',plannerSavedExerciseOnly:'每周运动目标已保存，营养仅保留为估算',plannerUnifiedNote:'一并保存可应用的热量和已启用的每周运动目标，保留其他营养素与目标历史。',plannerEstimateRetained:'保留体重、时长及活动规划；理论摄入不作为推荐饮食目标。',plannerReviewNutrition:'营养',plannerReviewExercise:'运动',plannerReviewApply:'应用计算目标',plannerReviewEstimate:'仅保留估算 · 原目标不变',plannerReviewUnchanged:'原目标不变',
+ plannerApplyPlan:'一键应用计划',plannerSavedBoth:'营养与每周运动目标已保存',plannerSavedExerciseOnly:'每周运动目标已保存，营养仅保留为估算',plannerUnifiedNote:'一并保存可应用的营养目标和已启用的每周运动目标，保留目标历史。',plannerEstimateRetained:'保留体重、时长及活动规划；理论摄入不作为推荐饮食目标。',plannerReviewNutrition:'营养',plannerReviewExercise:'运动',plannerReviewApply:'应用计算目标',plannerReviewEstimate:'仅保留估算 · 原目标不变',plannerReviewUnchanged:'原目标不变',
 
  plannerRiskTitle:'确认应用计划',plannerTheoretical:'理论每日摄入',plannerRiskExplanation:'此理论结果超出保守规划范围，不是推荐摄入量，也不是医疗建议。',plannerReturnEdit:'返回调整',
 

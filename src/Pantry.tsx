@@ -1,10 +1,13 @@
 import {DirectoryListHeader} from './DirectoryListHeader';
 import {IngredientTagNavigation,IngredientTagAssignment,IngredientTagManager,useIngredientTags} from "./IngredientTags";
-import {filterIngredients,putTaggedIngredient} from "./ingredient-tags";
+import {putTaggedIngredient} from "./ingredient-tags";
+import {searchFoodChoices,referenceName,referencePreparation,referenceCategory} from './reference-library';
+import {sortPantryFoods} from './pantry-foods';
+import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {NumberInput} from "./NumberInput";
 import { validConsumptionUnit, ingredientBaseUnit } from "./consumption-units";
 import { nutritionReference } from "./db";
-import {Fragment} from "react";
+import {Fragment,type ReactNode} from "react";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
 import { useState, type FormEvent } from "react";
@@ -27,7 +30,6 @@ import {
 import {
   Modal,
   NutritionFields,
-  Empty,
   Actions,
   changed,
   type Notice,
@@ -45,23 +47,7 @@ export function Pantry({
   const [tag,setTag]=useState(''),[tagPanel,setTagPanel]=useState<'manage'|null>(null);
   const activeTag=tags.some(item=>item.id===tag)?tag:'';
   const [sort, setSort] = useState<PantrySort>("name-asc");
-  const filtered = filterIngredients(items,search,activeTag,tags)
-    .sort((a, b) => {
-      const direction = sort.endsWith("desc") ? -1 : 1;
-      if (sort.startsWith("calories")) {
-        // Unknown calories stay last in both directions; keep the recorded basis.
-        if (a.calories == null) return b.calories == null ? 0 : 1;
-        if (b.calories == null) return -1;
-        const difference = (a.calories - b.calories) * direction;
-        if (difference) return difference;
-      }
-      return (
-        a.name.localeCompare(b.name, i18n.language, {
-          numeric: true,
-          sensitivity: "base",
-        }) * (sort.startsWith("name") ? direction : 1)
-      );
-    });
+  const filtered=sortPantryFoods(searchFoodChoices(items,search,activeTag,tags),sort,i18n.language);
   const [editing, setEditing] = useState<PantryItem | null | undefined>();
   return (
     <>
@@ -79,33 +65,46 @@ export function Pantry({
       <DirectoryListHeader count={t('ingredientCount',{count:filtered.length})}><PantrySortMenu value={sort} onChange={setSort}/></DirectoryListHeader>
       <button type="button" className="primary pantry-fab directory-fab" onClick={() => setEditing(null)} aria-label={t("directoryAddIngredient")}><Plus size={18} aria-hidden="true"/><span>{t("directoryAddIngredient")}</span></button>
       <div className="pantry-list">
-        {filtered.map((i) => {
+        {filtered.map((choice) => {
+          if(choice.kind==='built-in'){
+            const food=choice.item;
+            return <article className="pantry-row pantry-reference-row" key={food.id} data-reference-id={food.id}>
+              <PantryRowContent
+                title={<span className="ingredient-primary">{referenceName(food,i18n.language)}</span>}
+                energy={<><NumberUnit value={food.kcalPer100g===null?'—':Math.round(food.kcalPer100g)} unit="kcal"/> / 100 g</>}
+                metadata={<>{referencePreparation(food,i18n.language)} · {referenceCategory(food,i18n.language)} · <ReferenceSourceInfo source={food}/></>}
+                macros={(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}{t(key)} <NumberUnit value={food[`${key}Per100g`]?.toFixed(1)??'—'} unit="g"/></Fragment>)}
+              />
+            </article>;
+          }
+          const i=choice.item;
           const secondary=ingredientSecondaryNames(i);
           return (
           <article
             className="pantry-row"
             key={i.id}
+            data-user-food-id={i.id}
             onClick={(e) => {
               if (!(e.target as HTMLElement).closest("button")) setEditing(i);
             }}
           >
-            <div className="grow">
-              <div className="ingredient-title-line"><h3 title={[i.name,...secondary].join(" · ")}><button type="button" className="ingredient-name" onClick={()=>setEditing(i)}><span className="ingredient-primary">{i.name}</span>{secondary.length>0&&<> <small className="ingredient-secondary">{secondary.join(" · ")}</small></>}</button></h3><span className="ingredient-energy">{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==="serving"?t("servingUnit"): <NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==="serving"&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??"g"}/>)</>}</span></div>
-              <p className="macro-summary">{(["protein","carbs","fat"] as const).some(k=>i[k]!=null)?(["protein","carbs","fat"] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&" · "}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t("nutritionNotRecorded")}</p>
-            </div>
-            <Actions
+            <PantryRowContent
+              titleDescription={[i.name,...secondary].join(' · ')}
+              title={<button type="button" className="ingredient-name" onClick={()=>setEditing(i)}><span className="ingredient-primary">{i.name}</span>{secondary.length>0&&<> <small className="ingredient-secondary">{secondary.join(' · ')}</small></>}</button>}
+              energy={<>{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==='serving'?t('servingUnit'):<NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==='serving'&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??'g'}/>)</>}</>}
+              metadata={[...tags.filter(tag=>i.tagIds?.includes(tag.id)).map(tag=>tag.name),t('referenceMyFood')].join(' · ')}
+              macros={(['protein','carbs','fat'] as const).some(k=>i[k]!=null)?(['protein','carbs','fat'] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&' · '}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t('nutritionNotRecorded')}
+              actions={<Actions
               edit={() => setEditing(i)}
               remove={async () => {
                 await confirmDelete("ingredient",i.name,async()=>{await softDelete(db.ingredients, i.id)});
               }}
+              />}
             />
           </article>
         );})}
       </div>
-      {!items.length && (
-        <Empty heading={t("noIngredientsYet")} />
-      )}
-      {!!items.length && !filtered.length && <p className="collection-empty">{t("emptySearch")}</p>}
+      {!filtered.length && <p className="collection-empty">{t("emptySearch")}</p>}
       {editing !== undefined && (
         <PantryEditor
           item={editing}
@@ -115,6 +114,9 @@ export function Pantry({
       )}
     </>
   );
+}
+function PantryRowContent({title,titleDescription,energy,metadata,macros,actions}:{title:ReactNode;titleDescription?:string;energy:ReactNode;metadata:ReactNode;macros:ReactNode;actions?:ReactNode}){
+ return <div className={'grow pantry-row-content'+(actions?' has-secondary-actions':'')}><div className="ingredient-title-line"><h3 title={titleDescription}>{title}</h3><span className="ingredient-energy">{energy}</span></div><div className="pantry-secondary-line"><div className="pantry-source-line">{metadata}</div>{actions}</div><p className="macro-summary">{macros}</p></div>;
 }
 function PantryEditor({
   item,

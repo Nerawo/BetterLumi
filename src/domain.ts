@@ -230,8 +230,7 @@ export async function restoreAll(data: unknown) {
       if (
         table.name === "recipeCards" &&
         (!row.name ||
-          !Number.isFinite(row.servings) ||
-          row.servings <= 0 ||
+          (row.servings !== undefined && (!Number.isFinite(row.servings) || row.servings <= 0)) ||
           !validLines(row.lines) ||
           typeof row.stickyNote !== "string" ||
           typeof row.instructions !== "string")

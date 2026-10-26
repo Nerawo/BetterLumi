@@ -1,3 +1,5 @@
+import {calculateMacroPlan} from './macro-planner';
+import {weightInKg} from './calculator-model';
 import {professionalCalorieTarget,specialCircumstances} from './professional-guidance';
 import {saveCalculatorDraft,validCalculatorDraft,type CalculatorDraft} from './calculator-settings';
 import {planInteractively,type PlannerSettings} from './interactive-planner';
@@ -57,7 +59,7 @@ async function saveCalculatorCalories(height:number|null,target:number,date:stri
 }
 
 
-/** One atomic operation across independent calorie/exercise scopes and the planning draft.
+/** One atomic operation across nutrition/exercise versions and the planning draft.
  * A repeated click with the same plan and unchanged goal history is a no-op. */
 export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssessmentInput,choice:'plan'|'eligible'|'professional'='plan',date=localDate()){
  if(!validCalculatorDraft(draft)||!validLocalDate(date)||!['plan','eligible','professional'].includes(choice))throw Error('Invalid plan');
@@ -69,6 +71,7 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
  if(professional&&guidedTarget===null)throw Error('Invalid professional target');
  const nutrition=professional||result.nutritionApplicable?'nutrition':null;
  const exercise=!!(draft.exerciseEnabled&&result.exerciseApplicable);
+ const macros=!professional&&result.bodyValid&&!input.excluded?calculateMacroPlan(input.currentWeight===null?null:weightInKg(input.currentWeight,input.weightUnit),result.targetKcal,draft.nutritionPlan??'balanced'):null;
  if(!nutrition&&!exercise)throw Error('No eligible goals');
  const outcome={nutrition:!!nutrition,exercise,duplicate:false};
  return db.transaction('rw',goalTable,db.settings,async()=>{
@@ -78,9 +81,24 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
   const tolerances=nutrition?currentTolerances(parseToleranceEvents((await db.settings.get('goalTolerances'))?.value)):currentTolerances([]);
   const range=acceptableRange(target,tolerances.calories),calories=configuredNutritionGoals(current).calories;
   const latestCalories=rows.filter(row=>!row.deletedAt&&row.scope==='calories'&&row.startDate===date&&row.endDate===null).sort((a,b)=>b.revision-a.revision)[0];
-  const sameNutrition=sameDateScope('calories')&&current?.nutritionEnabled!==false&&calories.mode!=='off'&&(latestCalories?.calorieSource??'automatic')===(professional?'professional':'automatic')&&latestCalories?.nutritionTargets?.calories===target&&calories.min===range.min&&calories.max===range.max;
+  const sameCalories=sameDateScope('calories')&&current?.nutritionEnabled!==false&&calories.mode!=='off'&&(latestCalories?.calorieSource??'automatic')===(professional?'professional':'automatic')&&latestCalories?.nutritionTargets?.calories===target&&calories.min===range.min&&calories.max===range.max;
+  const frequency=current?.nutritionFrequency??(calories.mode==='off'?'daily':calories.mode);
+  const targets=macros?{calories:target,protein:macros.protein,carbs:macros.carbs,fat:macros.fat}:null;
+  const configs=configuredNutritionGoals(current);
+  const matchingNutritionRow=rows.some(row=>!row.deletedAt&&row.nutritionOnly&&row.nutritionPeriod?.startDate===date&&row.nutritionPeriod.endDate===null);
+  const sameNutrition=targets?matchingNutritionRow&&current?.nutritionEnabled!==false&&current?.nutritionFrequency===frequency&&(['calories','protein','carbs','fat'] as const).every(key=>{const expected=acceptableRange(targets[key],tolerances[key]);return current?.nutritionTargets?.[key]===targets[key]&&configs[key].mode===frequency&&configs[key].min===expected.min&&configs[key].max===expected.max}):sameCalories;
   const sameExercise=sameDateScope('exercise')&&current?.exerciseEnabled!==false&&current?.exerciseMode==='weekly'&&current.exerciseMinutes===result.exerciseMinutes&&current.exerciseKcal===Math.round(result.exerciseKcal??0);
-  if(nutrition&&!sameNutrition){if(professional)await saveCalculatorCalories(input.heightCm,target!,date,'professional');else await applyInteractiveGoals(input,draft,nutrition,date)}
+  if(nutrition&&!sameNutrition){
+   if(targets){
+    if(input.heightCm!==null&&parseHeightCm((await db.settings.get(heightSettingKey))?.value)!==input.heightCm)throw Error('Calculator inputs changed');
+    const events=parseToleranceEvents((await db.settings.get('goalTolerances'))?.value);
+    const nutritionGoals=Object.fromEntries((['calories','protein','carbs','fat'] as const).map(key=>[key,{mode:frequency,...acceptableRange(targets[key],tolerances[key])}])) as NonNullable<Goal['nutritionGoals']>;
+    // Additive nutrition-only metadata isolates this version from every exercise
+    // period, including future dated goals and unrestricted baselines.
+    await saveGoalVersion({nutritionOnly:true,startDate:date,endDate:null,nutritionPeriod:{startDate:date,endDate:null},nutritionEnabled:true,nutritionFrequency:frequency,nutritionTargets:targets,nutritionTolerances:tolerances,nutritionToleranceRevision:events.at(-1)?.id,nutritionGoals,calorieMin:range.min,calorieMax:range.max,exerciseEnabled:false,exerciseMinutes:null,exerciseKcal:null});
+   }else if(professional)await saveCalculatorCalories(input.heightCm,target!,date,'professional');
+   else await applyInteractiveGoals(input,draft,nutrition,date);
+  }
   if(exercise&&!sameExercise)await applyInteractiveGoals(input,draft,'exercise',date);
   await saveCalculatorDraft(draft);
   outcome.duplicate=(!nutrition||sameNutrition)&&(!exercise||sameExercise);

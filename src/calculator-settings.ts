@@ -1,16 +1,18 @@
 import {validProfessionalGuidance,specialCircumstances,type ProfessionalGuidance} from './professional-guidance';
 import {db} from './domain';
+import type {NutritionPlan} from './macro-planner';
 import {validPlannerSettings,type PlannerSettings} from './interactive-planner';
 import {weightFromKg,type CalculatorInput} from './health-calculator';
 export type CalculatorDraft=Omit<CalculatorInput,'age'|'heightCm'|'currentWeight'|'targetWeight'|'duration'>&Record<'age'|'targetWeight'|'duration',number|null>&{
  /** Legacy manual calculation weights are retained for backup compatibility only. */
  currentWeight?:number|null;currentWeightUnit?:'kg'|'lb';
+ nutritionPlan?:NutritionPlan;
 }&PlannerSettings&ProfessionalGuidance;
 export const calculatorSettingsKey='healthGoalCalculatorDraft';
 export const initialCalculatorDraft:CalculatorDraft={age:null,targetWeight:null,weightUnit:'kg',duration:12,durationUnit:'weeks',activity:'sedentary',sex:'',excluded:false};
 /** Draft values are never active goals; calculation validates safety separately. */
 export function validCalculatorDraft(value:unknown):value is CalculatorDraft {
-  const x=value as CalculatorDraft;return !!x&&validProfessionalGuidance(x)&&validPlannerSettings(x)&&(x.currentWeight===undefined||x.currentWeight===null||typeof x.currentWeight==='number'&&Number.isFinite(x.currentWeight))&&(x.currentWeightUnit===undefined||['kg','lb'].includes(x.currentWeightUnit))&&(x.currentWeight===undefined||x.currentWeightUnit!==undefined)&&(['age','targetWeight','duration'] as const).every(key=>x[key]===null||typeof x[key]==='number'&&Number.isFinite(x[key]))&&['kg','jin','lb'].includes(x.weightUnit)&&['weeks','months'].includes(x.durationUnit)&&['sedentary','light','moderate','very'].includes(x.activity)&&['','female','male'].includes(x.sex)&&typeof x.excluded==='boolean';
+  const x=value as CalculatorDraft;return !!x&&(x.nutritionPlan===undefined||['balanced','highProtein'].includes(x.nutritionPlan))&&validProfessionalGuidance(x)&&validPlannerSettings(x)&&(x.currentWeight===undefined||x.currentWeight===null||typeof x.currentWeight==='number'&&Number.isFinite(x.currentWeight))&&(x.currentWeightUnit===undefined||['kg','lb'].includes(x.currentWeightUnit))&&(x.currentWeight===undefined||x.currentWeightUnit!==undefined)&&(['age','targetWeight','duration'] as const).every(key=>x[key]===null||typeof x[key]==='number'&&Number.isFinite(x[key]))&&['kg','jin','lb'].includes(x.weightUnit)&&['weeks','months'].includes(x.durationUnit)&&['sedentary','light','moderate','very'].includes(x.activity)&&['','female','male'].includes(x.sex)&&typeof x.excluded==='boolean';
 }
 export function calculatorWeightKg(_legacyDraft:CalculatorDraft,journalKg:number|null){
  return journalKg;

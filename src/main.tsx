@@ -1,3 +1,5 @@
+import './recipe-yield.css';
+import {builtInRecipeItems} from './data/builtInRecipes';
 import {WeightDataProvider,useWeightData} from './WeightData';
 import {weightsOnDate} from './weight-state';
 import {pageSessionKey,readSession,validPageSession,restoreInitialPage} from './session-state';
@@ -243,7 +245,7 @@ function App() {
                         draft.date
                       }
                       draft={draft}
-                      recipes={recipeItems!}
+                      recipes={[...recipeItems!,...builtInRecipeItems(i18n.language)]}
                       pantry={pantry!}
                       close={() => setDraft(null)}
                       notice={setToast}
@@ -326,7 +328,7 @@ function App() {
               {page === "recipes" && route.recipeId && (
                 <RecipeDetail
                   key={route.recipeId}
-                  recipe={recipeItems?.find((r) => r.id === route.recipeId)}
+                  recipe={[...(recipeItems??[]),...builtInRecipeItems(i18n.language)].find((r) => r.id === route.recipeId)}
                   pantry={pantry ?? []}
                   notice={setToast}
                   addMeal={(recipe) => openMeal({ date: today, recipe })}

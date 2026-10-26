@@ -1,0 +1,371 @@
+{
+  "source": "USDA FoodData Central API",
+  "retrievedAt": "2026-10-22",
+  "basis": "100 g edible portion",
+  "description": "Selected fields transcribed directly from the official USDA full-food response. Nutrient IDs: 1008 energy kcal, 1003 protein, 1005 carbohydrate by difference, 1004 total lipid. Missing values must remain unknown, never inferred as zero.",
+  "records": [
+    {
+      "fdcId": 171477,
+      "ndbNumber": "5064",
+      "description": "Chicken, broilers or fryers, breast, meat only, cooked, roasted",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 165,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 31.02,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 3.57,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 0,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 174031,
+      "ndbNumber": "23563",
+      "description": "Beef, ground, 90% lean meat / 10% fat, patty, cooked, broiled",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 217,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 26.11,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 11.75,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 0,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 168250,
+      "ndbNumber": "10061",
+      "description": "Pork, fresh, loin, tenderloin, separable lean only, cooked, roasted",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 143,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 26.17,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 3.51,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 0,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 175168,
+      "ndbNumber": "15237",
+      "description": "Fish, salmon, Atlantic, farmed, cooked, dry heat",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 206,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 22.1,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 12.35,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 0,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 175180,
+      "ndbNumber": "15271",
+      "description": "Crustaceans, shrimp, cooked",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 99,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 23.98,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 0.28,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 0.2,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 168878,
+      "ndbNumber": "20045",
+      "description": "Rice, white, long-grain, regular, enriched, cooked",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 130,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 2.69,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 0.28,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 28.17,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 173904,
+      "ndbNumber": "8120",
+      "description": "Cereals, oats, regular and quick, not fortified, dry",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 379,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 13.15,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 6.52,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 67.7,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 170093,
+      "ndbNumber": "11674",
+      "description": "Potatoes, baked, flesh and skin, without salt",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 93,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 2.5,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 0.13,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 21.15,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 168483,
+      "ndbNumber": "11508",
+      "description": "Sweet potato, cooked, baked in skin, flesh, without salt",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 90,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 2.01,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 0.15,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 20.71,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 168411,
+      "ndbNumber": "11212",
+      "description": "Edamame, frozen, prepared",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 121,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 11.91,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 5.2,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 8.91,
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "fdcId": 172475,
+      "ndbNumber": "16426",
+      "description": "Tofu, raw, firm, prepared with calcium sulfate",
+      "dataType": "SR Legacy",
+      "publicationDate": "4/1/2019",
+      "nutrients": [
+        {
+          "id": 1008,
+          "name": "Energy",
+          "amount": 144,
+          "unit": "kcal"
+        },
+        {
+          "id": 1003,
+          "name": "Protein",
+          "amount": 17.27,
+          "unit": "g"
+        },
+        {
+          "id": 1004,
+          "name": "Total lipid (fat)",
+          "amount": 8.72,
+          "unit": "g"
+        },
+        {
+          "id": 1005,
+          "name": "Carbohydrate, by difference",
+          "amount": 2.78,
+          "unit": "g"
+        }
+      ]
+    }
+  ]
+}

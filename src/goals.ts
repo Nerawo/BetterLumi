@@ -33,14 +33,14 @@ function selectSectionVersion(goals:Goal[],start:string,end:string,section:GoalS
  const dated=candidates.filter(g=>!goalPeriod(g,section).unrestricted&&(!unrestricted||revisionOrder(g,unrestricted)<0));
  return dated.sort((a,b)=>goalPeriod(b,section).startDate.localeCompare(goalPeriod(a,section).startDate)||revisionOrder(a,b))[0]??unrestricted??null;
 }
-export function sectionGoal(goals:Goal[],start:string,end:string,section:GoalSection){return selectSectionVersion(goals.filter(goal=>section==='nutrition'?!goal.scope:goal.scope!=='calories'),start,end,section)}
+export function sectionGoal(goals:Goal[],start:string,end:string,section:GoalSection){return selectSectionVersion(goals.filter(goal=>section==='nutrition'?!goal.scope:goal.scope!=='calories'&&!goal.nutritionOnly),start,end,section)}
 /** Compose a read-only view; never persist or rewrite these resolved versions. */
 export function resolvedGoal(goals:Goal[],start:string,end=start):Goal|null {
  const nutrition=evaluateToleranceGoal(sectionGoal(goals,start,end,'nutrition'),end),exercise=sectionGoal(goals,start,end,'exercise');
  const latest=selectSectionVersion(goals.filter(goal=>goal.scope!=='exercise'),start,end,'nutrition'),calories=latest?.scope==='calories'?evaluateToleranceGoal(latest,end):null;
  if(!calories&&nutrition===exercise)return nutrition;
  const base=[nutrition,exercise,calories].filter((g):g is Goal=>g!==null).sort((a,b)=>b.revision-a.revision||goalVersionOrder(a,b))[0];if(!base)return null;
- const result:Goal={...base,scope:undefined,evaluationCalorieTarget:nutrition?.nutritionTargets?.calories??null,nutritionTargets:nutrition?.nutritionTargets,nutritionTolerances:nutrition?.nutritionTolerances,nutritionToleranceRevision:nutrition?.nutritionToleranceRevision,evaluationToleranceEvents:nutrition?.evaluationToleranceEvents,nutritionFrequency:nutrition?.nutritionFrequency,nutritionGoals:nutrition?.nutritionGoals,calorieMin:nutrition?.calorieMin??null,calorieMax:nutrition?.calorieMax??null,nutritionEnabled:nutrition?nutrition.nutritionEnabled!==false:false,nutritionPeriod:nutrition?goalPeriod(nutrition,'nutrition'):undefined,exerciseMode:exercise?.exerciseMode,exerciseMinutes:exercise?.exerciseMinutes??null,exerciseKcal:exercise?.exerciseKcal??null,exerciseEnabled:exercise?exercise.exerciseEnabled!==false:false,exercisePeriod:exercise?goalPeriod(exercise,'exercise'):undefined};
+ const result:Goal={...base,scope:undefined,nutritionOnly:undefined,evaluationCalorieTarget:nutrition?.nutritionTargets?.calories??null,nutritionTargets:nutrition?.nutritionTargets,nutritionTolerances:nutrition?.nutritionTolerances,nutritionToleranceRevision:nutrition?.nutritionToleranceRevision,evaluationToleranceEvents:nutrition?.evaluationToleranceEvents,nutritionFrequency:nutrition?.nutritionFrequency,nutritionGoals:nutrition?.nutritionGoals,calorieMin:nutrition?.calorieMin??null,calorieMax:nutrition?.calorieMax??null,nutritionEnabled:nutrition?nutrition.nutritionEnabled!==false:false,nutritionPeriod:nutrition?goalPeriod(nutrition,'nutrition'):undefined,exerciseMode:exercise?.exerciseMode,exerciseMinutes:exercise?.exerciseMinutes??null,exerciseKcal:exercise?.exerciseKcal??null,exerciseEnabled:exercise?exercise.exerciseEnabled!==false:false,exercisePeriod:exercise?goalPeriod(exercise,'exercise'):undefined};
  if(!calories)return result;
  const configs=nutritionGoals(nutrition),config=nutritionGoals(calories).calories;
  // Resolve non-calorie goals from their own original versions and periods.
@@ -77,7 +77,7 @@ type GoalValues=Omit<Goal,keyof RecordBase>;
 function sameGoalDates(a:GoalValues,b:GoalValues){return (['nutrition','exercise'] as const).every(section=>{const key=section==='nutrition'?'nutritionPeriod':'exercisePeriod',before:GoalPeriod=a[key]??a,after:GoalPeriod=b[key]??b;return !!before.unrestricted===!!after.unrestricted&&(before.unrestricted||before.startDate===after.startDate)})}
 /** Match both families, never merge or rewrite duplicate/overlapping history. */
 export function goalEditContext(goals:Goal[],value:GoalValues):GoalEditContext|undefined{
- const match=goals.filter(goal=>!goal.deletedAt&&!goal.scope&&sameGoalDates(goal,value)).sort((a,b)=>b.revision-a.revision||b.createdAt.localeCompare(a.createdAt)||b.id.localeCompare(a.id))[0];
+ const match=goals.filter(goal=>!goal.deletedAt&&!goal.scope&&!!goal.nutritionOnly===!!value.nutritionOnly&&sameGoalDates(goal,value)).sort((a,b)=>b.revision-a.revision||b.createdAt.localeCompare(a.createdAt)||b.id.localeCompare(a.id))[0];
  return match?{id:match.id,revision:match.revision}:undefined;
 }
 /** Only the explicitly edited record can be updated; default callers append. */

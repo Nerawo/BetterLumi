@@ -1,3 +1,4 @@
+import {builtInTagIds,type IngredientTagOption} from './data/builtInTags';
 import {nextOrder,associatedNameMatches} from './collection-order';
 import {db,stamp,type PantryItem} from './domain';
 import {normalizeUserName} from './user-names';
@@ -22,8 +23,8 @@ export async function deleteIngredientTag(tag:IngredientTag){
 }
 export async function putTaggedIngredient(row:PantryItem){
  await db.transaction('rw',[ingredientTags,db.ingredients],async()=>{
-  const active=new Set((await ingredientTags.filter(t=>!t.deletedAt).toArray()).map(t=>t.id));
+  const active=new Set([...builtInTagIds,...(await ingredientTags.filter(t=>!t.deletedAt).toArray()).map(t=>t.id)]);
   await db.ingredients.put({...row,tagIds:[...new Set(row.tagIds??[])].filter(id=>active.has(id))});
  });
 }
-export function filterIngredients(items:PantryItem[],query:string,tagId:string,tags:IngredientTag[]=[]){return items.filter(i=>(matchesIngredient(i,query)||associatedNameMatches(i.tagIds,tags,query))&&(!tagId||(i.tagIds??[]).includes(tagId)));}
+export function filterIngredients(items:PantryItem[],query:string,tagId:string,tags:readonly IngredientTagOption[]=[]){return items.filter(i=>(matchesIngredient(i,query)||associatedNameMatches(i.tagIds,tags,query))&&(!tagId||(i.tagIds??[]).includes(tagId)));}

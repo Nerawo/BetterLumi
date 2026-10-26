@@ -1,0 +1,11 @@
+# Exercise presets — Phase 3B
+
+Built-in selection uses localized human-readable intensity choices. Exercise estimates remain MET × 3.5 × kg ÷ 200 × minutes. A manual override remains explicit. Source details and saved estimates retain the actual MET, activity code, weight, duration and final calorie snapshot.
+
+Walking/running/cycling preset the existing thighs and calves body areas; the app has no lower-body or whole-body category, so none was invented. Cardio presets select cardio; strength/bodyweight select strength and anaerobic. Users may freely change these choices. Duration, weight and intensity changes never reset metadata. An explicit category change loads its defaults; selecting custom clears preset metadata. Opening a historical record never backfills defaults.
+
+No schema, backup-format or exercise formula change. No preset is seeded. Validation: 430 unit tests; 17 focused browser tests covering Chinese/English at 390/430/1440 widths, historical snapshots, custom exercises and manual overrides. Production build passes.
+
+Selector refinement: Exercise type now contains only the seven static built-in categories and one Custom exercise option. Historical/custom record names are no longer queried for selector options. The search input is removed. Custom exercises retain a separate editable name and manual calories; blank built-in estimates show a compact localized duration prompt. Existing records, MET values, calculation formula, schema and backup format are unchanged. Validation: TypeScript, 450 unit tests, 21 focused bilingual mobile/desktop browser checks and production build pass.
+
+Custom-mode clarification: the selector label is Exercise / 运动选择. Only Custom mode renders Custom exercise name / 自定义运动名称 with a localized example placeholder. The editor maintains independent preset identity and a custom draft (name, manual kcal, training tags and body areas). Explicitly entering Custom discards preset-derived state rather than copying the preset name or estimate; returning restores only user-authored custom values. Saved records initialize from their own names and snapshots without writes on open/cancel. A visually hidden body-area legend is kept at 1px to avoid invisible horizontal overflow. No MET, calorie formula, schema or backup-format changes.

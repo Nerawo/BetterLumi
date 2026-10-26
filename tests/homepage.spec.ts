@@ -1,3 +1,4 @@
+import {openPersonalGoalEditor} from './current-ui';
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: new Date("2026-10-17T12:00:00-04:00") });
@@ -11,10 +12,10 @@ test("default Chinese, calm empty states, compact ordering and responsive layout
 }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "zh");
   await expect(page.getByTestId("food-progress")).toContainText(
-    "暂无记录",
+    "今天还没有吃饭吗？",
   );
   await expect(page.getByTestId("exercise-progress")).toContainText(
-    "暂无记录",
+    "今天还没有运动吗？",
   );
   await expect(page.locator(".today-progress [role=progressbar]")).toHaveCount(
     0,
@@ -22,14 +23,14 @@ test("default Chinese, calm empty states, compact ordering and responsive layout
   await expect(page.getByTestId("food-progress")).not.toContainText("0 kcal");
   await expect(page.getByRole("heading", { name: "未来计划" })).toHaveCount(0);
   await expect(page.locator(".today-layout .exercise-card")).toHaveCount(1);
-  await expect(page.locator(".exercise-plans-section")).toBeVisible();
+  await page.locator("#today-tab-activity").click();await expect(page.locator(".exercise-plans-section")).toBeVisible();
   await expect(page.locator(".today-support .weight-mini")).toHaveCount(1);
   await expect(page.locator(".goal-settings .goal-values")).toHaveCount(0);
   const food = await page.getByTestId("food-progress").boundingBox();
   const exercise = await page.getByTestId("exercise-progress").boundingBox();
   expect(exercise!.x).toBeGreaterThan(food!.x);
   const top = await page.locator(".today-progress").boundingBox();
-  const columns = await page.locator(".today-layout").boundingBox();
+  const columns = await page.locator("#today-panel-activity .today-layout").boundingBox();
   expect(top!.y + top!.height).toBeLessThan(columns!.y);
   await page.setViewportSize({ width: 390, height: 844 });
   const mFood = await page.getByTestId("food-progress").boundingBox();
@@ -40,12 +41,10 @@ test("default Chinese, calm empty states, compact ordering and responsive layout
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.getByRole("button", { name: "编辑目标", exact: true }).click();
-  await expect(page.getByRole("dialog")).toContainText("目标历史");
-  await page.getByRole("button", { name: "关闭", exact: true }).click();
+  await openPersonalGoalEditor(page);await expect(page.locator(".goal-editor-inline")).toBeVisible();await page.locator(".goal-editor-inline .form-actions button").first().click();
   await page.goto("/more");
-  await page.getByRole("button", { name: /语言/ }).click();
-  await page.getByRole("button", { name: "English", exact: true }).click();
+  await page.locator("[data-setting=language]").click();
+  await page.getByRole("button", { name: "English", exact: true }).click();await expect.poll(()=>page.evaluate(async()=>{const d=await import("/src/domain.ts");return (await d.db.settings.get("language"))?.value})).toBe("en");
   await page.goto("/today");
   await expect(
     page.getByRole("heading", { name: /Daily overview/ }),
@@ -99,8 +98,8 @@ test("below, within, above, unknown and no-goal states update live with separate
   const f = page.getByTestId("food-progress"),
     e = page.getByTestId("exercise-progress");
   await expect(f).toContainText("距目标下限还差 1000 kcal");
-  await expect(e).toContainText("距时长目标还差 10 分钟");
-  await expect(e).toContainText("运动消耗热量未记录");
+  await expect(e).toContainText("还差 10 分钟");
+  await expect(e.locator(".overview-unknown").first()).toHaveText("未记录");
   await expect(e.getByRole("progressbar")).toHaveCount(1);
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
@@ -118,8 +117,8 @@ test("below, within, above, unknown and no-goal states update live with separate
     "aria-valuenow",
     "100",
   );
-  await expect(e).toContainText("已达到时长目标");
-  await expect(e).toContainText("距消耗目标还差 120 kcal");
+  await expect(e).toContainText("已达标");
+  await expect(e).toContainText("还差 120 kcal");
   await expect(e.getByRole("progressbar")).toHaveCount(2);
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
@@ -130,12 +129,7 @@ test("below, within, above, unknown and no-goal states update live with separate
   }, ids);
   await expect(f).toContainText("超出目标上限 300 kcal");
   await expect(f.locator(".progress-track.above")).toBeVisible();
-  await page.getByRole("button", { name: "编辑目标", exact: true }).click();
-  await page.getByRole("dialog").locator("input[name=calorieMax]").fill("2200");
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "新增日期版本", exact: true })
-    .click();
+  await openPersonalGoalEditor(page);await page.locator("[name=caloriesTarget]").fill("2100");await page.locator(".goal-editor-inline .form-actions .primary").click();
   await expect(f).toContainText("已进入目标范围");
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
@@ -149,7 +143,7 @@ test("below, within, above, unknown and no-goal states update live with separate
         deletedAt: new Date().toISOString(),
       });
   }, ids);
-  await expect(f).toContainText("已记录饮食，热量暂未知");
+  await expect(f.locator(".overview-unknown").first()).toHaveText("未记录");
   await expect(f.getByRole("progressbar")).toHaveCount(0);
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
@@ -164,13 +158,13 @@ test("below, within, above, unknown and no-goal states update live with separate
   await expect(f).not.toContainText("还差");
   await expect(page.locator(".meal-totals")).toHaveCount(0);
   const summary = await page.locator(".today-progress").boundingBox();
-  const meal = await page.locator(".meal-card .meal-row").boundingBox();
+  await page.locator("#today-tab-food").click();const meal = await page.locator(".meal-card .meal-row").boundingBox();
   expect(summary!.y + summary!.height).toBeLessThan(meal!.y);
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
     await d.softDelete(d.foodLogs, ids.food);
     await d.softDelete(d.db.activities, ids.activity);
   }, ids);
-  await expect(f).toContainText("暂无记录");
-  await expect(e).toContainText("暂无记录");
+  await expect(f).toContainText("今天还没有吃饭吗？");
+  await expect(e).toContainText("今天还没有运动吗？");
 });

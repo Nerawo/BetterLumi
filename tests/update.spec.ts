@@ -1,3 +1,4 @@
+import {openPersonalGoalEditor} from './current-ui';
 import {jumpToDate} from "./date-jump";
 import { test, expect, chromium, type Page } from "@playwright/test";
 test("ingredient replacement and explicit variation/original actions remain independent", async ({
@@ -29,7 +30,7 @@ test("ingredient replacement and explicit variation/original actions remain inde
     return item.id;
   });
   await page.locator(".ingredient-replace-toggle").click();
-  await page.locator(".add-food .replace-select").selectOption(replacement);
+  await page.locator(`.ingredient-picker-modal [data-ingredient-id="${replacement}"]`).click();
   page.once("dialog", (d) => d.accept("Explicit variation"));
   await page
     .getByRole("button", { name: "Save as variation", exact: true })
@@ -55,7 +56,7 @@ test("ingredient replacement and explicit variation/original actions remain inde
   await expect(page.getByRole("status")).toContainText(
     "Original recipe updated explicitly",
   );
-  await page.getByRole("button", { name: "Log Once", exact: true }).click();
+  await page.locator(".add-food-footer .primary").click();
   const log = await page.evaluate(async () => {
     const d = await import("/src/domain.ts");
     return (await d.foodLogs.toArray())[0];
@@ -63,7 +64,7 @@ test("ingredient replacement and explicit variation/original actions remain inde
   expect(log.lines[0].quantity).toBe(60);
   expect(log.lines[0].ingredientId).toBe(replacement);
 });
-test("reopening an isolated browser profile retains IndexedDB records and explicit Chinese preference", async ({}, info) => {
+test("reopening an isolated browser profile retains IndexedDB records and explicit Chinese preference", async ({baseURL}, info) => {
   const profile = info.outputPath("persistent-profile");
   const options = {
     channel: "chrome",
@@ -72,7 +73,7 @@ test("reopening an isolated browser profile retains IndexedDB records and explic
   };
   let context = await chromium.launchPersistentContext(profile, options);
   let p = await context.newPage();
-  await p.goto("http://127.0.0.1:5190/pantry");
+  await p.goto(new URL("/pantry",baseURL!).href);
   await p.getByRole("heading", { name: "Pantry" }).waitFor();
   await p.evaluate(async () => {
     const d = await import("/src/domain.ts");
@@ -96,7 +97,7 @@ test("reopening an isolated browser profile retains IndexedDB records and explic
   await context.close();
   context = await chromium.launchPersistentContext(profile, options);
   p = await context.newPage();
-  await p.goto("http://127.0.0.1:5190/pantry");
+  await p.goto(new URL("/pantry",baseURL!).href);
   await expect(p.getByRole("heading", { name: "Pantry" })).toBeVisible();
   await expect(
     p.getByText("Retained on reopen", { exact: true }),
@@ -201,20 +202,20 @@ test("Journal input/calendar/URL stay synchronized and use desktop columns", asy
 }) => {
   await seed(page);
   await page.goto("/journal?date=2026-10-17");
-  const input = page.getByTestId("selected-day");
+  const input = page.locator(".calendar-grid [aria-pressed=true]");
   await jumpToDate(page,"2026-09-05");
   await expect(page).toHaveURL(/date=2026-09-05/);
-  await expect(page.getByTestId("selected-day")).toHaveAttribute("datetime", "2026-09-05");
+  await expect(page.locator(".calendar-grid [aria-pressed=true]")).toHaveAttribute("data-date", "2026-09-05");
   await expect(
     page.getByRole("heading", { name: "September 2026" }),
   ).toBeVisible();
   await page.getByRole("button", {name:"Expand month", exact:true}).click();
   await page.locator('[data-date="2026-09-11"]').click();
-  await expect(input).toHaveAttribute("datetime","2026-09-11");
+  await expect(input).toHaveAttribute("data-date","2026-09-11");
   await page.goBack();
-  await expect(input).toHaveAttribute("datetime","2026-09-05");
+  await expect(input).toHaveAttribute("data-date","2026-09-05");
   await page.reload();
-  await expect(input).toHaveAttribute("datetime","2026-09-05");
+  await expect(input).toHaveAttribute("data-date","2026-09-05");
   const left = await page.locator(".calendar-card").boundingBox();
   await expect(page.locator(".journal-day-panel")).toHaveCount(0);
   expect(left!.height).toBeLessThan(420);
@@ -225,7 +226,7 @@ test("Journal input/calendar/URL stay synchronized and use desktop columns", asy
 test("direct weight entry stays on Today and persists into /weight and the calendar", async ({
   page,
 }) => {
-  await page
+  await page.locator("#today-tab-weight").click();await page
     .getByRole("button", { name: "Record Weight", exact: true })
     .click();
   const form = page.getByRole("dialog");
@@ -234,7 +235,7 @@ test("direct weight entry stays on Today and persists into /weight and the calen
   await form.locator("input[name=value]").fill("154.323583526");
   await form.locator("textarea").fill("Morning measurement");
   await form.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page).toHaveURL(/\/today$/);
+  await expect(page).toHaveURL(/\/today\?date=2026-10-17$/);
   await expect(page.locator(".weight-mini strong")).toContainText("70.0");
   await page.reload();
   await expect(page.locator(".weight-mini strong")).toContainText("70.0");
@@ -259,18 +260,18 @@ test("direct weight entry stays on Today and persists into /weight and the calen
     .click();
   await expect(page.getByText("Edited historical note")).toBeVisible();
   await page.goto("/journal?date=2026-10-17");
-  await expect(page.locator(".weight-mini")).toContainText("70.0 kg");
+  await expect(page.locator(".weight-mini .weight-value")).toHaveText("70.0kg");
 });
 test("custom activities, tags and manual energy persist and remain separate from food", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Log movement", exact: true }).click();
+  await page.locator("#today-tab-activity").click();await page.locator(".exercise-card .section-heading .primary").click();
   const form = page.getByRole("dialog");
   await form.locator("input[name=name]").fill("My custom cable flow");
   await form.locator("input[name=duration]").fill("45");
-  await form.getByLabel("Strength Training", { exact: true }).check();
+  await form.getByRole("checkbox",{name:/strength training/i}).check();
   await form.getByLabel("Anaerobic", { exact: true }).check();
-  await form.getByLabel("Add any body-part label").fill("Rotator cuff");
+  await form.locator(".exercise-body-parts > summary").click();await form.getByLabel("Add any body-part label").fill("Rotator cuff");
   await form.getByRole("button", { name: "Add", exact: true }).click();
   await form.locator("input[name=caloriesBurned]").fill("240");
   await form.getByRole("button", { name: "Save", exact: true }).click();
@@ -280,7 +281,7 @@ test("custom activities, tags and manual energy persist and remain separate from
   );
   await expect(page.locator(".activity-row")).toContainText("Rotator cuff");
   await expect(page.locator(".activity-row")).toContainText("240 kcal");
-  await page.goto("/journal?date=2026-10-17");
+  await page.goto("/journal?date=2026-10-17");await page.locator("#today-tab-activity").click();
   await expect(page.locator(".today-layout .activity-row")).toContainText(
     "Strength Training",
   );
@@ -290,7 +291,7 @@ test("custom activities, tags and manual energy persist and remain separate from
 test("independent custom supplement schedules and editing survive refresh", async ({
   page,
 }) => {
-  for (const [name, days] of [
+  await page.locator("#today-tab-supplements").click();for (const [name, days] of [
     ["Schedule A", ["Tuesday", "Wednesday"]],
     ["Schedule B", ["Thursday", "Friday"]],
   ] as const) {
@@ -305,7 +306,7 @@ test("independent custom supplement schedules and editing survive refresh", asyn
     for (const day of days) await form.getByLabel(day, { exact: true }).check();
     await form.getByRole("button", { name: "Save", exact: true }).click();
   }
-  await page.goto("/journal?date=2026-10-20");
+  await page.goto("/journal?date=2026-10-20");await page.locator("#today-tab-supplements").click();
   await expect(page.locator(".today-support .supplement-row")).toHaveCount(
     1,
   );
@@ -402,13 +403,19 @@ test("sticky notes CRUD and Log Once do not overwrite the original recipe", asyn
   await page
     .locator(".add-food textarea[name=cookingNote]")
     .fill("Only this meal");
-  await page.getByRole("button", { name: "Log Once", exact: true }).click();
+  await page.locator(".add-food-footer .primary").click();
   await expect(page.locator(".meal-card .meal-row")).toContainText(
     "Only this meal",
   );
   await page.goto("/recipes");
   await page.getByRole("link", { name: "Reading recipe" }).click();
-  await expect(page.locator(".detail-ingredients")).toContainText("100 g");
+  // The detail defaults to one serving of this two-serving recipe.
+  await expect(page.locator(".detail-ingredients")).toContainText("50 g");
+  const original = await page.evaluate(async () => {
+    const d = await import("/src/domain.ts");
+    return (await d.recipes.toArray()).find(r => r.name === "Reading recipe");
+  });
+  expect(original?.lines[0].quantity).toBe(100);
   await expect(page.locator(".recipe-method")).toContainText(
     "FINAL STEP — ENJOY.",
   );
@@ -418,21 +425,8 @@ test("mobile quick meals are optional, goals version and calendar dots are real,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".mobile-nav")).toBeVisible();
-  await page.getByRole("button", { name: "Edit goals", exact: true }).click();
-  const form = page.getByRole("dialog");
-  await form
-    .getByLabel("Intake reference — minimum kcal", { exact: true })
-    .fill("1500");
-  await form
-    .getByLabel("Intake reference — maximum kcal", { exact: true })
-    .fill("1800");
-  await form
-    .getByLabel("Exercise target — minutes", { exact: true })
-    .fill("30");
-  await form
-    .getByRole("button", { name: "New dated version", exact: true })
-    .click();
-  await page.getByRole("button", { name: "Add food", exact: true }).click();
+  await openPersonalGoalEditor(page);const form=page.locator('.goal-editor-inline');await form.locator('[data-goal-metric=calories] input[type=checkbox]').check();await form.locator('[name=caloriesTarget]').fill('1650');await form.locator('.exercise-goal-controls .goal-master-heading input').check();await form.locator('[name=exerciseMinutes]').fill('30');await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);const version=await page.evaluate(async()=>{const g=await import('/src/goals.ts');return g.goalTable.toArray()});expect(version).toHaveLength(1);expect(version[0]).toMatchObject({calorieMin:1600,calorieMax:1700,exerciseMinutes:30});await page.locator('#today-tab-food').click();
+  await page.locator(".meal-card .section-heading .primary").click();
   await expect(page.locator(".add-food .source-tabs button")).toHaveCount(3);
   await expect(page.locator(".add-food .import-entry")).toHaveCount(0);
   await page
@@ -440,7 +434,7 @@ test("mobile quick meals are optional, goals version and calendar dots are real,
     .getByRole("button", { name: "Quick entry", exact: true })
     .click();
   await page.locator(".add-food .nutrition-fields input").first().fill("1700");
-  await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await page.locator(".add-food-footer .primary").click();
   await expect(page.locator(".meal-row")).toHaveCount(1);
   await expect(
     page
@@ -459,8 +453,8 @@ test("mobile quick meals are optional, goals version and calendar dots are real,
     .locator(".mobile-nav")
     .getByRole("button", { name: "More", exact: true })
     .click();
-  await page.getByRole("button", { name: /Language/ }).click();
-  await page.getByRole("button", { name: "简体中文", exact: true }).click();
+  await page.locator("[data-setting=language]").click();
+  await page.getByRole("button", { name: "简体中文", exact: true }).click();await expect.poll(()=>page.evaluate(async()=>{const d=await import("/src/domain.ts");return (await d.db.settings.get("language"))?.value})).toBe("zh");
   await page.reload();
   await expect(page.getByRole("heading", { name: "More" })).toBeVisible();
   expect(
