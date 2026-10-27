@@ -15,9 +15,8 @@ export function BmiHeightInput({height,onChange,notice}:{height:number|null;onCh
   const persist=async(value:number)=>{const request=++revision.current;setStatus('bmiHeightSaving');try{await saveHeightCm(value);if(request===revision.current)setStatus('bmiHeightSaved')}catch{if(request===revision.current){setStatus('');notice(t('failedMessage'))}}};
   return <div className="bmi-height-setting"><label>{t('bmiHeight')}<span className="calculator-number-unit"><NumberInput name="bmiHeightCm" required min="100" max="250" step="any" aria-invalid={error||undefined} value={height??''} onChange={event=>{revision.current++;const value=event.target.value===''?null:Number(event.target.value),valid=validHeightCm(value);onChange(valid?value:null);setError(false);setStatus('');if(valid)void persist(value)}} onBlur={event=>setError(event.target.value!==''&&!validHeightCm(Number(event.target.value)))}/><small>cm</small></span></label>{error?<small className="bmi-height-feedback" role="alert">{t('bmiHeightInvalid')}</small>:status&&<small className="bmi-height-feedback" role="status">{t(status)}</small>}</div>;
 }
-export function PersistentBmi({age,profile,height}:{age:number|null;profile:BmiProfile;height:number|null}){
+export function PersistentBmi({age,profile,height,calculationWeightKg=profile.weight?.kg??null}:{age:number|null;profile:BmiProfile;height:number|null;calculationWeightKg?:number|null}){
   const {t,i18n}=useTranslation();
-  const calculationWeightKg=profile.weight?.kg??null;
   const value=weightBmi(calculationWeightKg,height),feedback=bmiFeedback(value,age),category=feedback.category;
   // Linear scale 12–40; only the marker is clamped in the open-ended categories.
   const position=value===null?null:(Math.min(40,Math.max(12,value))-12)/28*100;

@@ -315,7 +315,7 @@ function App() {
                     <GoalCard goals={goals} date={selected} notice={setToast} />
                     <details className="other-daily-plans"><summary><CalendarDays size={17}/><span>{t("otherDailyPlans")}</span><small className="todo-count">{planItems!.filter(plan=>plan.date===selected).length}</small><ChevronDown size={15}/></summary><PlanList items={planItems!.filter(plan => plan.date === selected)} notice={setToast} defaultDate={selected}/></details>
                   </div>,
-                    calculator: <HealthGoalCalculator notice={setToast}/>
+                    calculator: <HealthGoalCalculator notice={setToast} active={page==='today'&&todayTab==='calculator'}/>
                    }}
                   </TodayTabs>
                 </>

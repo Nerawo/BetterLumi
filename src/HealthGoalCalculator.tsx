@@ -51,17 +51,23 @@ function PlannerSlider({name,label,value,unit,min,max,step=1,onChange,disabled=f
  {(disabled||!within)&&<p id={hintId} className="calculator-footnote">{t(disabled?'plannerWeightRangeNeedsWeight':'plannerNoLimit')}</p>}
 </div>;
 }
-export function HealthGoalCalculator({notice}:{notice:Notice}){
+export function HealthGoalCalculator({notice,active=true}:{notice:Notice;active?:boolean}){
  const profile=useBmiProfile();
  const saved=useLiveQuery(()=>db.settings.get(calculatorSettingsKey).then(value=>value??null));
  if(!profile||saved===undefined)return null;
- return <CalculatorContent profile={profile} initialDraft={parseCalculatorDraft(saved?.value)??initialCalculatorDraft} notice={notice}/>;
+ return <CalculatorContent profile={profile} initialDraft={parseCalculatorDraft(saved?.value)??initialCalculatorDraft} notice={notice} active={active}/>;
 }
-function CalculatorContent({profile,initialDraft,notice}:{profile:BmiProfile;initialDraft:CalculatorDraft;notice:Notice}){
+function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProfile;initialDraft:CalculatorDraft;notice:Notice;active:boolean}){
  const {t,i18n}=useTranslation(),[draft,setDraft]=useState<CalculatorDraft>(()=>({...initialDraft}));
  const [heightDraft,setHeightDraft]=useState<number|null|undefined>();
  const height=heightDraft===undefined?profile.height:heightDraft;
- const kg=calculatorWeightKg(draft,profile.weight?.kg??null),currentUnit=profile.unit;
+ // Undefined follows the journal; null is an intentionally blank estimate.
+ const [temporaryKg,setTemporaryKg]=useState<number|null|undefined>();
+ const [weightRevision,setWeightRevision]=useState(0);
+ const recordedKg=profile.weight?.kg??null,previousRecorded=useRef(recordedKg);
+ useLayoutEffect(()=>{if(!active){setTemporaryKg(undefined);setWeightRevision(v=>v+1)}},[active]);
+ useLayoutEffect(()=>{if(previousRecorded.current!==recordedKg){previousRecorded.current=recordedKg;if(temporaryKg===undefined)setWeightRevision(v=>v+1)}},[recordedKg,temporaryKg]);
+ const kg=temporaryKg===undefined?calculatorWeightKg(draft,recordedKg):temporaryKg,currentUnit=profile.unit;
  const currentWeight=kg===null?null:weightFromKg(kg,currentUnit);
  const settings={...plannerDefaults,...draft};
  const quickWeightAvailable=kg!==null&&Number.isFinite(kg)&&kg>=30&&kg<=350;
@@ -110,17 +116,18 @@ function CalculatorContent({profile,initialDraft,notice}:{profile:BmiProfile;ini
  const openRisk=(trigger:HTMLButtonElement)=>{riskTrigger.current=trigger;setError('');setRiskOpen(true)};
  const requestPlan=(event:React.MouseEvent<HTMLButtonElement>)=>{notice('',0);setError('');if(useProfessional){if(guidedTarget===null){setError(t('guidedInvalid'));if(specialPanel.current){specialPanel.current.open=true;specialPanel.current.querySelector<HTMLInputElement>('[name=professionalKcal]')?.focus({preventScroll:true});specialPanel.current.scrollIntoView({block:'nearest'})}return}openRisk(event.currentTarget);return}if(plan.nutritionApplicable&&(!settings.exerciseEnabled||plan.exerciseApplicable))void save('plan');else openRisk(event.currentTarget)};
  return <section className="health-calculator-inline" aria-label={t('calcTitle')}>
-  <PersistentBmi age={draft.age} profile={profile} height={height}/>
+  <PersistentBmi age={draft.age} profile={profile} height={height} calculationWeightKg={kg}/>
   <details className="calculator-input-section" open={expanded} onToggle={e=>setExpanded(e.currentTarget.open)}>
    <summary><span>{t('inlineBodyGoals')}</span><span className="calculator-chevron" aria-hidden="true"><ChevronDown size={17}/></span></summary>
    <form onSubmit={e=>e.preventDefault()}>
     <section className="calculator-subsection calculator-body-section"><h3>{t('inlineBodyData')}</h3><div className="calculator-fields">
      <BmiHeightInput height={height} onChange={setHeightDraft} notice={notice}/>
      <label>{t('calcAge')}<span className="calculator-number-unit"><NumberInput name="age" value={draft.age??''} step="1" onChange={e=>edit({age:e.target.value===''?null:Number(e.target.value)})}/><small>{t('calcYears')}</small></span></label>
-     <label className="calculator-unit-field"><span className="calculator-label">{t('calcCurrent')}</span><span className="calculator-unit-controls"><input type="number" inputMode="decimal" key={currentUnit} name="currentWeight" value={currentWeight??''} step="any" readOnly/><select name="currentWeightUnit" aria-label={t('calcCurrentUnit')} value={currentUnit} onChange={e=>{const unit=e.target.value as 'kg'|'lb';void db.settings.put({key:'weightUnit',value:unit}).catch(()=>notice(t('failedMessage')))}}><option value="kg">kg</option><option value="lb">lb</option></select></span></label>
+     <label className="calculator-unit-field"><span className="calculator-label">{t('calcCurrent')}</span><span className="calculator-unit-controls"><NumberInput key={currentUnit+'-'+weightRevision} name="currentWeight" value={currentWeight??''} step="any" onChange={e=>{setRiskOpen(false);setError('');setTemporaryKg(e.target.value===''?null:weightInKg(Number(e.target.value),currentUnit))}}/><select name="currentWeightUnit" aria-label={t('calcCurrentUnit')} value={currentUnit} onChange={e=>{const unit=e.target.value as 'kg'|'lb';void db.settings.put({key:'weightUnit',value:unit}).catch(()=>notice(t('failedMessage')))}}><option value="kg">kg</option><option value="lb">lb</option></select></span></label>
      <div className="calculator-sex"><div className="calculator-label">{t('calcSex')}<CalculatorInfo label={t('calcSex')} text={t('calcSexInfo')}/></div><select name="sex" aria-label={t('calcSex')} value={draft.sex} onChange={e=>edit({sex:e.target.value as CalculatorInput['sex']})}><option value="">{t('calcUnspecified')}</option><option value="female">{t('calcFemale')}</option><option value="male">{t('calcMale')}</option></select></div>
     </div>
-    <div className="calculator-body-bmr" aria-live="polite"><div className="calculator-result-heading">{t('bodyBmr')}<CalculatorInfo label={t('bodyBmr')} text={t('bodyBmrInfo')}/></div><p className="calculator-secondary-value" data-testid="body-bmr">{bmrValue===null?t('bodyBmrMissing'):'≈ '+format(bmrValue)}{bmrValue!==null&&<small>{t('calcPerDay')}</small>}</p></div>
+    <div className="calculator-weight-note"><p className="calculator-footnote">{t('calcTemporaryWeightNote')}</p>{temporaryKg!==undefined&&recordedKg!==null&&<button type="button" className="planner-text-action" onClick={()=>{setTemporaryKg(undefined);setWeightRevision(v=>v+1)}}>{t('calcUseLatestWeight')}</button>}</div>
+    <div className="calculator-body-bmr" aria-live="polite"><div className="calculator-result-heading">{t('bodyBmr')}<CalculatorInfo label={t('bodyBmr')} text={t('bodyBmrInfo')}/></div><p className={bmrValue===null?'calculator-footnote calculator-bmr-missing':'calculator-secondary-value'} data-testid="body-bmr">{bmrValue===null?t('bodyBmrMissing'):'≈ '+format(bmrValue)}{bmrValue!==null&&<small>{t('calcPerDay')}</small>}</p></div>
     <details className="calculator-setting-row" open={activityOpen} onToggle={e=>setActivityOpen(e.currentTarget.open)}><summary ref={activityTrigger}><span>{t('calcActivity')}</span><span className="calculator-setting-value">{t({sedentary:'calcSedentary',light:'calcLight',moderate:'calcModerate',very:'calcVery'}[draft.activity])}<ChevronDown size={15}/></span></summary><fieldset className="calculator-activity"><legend className="sr-only">{t('calcActivity')}</legend>{(['sedentary','light','moderate','very'] as const).map((key,index)=><label key={key}><input type="radio" name="activity" value={key} checked={draft.activity===key} onClick={()=>{setActivityOpen(false);activityTrigger.current?.focus({preventScroll:true})}} onChange={()=>{edit({activity:key});setActivityOpen(false);activityTrigger.current?.focus({preventScroll:true})}}/><span>{t(['calcSedentary','calcLight','calcModerate','calcVery'][index])}</span></label>)}</fieldset></details>
     <details ref={specialPanel} className="calculator-setting-row calculator-special-settings"><summary><span>{t('compactSpecial')}</span><span className="calculator-setting-value">{t(special.active?'compactConfigured':'compactNotSet')}<ChevronDown size={15}/></span></summary><div className="calculator-guidance">
      <label className="calculator-exclusion"><input type="checkbox" name="specialOrProfessionalGuidance" checked={special.active} onChange={e=>edit({specialOrProfessionalGuidance:e.target.checked,excluded:e.target.checked})}/><span>{t('unifiedSpecialLabel')}</span></label>

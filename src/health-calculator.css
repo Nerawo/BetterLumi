@@ -258,3 +258,6 @@
 .calculator-macro-values dd { margin:2px 0 0; font:400 26px/1.2 var(--font-editorial); color:var(--ink); font-variant-numeric:tabular-nums; }
 .calculator-macro-values dd small { margin-left:4px; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
 .calculator-macro-caution summary { justify-content:space-between; }
+
+.calculator-bmr-missing { overflow-wrap:anywhere; min-width:0; }
+.calculator-weight-note .calculator-footnote { margin-top:6px; }
