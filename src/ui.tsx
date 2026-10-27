@@ -25,17 +25,21 @@ export function Modal({
   useEffect(() => {
     if (!standard&&!className.includes("add-food-modal")) return;
     const viewport = window.visualViewport,dialog=ref.current;
-    let frame=0;
+    let frame=0,settleUntil=0,userScrolled=false,lastViewport="";
+    const focusedField=()=>{const field=document.activeElement;return dialog&&field instanceof HTMLElement&&dialog.contains(field)&&field.matches('input,textarea,select,[contenteditable=true]')?field:null};
     // Scroll only the focused control's own modal body, never its ancestors/page.
     const revealFocused = () => {
-      const field=document.activeElement;
-      if(!dialog||!(field instanceof HTMLElement)||!dialog.contains(field)||!field.matches('input,textarea,select,[contenteditable=true]'))return;
+      const field=focusedField();
+      if(!dialog||!field)return;
       let body=field.parentElement;
       while(body&&body!==dialog){
         if(/auto|scroll/.test(getComputedStyle(body).overflowY)&&body.scrollHeight>body.clientHeight){
           const box=body.getBoundingClientRect(),control=field.getBoundingClientRect();
-          const top=Math.max(box.top,viewport?.offsetTop??0)+12;
-          const bottom=Math.min(box.bottom,(viewport?.offsetTop??0)+(viewport?.height??innerHeight))-12;
+          // DOM rectangles and offsetTop are both in layout-viewport coordinates.
+          const header=dialog.querySelector(':scope > .modal-head')?.getBoundingClientRect();
+          const footer=dialog.querySelector(':scope > .form-actions,:scope > form > .form-actions,:scope > form > .recipe-editor-footer')?.getBoundingClientRect();
+          const top=Math.max(box.top,viewport?.offsetTop??0,header?.bottom??-Infinity)+12;
+          const bottom=Math.min(box.bottom,(viewport?.offsetTop??0)+(viewport?.height??innerHeight),footer?.top??Infinity)-12;
           if(bottom<=top)return;
           const delta=control.height>bottom-top?control.top-top:control.bottom>bottom?control.bottom-bottom:control.top<top?control.top-top:0;
           if(Math.abs(delta)>1)body.scrollTo({top:body.scrollTop+delta,behavior:'instant'});
@@ -44,19 +48,48 @@ export function Modal({
         body=body.parentElement;
       }
     };
-    const update = () => {
-      dialog?.style.setProperty("--food-viewport-height", (viewport?.height ?? window.innerHeight) + "px");
-      dialog?.style.setProperty("--food-viewport-top", (viewport?.offsetTop ?? 0) + "px");
-      cancelAnimationFrame(frame);frame=requestAnimationFrame(revealFocused);
+    const syncViewport = () => {
+      const height=viewport?.height??window.innerHeight,top=viewport?.offsetTop??0;
+      const geometry=height+':'+top;
+      if(geometry===lastViewport)return false;
+      lastViewport=geometry;
+      dialog?.style.setProperty("--food-viewport-height",height+"px");
+      dialog?.style.setProperty("--food-viewport-top",top+"px");
+      return true;
     };
+    // WebKit can report viewport geometry before modal layout/native panning settles.
+    // Retry briefly after focus/geometry changes, without a permanent scroll loop.
+    const settle = () => {
+      frame=0;syncViewport();
+      if(userScrolled||!focusedField())return;
+      revealFocused();
+      if(performance.now()<settleUntil)frame=requestAnimationFrame(settle);
+    };
+    const update = () => {
+      const changed=syncViewport();
+      if(changed&&!userScrolled&&focusedField())settleUntil=performance.now()+900;
+      if(!frame&&!userScrolled&&focusedField()&&performance.now()<settleUntil)frame=requestAnimationFrame(settle);
+    };
+    const focus = () => {userScrolled=false;settleUntil=performance.now()+900;update()};
+    const stop = () => {userScrolled=true;settleUntil=0;cancelAnimationFrame(frame);frame=0};
+    const pointer = (event:PointerEvent) => {if(event.target!==document.activeElement)stop()};
+    const key = (event:KeyboardEvent) => {if(['PageUp','PageDown'].includes(event.key))stop()};
     update();
-    dialog?.addEventListener('focusin',update);
+    dialog?.addEventListener('focusin',focus);
+    dialog?.addEventListener('touchmove',stop,{passive:true});
+    dialog?.addEventListener('wheel',stop,{passive:true});
+    dialog?.addEventListener('pointerdown',pointer);
+    dialog?.addEventListener('keydown',key);
     window.addEventListener('resize',update);
     viewport?.addEventListener("resize", update);
     viewport?.addEventListener("scroll", update);
     return () => {
       cancelAnimationFrame(frame);
-      dialog?.removeEventListener('focusin',update);
+      dialog?.removeEventListener('focusin',focus);
+      dialog?.removeEventListener('touchmove',stop);
+      dialog?.removeEventListener('wheel',stop);
+      dialog?.removeEventListener('pointerdown',pointer);
+      dialog?.removeEventListener('keydown',key);
       window.removeEventListener('resize',update);
       viewport?.removeEventListener("resize", update);
       viewport?.removeEventListener("scroll", update);
