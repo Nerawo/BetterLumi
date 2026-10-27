@@ -219,7 +219,7 @@
 .page-today .macro-actual dd small { font-size: 10px; font-weight: 400; }
 .page-today .macro-actual .overview-unknown { font: 400 10px/1.4 var(--font-ui); color: var(--muted); }
 .page-today .compact-daily-overview .macro-goal-range { font: 400 10px/1.5 var(--font-ui); width: 100%; }
-.page-today .macro-goal-range .number-unit { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+.page-today .macro-goal-range .number-unit { display: inline-flex; flex-wrap: nowrap; justify-content: center; gap: 2px; white-space: nowrap; }
 .page-today .exercise-card :is(.activity-row,.planned-movement-row) { min-height: 64px; padding-block: 10px; }
 .page-today .exercise-card .activity-row .actions button { width: 40px; min-width: 40px; min-height: 44px; }
 .page-today .exercise-card :is(.simple-row .grow > small,.exercise-row-values,.exercise-notes) { font-size: 11px; line-height: 1.5; }
@@ -368,18 +368,24 @@
 .current-goals-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; }
 .current-goals-heading h3 { margin:0; font:600 14px/1.5 var(--font-ui); }
 .current-goals-heading button,.current-goals-empty button { min-height:44px; padding:6px 0; border:0; background:transparent; color:var(--action); font:500 13px/1.5 var(--font-ui); }
-.current-goal-section { padding:10px 0 14px; }
+.current-goal-section { padding:8px 0 12px; }
 .current-goal-section + .current-goal-section { border-top:1px solid var(--line); }
 .current-goal-section h4 { margin:0 0 6px; color:var(--muted); font:500 12px/1.5 var(--font-ui); }
 .current-goal-number { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px; margin:0; color:var(--ink); font:400 clamp(28px,7vw,36px)/1.2 var(--font-editorial); font-variant-numeric:tabular-nums; }
 .current-goal-number small { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
 .current-goal-caption,.current-goal-range,.current-goals-updated { margin:5px 0 0; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
 .current-goal-range,.current-goals-updated { font-size:11px; }
-.current-exercise-targets { display:flex; flex-wrap:wrap; gap:12px 24px; }
-.current-goal-macros { margin:8px 0 0; }
+.current-exercise-targets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.current-exercise-targets .current-goal-number { font-size:clamp(23px,6vw,30px); gap:3px 5px; }
+.current-goal-macros { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:12px 0 0; }
 .current-goal-macros:empty { display:none; }
-.current-goal-macros > div { display:flex; flex-wrap:wrap; gap:4px 12px; margin:4px 0; font:400 12px/1.6 var(--font-ui); }
-.current-goal-macros dd { margin:0; color:var(--muted); }
+.current-goal-macros > div { min-width:0; padding-inline:10px; font:400 11px/1.5 var(--font-ui); }
+.current-goal-macros > div:first-child { padding-left:0; }
+.current-goal-macros > div + div { border-left:1px solid var(--line); }
+.current-goal-macros dt,.current-goal-frequency { color:var(--muted); font:400 10px/1.5 var(--font-ui); }
+.current-goal-macros dd { margin:3px 0 0; color:var(--ink); font:500 clamp(17px,4.8vw,23px)/1.35 var(--font-ui); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.current-macro-unit { display:inline-block; font:400 12px/1.4 var(--font-ui); color:var(--muted); }
+.current-goals-updated { margin-top:4px; }
 .current-goals-empty > p:first-child { font:400 22px/1.5 var(--font-editorial); }
 /* Operation feedback stays above the mobile navigation and outside document flow. */
 @media(max-width:1150px){ .toast { bottom:calc(100px + env(safe-area-inset-bottom)); } }
@@ -406,3 +412,10 @@
 .page-today .macro-goal-slot[data-empty=true] .macro-actual { grid-template-rows:auto; gap:0; }
 .page-today .macro-goal-slot[data-empty=true] .macro-goal-name { font-weight:500; }
 .page-today .macro-goal-slot[data-empty=true] .macro-goal-range { color:var(--muted); font-size:9px; }
+
+/* Keep each target range and unit together inside narrow overview columns. */
+@media(max-width:380px){
+ .page-today .compact-daily-overview .macro-goal-range { font-size:8px; letter-spacing:-.15px; }
+ .page-today .compact-daily-overview .macronutrient-goals { column-gap:2px; }
+}
+.page-today .compact-daily-overview [data-goal-metric=calories]:not(:has(.progress-message)) { grid-template-rows:auto auto 4px; }

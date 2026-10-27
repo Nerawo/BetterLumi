@@ -278,3 +278,6 @@
 .health-calculator-inline :is(.calculator-unit-controls,.planner-value-edit) > select { color:var(--muted); font:400 12px/1.5 var(--font-ui); }
 .health-calculator-inline .planner-control:has([name=targetWeight],[name=duration]) { padding-block:4px 2px; }
 .health-calculator-inline input:is([name=targetWeightSlider],[name=durationSlider]) { margin-top:-6px; }
+
+.health-calculator-inline .calculator-input-section > summary { scroll-margin-top:calc(16px + env(safe-area-inset-top)); }
+.health-calculator-inline .calculator-save-feedback { margin:6px 0 0; color:var(--muted); font:400 12px/1.5 var(--font-ui); }

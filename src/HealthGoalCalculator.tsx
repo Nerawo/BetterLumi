@@ -79,6 +79,10 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
  const input={...draft,excluded:special.active,heightCm:height,currentWeight:kg===null?null:weightFromKg(kg,draft.weightUnit)};
  const plan=planInteractively(input,settings),tolerance=useGoalToleranceSettings();
  const [expanded,setExpanded]=useState(()=>weightBmi(profile.weight?.kg??null,profile.height)===null);
+ const sectionHeader=useRef<HTMLElement>(null);
+ const [applied,setApplied]=useState(false);
+ useEffect(()=>{setApplied(false)},[draft,height,kg,currentUnit]);
+ useEffect(()=>{if(!applied||expanded)return;const frame=requestAnimationFrame(()=>{const header=sectionHeader.current;if(!header)return;header.focus({preventScroll:true});header.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'})});return()=>cancelAnimationFrame(frame)},[applied,expanded]);
  const [riskOpen,setRiskOpen]=useState(false),riskTrigger=useRef<HTMLButtonElement>(null);
  useEffect(()=>{if(riskOpen)return()=>{if(riskTrigger.current?.isConnected)riskTrigger.current.focus({preventScroll:true})}},[riskOpen]);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -110,16 +114,15 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
   try{
    await writes.current;
    await applyCalculatorPlan(draft,input,choice);
-   setRiskOpen(false);
-   notice(t('planApplied'),2500);
+   riskTrigger.current=null;setRiskOpen(false);setExpanded(false);setApplied(true);
   }catch{setError(t('plannerSaveFailed'))}finally{lock.current=false;setBusy(false)}
  };
  const openRisk=(trigger:HTMLButtonElement)=>{riskTrigger.current=trigger;setError('');setRiskOpen(true)};
  const requestPlan=(event:React.MouseEvent<HTMLButtonElement>)=>{notice('',0);setError('');if(useProfessional){if(guidedTarget===null){setError(t('guidedInvalid'));if(specialPanel.current){specialPanel.current.open=true;specialPanel.current.querySelector<HTMLInputElement>('[name=professionalKcal]')?.focus({preventScroll:true});specialPanel.current.scrollIntoView({block:'nearest'})}return}openRisk(event.currentTarget);return}if(completePlan&&plan.assessment.withinPlanningRange)void save('plan');else openRisk(event.currentTarget)};
  return <section className="health-calculator-inline" aria-label={t('calcTitle')}>
   <PersistentBmi age={draft.age} profile={profile} height={height} calculationWeightKg={kg}/>
-  <details className="calculator-input-section" open={expanded} onToggle={e=>setExpanded(e.currentTarget.open)}>
-   <summary><span>{t('inlineBodyGoals')}</span><span className="calculator-chevron" aria-hidden="true"><ChevronDown size={17}/></span></summary>
+  <details className="calculator-input-section" open={expanded} onToggle={e=>{setExpanded(e.currentTarget.open);if(e.currentTarget.open)setApplied(false)}}>
+   <summary ref={sectionHeader}><span>{t('inlineBodyGoals')}</span><span className="calculator-chevron" aria-hidden="true"><ChevronDown size={17}/></span></summary>
    <form onSubmit={e=>e.preventDefault()}>
     <section className="calculator-subsection calculator-body-section"><h3>{t('inlineBodyData')}</h3><div className="calculator-fields">
      <BmiHeightInput height={height} onChange={setHeightDraft} notice={notice}/>
@@ -156,7 +159,7 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
       {macros?<><dl className="calculator-macro-values">{(['protein','carbs','fat'] as const).map(key=><div key={key}><dt>{t(key)}</dt><dd data-testid={'macro-'+key}>{format(macros[key])}<small>g</small></dd></div>)}</dl>{macros.cautions.length>0&&<div className="calculator-macro-cautions" aria-live="polite">{macros.cautions.map(item=><div className="calculator-macro-caution" data-nutrient={item.nutrient} key={item.nutrient}><div className="calculator-macro-caution-heading"><span>{t(item.percent<item.min?'macroProportionLow':'macroProportionHigh',{nutrient:t(item.nutrient==='carbs'?'macroCarbs':item.nutrient)})}</span><CalculatorInfo label={t('macroProportionInfo',{nutrient:t(item.nutrient==='carbs'?'macroCarbs':item.nutrient)})} text={t(nutritionPlan==='highProtein'?'macroHighProteinAmdrInfo':'macroAmdrInfo')}/></div><p>{t('macroProportion',{percent:format(item.percent,1),min:item.min,max:item.max})}</p></div>)}</div>}</>:<p className="calculator-footnote">{t(plan.targetKcal!==null&&plan.targetKcal>0&&kg!==null?'macroCannotAllocate':'macroNeedInputs')}</p>}
      </section>}
      <p className="planner-compact-plan"><span>{draft.targetWeight===null?t('plannerNotRecorded'):format(draft.targetWeight,2)+' '+(draft.weightUnit==='jin'?t('calcJinUnit'):draft.weightUnit)}</span><span data-testid="planner-duration">{durationValue===null?t('plannerNotRecorded'):format(durationValue,2)+' '+t(draft.durationUnit==='weeks'?'calcWeeks':'calcMonths')}</span>{settings.exerciseEnabled&&<span>{plan.exerciseMinutes===null?t('plannerNotRecorded'):format(plan.exerciseMinutes!,1)+' '+t('calcMinutesWeek')}</span>}</p>
-     {!special.active&&(unavailable||caution)&&<details id="planner-apply-status" className="calculator-theory-warning"><summary><span>{t(plan.intake?(plan.assessment.status==='attention'?'planStatus_attention':'compactPlanWarning'):'compactNeedInputs')}</span><span>{t('compactViewReason')}<ChevronDown size={14}/></span></summary><p>{unavailable||caution}</p>{!plan.nutritionApplicable&&suggested?.adopt!=null&&<button type="button" className="planner-text-action" onClick={()=>edit({duration:suggested.adopt})}>{t('planUseTimeline')} · {format(suggested.adopt,1)} {t(draft.durationUnit==='weeks'?'calcWeeks':'calcMonths')}</button>}</details>}
+     {!special.active&&(unavailable||caution)&&<details id="planner-apply-status" className="calculator-theory-warning"><summary><span>{t(!plan.nutritionApplicable?'compactNeedInputs':(plan.assessment.status==='attention'?'planStatus_attention':'compactPlanWarning'))}</span><span>{t('compactViewReason')}<ChevronDown size={14}/></span></summary><p>{unavailable||caution}</p>{!plan.nutritionApplicable&&suggested?.adopt!=null&&<button type="button" className="planner-text-action" onClick={()=>edit({duration:suggested.adopt})}>{t('planUseTimeline')} · {format(suggested.adopt,1)} {t(draft.durationUnit==='weeks'?'calcWeeks':'calcMonths')}</button>}</details>}
      <div className="form-actions"><button className="primary" type="button" disabled={busy||!tolerance.ready} aria-describedby={!special.active&&(unavailable||caution)?'planner-apply-status':undefined} onClick={requestPlan}>{t('plannerApplyPlan')}</button></div>
      {error&&<p role="alert" className="calculator-error">{error}</p>}
      <details className="calculator-references"><summary>{t('compactCalculationDetails')}<ChevronDown size={15}/></summary>
@@ -172,6 +175,7 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
     </section>
    </form>
   </details>
+  {applied&&!expanded&&<p className="calculator-save-feedback" role="status">{t('calculatorGoalsUpdated')}</p>}
   {riskOpen&&<Modal className="calculator-risk-modal" title={t(useProfessional?'guidedConfirm':'plannerRiskTitle')} descriptionId="calculator-risk-description" close={()=>{if(!busy)setRiskOpen(false)}}>
    <div className="modal-scroll calculator-risk-body">
     <p id="calculator-risk-description" className="calculator-footnote">{t(useProfessional?'guidedConfirmNote':'plannerConfirmNote')}</p>

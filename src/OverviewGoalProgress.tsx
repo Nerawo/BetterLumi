@@ -21,12 +21,11 @@ export function NutritionGoalProgress({metric,config,daily,weekly,graphic=false}
  if(config.mode==="off"||(config.min===null&&config.max===null))return null;
  const display=calorieGoalDisplay(config,daily,weekly),{isWeekly,value:amount,status}=display,unit="kcal";
  const name=t(metric==="calories"?"goalCalories":metric);
- const message=status==="below"?t("overviewBelow",{value:round(config.min!-amount!),unit}):status==="above"?t("overviewAbove",{value:round(amount!-config.max!),unit}):status==="within"?(isWeekly&&weekly.days<7?t("overviewWeeklyPending"):t("progressFoodWithin")):null;
  return <div className={"overview-goal-progress"+(graphic?" graphic-calorie-goal":"")} data-status={status??(amount===null?"unknown":"partial")} data-incomplete={!display.complete||undefined} data-goal-metric={metric} data-weekly-metric={isWeekly?metric:undefined} data-goal-mode={config.mode} data-achieved={display.achieved||undefined}>
   <div className="overview-goal-heading"><p className="overview-goal-label">{t(isWeekly?"overviewWeeklyAverage":"dailyCalorieGoal")}</p>{isWeekly&&<small className="overview-goal-coverage">{t("overviewWeekCoverage",{count:weekly.days})}</small>}</div>
   <GoalComparison value={amount} target={rangeText(config.min,config.max)} unit={unit+(isWeekly?"/"+t("perDay"):"")}/>
   {graphic?<svg className="graphic-calorie-ring" viewBox="0 0 100 100" role={display.percent===null?"img":"progressbar"} aria-label={name+" · "+t(isWeekly?"overviewWeeklyAverage":"goalDaily")} aria-valuemin={display.percent===null?undefined:0} aria-valuemax={display.percent===null?undefined:100} aria-valuenow={display.percent===null?undefined:Number(display.percent.toFixed(1))} data-status={status??"unknown"}><circle className="graphic-calorie-track" cx="50" cy="50" r="45"/>{display.percent!==null&&<circle className="graphic-calorie-fill" cx="50" cy="50" r="45" pathLength="100" strokeDasharray="100" strokeDashoffset={100-display.percent} transform="rotate(-90 50 50)"/>}</svg>:<OverviewBar percent={display.percent} label={name+" · "+t(isWeekly?"overviewWeeklyAverage":"goalDaily")} status={status}/>}
-  {(message||!display.complete)&&<p className="progress-message">{message??t(amount===null?"notRecorded":"partialData")}</p>}
+  {!display.complete&&<p className="progress-message">{t(amount===null?"notRecorded":"partialData")}</p>}
  </div>;
 }
 export function ExerciseGoalProgress({metric,target,daily,weekly,isWeekly,compatible}:{metric:"minutes"|"burned";target:number|null;daily:Measurement;weekly:Measurement;isWeekly:boolean;compatible:boolean}){
