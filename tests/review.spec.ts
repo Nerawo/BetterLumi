@@ -71,7 +71,7 @@ test("calendar above meals synchronizes the selected day while old links and his
 }) => {
   await seed(page);
   await page.goto("/journal?date=2026-10-16");
-  await expect(page).toHaveURL("/today?date=2026-10-16");
+  await expect(page).toHaveURL("/#/today?date=2026-10-16");
   await expect(
     page.locator("nav").getByRole("button", { name: "日记", exact: true }),
   ).toHaveCount(0);

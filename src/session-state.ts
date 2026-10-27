@@ -1,4 +1,4 @@
-import {validLocalDate} from './routing';
+import {validLocalDate,currentRoute,routeHref} from './routing';
 import type {NutritionGoals} from './goal-model';
 import type {NutritionTargets} from './goal-tolerance-model';
 export const pageSessionKey='betterlumi.page-session.v1';
@@ -17,4 +17,4 @@ export function validGoalDraft(value:unknown):value is GoalDraftState{
 export function readGoalDraft(date:string,baseline:string){const x=readSession<{baseline:string;value:GoalDraftState}>(goalDraftKey(date),(value):value is {baseline:string;value:GoalDraftState}=>!!value&&typeof value==='object'&&typeof (value as any).baseline==='string'&&validGoalDraft((value as any).value));return x?.baseline===baseline?x.value:null}
 /** Same timeOrigin means the same document, even through BFCache or development remounts. */
 export function recordLifecycle(event:string,persisted?:boolean){try{const old=JSON.parse(sessionStorage.getItem(lifecycleSessionKey)??'[]');const rows=Array.isArray(old)?old:[];rows.push({event,document:String(performance.timeOrigin),navigation:(performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming|undefined)?.type??'unknown',visibility:document.visibilityState,persisted,at:Date.now()});writeSession(lifecycleSessionKey,rows.slice(-20))}catch{/* Diagnostics never block normal use. */}}
-export function restoreInitialPage(){const saved=readSession(pageSessionKey,validPageSession);if(saved&&location.pathname==='/')history.replaceState(history.state,'',saved.route);return saved}
+export function restoreInitialPage(){const saved=readSession(pageSessionKey,validPageSession);const route=currentRoute();history.replaceState(history.state,'',routeHref(route==='/'&&saved?saved.route:route));return saved}

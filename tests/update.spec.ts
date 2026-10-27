@@ -367,10 +367,13 @@ test("sticky notes CRUD and Log Once do not overwrite the original recipe", asyn
     .getByRole("dialog")
     .getByRole("button", { name: "Save", exact: true })
     .click();
-  await page.reload();
   const note = page
     .locator(".paper-note")
     .filter({ hasText: "New paper note" });
+  // A click does not await the async IndexedDB save; wait for its visible result.
+  await expect(note).toBeVisible();
+  await page.reload();
+  await expect(note).toBeVisible();
   await note.locator(".note-text").click();
   await page.getByRole("dialog").locator("textarea").fill("Revised paper note");
   await page

@@ -4,7 +4,7 @@ const testURL=`http://127.0.0.1:${testPort}`;
 export default defineConfig({
   testDir: "./tests",
   // Production-only assertions run with playwright.goal-preview.config.ts.
-  testIgnore: "**/goal-preview.spec.ts",
+  testIgnore: ["**/goal-preview.spec.ts", "**/github-pages.spec.ts"],
   outputDir: "./work/browser-results",
   workers: 1,
   timeout: 45000,

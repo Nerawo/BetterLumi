@@ -21,7 +21,7 @@ import {
 } from "./categories";
 import { RecipeCategoryPicker } from "./RecipeCategoryPicker";
 import { Fragment, useState, useRef, type FormEvent } from "react";
-import { navigate } from "./routing";
+import { navigate, routeHref } from "./routing";
 import { readLocalImage } from "./images";
 import { useTranslation } from "react-i18next";
 import {
@@ -87,7 +87,7 @@ export function Recipes({
       <div className="recipe-grid recipe-list">
         {filtered.map(r=>{const {nutrition,perServing}=recipeListNutrition(r),basis=t(perServing?"compactPerServing":"recipeListWholeBasis"),hasMacros=(["protein","carbs","fat"] as const).some(key=>nutrition[key]!==null);return <article className="recipe-card recipe-list-row" key={r.id} onClick={e=>{if(!(e.target as HTMLElement).closest("button,a,input,select,dialog"))navigate("/recipes/"+encodeURIComponent(r.id))}}>
           {r.photo&&<img className="recipe-thumbnail" src={r.photo} alt="" loading="lazy"/>}
-          <div className="recipe-body"><h3><a href={"/recipes/"+encodeURIComponent(r.id)} onClick={e=>{e.preventDefault();navigate("/recipes/"+encodeURIComponent(r.id))}}>{r.name}</a></h3>
+          <div className="recipe-body"><h3><a href={routeHref("/recipes/"+encodeURIComponent(r.id))} onClick={e=>{e.preventDefault();navigate("/recipes/"+encodeURIComponent(r.id))}}>{r.name}</a></h3>
           {isBuiltInRecipe(r)&&<div className="recipe-reference-badge"><BuiltInRecipeSource/></div>}
           <p className="recipe-metadata">{nutrition.calories===null?t(hasMacros?'recipeListCaloriesMissing':'nutritionNotRecorded'):<NumberUnit value={recipeNutritionDisplay(nutrition.calories)} unit="kcal"/>} / {basis}</p>
           {hasMacros&&<p className="macro-summary recipe-macros">{(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}<span className="recipe-macro">{t(key==='carbs'?'recipeListCarbs':key)} {nutrition[key]===null?<span className="recipe-nutrient-unavailable">{t('notRecorded')}</span>:<NumberUnit value={recipeNutritionDisplay(nutrition[key]!)} unit="g"/>}</span></Fragment>)}</p>}</div>

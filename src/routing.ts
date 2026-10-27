@@ -1,29 +1,34 @@
 import {newId} from "./ids";
 import { useSyncExternalStore } from "react";
+import {currentRoute,logicalRoute,routeHref} from './route-urls';
+export {currentRoute,routeHref} from './route-urls';
 const scrollPositions = new Map<string, number>();
 import { localDate } from "./db";
 export function navigate(url: string, replace = false, preserveScroll = false) {
   const next = new URL(url, location.origin);
   if (next.origin !== location.origin) throw Error("External route");
-  if (next.pathname + next.search === location.pathname + location.search)
+  const target = logicalRoute(next.href);
+  const current = currentRoute();
+  if (target === current)
     return;
   window.history.replaceState({...history.state, scrollY:window.scrollY}, "");
   window.history[replace ? "replaceState" : "pushState"](
     {
       ...(replace ? history.state : {}),
-      ...(replace ? {} : {from: location.pathname + location.search, appNavigation: true, navKey: newId(), scrollY: preserveScroll ? window.scrollY : 0}),
+      ...(replace ? {} : {from: current, appNavigation: true, navKey: newId(), scrollY: preserveScroll ? window.scrollY : 0}),
       recipeOverlay:
-        /^\/recipes\/[^/]+$/.test(next.pathname) &&
-        location.pathname === "/recipes",
+        /^\/recipes\/[^/?]+(?:\?|$)/.test(target) &&
+        new URL(current, "http://local").pathname === "/recipes",
     },
     "",
-    next.pathname + next.search,
+    routeHref(target),
   );
   window.dispatchEvent(new PopStateEvent("popstate", {state: {inPlace: preserveScroll}}));
 }
 const subscribe = (fn: () => void) => {
   window.addEventListener("popstate", fn);
-  return () => window.removeEventListener("popstate", fn);
+  window.addEventListener("hashchange", fn);
+  return () => {window.removeEventListener("popstate", fn);window.removeEventListener("hashchange", fn)};
 };
 export function validLocalDate(value: string | null): value is string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -31,7 +36,7 @@ export function validLocalDate(value: string | null): value is string {
   return Number.isFinite(d.getTime()) && localDate(d) === value;
 }
 export function parseRoute(href: string) {
-  const u = new URL(href, "http://local");
+  const u = new URL(logicalRoute(href), "http://local");
   const paths = u.pathname.split("/").filter(Boolean);
   const section = [
     "today",
@@ -62,7 +67,7 @@ function decodeId(value: string) {
 export function useRoute() {
   const href = useSyncExternalStore(
     subscribe,
-    () => location.pathname + location.search,
+    currentRoute,
   );
   return parseRoute(href);
 }
@@ -84,12 +89,12 @@ export function backToOrigin(fallback = "/more") {
 }
 if (typeof window !== "undefined") window.addEventListener("popstate", (event) => {
   if (event.state?.inPlace) return;
-  const key = history.state?.navKey ?? location.pathname + location.search;
+  const key = history.state?.navKey ?? currentRoute();
   const y = Number(scrollPositions.get(key) ?? history.state?.scrollY ?? 0);
   requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({top:Number.isFinite(y)?y:0,behavior:"instant"})));
 });
 
 if (typeof window !== "undefined") {
   if (!history.state?.navKey) history.replaceState({...history.state,navKey:newId()}, "");
-  window.addEventListener("scroll", () => scrollPositions.set(history.state?.navKey ?? location.pathname + location.search, window.scrollY), {passive:true});
+  window.addEventListener("scroll", () => scrollPositions.set(history.state?.navKey ?? currentRoute(), window.scrollY), {passive:true});
 }

@@ -1,3 +1,4 @@
+import {PwaUpdatePrompt} from './PwaUpdatePrompt';
 import './recipe-yield.css';
 import {builtInRecipeItems} from './data/builtInRecipes';
 import {WeightDataProvider,useWeightData} from './WeightData';
@@ -24,7 +25,7 @@ import { TodayProgress, todayOverview } from "./TodayProgress";
 import { TodayTabs, type TodayTab } from "./TodayTabs";
 import {HealthGoalCalculator} from './HealthGoalCalculator';
 import { useLocalToday } from "./useLocalToday";
-import { useRoute, navigate, backToOrigin, validLocalDate } from "./routing";
+import { useRoute, navigate, backToOrigin, validLocalDate, currentRoute } from "./routing";
 import { goalTable } from "./goals";
 import { GoalCard } from "./GoalCards";
 import { RecipeDetail } from "./RecipeDetail";
@@ -95,10 +96,11 @@ function App() {
   const selected = route.selectedDate;
   const setSelected = (date: string) => navigate("/today?date=" + date, false, true);
   useEffect(() => {
-    if (location.pathname === "/") navigate("/today", true);
+    const current = new URL(currentRoute(), 'http://local');
+    if (current.pathname === "/") navigate("/today" + current.search, true);
     else if (route.page === "journal")
       navigate("/today?date=" + selected, true);
-    else if(page==='today'&&!validLocalDate(new URLSearchParams(location.search).get('date')))navigate('/today?date='+selected,true,true);
+    else if(page==='today'&&!validLocalDate(new URL(currentRoute(),'http://local').searchParams.get('date')))navigate('/today?date='+selected,true,true);
   }, [page, selected, route.page]);
   const [todayTab, setTodayTab] = useState<TodayTab>(()=>(readSession(pageSessionKey,validPageSession)?.tab as TodayTab)??'food');
   const [draft, setDraft] = useState<MealDraft | null>(null);
@@ -411,6 +413,7 @@ createRoot(document.getElementById("root")!).render(
     <StorageBoundary>
       <WeightDataProvider><App /></WeightDataProvider>
       <DeleteConfirmationHost />
+      <PwaUpdatePrompt />
     </StorageBoundary>
   </React.StrictMode>,
 );
