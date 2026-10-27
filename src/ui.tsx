@@ -24,15 +24,40 @@ export function Modal({
   }, []);
   useEffect(() => {
     if (!standard&&!className.includes("add-food-modal")) return;
-    const viewport = window.visualViewport;
+    const viewport = window.visualViewport,dialog=ref.current;
+    let frame=0;
+    // Scroll only the focused control's own modal body, never its ancestors/page.
+    const revealFocused = () => {
+      const field=document.activeElement;
+      if(!dialog||!(field instanceof HTMLElement)||!dialog.contains(field)||!field.matches('input,textarea,select,[contenteditable=true]'))return;
+      let body=field.parentElement;
+      while(body&&body!==dialog){
+        if(/auto|scroll/.test(getComputedStyle(body).overflowY)&&body.scrollHeight>body.clientHeight){
+          const box=body.getBoundingClientRect(),control=field.getBoundingClientRect();
+          const top=Math.max(box.top,viewport?.offsetTop??0)+12;
+          const bottom=Math.min(box.bottom,(viewport?.offsetTop??0)+(viewport?.height??innerHeight))-12;
+          if(bottom<=top)return;
+          const delta=control.height>bottom-top?control.top-top:control.bottom>bottom?control.bottom-bottom:control.top<top?control.top-top:0;
+          if(Math.abs(delta)>1)body.scrollTo({top:body.scrollTop+delta,behavior:'instant'});
+          return;
+        }
+        body=body.parentElement;
+      }
+    };
     const update = () => {
-      ref.current?.style.setProperty("--food-viewport-height", (viewport?.height ?? window.innerHeight) + "px");
-      ref.current?.style.setProperty("--food-viewport-top", (viewport?.offsetTop ?? 0) + "px");
+      dialog?.style.setProperty("--food-viewport-height", (viewport?.height ?? window.innerHeight) + "px");
+      dialog?.style.setProperty("--food-viewport-top", (viewport?.offsetTop ?? 0) + "px");
+      cancelAnimationFrame(frame);frame=requestAnimationFrame(revealFocused);
     };
     update();
+    dialog?.addEventListener('focusin',update);
+    window.addEventListener('resize',update);
     viewport?.addEventListener("resize", update);
     viewport?.addEventListener("scroll", update);
     return () => {
+      cancelAnimationFrame(frame);
+      dialog?.removeEventListener('focusin',update);
+      window.removeEventListener('resize',update);
       viewport?.removeEventListener("resize", update);
       viewport?.removeEventListener("scroll", update);
     };
