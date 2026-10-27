@@ -31,7 +31,7 @@ describe('linked planner',()=>{
   expect(planInteractively({...body,duration:null}).weeks).toBeNull();
  });
  it('does not clamp out-of-horizon durations or unsafe mathematical intake',()=>{
-  const p=planInteractively({...body,duration:5500});expect(p.weeks).toBe(5500);expect(p.intake).not.toBeNull();expect(p.nutritionApplicable).toBe(false);
+  const p=planInteractively({...body,duration:5500});expect(p.weeks).toBe(5500);expect(p.intake).not.toBeNull();expect(p.nutritionApplicable).toBe(true);
   const fast=planInteractively({...body,duration:1});expect(fast.intake!.min).toBeLessThan(0);expect(fast.nutritionApplicable).toBe(false);
  });
  it('preserves kg/lb/jin and weeks/months semantics',()=>{
@@ -42,9 +42,10 @@ describe('linked planner',()=>{
   const p=planInteractively({...body,excluded:true},{exerciseEnabled:true});expect(p.energy).not.toBeNull();expect(p.intake).toBeNull();expect(p.nutritionApplicable).toBe(false);expect(p.exerciseApplicable).toBe(false);
   const minor=planInteractively({...body,age:17},{exerciseEnabled:true});expect(minor.intake).toBeNull();expect(minor.nutritionApplicable).toBe(false);expect(minor.exerciseApplicable).toBe(false);
  });
- it('cannot bypass safety screening using extreme exercise or low weight',()=>{
-  for(const input of [{...body,targetWeight:50},{...body,duration:.1}])expect(planInteractively(input,{exerciseEnabled:true}).nutritionApplicable).toBe(false);
-  expect(planInteractively(body,{exerciseEnabled:true,exerciseMinutes:6000}).nutritionApplicable).toBe(false);
+ it('keeps health warnings informational while rejecting nonpositive intake',()=>{
+  const low=planInteractively({...body,targetWeight:50},{exerciseEnabled:true});expect(low.assessment.reasons).toContain('targetUnderweight');expect(low.nutritionApplicable).toBe(true);
+  expect(planInteractively({...body,duration:.1},{exerciseEnabled:true}).nutritionApplicable).toBe(false);
+  expect(planInteractively(body,{exerciseEnabled:true,exerciseMinutes:6000}).nutritionApplicable).toBe(true);
  });
  it('handles unknown coefficients as ranges; blocks missing exercise inputs',()=>{
   const p=planInteractively({...body,sex:''});expect(p.intake!.max).toBeGreaterThan(p.intake!.min);expect(p.nutritionApplicable).toBe(false);

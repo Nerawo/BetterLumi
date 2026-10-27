@@ -96,15 +96,16 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
  const appliedTarget=useProfessional?guidedTarget:plan.targetKcal;
  const nutritionPlan=draft.nutritionPlan??'balanced';
  const macros=!special.active&&plan.bodyValid?calculateMacroPlan(kg,plan.targetKcal,nutritionPlan):null;
+ const completePlan=plan.nutritionApplicable&&macros!==null&&(!settings.exerciseEnabled||plan.exerciseApplicable);
  const calorieRange=acceptableRange(appliedTarget,tolerance.values.calories);
  const bmrValue=plan.energy&&draft.sex?plan.energy.bmr.min:null;
  const explain=(reason:Parameters<typeof planReasonMessage>[0])=>{if(reason==='excluded')return specialMessage;const message=planReasonMessage(reason,plan.assessment);return t(message.key,Object.fromEntries(Object.entries(message.values).map(([key,value])=>[key,format(value,1)])))};
  const reason=primaryPlanReason(plan.assessment.blockingReasons.length?plan.assessment.blockingReasons:plan.assessment.reasons);
  const unavailable=special.active?specialMessage:draft.age!==null&&draft.age<18?t('planReason_minor'):!plan.exerciseValid?t('plannerExerciseInvalid'):plan.weeks!==null&&plan.weeks>maxDurationWeeks?t('plannerHorizon'):!plan.intake?t('plannerNeed'):!draft.sex?t('planReason_sexNeeded'):!plan.nutritionApplicable?explain(reason):'';
  const suggested=suggestTargetTimeline(input,(plan.exerciseKcal??0)/7);
- const caution=plan.nutritionApplicable&&plan.assessment.status==='attention'?explain(primaryPlanReason(plan.assessment.warningReasons)):'';
+ const caution=plan.nutritionApplicable&&plan.assessment.status!=='reasonable'&&plan.assessment.reasons.length?explain(reason):'';
  const save=async(choice:'plan'|'eligible'|'professional')=>{
-  if(choice==='professional'?guidedTarget===null:!plan.nutritionApplicable&&!plan.exerciseApplicable){setError(t('plannerNoEligible'));return}
+  if(choice==='professional'?guidedTarget===null:!completePlan){setError(t('plannerCompleteRequired'));return}
   if(lock.current)return;lock.current=true;setBusy(true);setError('');
   try{
    await writes.current;
@@ -114,7 +115,7 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
   }catch{setError(t('plannerSaveFailed'))}finally{lock.current=false;setBusy(false)}
  };
  const openRisk=(trigger:HTMLButtonElement)=>{riskTrigger.current=trigger;setError('');setRiskOpen(true)};
- const requestPlan=(event:React.MouseEvent<HTMLButtonElement>)=>{notice('',0);setError('');if(useProfessional){if(guidedTarget===null){setError(t('guidedInvalid'));if(specialPanel.current){specialPanel.current.open=true;specialPanel.current.querySelector<HTMLInputElement>('[name=professionalKcal]')?.focus({preventScroll:true});specialPanel.current.scrollIntoView({block:'nearest'})}return}openRisk(event.currentTarget);return}if(plan.nutritionApplicable&&(!settings.exerciseEnabled||plan.exerciseApplicable))void save('plan');else openRisk(event.currentTarget)};
+ const requestPlan=(event:React.MouseEvent<HTMLButtonElement>)=>{notice('',0);setError('');if(useProfessional){if(guidedTarget===null){setError(t('guidedInvalid'));if(specialPanel.current){specialPanel.current.open=true;specialPanel.current.querySelector<HTMLInputElement>('[name=professionalKcal]')?.focus({preventScroll:true});specialPanel.current.scrollIntoView({block:'nearest'})}return}openRisk(event.currentTarget);return}if(completePlan&&plan.assessment.withinPlanningRange)void save('plan');else openRisk(event.currentTarget)};
  return <section className="health-calculator-inline" aria-label={t('calcTitle')}>
   <PersistentBmi age={draft.age} profile={profile} height={height} calculationWeightKg={kg}/>
   <details className="calculator-input-section" open={expanded} onToggle={e=>setExpanded(e.currentTarget.open)}>
@@ -160,7 +161,7 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
      {error&&<p role="alert" className="calculator-error">{error}</p>}
      <details className="calculator-references"><summary>{t('compactCalculationDetails')}<ChevronDown size={15}/></summary>
       {plan.energy&&<dl className="planner-summary-grid"><div><dt>{t('calcMaintenance')}</dt><dd>{range(plan.energy.maintenance)} {t('calcPerDay')}</dd></div><div><dt>{t('calcBmr')}</dt><dd>{range(plan.energy.bmr)} {t('calcPerDay')}</dd></div><div><dt>{t('calcPace')}</dt><dd>{plan.weeklyChangeKg===null?t('plannerNotRecorded'):format(plan.weeklyChangeKg,2)+' '+t('calcKgWeek')}</dd></div><div><dt>{t('calcTargetBmi')}</dt><dd>{plan.targetBmi===null?t('plannerNotRecorded'):format(plan.targetBmi,1)}</dd></div><div><dt>{t('calcChange')}</dt><dd>{plan.changeKg===null?t('plannerNotRecorded'):format(plan.changeKg,2)+' kg'}</dd></div></dl>}
-      {appliedTarget!==null&&(useProfessional||plan.nutritionApplicable)&&<div className="calculator-apply-preview"><dl><div><dt>{t('calcApplyRange')}</dt><dd>{format(calorieRange.min!)}–{format(calorieRange.max!)} {t('calcPerDay')}</dd></div><div><dt>{t('startDate')}</dt><dd>{formatLocalDate(localDate(),i18n.language)}</dd></div></dl></div>}
+      {appliedTarget!==null&&(useProfessional||completePlan)&&<div className="calculator-apply-preview"><dl><div><dt>{t('calcApplyRange')}</dt><dd>{format(calorieRange.min!)}–{format(calorieRange.max!)} {t('calcPerDay')}</dd></div><div><dt>{t('startDate')}</dt><dd>{formatLocalDate(localDate(),i18n.language)}</dd></div></dl></div>}
       <p>{t('plannerUnifiedNote')}</p>{plan.assessment.intakeFloor!==null&&!special.active&&<p>{t('planIntakeBoundary',{value:format(plan.assessment.intakeFloor)})}</p>}
       <p>{t('plannerFormula')}</p><p>{t('plannerMethod')}</p><p>{t('planScreeningNote')}</p>
       {plan.assessment.reasons.map(reason=><p key={reason}>{explain(reason)}</p>)}
@@ -173,20 +174,20 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
   </details>
   {riskOpen&&<Modal className="calculator-risk-modal" title={t(useProfessional?'guidedConfirm':'plannerRiskTitle')} descriptionId="calculator-risk-description" close={()=>{if(!busy)setRiskOpen(false)}}>
    <div className="modal-scroll calculator-risk-body">
-    <p className="calculator-result-heading">{t(useProfessional?'guidedTarget':'plannerTheoretical')}</p>
-    <p className="calculator-secondary-value" data-testid="risk-theoretical">{useProfessional?(guidedTarget===null?t('plannerNotRecorded'):format(guidedTarget)):(special.active?t('compactNoAutomatic'):plan.intake?range(plan.intake):t('plannerNotRecorded'))}{(useProfessional?guidedTarget!==null:plan.intake!==null)&&<small>{t('calcPerDay')}</small>}</p>
-    <p id="calculator-risk-description">{useProfessional?t('guidedConfirmNote'):(unavailable||t('plannerRiskExplanation'))}</p>
-    <p className="calculator-footnote">{t('plannerEstimateRetained')}</p>
+    <p id="calculator-risk-description" className="calculator-footnote">{t(useProfessional?'guidedConfirmNote':'plannerConfirmNote')}</p>
     <dl className="planner-review-summary">
-     <div><dt>{t('plannerReviewNutrition')}</dt><dd>{t(useProfessional?'guidedTarget':plan.nutritionApplicable?'plannerReviewApply':'plannerReviewEstimate')}</dd></div>
+     <div><dt>{t('plannerReviewCalories')}</dt><dd data-testid="risk-theoretical">{appliedTarget===null?t('plannerNotRecorded'):format(appliedTarget)} {t('calcPerDay')}</dd></div>
+     {!useProfessional&&(['protein','carbs','fat'] as const).map(key=><div key={key}><dt>{t(key)}</dt><dd data-testid={'risk-'+key}>{macros===null?t('plannerNotRecorded'):format(macros[key])+' g'}</dd></div>)}
      <div><dt>{t('plannerMinutes')}</dt><dd>{settings.exerciseEnabled?(plan.exerciseMinutes===null?t('plannerNotRecorded'):format(plan.exerciseMinutes!)+' '+t('calcMinutesWeek')):t('plannerNotEnabled')}</dd></div>
      <div><dt>{t('plannerBurn')}</dt><dd>{plan.exerciseKcal===null?t(settings.exerciseEnabled?'plannerNotRecorded':'plannerNotEnabled'):format(plan.exerciseKcal)+' '+t('plannerWeeklyBurn')}</dd></div>
     </dl>
-    {!error&&<p className="calculator-footnote">{t(useProfessional?'guidedApplyNote':plan.nutritionApplicable?(plan.exerciseApplicable?'plannerUnifiedNote':'plannerNutritionOnly'):plan.exerciseApplicable?'plannerExerciseWillApply':'plannerNoEligible')}</p>}
+    {!useProfessional&&(unavailable||caution)&&<p className="calculator-footnote">{unavailable||caution}</p>}
+    {!useProfessional&&macros?.cautions.map(item=><p className="calculator-footnote" key={item.nutrient}>{t(item.percent<item.min?'macroProportionLow':'macroProportionHigh',{nutrient:t(item.nutrient==='carbs'?'macroCarbs':item.nutrient)})} · {t('macroProportion',{percent:format(item.percent,1),min:item.min,max:item.max})}</p>)}
+    {!error&&<p className="calculator-footnote">{t(useProfessional?'guidedApplyNote':completePlan?(settings.exerciseEnabled?'plannerUnifiedNote':'plannerNutritionOnly'):'plannerCompleteRequired')}</p>}
     {error&&<p role="alert" className="calculator-error">{error}</p>}
    </div>
    <div className="form-actions calculator-risk-actions">
-    <button type="button" className="primary" disabled={busy||!tolerance.ready} onClick={()=>void save(useProfessional?'professional':'eligible')}>{t('plannerApplyPlan')}</button>
+    <button type="button" className="primary" disabled={busy||!tolerance.ready} onClick={()=>void save(useProfessional?'professional':'plan')}>{t('plannerApplyPlan')}</button>
     <button type="button" className="calculator-risk-secondary" disabled={busy} onClick={()=>setRiskOpen(false)}>{t('plannerReturnEdit')}</button>
    </div>
   </Modal>}

@@ -1,4 +1,4 @@
-import {bmi,durationInWeeks,estimatedEnergy,maxDurationWeeks,weightInKg,type EstimateRange} from './calculator-model';
+import {bmi,durationInWeeks,estimatedEnergy,activityMultipliers,weightInKg,type EstimateRange} from './calculator-model';
 import {assessGoalPlan,type PlanAssessmentInput} from './goal-plan-assessment';
 
 export interface PlannerSettings {
@@ -25,7 +25,8 @@ export function planInteractively(input:PlanAssessmentInput,settings:PlannerSett
  const minutes=s.exerciseMinutes,estimated=estimateExerciseCalories(kg,minutes);
  const exerciseValid=!s.exerciseEnabled||estimated!==null;
  const exerciseKcal=s.exerciseEnabled&&exerciseValid?estimated!:0,extra=exerciseKcal/7;
- const bodyValid=input.age!==null&&Number.isInteger(input.age)&&input.age>=18&&input.age<=120&&input.heightCm!==null&&Number.isFinite(input.heightCm)&&input.heightCm>=100&&input.heightCm<=250&&kg!==null&&Number.isFinite(kg)&&kg>=30&&kg<=350;
+ const supportedInput=['kg','jin','lb'].includes(input.weightUnit)&&['weeks','months'].includes(input.durationUnit)&&Object.hasOwn(activityMultipliers,input.activity)&&['','female','male'].includes(input.sex)&&typeof input.excluded==='boolean';
+ const bodyValid=supportedInput&&input.age!==null&&Number.isInteger(input.age)&&input.age>=18&&input.age<=120&&input.heightCm!==null&&Number.isFinite(input.heightCm)&&input.heightCm>=100&&input.heightCm<=250&&kg!==null&&Number.isFinite(kg)&&kg>=30&&kg<=350;
  const energy=bodyValid?estimatedEnergy(input.age!,input.heightCm!,kg!,input.sex,input.activity):null;
  const target=input.targetWeight===null?null:weightInKg(input.targetWeight,input.weightUnit);
  const change=target!==null&&Number.isFinite(target)&&target>=30&&target<=350&&kg!==null?target-kg:null;
@@ -38,10 +39,8 @@ export function planInteractively(input:PlanAssessmentInput,settings:PlannerSett
  if(intake&&(!Number.isFinite(intake.min)||!Number.isFinite(intake.max)))intake=null;
  const assessment=assessGoalPlan(input,extra);
  const targetKcal=intake&&input.sex?Math.round(intake.min):null;
- const inHorizon=weeks!==null&&weeks>0&&weeks<=maxDurationWeeks+1e-8;
- // Screen the exact rounded number which will be saved too, never silently clamp.
- const withinFloor=targetKcal!==null&&targetKcal>0&&assessment.intakeFloor!==null&&targetKcal>=assessment.intakeFloor;
- const nutritionApplicable=!!(exerciseValid&&inHorizon&&assessment.withinPlanningRange&&input.sex&&withinFloor);
+ // Health screening informs the UI; only calculability controls application.
+ const nutritionApplicable=!!(bodyValid&&exerciseValid&&!input.excluded&&input.sex&&targetKcal!==null&&Number.isFinite(targetKcal)&&targetKcal>0);
  const maintenance=assessment.maintenanceTarget;
  // Reuse the existing screened baseline estimate, without extra exercise or the requested deficit.
  const conservativeTarget=assessment.canEstimate&&input.sex&&!input.excluded&&maintenance!==null&&Number.isFinite(maintenance)&&assessment.intakeFloor!==null&&maintenance>=assessment.intakeFloor?maintenance:null;

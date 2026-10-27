@@ -65,14 +65,15 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
  if(!validCalculatorDraft(draft)||!validLocalDate(date)||!['plan','eligible','professional'].includes(choice))throw Error('Invalid plan');
  input={...input,excluded:specialCircumstances(draft).active};
  const result=planInteractively(input,draft);
- if(choice==='plan'&&(!result.nutritionApplicable||(draft.exerciseEnabled&&!result.exerciseApplicable)))throw Error('Plan needs review');
  const professional=choice==='professional';
  const guidedTarget=professionalCalorieTarget(draft);
  if(professional&&guidedTarget===null)throw Error('Invalid professional target');
- const nutrition=professional||result.nutritionApplicable?'nutrition':null;
+ const nutrition=true;
  const exercise=!!(draft.exerciseEnabled&&result.exerciseApplicable);
  const macros=!professional&&result.bodyValid&&!input.excluded?calculateMacroPlan(input.currentWeight===null?null:weightInKg(input.currentWeight,input.weightUnit),result.targetKcal,draft.nutritionPlan??'balanced'):null;
- if(!nutrition&&!exercise)throw Error('No eligible goals');
+ // An automatic plan is all-or-nothing, including all three macro targets.
+ // The legacy 'eligible' action must never silently degrade to exercise only.
+ if(!professional&&(!result.nutritionApplicable||macros===null||(draft.exerciseEnabled&&!result.exerciseApplicable)))throw Error('No complete calculator plan');
  const outcome={nutrition:!!nutrition,exercise,duplicate:false};
  return db.transaction('rw',goalTable,db.settings,async()=>{
   const rows=await goalTable.toArray(),current=resolvedGoal(rows,date);
@@ -97,7 +98,6 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
     // period, including future dated goals and unrestricted baselines.
     await saveGoalVersion({nutritionOnly:true,startDate:date,endDate:null,nutritionPeriod:{startDate:date,endDate:null},nutritionEnabled:true,nutritionFrequency:frequency,nutritionTargets:targets,nutritionTolerances:tolerances,nutritionToleranceRevision:events.at(-1)?.id,nutritionGoals,calorieMin:range.min,calorieMax:range.max,exerciseEnabled:false,exerciseMinutes:null,exerciseKcal:null});
    }else if(professional)await saveCalculatorCalories(input.heightCm,target!,date,'professional');
-   else await applyInteractiveGoals(input,draft,nutrition,date);
   }
   if(exercise&&!sameExercise)await applyInteractiveGoals(input,draft,'exercise',date);
   await saveCalculatorDraft(draft);

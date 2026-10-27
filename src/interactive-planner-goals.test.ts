@@ -50,11 +50,10 @@ it('unified application is atomic, idempotent and preserves unrelated history',a
  await applyCalculatorPlan(draft,input,'plan',date);expect(await goalTable.count()).toBe(3);expect(await goalTable.get(original[0].id)).toEqual(original[0]);
  const g=activeGoal(await goalTable.toArray(),date)!;expect(g.exerciseMode).toBe('weekly');expect(g.calorieMin).toBe(2239);expect(g.nutritionGoals!.protein.min).toBeCloseTo(109,9);
 });
-it('flagged plan saves only eligible exercise and cannot substitute a maintenance goal',async()=>{
+it('nonpositive nutrition cannot produce an exercise-only successful application',async()=>{
  const risky={...input,duration:1},preferences={...draft,duration:1};await expect(applyCalculatorPlan(preferences,risky,'plan',date)).rejects.toThrow();expect(await goalTable.count()).toBe(1);
- await applyCalculatorPlan(preferences,risky,'eligible',date);expect(await goalTable.count()).toBe(2);expect(activeGoal(await goalTable.toArray(),date)!.calorieMin).toBe(1600);
- await applyCalculatorPlan(preferences,risky,'eligible',date);expect(await goalTable.count()).toBe(2);expect(activeGoal(await goalTable.toArray(),date)!.calorieMin).toBe(1600);
- expect(JSON.parse((await db.settings.get('healthGoalCalculatorDraft'))!.value).value).toEqual(preferences);
+ await expect(applyCalculatorPlan(preferences,risky,'eligible',date)).rejects.toThrow('No complete calculator plan');expect(await goalTable.count()).toBe(1);expect(activeGoal(await goalTable.toArray(),date)!.calorieMin).toBe(1600);
+ expect(await db.settings.get('healthGoalCalculatorDraft')).toBeUndefined();
 });
 it('a final draft write failure rolls back nutrition and exercise versions together',async()=>{
  const original=await goalTable.toArray();const fail=()=>{throw Error('Storage unavailable')};db.settings.hook('creating',fail);
@@ -66,11 +65,11 @@ it('new effective dates append versions and disabled exercise never changes its 
  await applyCalculatorPlan({...draft,exerciseEnabled:false},input,'plan','2026-10-23');expect(await goalTable.count()).toBe(6);expect(activeGoal(await goalTable.toArray(),'2026-10-23')!.exerciseMinutes).toBe(150);
 });
 it('excluded profiles cannot produce preference-only or misleading successful applications',async()=>{
- await expect(applyCalculatorPlan({...draft,excluded:true},{...input,excluded:true},'eligible',date)).rejects.toThrow('No eligible goals');expect(await goalTable.count()).toBe(1);expect(await db.settings.get('healthGoalCalculatorDraft')).toBeUndefined();
+ await expect(applyCalculatorPlan({...draft,excluded:true},{...input,excluded:true},'eligible',date)).rejects.toThrow('No complete calculator plan');expect(await goalTable.count()).toBe(1);expect(await db.settings.get('healthGoalCalculatorDraft')).toBeUndefined();
 });
 
-it('nutrition tolerance failures cannot block an exercise-only eligible save',async()=>{
- await db.settings.put({key:'goalTolerances',value:'invalid'});await applyCalculatorPlan({...draft,duration:1},{...input,duration:1},'eligible',date);expect(await goalTable.count()).toBe(2);expect(activeGoal(await goalTable.toArray(),date)!.exerciseMinutes).toBe(150);
+it('invalid tolerance settings cannot produce an exercise-only successful save',async()=>{
+ await db.settings.put({key:'goalTolerances',value:'invalid'});const before=await goalTable.toArray();await expect(applyCalculatorPlan(draft,input,'eligible',date)).rejects.toThrow();expect(await goalTable.toArray()).toEqual(before);expect(await db.settings.get('healthGoalCalculatorDraft')).toBeUndefined();
 });
 
 it('applies a cautionary 1284 kcal plan normally and preserves original history and unrelated goals',async()=>{
