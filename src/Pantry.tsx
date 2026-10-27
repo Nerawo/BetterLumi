@@ -15,7 +15,7 @@ import {Fragment,type ReactNode} from "react";
 import {NumberUnit} from "./NumberUnit";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Pencil, MoreHorizontal } from "lucide-react";
 import {
   ingredientSecondaryNames,
   ingredientAliases,
@@ -70,10 +70,9 @@ export function Pantry({
         {filtered.map((choice) => {
           if(choice.kind==='built-in'){
             const food=choice.item;
-            return <article className="pantry-row pantry-reference-row" key={food.id} data-reference-id={food.id}>
+            return <article className="pantry-row pantry-reference-row" key={food.id} data-reference-id={food.id} onClick={event=>{if(event.currentTarget.contains(event.target as Node)&&!(event.target as HTMLElement).closest('button,a,summary,details,input,select,textarea,[role=button]'))setManagingIngredient(choice)}}>
               <PantryRowContent
                 title={<button type="button" className="ingredient-name" onClick={()=>setManagingIngredient(choice)}>{referenceName(food,i18n.language)}</button>}
-                actions={<button className="pantry-manage-units" onClick={()=>setManagingIngredient(choice)}>{t("customizeIngredient")}</button>}
                 energy={<><NumberUnit value={food.kcalPer100g===null?'—':Math.round(food.kcalPer100g)} unit="kcal"/> / 100 g</>}
                 metadata={<>{referencePreparation(food,i18n.language)} · {referenceCategory(food,i18n.language)} · <ReferenceSourceInfo source={food}/></>}
                 macros={(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}{t(key)} <NumberUnit value={food[`${key}Per100g`]?.toFixed(1)??'—'} unit="g"/></Fragment>)}
@@ -97,7 +96,7 @@ export function Pantry({
               energy={<>{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==='serving'?t('servingUnit'):<NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==='serving'&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??'g'}/>)</>}</>}
               metadata={[...tags.filter(tag=>i.tagIds?.includes(tag.id)).map(tag=>tag.name),t('referenceMyFood')].join(' · ')}
               macros={(['protein','carbs','fat'] as const).some(k=>i[k]!=null)?(['protein','carbs','fat'] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&' · '}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t('nutritionNotRecorded')}
-              actions={<div className="actions"><button type="button" onClick={()=>setEditing(i)}>{t('edit')}</button><button type="button" className="pantry-manage-units" onClick={()=>setManagingIngredient(choice)}>{t('customizeIngredient')}</button></div>}
+              actions={<div className="actions"><button type="button" aria-label={t('edit')} onClick={()=>setEditing(i)}><Pencil size={15}/></button><button type="button" className="pantry-unit-options" aria-label={t('customizeIngredient')} onClick={()=>setManagingIngredient(choice)}><MoreHorizontal size={16}/></button></div>}
             />
           </article>
         );})}
