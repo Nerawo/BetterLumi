@@ -18,14 +18,18 @@ it('distinguishes all three screening tiers without treating BMR as an intake fl
 });
 it('adds additional exercise exactly once in both arithmetic and safety budgets',()=>{
  const body={...profile,age:30,currentWeight:65,targetWeight:65-(1644.3-1190)*4/1100,duration:4};const base=planInteractively(body),p=planInteractively(body,{exerciseEnabled:true,exerciseMinutes:600});
- expect(base.intake!.min).toBeCloseTo(1190);expect(base.nutritionApplicable).toBe(false);expect(p.intake!.min-base.intake!.min).toBeCloseTo(p.exerciseKcal!/7);expect(p.assessment.requestedIntake!.min).toBeCloseTo(p.intake!.min);expect(p.assessment.dailyDeficit).toBe(base.assessment.dailyDeficit);expect(p.assessment.maxDeficit!).toBeGreaterThan(base.assessment.maxDeficit!);expect(p.nutritionApplicable).toBe(true);
+ expect(base.intake!.min).toBeCloseTo(1190);expect(base.nutritionApplicable).toBe(true);expect(base.targetKcal).toBe(1190);expect(base.assessment.blockingReasons).toContain('intake');expect(p.intake!.min-base.intake!.min).toBeCloseTo(p.exerciseKcal!/7);expect(p.assessment.requestedIntake!.min).toBeCloseTo(p.intake!.min);expect(p.assessment.dailyDeficit).toBe(base.assessment.dailyDeficit);expect(p.assessment.maxDeficit!).toBeGreaterThan(base.assessment.maxDeficit!);expect(p.nutritionApplicable).toBe(true);
 });
-it.each([900,1000,1100,1199])('keeps %s kcal theoretical estimates visible but ineligible',value=>{
- const body={...profile,currentWeight:65,age:30,targetWeight:65-(1644.3-value)*4/1100,duration:4};const p=planInteractively(body);expect(p.intake!.min).toBeCloseTo(value);expect(p.nutritionApplicable).toBe(false);expect(p.assessment.blockingReasons).toContain('intake');
+it.each([900,1000,1100,1199])('keeps %s kcal estimates applicable and unchanged with intake warnings',value=>{
+ const body={...profile,currentWeight:65,age:30,targetWeight:65-(1644.3-value)*4/1100,duration:4};const before=structuredClone(body),p=planInteractively(body);expect(p.intake!.min).toBeCloseTo(value);expect(p.targetKcal).toBe(value);expect(p.nutritionApplicable).toBe(true);expect(p.assessment.blockingReasons).toContain('intake');expect(p.assessment.withinPlanningRange).toBe(false);expect(body).toEqual(before);
 });
-it('never treats 1284 as universally appropriate for every profile or restricted user',()=>{
- for(const partial of [{sex:'male' as const},{age:17},{excluded:true},{currentWeight:45},{targetWeight:45}])expect(planInteractively({...profile,...partial}).nutritionApplicable).toBe(false);
- expect(planInteractively(profile,{exerciseEnabled:true,exerciseMinutes:9000}).assessment.blockingReasons).toContain('energyUnreliable');
+it('separates profile health warnings from unsupported or uncalculable inputs',()=>{
+ for(const [partial,reason] of [[{sex:'male' as const},'intake'],[{currentWeight:45},'underweight'],[{targetWeight:45},'targetUnderweight']] as const){
+  const input={...profile,...partial},before=structuredClone(input),p=planInteractively(input);
+  expect(p.intake!.min).toBeGreaterThan(0);expect(p.targetKcal).toBe(Math.round(p.intake!.min));expect(p.nutritionApplicable).toBe(true);expect(p.assessment.blockingReasons).toContain(reason);expect(input).toEqual(before);
+ }
+ for(const partial of [{age:17},{excluded:true},{currentWeight:null},{currentWeight:NaN},{currentWeight:Infinity},{duration:null},{duration:0},{duration:NaN},{duration:Infinity},{targetWeight:NaN},{targetWeight:Infinity},{sex:'' as const}])expect(planInteractively({...profile,...partial}).nutritionApplicable).toBe(false);
+ const exercise=planInteractively(profile,{exerciseEnabled:true,exerciseMinutes:9000});expect(exercise.assessment.blockingReasons).toContain('energyUnreliable');expect(exercise.nutritionApplicable).toBe(true);expect(exercise.intake!.min-planInteractively(profile).intake!.min).toBeCloseTo(exercise.exerciseKcal!/7);
 });
 it('keeps caution, boundaries and exercise contribution invariant across units',()=>{
  const expected=planInteractively(profile,{exerciseEnabled:true});for(const weightUnit of ['lb','jin'] as const){const actual=planInteractively({...profile,weightUnit,currentWeight:weightFromKg(profile.currentWeight!,weightUnit),targetWeight:weightFromKg(profile.targetWeight!,weightUnit),durationUnit:'months',duration:durationFromWeeks(10,'months')},{exerciseEnabled:true});expect(actual.intake!.min).toBeCloseTo(expected.intake!.min);expect(actual.assessment.intakeFloor).toBeCloseTo(expected.assessment.intakeFloor!);expect(actual.nutritionApplicable).toBe(expected.nutritionApplicable);expect(actual.assessment.status).toBe(expected.assessment.status)}
