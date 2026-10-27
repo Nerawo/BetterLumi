@@ -4,7 +4,7 @@ import type {NutritionGoals} from "./goal-model";
 import type {dailyAggregation} from "./aggregation";
 import {nutrientGoalDisplay} from "./nutrition-goal-display";
 import type {weeklyStatistics} from './weekly-goals';
-import {rangeText} from "./GoalCards";
+import {todayMacroRange} from "./today-macro-format";
 import {round} from "./domain";
 
 const metrics=["protein","carbs","fat"] as const;
@@ -13,9 +13,9 @@ export function MacronutrientGoals({configs,daily,week,showActuals=false}:{confi
  return <div className="macronutrient-goals" aria-label={t("overviewMacroGoals")}>{metrics.map(metric=>{
   const config=configs[metric],weekly=week.nutrients[metric],display=nutrientGoalDisplay(config,daily.nutrients[metric],weekly);
   const empty=daily.foodCount===0,ringPercent=empty?null:display.ringPercent;
-  const enabled=display.enabled,actual=daily.nutrition[metric],name=t(metric==="carbs"?"macroCarbs":metric);
+  const enabled=display.enabled,actual=daily.nutrition[metric],name=t(metric==="carbs"?"todayMacroCarbs":metric);
   if(!enabled&&!showActuals)return <div className="macro-goal-slot" data-macro-slot={metric} key={metric} aria-hidden="true"/>;
-  const target=rangeText(config.min,config.max)+" g",mode=t(display.isWeekly?'goalWeeklyAverage':'goalDaily');
+  const range=todayMacroRange(config.min,config.max),bounds=range.split("–"),target=range+" g",mode=t(display.isWeekly?'goalWeeklyAverage':'goalDaily');
   const state=!display.complete?(display.value===null?'unknown':'partial'):display.status??'unknown',message=display.status==="above"?t("overviewAbove",{value:round(display.value!-config.max!),unit:"g"}):display.achieved?t("progressFoodWithin"):display.status==="below"?t("overviewBelow",{value:round(config.min!-display.value!),unit:"g"}):t(display.value===null?"notRecorded":"partialData");
   const description=empty?[name,t("notRecorded"),target].join(" · "):[name,mode,display.value===null?t("notRecorded"):round(display.value)+" g",target,message,display.upperOnly?t("upperOnlyRingHelp"):""].filter(Boolean).join(" · ");
   return <div className="macro-goal-slot" data-macro-slot={metric} data-empty={empty||undefined} data-goal-metric={enabled?metric:undefined} data-goal-mode={enabled?config.mode:undefined} data-incomplete={enabled&&!display.complete||undefined} data-status={enabled&&!empty?state:undefined} data-achieved={enabled&&!empty&&display.achieved||undefined} data-upper-only={display.upperOnly||undefined} key={metric}>
@@ -23,7 +23,7 @@ export function MacronutrientGoals({configs,daily,week,showActuals=false}:{confi
    {enabled&&<><svg className="macro-goal-ring" viewBox="0 0 32 32" role={ringPercent===null?"img":"progressbar"} aria-label={description} aria-valuemin={ringPercent===null?undefined:0} aria-valuemax={ringPercent===null?undefined:100} aria-valuenow={ringPercent===null?undefined:Number(ringPercent.toFixed(1))}>
     <title>{description}</title><circle className="macro-ring-track" cx="16" cy="16" r={radius}/>
     {ringPercent!==null&&<circle className="macro-ring-fill" cx="16" cy="16" r={radius} strokeDasharray={circumference} strokeDashoffset={circumference*(1-ringPercent/100)} transform="rotate(-90 16 16)"/>}
-   </svg>{!empty&&display.isWeekly&&<small className="macro-weekly-summary" data-weekly-metric={metric} aria-label={t('overviewWeeklyAverage')+' · '+t('overviewWeekCoverage',{count:weekly.days})}>{display.value===null?t('notRecorded'):round(display.value)+' g'} · {weekly.days}/7</small>}<small className="macro-goal-range"><NumberUnit value={rangeText(config.min,config.max)} unit="g"/></small></>}{!enabled&&showActuals&&<small className="macro-goal-disabled">{t("goalOff")}</small>}
+   </svg>{!empty&&display.isWeekly&&<small className="macro-weekly-summary" data-weekly-metric={metric} aria-label={t('overviewWeeklyAverage')+' · '+t('overviewWeekCoverage',{count:weekly.days})}>{display.value===null?t('notRecorded'):round(display.value)+' g'} · {weekly.days}/7</small>}<small className="macro-goal-range"><span className="today-macro-target">{bounds.length===2?<>{bounds[0]}–<wbr/><span>{bounds[1]}&#160;g</span></>:<span>{range}&#160;g</span>}</span></small></>}{!enabled&&showActuals&&<small className="macro-goal-disabled">{t("goalOff")}</small>}
   </div>;
  })}</div>;
 }

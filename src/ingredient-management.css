@@ -7,27 +7,38 @@
 
 .modal.supplement-editor .pantry-editor-body > .form-grid > label { grid-column:auto; }
 
-/* Ingredient detail: compact saved units, with editing only on request. */
+/* Compact unit selection; all layout changes stay within this modal. */
+.ingredient-management-modal .pantry-editor-body { padding-block:12px; gap:8px; }
 .ingredient-management-modal .ingredient-reference-summary { color:var(--muted); font:400 11px/1.6 var(--font-ui); }
 .ingredient-management-modal .ingredient-reference-summary p { margin:0; }
-.ingredient-management-modal .ingredient-units-section h3 { margin:14px 0 4px; }
-.ingredient-unit-item { display:flex; align-items:flex-start; min-width:0; border-bottom:1px solid var(--line); }
-.ingredient-unit-choice { display:flex; align-items:center; justify-content:space-between; gap:10px; flex:1; min-width:0; min-height:44px; padding:8px 0; background:transparent; border:0; color:var(--ink); text-align:left; font:400 13px/1.5 var(--font-ui); }
-.ingredient-unit-choice > span { min-width:0; overflow-wrap:anywhere; }
+.ingredient-management-modal .ingredient-units-section h3 { margin:8px 0 6px; font:500 13px/1.5 var(--font-ui); }
+.ingredient-units-section h3 small { color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.ingredient-unit-list { border-block:1px solid var(--line); }
+.ingredient-unit-item { display:grid; grid-template-columns:minmax(0,1fr) 44px; align-items:center; min-width:0; }
+.ingredient-unit-item + .ingredient-unit-item { border-top:1px solid var(--line); }
+.ingredient-unit-choice { display:flex; align-items:center; gap:9px; flex:1; min-width:0; min-height:52px; padding:7px 0; background:transparent; border:0; border-radius:0; color:var(--ink); text-align:left; font:400 13px/1.4 var(--font-ui); }
+.ingredient-unit-copy { flex:1; min-width:0; overflow-wrap:anywhere; }
+.ingredient-unit-copy > span,.ingredient-unit-copy > small { display:block; }
+.ingredient-unit-copy > small { margin-top:2px; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.ingredient-unit-indicator { display:grid; place-items:center; flex:none; width:17px; height:17px; border:1px solid var(--line); border-radius:50%; color:var(--action); }
+.ingredient-unit-choice[aria-pressed=true] .ingredient-unit-indicator { border-color:var(--action); }
 .ingredient-unit-default { flex:none; color:var(--muted); font:500 11px/1.5 var(--font-ui); }
-.ingredient-unit-options { flex:none; position:relative; margin:0; }
-.ingredient-unit-options > summary { display:grid; place-items:center; min-width:44px; min-height:44px; list-style:none; color:var(--muted); cursor:pointer; }
-.ingredient-unit-options > summary::-webkit-details-marker { display:none; }
-.ingredient-unit-options[open] > div { display:flex; flex-direction:column; padding-bottom:4px; }
-.ingredient-unit-options button { min-height:40px; padding:6px; border:0; background:transparent; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
-.ingredient-unit-add { display:inline-flex; align-items:center; gap:5px; min-height:44px; margin-top:4px; padding:6px 0; border:0; background:transparent; color:var(--action); font:500 12px/1.5 var(--font-ui); }
-.ingredient-unit-editor { padding:10px 0 4px; }
-.ingredient-unit-equation { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:6px 8px; align-items:end; }
-.ingredient-unit-equation label { display:flex; flex-direction:column; min-width:0; gap:3px; }
-.ingredient-unit-equation label > span { color:var(--muted); font:400 10px/1.4 var(--font-ui); }
-.ingredient-unit-equals { grid-column:1/-1; text-align:center; color:var(--muted); line-height:1; }
-.ingredient-unit-base { padding:10px 0; color:var(--muted); font:400 13px/1.5 var(--font-ui); }
-.ingredient-unit-editor-actions { display:flex; justify-content:flex-end; gap:12px; }
-.ingredient-unit-editor-actions button { min-height:44px; padding:6px 0; border:0; background:transparent; color:var(--action); font:400 12px/1.5 var(--font-ui); }
-.ingredient-archive-action { border-top:1px solid var(--line); margin-top:14px; padding-top:6px; }
-.ingredient-archive-action button { min-height:44px; padding:6px 0; border:0; background:transparent; color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+.ingredient-unit-options { flex:none; }
+.ingredient-unit-options > button { display:grid; place-items:center; width:44px; min-height:44px; padding:0; border:0; background:transparent; color:var(--muted); }
+.ingredient-unit-menu { position:fixed; inset:auto; margin:0; padding:4px; width:max-content; box-sizing:border-box; overflow:auto; border:1px solid var(--line); border-radius:5px; background:var(--bg); color:var(--ink); box-shadow:0 4px 16px #00000014; }
+.ingredient-unit-menu:popover-open { display:flex; flex-direction:column; }
+.ingredient-unit-menu button { min-height:44px; padding:8px 12px; border:0; background:transparent; color:var(--ink); text-align:left; font:400 12px/1.4 var(--font-ui); }
+.ingredient-unit-menu button:focus-visible { outline:2px solid var(--action); outline-offset:-2px; }
+.ingredient-unit-add { display:inline-flex; align-items:center; gap:5px; min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--action); font:500 12px/1.5 var(--font-ui); }
+.ingredient-management-modal .ingredient-unit-editor { padding:8px 0 0; }
+.ingredient-management-modal .ingredient-unit-equation { display:grid; grid-template-columns:minmax(0,72px) minmax(0,1fr); gap:6px 8px; align-items:end; }
+.ingredient-management-modal .ingredient-unit-equation label { display:flex; flex-direction:column; min-width:0; gap:3px; margin:0; }
+.ingredient-unit-equation label > span { color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.ingredient-management-modal .ingredient-unit-equation input { width:100%; min-width:0; height:44px; padding:8px; }
+.ingredient-unit-amount { grid-column:1/-1; display:flex; align-items:end; gap:8px; }
+.ingredient-unit-amount label { flex:1; max-width:180px; }
+.ingredient-unit-equals,.ingredient-unit-base { display:flex; align-items:center; height:44px; color:var(--muted); font:400 13px/1.5 var(--font-ui); }
+.ingredient-unit-editor-actions { display:flex; justify-content:flex-end; gap:16px; }
+.ingredient-unit-editor-actions button { min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--action); font:400 12px/1.5 var(--font-ui); }
+.ingredient-management-modal .ingredient-archive-action { border-top:1px solid var(--line); margin-top:4px; padding-top:2px; }
+.ingredient-archive-action button { min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--muted); font:400 11px/1.5 var(--font-ui); }

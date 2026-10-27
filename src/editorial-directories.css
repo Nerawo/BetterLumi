@@ -138,3 +138,18 @@ html:has(dialog[open]) .directory-fab { visibility: hidden; pointer-events: none
 .recipe-list .recipe-macros { margin:0; color:var(--muted); font:400 11px/1.5 var(--font-ui); overflow-wrap:anywhere; }
 .recipe-list .recipe-macro { display:inline-block; }
 .recipe-list .recipe-nutrient-unavailable { color:var(--muted); }
+
+/* Compact picker metadata; keep the source action independently touchable. */
+.ingredient-picker-modal .reference-picker-row { padding:5px 0 10px; gap:0; }
+.ingredient-picker-modal .reference-picker-row > .ingredient-picker-result { min-height:0; padding:2px 0; gap:1px; }
+.ingredient-picker-modal .reference-picker-row .reference-nutrition { line-height:1.45; }
+.ingredient-picker-modal .reference-picker-row > .reference-origin { min-height:24px; margin:0; gap:2px; }
+.ingredient-picker-modal .reference-origin .reference-info-trigger { width:44px; height:44px; min-height:44px; margin-block:-10px; padding:0; }
+/* Recipe-only row rhythm; quantity and unit remain side by side. */
+.recipe-editor-modal .line-editor .recipe-line.ingredient-editor-row { padding:5px 0; }
+.recipe-editor-modal .ingredient-editor-row .recipe-line-heading { gap:6px; align-items:flex-start; }
+.recipe-editor-modal .ingredient-editor-row .recipe-line-heading > .grow { padding-top:4px; }
+.recipe-editor-modal .ingredient-editor-row .recipe-line-heading .reference-origin { display:flex; width:max-content; max-width:100%; min-height:24px; }
+.recipe-editor-modal .ingredient-editor-row .reference-origin .reference-info-trigger { margin-block:-10px; }
+.recipe-editor-modal .ingredient-editor-row .recipe-line-amounts { gap:8px; margin-top:2px; }
+.recipe-editor-modal .ingredient-editor-row .recipe-line-amounts label { display:flex; flex-direction:column; gap:2px; font-size:11px; }

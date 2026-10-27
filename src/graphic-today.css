@@ -419,3 +419,12 @@
  .page-today .compact-daily-overview .macronutrient-goals { column-gap:2px; }
 }
 .page-today .compact-daily-overview [data-goal-metric=calories]:not(:has(.progress-message)) { grid-template-rows:auto auto 4px; }
+
+/* Allow target bounds to wrap within their own Today column, never the unit alone. */
+.page-today .compact-daily-overview .macro-goal-range { min-width:0; max-width:100%; white-space:normal; text-align:center; font-size:clamp(9px,2.4vw,10px); letter-spacing:0; }
+.page-today .today-macro-target { display:block; max-width:100%; overflow-wrap:anywhere; }
+.page-today .today-macro-target > span { display:inline-block; white-space:nowrap; }
+
+.page-today .compact-daily-overview .macro-goal-slot { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(44px,auto) 32px auto; }
+.page-today .compact-daily-overview .macro-goal-name { white-space:normal; overflow-wrap:anywhere; text-align:center; }
+.page-today .compact-daily-overview .macro-actual { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(16px,auto) 24px; }
