@@ -1,3 +1,4 @@
+import {IngredientArchive} from './IngredientManagement';
 import {currentTolerances,parseToleranceEvents} from './goal-tolerance-model';
 import './goal-tolerances-locale';
 import {GoalTolerancePanel} from './GoalTolerancePanel';
@@ -58,6 +59,7 @@ export function More({
       title: "backup",
       action: () => setPanel("data"),
     },
+    {key:"ingredientArchive",icon:Database,title:"ingredientArchive",action:()=>setPanel("ingredientArchive")},
     {
       key: "about",
       icon: Info,
@@ -95,7 +97,7 @@ export function More({
       {panel && (
         <Modal
           title={t(
-            panel === "tolerances" ? "goalTolerances" : panel === "history" ? "goalHistory" : panel === "appearance"
+            panel === "ingredientArchive" ? "ingredientArchive" : panel === "tolerances" ? "goalTolerances" : panel === "history" ? "goalHistory" : panel === "appearance"
               ? "themeTitle"
               : panel === "language"
                 ? "language"
@@ -104,8 +106,9 @@ export function More({
                   : "privacyAbout",
           )}
           close={() => setPanel("")}
-          className={"settings-modal"+(["tolerances","history"].includes(panel)?" goal-settings-modal":"")}
+          className={"settings-modal"+(["tolerances","history","ingredientArchive"].includes(panel)?" goal-settings-modal":"")}
         >
+          {panel === "ingredientArchive"&&<IngredientArchive notice={notice}/>}
           {panel === "tolerances"&&<GoalTolerancePanel initial={currentTolerances(parseToleranceEvents(prefs.goalTolerances))} close={()=>setPanel("")}/>}
           {panel === "history"&&<div className="modal-scroll"><GoalHistory goals={goals} embedded/></div>}
           {panel === "appearance" && (

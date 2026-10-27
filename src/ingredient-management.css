@@ -1,0 +1,12 @@
+.personal-unit-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); gap:8px; padding-block:10px; border-bottom:1px solid var(--line); align-items:end; }
+.personal-unit-row > button { grid-column:1/-1; justify-self:start; min-height:44px; background:transparent; color:var(--muted); border:0; }
+.ingredient-management-modal h3 { font:500 14px/1.5 var(--font-ui); margin:16px 0 6px; }
+.archive-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:12px; border-bottom:1px solid var(--line); }
+.archive-row > div { min-width:0; }.archive-row small { display:block; color:var(--muted); font-size:11px; }.archive-row p { font-size:11px; overflow-wrap:anywhere; }.archive-row button { flex:none; min-height:44px; }
+.pantry-manage-units { min-height:44px; background:transparent; border:0; color:var(--action); font:400 11px/1.5 var(--font-ui); }
+.supplement-row { display:block!important; }.supplement-row-heading { display:flex; align-items:center; gap:8px; }.supplement-row-heading .grow { min-width:0; }.supplement-row-heading .grow small { display:inline; margin-left:6px; }
+.supplement-status-segments { display:flex; gap:2px; margin-top:6px; }.supplement-status-segments button { min-height:36px; flex:1; border:1px solid transparent; background:transparent; color:var(--muted); font:400 11px/1.4 var(--font-ui); padding:6px; border-radius:18px; }.supplement-status-segments button[aria-pressed=true] { border-color:var(--action); color:var(--ink); background:var(--soft); font-weight:600; }
+.modal.supplement-editor { width:min(460px,calc(100% - 20px)); padding:0; }.supplement-editor form { gap:10px; }.supplement-editor .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }.supplement-editor :is(input,select) { min-height:44px; font-size:16px; width:100%; min-width:0; }.supplement-editor label { margin:0; font-size:12px; }.supplement-editor .weekday-toggles > div { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px; }.supplement-editor .weekday-toggles label { min-width:0; min-height:44px; padding:6px 0; }
+
+.modal.supplement-editor .pantry-editor-body > .form-grid > label { grid-column:auto; }
+.pantry-secondary-line .actions .pantry-manage-units { width:auto; min-width:44px; }

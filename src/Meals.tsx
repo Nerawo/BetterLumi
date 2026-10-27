@@ -1,12 +1,13 @@
+import {useIngredientPreferences} from './useIngredientPreferences';
+import {personalUnits,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods} from './data/builtInFoods';
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 import {isBuiltInRecipe} from './data/builtInRecipes';
-import {builtInFoodNutrition,referenceName,referencePreparation} from './reference-library';
+import {referenceName,referencePreparation} from './reference-library';
 import {IngredientPicker} from './IngredientPicker';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {defaultIngredientQuantity} from "./consumption-units";
 import {NumberInput} from "./NumberInput";
-import { nutritionReference } from "./db";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
 import {retainedRecipeNutrition,recipeServingLines,recipeYield,scaleRecipeLines} from "./recipe-nutrition";
@@ -23,7 +24,6 @@ import {
   foodLogs,
   stamp,
   localDate,
-  ingredientNutrition,
   sumNutrition,
   scaleNutrition,
   unknownNutrition,
@@ -71,7 +71,7 @@ export function AddFood({
   close: () => void;
   notice: Notice;
 }) {
-  const { t,i18n } = useTranslation();
+  const { t,i18n } = useTranslation(),preferences=useIngredientPreferences();
   const [ingredientPicking,setIngredientPicking]=useState(false);
   const [message, setMessage] = useState("");
   const notice: Notice = message => { setMessage(message); };
@@ -151,15 +151,15 @@ export function AddFood({
     setIngredientId(id);
     setIngredientPicking(false);
     const reference=builtInFoods.find(item=>item.id===id);
-    if(reference){setName(referenceName(reference,i18n.language));setUnit('g');setQuantity(100);return}
+    if(reference){const choice={kind:'built-in' as const,item:reference},next=preferredFoodUnit(choice,preferences[id]);setName(referenceName(reference,i18n.language));setUnit(next);setQuantity(personalQuantity(choice,next));return}
     const item = pantry.find((i) => i.id === id);
     if (item) {
       setName(item.name);
-      setUnit(item.basis === "100g" ? nutritionReference(item).unit : "serving");
-      setQuantity(item.basis === "100g" ? nutritionReference(item).amount : 1);
+      const next=preferredFoodUnit(userChoice(item),preferences[id]);setUnit(next);setQuantity(personalQuantity(userChoice(item),next));
     }
   };
   const ingredient = pantry.find((i) => i.id === ingredientId),builtIn=builtInFoods.find(item=>item.id===ingredientId);
+  const choice=ingredient?userChoice(ingredient):builtIn?{kind:'built-in' as const,item:builtIn}:null,units=choice?personalUnits(choice,preferences[ingredientId]):[];
   const totals =
     source === "quick"
       ? nutrition
@@ -172,8 +172,7 @@ export function AddFood({
               initial.baseNutrition ?? initial.nutrition,
               quantity / initial.quantity,
             )
-          : builtIn?builtInFoodNutrition(builtIn,quantity,unit):ingredient
-            ? ingredientNutrition(ingredient, quantity, unit)
+          : choice?personalNutrition(choice,quantity,unit,preferences[ingredientId])
             : unknownNutrition();
   const retained=source==="recipe"&&recipeBasis==="snapshot"&&initial&&lines===initial.lines;
   const preview=retained?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,consumptionPercent,initial.baseNutrition):consumedNutrition(totals,consumptionPercent);
@@ -396,13 +395,13 @@ export function AddFood({
                           const nextUnit=e.target.value;
                           if(nextUnit===unit)return;
                           setUnit(nextUnit);
-                          setQuantity(defaultIngredientQuantity(ingredient,nextUnit));
+                          setQuantity(choice?personalQuantity(choice,nextUnit):defaultIngredientQuantity(ingredient,nextUnit));
                         }}
                       >
                         <option value="g">{t("gramsUnit")}</option>{!builtIn&&<option value="mL">mL</option>}
                         {!builtIn&&<option value="serving">{t("servingUnit")}</option>}
-                        {ingredient?.consumptionUnit && <option value={ingredient.consumptionUnit.name}>{ingredient.consumptionUnit.name}</option>}
-                        {!["g","mL","serving",ingredient?.consumptionUnit?.name].includes(unit) && <option value={unit}>{unit}</option>}
+                        {units.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
+                        {!["g","mL","serving",...units.map(u=>u.name)].includes(unit) && <option value={unit}>{unit}</option>}
                       </select>
                     </label>
                   )}

@@ -1,3 +1,5 @@
+import './ingredient-management-locale';
+import './ingredient-management.css';
 import {NumberInput} from "./NumberInput";
 import {confirmDelete} from "./DeleteConfirmation";
 import {SupplementStatusMenu} from "./SupplementStatusMenu";
@@ -38,17 +40,16 @@ export function SupplementCard({
         <button type="button" className="primary" onClick={()=>setEditing(null)}><Plus size={18}/>{t("addProfile")}</button>
       </div>
       <div className="supplement-toolbar">
-        <small className="supplement-count">{due.filter(s=>checks.find(c=>c.date===date&&c.supplementId===s.id)?.status==="taken").length}/{due.length}</small>
+        {due.length>0&&<small className="supplement-count">{due.filter(s=>checks.find(c=>c.date===date&&c.supplementId===s.id)?.status==="taken").length}/{due.length}</small>}
         <div className="inline-actions"><button type="button" className="icon-button" aria-label={t("manageSupplements")} title={t("manageSupplements")} onClick={()=>setManaging(true)}><Settings2 size={17}/></button><button type="button" className="icon-button supplement-chevron" aria-label={t(expanded?"collapseSupplements":"expandSupplements")} aria-expanded={expanded} aria-controls="supplement-entries" onClick={()=>setExpanded(!expanded)}><ChevronDown size={16}/></button></div>
       </div>
       {expanded&&<div id="supplement-entries">
-       {!due.length&&<p className="muted text-small">{t(items.length?"noScheduled":"noSupplements")}</p>}
+       {!due.length&&<p className="muted text-small">{t(date===localDate()?"supplementNoScheduleToday":"supplementNoScheduleDate")}</p>}
        {due.map(s=><div className="supplement-row" key={s.id}>
-        <div className="grow"><strong>{s.name}</strong><small>{s.dosage} {s.unit} · {t(s.schedule==="daily"?"dailySchedule":s.schedule==="weekdays"?"weekdays":"customDays")}</small></div>
+        <div className="supplement-row-heading"><div className="grow"><strong>{s.name}</strong><small>{s.dosage} {s.unit}</small></div><Actions edit={()=>setEditing(s)} remove={async()=>{await confirmDelete("supplement",s.name,async()=>{await softDelete(db.supplements,s.id)})}}/></div>
         <SupplementStatusMenu name={s.name} value={checks.find(c=>c.date===date&&c.supplementId===s.id)?.status??"unconfirmed"} disabled={date>localDate()} onChange={async status=>{
           try{const id=s.id+":"+date;const old=await db.checks.get(id);await db.checks.put({...old?changed(old):stamp(),id,supplementId:s.id,date,status})}catch{notice(t("failedMessage"))}
         }}/>
-        <Actions edit={()=>setEditing(s)} remove={async()=>{await confirmDelete("supplement",s.name,async()=>{await softDelete(db.supplements,s.id)})}}/>
        </div>)}
       </div>}
       {managing&&<Modal title={t("manageSupplements")} close={()=>setManaging(false)} className="supplement-manager">
@@ -58,6 +59,7 @@ export function SupplementCard({
       {editing !== undefined && (
         <Modal
           title={t(editing ? "edit" : "addProfile")}
+          className="pantry-editor-modal supplement-editor"
           close={() => setEditing(undefined)}
         >
           <form
@@ -91,6 +93,7 @@ export function SupplementCard({
               }
             }}
           >
+            <div className="pantry-editor-body">
             <label>
               {t("name")}
               <input name="name" required defaultValue={editing?.name} />
@@ -116,7 +119,7 @@ export function SupplementCard({
             {schedule === "custom" && (
               <WeekdayPicker days={days} onChange={setDays}/>
             )}
-            <div className="form-actions">
+            </div><div className="form-actions">
               <button type="button" onClick={() => setEditing(undefined)}>
                 {t("cancel")}
               </button>

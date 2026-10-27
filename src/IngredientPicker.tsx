@@ -1,3 +1,4 @@
+import {useIngredientPreferences} from './useIngredientPreferences';
 import {createPortal} from 'react-dom';
 import {useEffect,useRef,useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,11 +12,12 @@ import {ingredientSecondaryNames} from './pantry-names';
 import {nutritionReference} from './db';
 import type {PantryItem} from './domain';
 export function IngredientPicker({items,onSelect,onSelectBuiltIn,close}:{items:PantryItem[];onSelect:(item:PantryItem)=>void;onSelectBuiltIn?:(item:BuiltInFood)=>void;close:()=>void}){
+ const preferences=useIngredientPreferences();
  const {t,i18n}=useTranslation(),[search,setSearch]=useState(''),[tag,setTag]=useState(''),tags=useIngredientTags();
  const trigger=useRef(document.activeElement instanceof HTMLElement?document.activeElement:null);
  useEffect(()=>()=>{requestAnimationFrame(()=>{if(trigger.current?.isConnected)trigger.current.focus({preventScroll:true})})},[]);
  const activeTag=tags.some(item=>item.id===tag)?tag:'';
- const results=searchFoodChoices(items,search,activeTag,tags).filter(choice=>choice.kind==='user'||!!onSelectBuiltIn);
+ const results=searchFoodChoices(items,search,activeTag,tags).filter(choice=>!preferences[choice.item.id]?.archived&&(choice.kind==='user'||!!onSelectBuiltIn));
  return createPortal(<Modal title={t('ingredientPickerTitle')} close={close} className="ingredient-picker-modal">
   <div className="ingredient-picker-search" onKeyDown={event=>{if(event.key==='Enter')event.preventDefault()}}><label className="search"><Search size={17}/><span className="sr-only">{t('ingredientPickerSearch')}</span><input type="search" value={search} placeholder={t('ingredientPickerSearch')} onChange={event=>setSearch(event.target.value)}/></label></div>
   <IngredientTagNavigation items={tags} active={activeTag} onChange={setTag}/>

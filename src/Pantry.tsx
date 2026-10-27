@@ -1,3 +1,7 @@
+import {IngredientManagement} from './IngredientManagement';
+import {useIngredientPreferences} from './useIngredientPreferences';
+import {parseIngredientPreference,saveIngredientPreference,ingredientPreferencePrefix,userChoice,type IngredientPreference} from './ingredient-preferences';
+import type {FoodChoice} from './reference-library';
 import {DirectoryListHeader} from './DirectoryListHeader';
 import {IngredientTagNavigation,IngredientTagAssignment,IngredientTagManager,useIngredientTags} from "./IngredientTags";
 import {putTaggedIngredient} from "./ingredient-tags";
@@ -9,7 +13,6 @@ import { validConsumptionUnit, ingredientBaseUnit } from "./consumption-units";
 import { nutritionReference } from "./db";
 import {Fragment,type ReactNode} from "react";
 import {NumberUnit} from "./NumberUnit";
-import {confirmDelete} from "./DeleteConfirmation";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, Plus } from "lucide-react";
@@ -22,7 +25,6 @@ import { PantrySortMenu, type PantrySort } from "./PantrySortMenu";
 import {
   db,
   stamp,
-  softDelete,
   unknownNutrition,
   type PantryItem,
   type Nutrition,
@@ -30,7 +32,6 @@ import {
 import {
   Modal,
   NutritionFields,
-  Actions,
   changed,
   type Notice,
 } from "./ui";
@@ -42,12 +43,13 @@ export function Pantry({
   notice: Notice;
 }) {
   const { t, i18n } = useTranslation();
+  const preferences=useIngredientPreferences(),[managingIngredient,setManagingIngredient]=useState<FoodChoice|null>(null);
   const [search, setSearch] = useState("");
   const tags=useIngredientTags();
   const [tag,setTag]=useState(''),[tagPanel,setTagPanel]=useState<'manage'|null>(null);
   const activeTag=tags.some(item=>item.id===tag)?tag:'';
   const [sort, setSort] = useState<PantrySort>("name-asc");
-  const filtered=sortPantryFoods(searchFoodChoices(items,search,activeTag,tags),sort,i18n.language);
+  const filtered=sortPantryFoods(searchFoodChoices(items,search,activeTag,tags).filter(c=>!preferences[c.item.id]?.archived),sort,i18n.language);
   const [editing, setEditing] = useState<PantryItem | null | undefined>();
   return (
     <>
@@ -70,7 +72,8 @@ export function Pantry({
             const food=choice.item;
             return <article className="pantry-row pantry-reference-row" key={food.id} data-reference-id={food.id}>
               <PantryRowContent
-                title={<span className="ingredient-primary">{referenceName(food,i18n.language)}</span>}
+                title={<button type="button" className="ingredient-name" onClick={()=>setManagingIngredient(choice)}>{referenceName(food,i18n.language)}</button>}
+                actions={<button className="pantry-manage-units" onClick={()=>setManagingIngredient(choice)}>{t("customizeIngredient")}</button>}
                 energy={<><NumberUnit value={food.kcalPer100g===null?'—':Math.round(food.kcalPer100g)} unit="kcal"/> / 100 g</>}
                 metadata={<>{referencePreparation(food,i18n.language)} · {referenceCategory(food,i18n.language)} · <ReferenceSourceInfo source={food}/></>}
                 macros={(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}{t(key)} <NumberUnit value={food[`${key}Per100g`]?.toFixed(1)??'—'} unit="g"/></Fragment>)}
@@ -94,20 +97,17 @@ export function Pantry({
               energy={<>{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==='serving'?t('servingUnit'):<NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==='serving'&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??'g'}/>)</>}</>}
               metadata={[...tags.filter(tag=>i.tagIds?.includes(tag.id)).map(tag=>tag.name),t('referenceMyFood')].join(' · ')}
               macros={(['protein','carbs','fat'] as const).some(k=>i[k]!=null)?(['protein','carbs','fat'] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&' · '}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t('nutritionNotRecorded')}
-              actions={<Actions
-              edit={() => setEditing(i)}
-              remove={async () => {
-                await confirmDelete("ingredient",i.name,async()=>{await softDelete(db.ingredients, i.id)});
-              }}
-              />}
+              actions={<div className="actions"><button type="button" onClick={()=>setEditing(i)}>{t('edit')}</button><button type="button" className="pantry-manage-units" onClick={()=>setManagingIngredient(choice)}>{t('customizeIngredient')}</button></div>}
             />
           </article>
         );})}
       </div>
       {!filtered.length && <p className="collection-empty">{t("emptySearch")}</p>}
+      {managingIngredient&&<IngredientManagement choice={managingIngredient} preference={preferences[managingIngredient.item.id]} close={()=>setManagingIngredient(null)} notice={notice}/>}
       {editing !== undefined && (
         <PantryEditor
           item={editing}
+          preference={editing?preferences[editing.id]:undefined}
           close={() => setEditing(undefined)}
           notice={notice}
         />
@@ -120,10 +120,12 @@ function PantryRowContent({title,titleDescription,energy,metadata,macros,actions
 }
 function PantryEditor({
   item,
+  preference,
   close,
   notice,
 }: {
   item: PantryItem | null;
+  preference?:IngredientPreference;
   close: () => void;
   notice: Notice;
 }) {
@@ -150,12 +152,13 @@ function PantryEditor({
     PantryItem["nutritionSource"]
   >(item?.nutritionSource ?? "manual");
   const [recognition, setRecognition] = useState(item?.labelRecognition);
-  const [conversionOpen,setConversionOpen]=useState(!!item?.consumptionUnit);
-  const [conversionQuantity,setConversionQuantity]=useState<number|null>(item?.consumptionUnit?.quantity??null);
-  const [conversionName,setConversionName]=useState(item?.consumptionUnit?.name??"");
-  const [conversionAmount,setConversionAmount]=useState<number|null>(item?.consumptionUnit?.amount??null);
-  const [conversionUnitChoice,setConversionUnitChoice]=useState<"g"|"mL">(item?.consumptionUnit?.unit??ingredientBaseUnit({basis,referenceUnit,servingUnit}));
-  const [conversionUnitOverridden,setConversionUnitOverridden]=useState(!!item?.consumptionUnit);
+  const initialConversion=preference?preference.units[0]:item?.consumptionUnit;
+  const [conversionOpen,setConversionOpen]=useState(!!initialConversion);
+  const [conversionQuantity,setConversionQuantity]=useState<number|null>(initialConversion?.quantity??null);
+  const [conversionName,setConversionName]=useState(initialConversion?.name??"");
+  const [conversionAmount,setConversionAmount]=useState<number|null>(initialConversion?.amount??null);
+  const [conversionUnitChoice,setConversionUnitChoice]=useState<"g"|"mL">(initialConversion?.unit??ingredientBaseUnit({basis,referenceUnit,servingUnit}));
+  const [conversionUnitOverridden,setConversionUnitOverridden]=useState(!!initialConversion);
   const conversionUnit=conversionUnitOverridden?conversionUnitChoice:ingredientBaseUnit({basis,referenceUnit,servingUnit});
   const conversionEnabled=conversionQuantity!==null||conversionName.trim()!==''||conversionAmount!==null;
   const conversion={quantity:conversionQuantity!,name:conversionName.trim(),amount:conversionAmount!,unit:conversionUnit};
@@ -188,7 +191,11 @@ function PantryEditor({
         nutritionSource,
         labelRecognition: recognition,
       };
-      await putTaggedIngredient(row);
+      await db.transaction('rw',[db.settings,db.ingredients,db.table('ingredientTags')],async()=>{
+        await putTaggedIngredient(row);
+        const saved=parseIngredientPreference((await db.settings.get(ingredientPreferencePrefix+row.id))?.value);
+        if(saved){const units=[...(conversionEnabled?[conversion]:[]),...saved.units.slice(1)];const preferred=[row.basis==='serving'?'serving':row.referenceUnit??'g',...units.map(u=>u.name)].includes(saved.preferred)?saved.preferred:row.basis==='serving'?'serving':row.referenceUnit??'g';await saveIngredientPreference(userChoice(row),{...saved,units,preferred})}
+      });
       close();
       notice(t("savedMessage"));
     } catch {
