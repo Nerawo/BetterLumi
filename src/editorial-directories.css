@@ -79,17 +79,19 @@ html:has(dialog[open]) .directory-fab { visibility: hidden; pointer-events: none
 
 .page-recipes .recipe-directory-tools.directory-list-heading { margin-top: 0; padding-block: 4px; }
 
-.ingredient-picker-modal { --directory-forest: var(--action); width: min(560px,calc(100% - 20px)); height: min(640px,calc(var(--food-viewport-height,100dvh) - 24px)); }
+.modal.ingredient-picker-modal { --directory-forest:var(--action); width:min(560px,calc(100% - 20px)); height:auto; max-height:min(580px,calc(var(--food-viewport-height,100dvh) - max(10px,env(safe-area-inset-top)) - max(10px,env(safe-area-inset-bottom)))); }
+.ingredient-picker-modal > .modal-head { min-height:56px; padding:6px 16px; }
+.ingredient-picker-modal .category-bar.collection-navigation { margin:8px 16px 4px; padding-block:4px; min-height:52px; }
 [data-theme="olive"] .ingredient-picker-modal { --directory-forest: color-mix(in srgb,#183d30 82%,var(--action)); }
 .ingredient-tag-choices { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .ingredient-tag-choices > button { min-height: 40px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 22px; font: 500 12px/1.5 var(--font-ui); color: var(--muted); }
 .ingredient-tag-choices > button[aria-pressed=true] { background: var(--soft); color: var(--action); border-color: transparent; }
 .ingredient-tag-assignment > h3 { font: 600 13px/1.5 var(--font-ui); margin-bottom: 8px; }
-.ingredient-picker-search { flex: none; padding: 10px 16px 0; }
-.ingredient-picker-search .search { margin: 0; display: flex; flex-direction: row; align-items: center; gap: 8px; }
+.ingredient-picker-search { flex:none; padding:8px 16px 0; }
+.ingredient-picker-search .search { margin:0; padding:0 0 4px; display:flex; flex-direction: row; align-items: center; gap: 8px; }
 .ingredient-picker-search input { width: 100%; min-width: 0; height: 44px; border: 0; font-size: 16px; background: transparent; }
 .ingredient-picker-modal .category-bar { flex: none; margin-inline: 16px; }
-.ingredient-picker-results { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px; scroll-padding: 8px; }
+.ingredient-picker-results { flex:0 1 auto; min-height:0; overflow-y: auto; overscroll-behavior: contain; padding:0 16px 8px; scroll-padding:8px; }
 .ingredient-picker-result { display: flex; width: 100%; align-items: center; gap: 10px; text-align: left; min-height: 52px; padding: 8px 0; border-radius: 0; border-bottom: 1px solid var(--line); }
 .ingredient-picker-result .grow { min-width: 0; overflow-wrap: anywhere; }
 .ingredient-picker-result strong { font: 600 14px/1.5 var(--font-ui); }

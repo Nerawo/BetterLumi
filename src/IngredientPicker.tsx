@@ -17,12 +17,11 @@ export function IngredientPicker({items,onSelect,onSelectBuiltIn,close}:{items:P
  const activeTag=tags.some(item=>item.id===tag)?tag:'';
  const results=searchFoodChoices(items,search,activeTag,tags).filter(choice=>choice.kind==='user'||!!onSelectBuiltIn);
  return createPortal(<Modal title={t('ingredientPickerTitle')} close={close} className="ingredient-picker-modal">
-  <div className="ingredient-picker-search" onKeyDown={event=>{if(event.key==='Enter')event.preventDefault()}}><label className="search"><Search size={17}/><span className="sr-only">{t('ingredientPickerSearch')}</span><input autoFocus type="search" value={search} placeholder={t('ingredientPickerSearch')} onChange={event=>setSearch(event.target.value)}/></label></div>
+  <div className="ingredient-picker-search" onKeyDown={event=>{if(event.key==='Enter')event.preventDefault()}}><label className="search"><Search size={17}/><span className="sr-only">{t('ingredientPickerSearch')}</span><input type="search" value={search} placeholder={t('ingredientPickerSearch')} onChange={event=>setSearch(event.target.value)}/></label></div>
   <IngredientTagNavigation items={tags} active={activeTag} onChange={setTag}/>
   <div className="ingredient-picker-results" role="list" aria-label={t('ingredientPickerResults')}>
    {results.map(choice=>{if(choice.kind==='built-in'){const item=choice.item;return <div className="reference-picker-row" role="listitem" key={item.id} data-reference-id={item.id}><button type="button" className="ingredient-picker-result" onClick={()=>onSelectBuiltIn?.(item)}><strong>{referenceName(item,i18n.language)}</strong><small>{referencePreparation(item,i18n.language)} · {referenceCategory(item,i18n.language)}</small><small className="reference-nutrition">{referenceNutritionSummary(item)}</small></button><ReferenceSourceInfo source={item}/></div>}const item=choice.item;return <button type="button" className="ingredient-picker-result" key={item.id} data-ingredient-id={item.id} onClick={()=>onSelect(item)}><span className="grow"><strong>{item.name}</strong>{ingredientSecondaryNames(item).length>0&&<small>{ingredientSecondaryNames(item).join(' · ')}</small>}</span><small>{item.basis==='serving'?t('servingUnit'):`${nutritionReference(item).amount} ${nutritionReference(item).unit}`}</small></button>})}
    {!results.length&&<p className="collection-empty">{t('ingredientPickerEmpty')}</p>}
   </div>
-  <div className="form-actions"><button type="button" onClick={close}>{t('cancel')}</button></div>
  </Modal>,document.body);
 }

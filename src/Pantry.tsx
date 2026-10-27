@@ -150,11 +150,12 @@ function PantryEditor({
     PantryItem["nutritionSource"]
   >(item?.nutritionSource ?? "manual");
   const [recognition, setRecognition] = useState(item?.labelRecognition);
-  const [conversionEnabled,setConversionEnabled]=useState(!!item?.consumptionUnit);
+  const [conversionOpen,setConversionOpen]=useState(!!item?.consumptionUnit);
   const [conversionQuantity,setConversionQuantity]=useState<number|null>(item?.consumptionUnit?.quantity??null);
   const [conversionName,setConversionName]=useState(item?.consumptionUnit?.name??"");
   const [conversionAmount,setConversionAmount]=useState<number|null>(item?.consumptionUnit?.amount??null);
   const [conversionUnit,setConversionUnit]=useState<"g"|"mL">(item?.consumptionUnit?.unit??ingredientBaseUnit({basis,referenceUnit,servingUnit}));
+  const conversionEnabled=conversionQuantity!==null||conversionName.trim()!==''||conversionAmount!==null;
   const conversion={quantity:conversionQuantity!,name:conversionName.trim(),amount:conversionAmount!,unit:conversionUnit};
   const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -167,7 +168,7 @@ function PantryEditor({
     }
     if (basis === "100g" && (referenceAmount == null || !Number.isFinite(referenceAmount) || referenceAmount <= 0)) { notice(t("invalidReferenceAmount")); return; }
     if (servingGrams != null && (!Number.isFinite(servingGrams) || servingGrams <= 0)) { notice(t("invalidReferenceAmount")); return; }
-    if (conversionEnabled && (!validConsumptionUnit(conversion) || conversion.unit !== ingredientBaseUnit({basis,referenceUnit,servingUnit}))) { notice(t("invalidConsumptionUnit")); return; }
+    if (conversionEnabled && (!validConsumptionUnit(conversion) || conversion.unit !== ingredientBaseUnit({basis,referenceUnit,servingUnit}))) { setConversionOpen(true); notice(t("invalidConsumptionUnit")); return; }
     setBusy(true);
     try {
       const row: PantryItem = {
@@ -271,18 +272,16 @@ function PantryEditor({
           }}
         />
         </section>
-        <details className="ingredient-form-section consumption-unit-editor">
+        <details className="ingredient-form-section consumption-unit-editor" open={conversionOpen} onToggle={e=>setConversionOpen(e.currentTarget.open)}>
           <summary>{t("consumptionUnitConversion")}</summary>
-          <label className="checkbox-label"><input type="checkbox" checked={conversionEnabled} onChange={e=>setConversionEnabled(e.target.checked)}/>{t("enableConsumptionUnit")}</label>
-          {conversionEnabled && <>
             <div className="form-grid">
-              <label>{t("quantity")}<NumberInput name="conversionQuantity" type="number" required min="0" step="any" value={conversionQuantity??""} onChange={e=>setConversionQuantity(e.target.value===""?null:Number(e.target.value))}/></label>
-              <label>{t("customUnitName")}<input name="conversionName" required maxLength={40} value={conversionName} onChange={e=>setConversionName(e.target.value)}/></label>
-              <label>{t("equivalentAmount")}<NumberInput name="conversionAmount" type="number" required min="0" step="any" value={conversionAmount??""} onChange={e=>setConversionAmount(e.target.value===""?null:Number(e.target.value))}/></label>
+              <label>{t("quantity")}<NumberInput name="conversionQuantity" type="number" min="0" step="any" value={conversionQuantity??""} onChange={e=>setConversionQuantity(e.target.value===""?null:Number(e.target.value))}/></label>
+              <label>{t("customUnitName")}<input name="conversionName" maxLength={40} value={conversionName} onChange={e=>setConversionName(e.target.value)}/></label>
+              <label>{t("equivalentAmount")}<NumberInput name="conversionAmount" type="number" min="0" step="any" value={conversionAmount??""} onChange={e=>setConversionAmount(e.target.value===""?null:Number(e.target.value))}/></label>
               <label>{t("unit")}<select name="conversionUnit" value={conversionUnit} onChange={e=>setConversionUnit(e.target.value as "g"|"mL")}><option value="g">g</option><option value="mL">mL</option></select></label>
             </div>
             {validConsumptionUnit(conversion) && <p className="text-small muted" aria-live="polite">1 {conversion.name} ≈ {(conversion.amount/conversion.quantity).toLocaleString(i18n.language==="zh"?"zh-CN":"en-US",{maximumFractionDigits:2})} {conversion.unit}</p>}
-          </>}
+          <p className="text-small muted">{t("consumptionUnitClearHint")}</p>
         </details>
         </div>
         <div className="form-actions">

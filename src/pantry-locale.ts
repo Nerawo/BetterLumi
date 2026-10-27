@@ -1,5 +1,6 @@
 import i18n from "./locale";
 const zh = {
+  consumptionUnitClearHint:"清空数量、单位名称与对应总量可移除换算；收起不会删除已填写内容。",
   consumptionUnitConversion: "食用单位换算", enableConsumptionUnit: "启用自定义食用单位", customUnitName: "自定义单位名称", equivalentAmount: "对应的总量", invalidConsumptionUnit: "请填写大于零的数量和总量、非空单位名称，并与营养参考量使用相同的 g/mL 单位。单位名称不能使用 g、mL 或 serving。",
   customNutritionReference: "自定义参考量", perReference: "每", referenceAmount: "营养参考量", servingSizeOptional: "每份大小（可选）", invalidReferenceAmount: "参考量或每份大小必须大于零。",
   ocrExplain:
@@ -62,6 +63,7 @@ const zh = {
   progressBurnedUnknown: "运动消耗热量未记录",
 };
 const en: Record<keyof typeof zh, string> = {
+  consumptionUnitClearHint:"Clear quantity, unit name and total amount to remove the conversion. Collapsing keeps your entries.",
   consumptionUnitConversion: "Consumption Unit Conversion", enableConsumptionUnit: "Enable custom consumption unit", customUnitName: "Custom unit name", equivalentAmount: "Equivalent total amount", invalidConsumptionUnit: "Enter positive quantities, a unit name and the same g/mL unit as the nutrition reference. The name cannot be g, mL or serving.",
   customNutritionReference: "Custom reference", perReference: "Per", referenceAmount: "Nutrition reference amount", servingSizeOptional: "Serving size (optional)", invalidReferenceAmount: "Reference amount or serving size must be greater than zero.",
   ocrExplain:

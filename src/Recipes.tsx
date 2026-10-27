@@ -1,3 +1,5 @@
+import {PantrySortMenu,type PantrySort} from './PantrySortMenu';
+import {sortRecipes} from './recipe-sort';
 import {recipeListNutrition} from './recipe-list-nutrition';
 import {recipeNutritionDisplay} from './recipe-nutrition-display';
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
@@ -57,6 +59,7 @@ export function Recipes({
   const { t,i18n } = useTranslation();
   const [editing, setEditing] = useState<Recipe | null | undefined>();
   const [search, setSearch] = useState("");
+  const [sort,setSort]=useState<PantrySort>('name-asc');
   const [tab, setTab] = useState("");
   const categoryItems =
     useLiveQuery(async() => orderedItems(await categories.filter((c) => !c.deletedAt).toArray())) ?? [];
@@ -65,12 +68,12 @@ export function Recipes({
   const closeCategoryManager=()=>{setManage(false);requestAnimationFrame(()=>categoryManagerTrigger.current?.focus())};
   const [manageRecipes, setManageRecipes] = useState<RecipeCategory | null>(null);
 
-  const filtered = filterRecipes(
+  const filtered = sortRecipes(filterRecipes(
     [...items,...builtInRecipeItems(i18n.language)],
     search,
     categoryItems.some((c) => c.id === tab) ? tab : "",
     categoryItems,
-  );
+  ),sort,i18n.language);
   return (
     <>
       <div className="search">
@@ -82,7 +85,7 @@ export function Recipes({
         />
       </div>
       <CollectionNavigation items={categoryItems} active={categoryItems.some(c=>c.id===tab)?tab:''} onChange={setTab} label={t('recipeCategory')} allLabel={t('allCategories')} manageLabel={t('manageCategories')} manage={()=>setManage(true)} managementRef={categoryManagerTrigger}/>
-      <DirectoryListHeader count={t('recipeCount',{count:filtered.length})}>{categoryItems.filter(category=>category.id===tab).map(category=><span key={category.id}><button type="button" className="text-link manage-category-recipes" aria-label={t("manageCategoryRecipes",{name:category.name})} onClick={()=>setManageRecipes(category)}>{t("manageRecipes")}</button></span>)}</DirectoryListHeader>
+      <DirectoryListHeader count={t('recipeCount',{count:filtered.length})}>{categoryItems.filter(category=>category.id===tab).map(category=><span key={category.id}><button type="button" className="text-link manage-category-recipes" aria-label={t("manageCategoryRecipes",{name:category.name})} onClick={()=>setManageRecipes(category)}>{t("manageRecipes")}</button></span>)}<PantrySortMenu value={sort} onChange={setSort} kind="recipes"/></DirectoryListHeader>
       <button type="button" className="primary recipe-fab directory-fab" onClick={() => setEditing(null)} aria-label={t("directoryCreateRecipe")}><Plus size={18} aria-hidden="true"/><span>{t("directoryCreateRecipe")}</span></button>
       <div className="recipe-grid recipe-list">
         {filtered.map(r=>{const {nutrition,perServing}=recipeListNutrition(r),basis=t(perServing?"compactPerServing":"recipeListWholeBasis"),hasMacros=(["protein","carbs","fat"] as const).some(key=>nutrition[key]!==null);return <article className="recipe-card recipe-list-row" key={r.id} onClick={e=>{if(!(e.target as HTMLElement).closest("button,a,input,select,dialog"))navigate("/recipes/"+encodeURIComponent(r.id))}}>
