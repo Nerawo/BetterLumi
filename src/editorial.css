@@ -1406,6 +1406,12 @@ body, input, select, textarea, button { font-family: var(--font-ui); }
 .add-food-modal input:not([type=checkbox]), .add-food-modal select { box-sizing: border-box; min-width: 0; width: 100%; min-height: 44px; height: 44px; padding: 8px 10px; font-size: 16px; }
 .add-food-modal .consumption-control { display: flex; flex-direction: column; align-items: flex-start; }
 .add-food-modal .consumption-control input[type=number] { width: 150px; max-width: 100%; }
+.add-food-modal .recipe-consumption-control { align-items:stretch; width:100%; }
+.recipe-consumption-heading,.recipe-consumption-scale { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.recipe-consumption-value { flex:none; color:var(--ink); font-variant-numeric:tabular-nums; }
+.add-food-modal input.meal-consumption-slider[type=range] { appearance:auto; -webkit-appearance:auto; display:block; width:100%; min-width:0; height:44px; padding:0; margin:0; border:0; background:transparent; accent-color:var(--action); touch-action:pan-y; cursor:pointer; }
+.recipe-consumption-scale { margin-top:-6px; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.meal-consumption-slider:focus-visible { outline:2px solid var(--action); outline-offset:2px; }
 .add-food-modal .nutrition-strip { padding: 10px 0; margin: 0; }
 .add-food-modal .nutrition-strip strong { font-size: 29px; }
 .add-food-modal .nutrition-strip > div > span { font-size: 11px; }

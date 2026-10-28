@@ -14,7 +14,7 @@ import {retainedRecipeNutrition,recipeServingLines,recipeYield,scaleRecipeLines}
 import './recipe-yield-locale';
 import { DateInput } from "./DateInput";
 import { readLocalImage } from "./images";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Utensils } from "lucide-react";
 import {
@@ -78,7 +78,7 @@ export function AddFood({
   const initial = draft.log;
   const r = draft.recipe ?? recipes.find((r) => r.id === initial?.sourceId);
   const [source, setSource] = useState<"quick" | "recipe" | "pantry">(
-    initial?.source ?? (r ? "recipe" : "quick"),
+    initial?.source ?? "recipe",
   );
   const [recipeId, setRecipeId] = useState(r?.id ?? initial?.sourceId ?? "");
   const [ingredientId, setIngredientId] = useState(
@@ -107,6 +107,21 @@ export function AddFood({
   );
   const [renaming, setRenaming] = useState(false);
   const [estimated, setEstimated] = useState(initial?.estimated ?? false);
+  // Modal-local drafts only: switching source must not erase the user's edits.
+  const tabDraft={recipeId,ingredientId,recipeBasis,quantity,lineServings,unit,nutrition,lines,name,photo,consumptionPercent,renaming,estimated};
+  const tabDrafts=useRef<Partial<Record<typeof source,typeof tabDraft>>>({});
+  const switchSource=(key:typeof source)=>{
+    if(key===source)return;
+    tabDrafts.current[source]=tabDraft;
+    const next:typeof tabDraft=tabDrafts.current[key]??{recipeId:'',ingredientId:'',recipeBasis:'recipe',quantity:1,lineServings:1,unit:'serving',nutrition:unknownNutrition(),lines:[],name:'',photo:'',consumptionPercent:100,renaming:false,estimated:false};
+    setSource(key);setRecipeId(next.recipeId);setIngredientId(next.ingredientId);setRecipeBasis(next.recipeBasis);
+    setQuantity(next.quantity);setLineServings(next.lineServings);setUnit(next.unit);setNutrition(next.nutrition);
+    setLines(next.lines);setName(next.name);setPhoto(next.photo);setConsumptionPercent(next.consumptionPercent);
+    setRenaming(next.renaming);setEstimated(next.estimated);setMessage('');setIngredientPicking(false);
+  };
+  // Do not sanitize legacy decimal/>100 percentages just by opening a record.
+  const savedPercent=initial?.consumptionPercent??100;
+  const legacyRecipePercent=recipeBasis==='snapshot'&&initial?.source==='recipe'&&(savedPercent<0||savedPercent>100||savedPercent%5!==0);
   const NutritionPreview=source==='recipe'?RecipeNutritionStrip:NutritionStrip;
   const saveRecipeVersion = async (update: boolean) => {
     if(isBuiltInRecipe({id:recipeId}))return;
@@ -248,18 +263,7 @@ export function AddFood({
             className={source === key ? "selected" : ""}
             key={key}
             aria-label={t({recipe:"savedRecipe",pantry:"savedIngredient",quick:"quick"}[key])}
-            onClick={() => {
-              setRenaming(false);
-              setSource(key);
-              setName("");
-              setQuantity(1);
-              setLineServings(1);
-              setConsumptionPercent(100);
-              setLines([]);
-              setRecipeId("");
-              setIngredientId("");
-              setNutrition(unknownNutrition());
-            }}
+            onClick={() => switchSource(key)}
           >
             {t(["foodTabRecipe", "foodTabPantry", "quick"][index])}
           </button>
@@ -408,7 +412,11 @@ export function AddFood({
                 </div>
                 </>}
             {source==="recipe"&&recipeBasis==="snapshot"&&<p className="muted text-small">{t("legacyRecipeSnapshot")}</p>}
-            <label className="consumption-control">
+            {source==='recipe'&&!legacyRecipePercent?<label className="consumption-control recipe-consumption-control">
+              <span className="recipe-consumption-heading"><span>{t('consumptionPercent')}</span><span className="recipe-consumption-value" aria-hidden="true">{consumptionPercent}%</span></span>
+              <input className="meal-consumption-slider" name="consumptionPercent" type="range" min="0" max="100" step="5" value={consumptionPercent} aria-valuetext={`${consumptionPercent}%`} onChange={e=>setConsumptionPercent(Number(e.target.value))}/>
+              <span className="recipe-consumption-scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></span>
+            </label>:<label className="consumption-control">
               {t("consumptionPercent")}
               <NumberInput
                 name="consumptionPercent"
@@ -421,7 +429,7 @@ export function AddFood({
                   e.target.value !== "" && setConsumptionPercent(Number(e.target.value))
                 }
               />
-            </label>
+            </label>}
                 </div>
                 <div className="meal-nutrition-preview">
                 <NutritionPreview

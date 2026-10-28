@@ -34,7 +34,7 @@ for(const width of [320,360,390]) {
   await modal.locator('.add-food-scroll > label select').selectOption(ids.recipe);
   await expect(advanced).not.toHaveAttribute('open');
   await modal.locator('.recipe-amounts input[type=number]').first().fill('2');
-  await modal.locator('[name=consumptionPercent]').fill('50');
+  await modal.getByRole('slider').press('Home');for(let value=0;value<50;value+=5)await modal.getByRole('slider').press('ArrowRight');
   await expect(modal.locator('.meal-nutrition-preview .nutrition-strip > div').first()).toContainText('200');
   await modal.locator('.recipe-rename button').click();
   await modal.locator('.recipe-rename input').fill('本次早餐');

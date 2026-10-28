@@ -191,6 +191,7 @@ test("consumption above 100% is saved, displayed, editable and used in progress"
   page,
 }) => {
   await page.getByRole("button", { name: "添加餐食", exact: true }).click();
+  await page.locator(".add-food .source-tabs button").nth(2).click();
   await page.locator(".add-food .nutrition-fields input").first().fill("60");
   await page.locator("input[name=consumptionPercent]").fill("150");
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
