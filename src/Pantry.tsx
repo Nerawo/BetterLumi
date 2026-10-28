@@ -1,4 +1,5 @@
 import {IngredientManagement} from './IngredientManagement';
+import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import {parseIngredientPreference,saveIngredientPreference,ingredientPreferencePrefix,userChoice,type IngredientPreference} from './ingredient-preferences';
 import type {FoodChoice} from './reference-library';
@@ -177,7 +178,7 @@ function PantryEditor({
     try {
       const row: PantryItem = {
         ...(item ? changed(item) : stamp()),
-        ...nutrition,
+        ...normalizeIngredientNutrition(nutrition),
         name,
         nameZh: String(f.get("nameZh")).trim(),
         aliases: splitAliases(String(f.get("nameZh"))),

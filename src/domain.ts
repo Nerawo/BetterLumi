@@ -1,4 +1,5 @@
 import {validMeasuredAt} from './weight-time';
+import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {parseToleranceEvents} from './goal-tolerance-model';
 import {reconcileIngredientTags} from "./ingredient-tag-data";
 import {validConsumptionUnit} from "./consumption-units";
@@ -87,6 +88,7 @@ export function ingredientNutrition(
   quantity: number,
   unit: string,
 ): Nutrition {
+  const nutrition=normalizeIngredientNutrition(i);
   const conversion = i.consumptionUnit;
   if (validConsumptionUnit(conversion) && unit === conversion.name) {
     quantity = quantity * conversion.amount / conversion.quantity;
@@ -106,7 +108,7 @@ export function ingredientNutrition(
   return Object.fromEntries(
     nutrientKeys.map((k) => [
       k,
-      factor === null || i[k] == null ? null : i[k] * factor,
+      factor === null || nutrition[k] === null ? null : nutrition[k] * factor,
     ]),
   ) as Nutrition;
 }
