@@ -16,7 +16,7 @@ import { DateInput } from "./DateInput";
 import { readLocalImage } from "./images";
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Utensils } from "lucide-react";
+import { Utensils, ChevronDown } from "lucide-react";
 import {
   db,
   plans,
@@ -299,6 +299,7 @@ export function AddFood({
               <>
                 <label>
                   {t("selectRecipe")}
+                  <span className="meal-selection-control">
                   <select
                     value={recipeId}
                     onChange={(e) => chooseRecipe(e.target.value)}
@@ -310,6 +311,8 @@ export function AddFood({
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/>
+                  </span>
                 </label>
                 {!recipes.length && <p>{t("noRecipes")}</p>}
               </>
@@ -319,6 +322,7 @@ export function AddFood({
                 {builtInFoods.length===0?<>
                 <label>
                   {t("selectIngredient")}
+                  <span className="meal-selection-control">
                   <select
                     value={ingredientId}
                     onChange={(e) => chooseIngredient(e.target.value)}
@@ -330,9 +334,11 @@ export function AddFood({
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/>
+                  </span>
                 </label>
                 {!pantry.length && <p>{t("noIngredients")}</p>}
-                </>:<><button type="button" className="secondary ingredient-pick-trigger" onClick={()=>setIngredientPicking(true)}>{name||t('ingredientPickerTitle')}</button>{builtIn&&<><small>{referencePreparation(builtIn,i18n.language)}</small><ReferenceSourceInfo source={builtIn}/></>}{ingredientPicking&&<IngredientPicker items={pantry} close={()=>setIngredientPicking(false)} onSelect={item=>chooseIngredient(item.id)} onSelectBuiltIn={item=>chooseIngredient(item.id)}/>}</>}
+                </>:<><label>{t('selectIngredient')}<span className="meal-selection-control"><button type="button" className="ingredient-pick-trigger" aria-haspopup="dialog" aria-expanded={ingredientPicking} onClick={()=>setIngredientPicking(true)}><span className="meal-selection-value">{ingredientId?(ingredient?.name??(builtIn?referenceName(builtIn,i18n.language):name))||t('selectIngredient'):t('selectIngredient')}</span></button><ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/></span></label>{builtIn&&<><small>{referencePreparation(builtIn,i18n.language)}</small><ReferenceSourceInfo source={builtIn}/></>}{ingredientPicking&&<IngredientPicker items={pantry} close={()=>setIngredientPicking(false)} onSelect={item=>chooseIngredient(item.id)} onSelectBuiltIn={item=>chooseIngredient(item.id)}/>}</>}
               </>
             )}
             {source === "recipe" ? (

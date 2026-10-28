@@ -1404,13 +1404,19 @@ body, input, select, textarea, button { font-family: var(--font-ui); }
 .add-food-modal .meal-date-row, .add-food-modal .nutrition-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
 .add-food-modal label { margin: 0; gap: 4px; font-size: 13px; min-width: 0; }
 .add-food-modal input:not([type=checkbox]), .add-food-modal select { box-sizing: border-box; min-width: 0; width: 100%; min-height: 44px; height: 44px; padding: 8px 10px; font-size: 16px; }
+.add-food-modal .meal-selection-control { position:relative; display:block; width:100%; min-width:0; }
+.add-food-modal .meal-selection-control > :is(select,button) { appearance:none; -webkit-appearance:none; display:block; box-sizing:border-box; width:100%; min-width:0; height:44px; min-height:44px; margin:0; padding:8px 34px 8px 10px; border:1px solid var(--line); border-radius:5px; background:var(--surface); color:var(--ink); font:400 16px/1.4 var(--font-ui); text-align:left; }
+.add-food-modal .meal-selection-chevron { position:absolute; right:10px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--muted); }
+.add-food-modal .meal-selection-value { display:block; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .add-food-modal .consumption-control { display: flex; flex-direction: column; align-items: flex-start; }
 .add-food-modal .consumption-control input[type=number] { width: 150px; max-width: 100%; }
 .add-food-modal .recipe-consumption-control { align-items:stretch; width:100%; }
 .recipe-consumption-heading,.recipe-consumption-scale { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .recipe-consumption-value { flex:none; color:var(--ink); font-variant-numeric:tabular-nums; }
-.add-food-modal input.meal-consumption-slider[type=range] { appearance:auto; -webkit-appearance:auto; display:block; width:100%; min-width:0; height:44px; padding:0; margin:0; border:0; background:transparent; accent-color:var(--action); touch-action:pan-y; cursor:pointer; }
-.recipe-consumption-scale { margin-top:-6px; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.add-food-modal input.meal-consumption-slider[type=range] { appearance:auto; -webkit-appearance:auto; display:block; width:100%; min-width:0; max-width:none; height:44px; padding:0; margin:0; border:0; background:transparent; accent-color:var(--action); touch-action:pan-y; cursor:pointer; }
+.recipe-consumption-scale { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin-top:-6px; color:var(--muted); font:400 11px/1.4 var(--font-ui); }
+.recipe-consumption-scale > span:nth-child(2) { justify-self:center; }
+.recipe-consumption-scale > span:last-child { justify-self:end; }
 .meal-consumption-slider:focus-visible { outline:2px solid var(--action); outline-offset:2px; }
 .add-food-modal .nutrition-strip { padding: 10px 0; margin: 0; }
 .add-food-modal .nutrition-strip strong { font-size: 29px; }
