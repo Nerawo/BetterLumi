@@ -1,0 +1,938 @@
+[
+  {
+    "foodId": "builtin-broccoli-raw",
+    "name": "usda:portion:747447:187633",
+    "quantity": 1,
+    "amount": 76,
+    "unit": "g",
+    "labelZh": "杯（切碎）",
+    "labelEn": "cup (chopped)"
+  },
+  {
+    "foodId": "builtin-banana-raw",
+    "name": "usda:portion:1105314:267795",
+    "quantity": 1,
+    "amount": 115,
+    "unit": "g",
+    "labelZh": "根（去皮）",
+    "labelEn": "piece (peeled)"
+  },
+  {
+    "foodId": "builtin-whole-egg",
+    "name": "usda:portion:748967:193781",
+    "quantity": 1,
+    "amount": 50.3,
+    "unit": "g",
+    "labelZh": "个（大号，去壳）",
+    "labelEn": "egg (large, shell removed)"
+  },
+  {
+    "foodId": "builtin-whole-milk",
+    "name": "usda:portion:746782:187530",
+    "quantity": 1,
+    "amount": 249,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "builtin-chicken-breast-roasted",
+    "name": "usda:portion:171477:88817",
+    "quantity": 1,
+    "amount": 140,
+    "unit": "g",
+    "labelZh": "杯（切块）",
+    "labelEn": "cup (chopped or diced)"
+  },
+  {
+    "foodId": "builtin-chicken-breast-roasted",
+    "name": "usda:portion:171477:88819",
+    "quantity": 0.5,
+    "amount": 86,
+    "unit": "g",
+    "labelZh": "整胸份（去骨去皮）",
+    "labelEn": "breast (bone and skin removed)"
+  },
+  {
+    "foodId": "builtin-white-rice-cooked",
+    "name": "usda:portion:168878:83928",
+    "quantity": 1,
+    "amount": 158,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "builtin-potato-baked",
+    "name": "usda:portion:170093:86029",
+    "quantity": 1,
+    "amount": 173,
+    "unit": "g",
+    "labelZh": "个（中等）",
+    "labelEn": "piece (medium)"
+  },
+  {
+    "foodId": "builtin-potato-baked",
+    "name": "usda:portion:170093:86028",
+    "quantity": 1,
+    "amount": 299,
+    "unit": "g",
+    "labelZh": "个（大）",
+    "labelEn": "piece (large)"
+  },
+  {
+    "foodId": "builtin-edamame-prepared",
+    "name": "usda:portion:168411:83053",
+    "quantity": 1,
+    "amount": 155,
+    "unit": "g",
+    "labelZh": "杯（豆仁）",
+    "labelEn": "cup (shelled beans)"
+  },
+  {
+    "foodId": "builtin-tofu-firm-calcium-set",
+    "name": "usda:portion:172475:90683",
+    "quantity": 0.5,
+    "amount": 126,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "builtin-onion-raw",
+    "name": "usda:portion:170000:85860",
+    "quantity": 1,
+    "amount": 110,
+    "unit": "g",
+    "labelZh": "个（中等，直径2½英寸）",
+    "labelEn": "piece (medium, 2½ in diameter)"
+  },
+  {
+    "foodId": "builtin-onion-raw",
+    "name": "usda:portion:170000:85855",
+    "quantity": 1,
+    "amount": 160,
+    "unit": "g",
+    "labelZh": "杯（切碎）",
+    "labelEn": "cup (chopped)"
+  },
+  {
+    "foodId": "builtin-celery-raw",
+    "name": "usda:portion:169988:85828",
+    "quantity": 1,
+    "amount": 40,
+    "unit": "g",
+    "labelZh": "根（中等，长7½–8英寸）",
+    "labelEn": "stalk (medium, 7½–8 in long)"
+  },
+  {
+    "foodId": "builtin-celery-raw",
+    "name": "usda:portion:169988:85824",
+    "quantity": 1,
+    "amount": 101,
+    "unit": "g",
+    "labelZh": "杯（切碎）",
+    "labelEn": "cup (chopped)"
+  },
+  {
+    "foodId": "builtin-tomato-puree",
+    "name": "usda:portion:170460:86700",
+    "quantity": 1,
+    "amount": 250,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "builtin-tomato-paste",
+    "name": "usda:portion:170459:86698",
+    "quantity": 1,
+    "amount": 16,
+    "unit": "g",
+    "labelZh": "汤匙",
+    "labelEn": "tablespoon"
+  },
+  {
+    "foodId": "builtin-tomato-paste",
+    "name": "usda:portion:170459:86697",
+    "quantity": 1,
+    "amount": 262,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "builtin-olive-oil",
+    "name": "usda:portion:171413:88667",
+    "quantity": 1,
+    "amount": 13.5,
+    "unit": "g",
+    "labelZh": "汤匙",
+    "labelEn": "tablespoon"
+  },
+  {
+    "foodId": "builtin-olive-oil",
+    "name": "usda:portion:171413:88669",
+    "quantity": 1,
+    "amount": 4.5,
+    "unit": "g",
+    "labelZh": "茶匙",
+    "labelEn": "teaspoon"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746773",
+    "name": "usda:portion:746773:187517",
+    "quantity": 1,
+    "amount": 178,
+    "unit": "g",
+    "labelZh": "个（中等）",
+    "labelEn": "piece (medium)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746773",
+    "name": "usda:portion:746773:187515",
+    "quantity": 1,
+    "amount": 140,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (slices)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746771",
+    "name": "usda:portion:746771:187513",
+    "quantity": 1,
+    "amount": 140,
+    "unit": "g",
+    "labelZh": "个（直径2⅞英寸）",
+    "labelEn": "piece (2⅞ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746771",
+    "name": "usda:portion:746771:187512",
+    "quantity": 1,
+    "amount": 165,
+    "unit": "g",
+    "labelZh": "杯（橘瓣，去膜）",
+    "labelEn": "cup (sections, no membranes)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173033",
+    "name": "usda:portion:173033:91840",
+    "quantity": 0.5,
+    "amount": 128,
+    "unit": "g",
+    "labelZh": "个（中等，直径约4英寸）",
+    "labelEn": "piece (medium, about 4 in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173033",
+    "name": "usda:portion:173033:91838",
+    "quantity": 1,
+    "amount": 230,
+    "unit": "g",
+    "labelZh": "杯（瓣，含汁）",
+    "labelEn": "cup (sections, with juice)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-167746",
+    "name": "usda:portion:167746:81883",
+    "quantity": 1,
+    "amount": 58,
+    "unit": "g",
+    "labelZh": "个（直径2⅛英寸，去皮）",
+    "labelEn": "piece (2⅛ in diameter, peeled)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-167746",
+    "name": "usda:portion:167746:81882",
+    "quantity": 1,
+    "amount": 212,
+    "unit": "g",
+    "labelZh": "杯（瓣）",
+    "labelEn": "cup (sections)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168155",
+    "name": "usda:portion:168155:82570",
+    "quantity": 1,
+    "amount": 67,
+    "unit": "g",
+    "labelZh": "个（直径2英寸）",
+    "labelEn": "piece (2 in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173946",
+    "name": "usda:portion:173946:93521",
+    "quantity": 1,
+    "amount": 144,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-325430",
+    "name": "usda:portion:325430:119284",
+    "quantity": 1,
+    "amount": 161,
+    "unit": "g",
+    "labelZh": "个（中等，直径2⅔英寸）",
+    "labelEn": "piece (medium, 2⅔ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-325430",
+    "name": "usda:portion:325430:119282",
+    "quantity": 1,
+    "amount": 154,
+    "unit": "g",
+    "labelZh": "杯（带皮切片）",
+    "labelEn": "cup (slices with skin)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-327357",
+    "name": "usda:portion:327357:119532",
+    "quantity": 1,
+    "amount": 142,
+    "unit": "g",
+    "labelZh": "个（直径2½英寸）",
+    "labelEn": "piece (2½ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-327357",
+    "name": "usda:portion:327357:119530",
+    "quantity": 1,
+    "amount": 143,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (slices)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-167765",
+    "name": "usda:portion:167765:81933",
+    "quantity": 1,
+    "amount": 152,
+    "unit": "g",
+    "labelZh": "杯（切丁）",
+    "labelEn": "cup (diced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746770",
+    "name": "usda:portion:746770:187503",
+    "quantity": 1,
+    "amount": 160,
+    "unit": "g",
+    "labelZh": "杯（切块）",
+    "labelEn": "cup (cubes)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-746770",
+    "name": "usda:portion:746770:187508",
+    "quantity": 1,
+    "amount": 69,
+    "unit": "g",
+    "labelZh": "块（中等瓜的⅛）",
+    "labelEn": "wedge (⅛ of medium melon)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169134",
+    "name": "usda:portion:169134:84309",
+    "quantity": 0.5,
+    "amount": 87,
+    "unit": "g",
+    "labelZh": "杯（石榴籽粒）",
+    "labelEn": "cup (arils)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169941",
+    "name": "usda:portion:169941:85724",
+    "quantity": 1,
+    "amount": 168,
+    "unit": "g",
+    "labelZh": "个（直径2½英寸）",
+    "labelEn": "piece (2½ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173021",
+    "name": "usda:portion:173021:91821",
+    "quantity": 1,
+    "amount": 50,
+    "unit": "g",
+    "labelZh": "个（中等，直径2¼英寸）",
+    "labelEn": "piece (medium, 2¼ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173021",
+    "name": "usda:portion:173021:91820",
+    "quantity": 1,
+    "amount": 64,
+    "unit": "g",
+    "labelZh": "个（大，直径2½英寸）",
+    "labelEn": "piece (large, 2½ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169086",
+    "name": "usda:portion:169086:84201",
+    "quantity": 1,
+    "amount": 9.6,
+    "unit": "g",
+    "labelZh": "个（去皮去核）",
+    "labelEn": "piece (without refuse)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169086",
+    "name": "usda:portion:169086:84200",
+    "quantity": 1,
+    "amount": 190,
+    "unit": "g",
+    "labelZh": "杯（果肉）",
+    "labelEn": "cup (edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169089",
+    "name": "usda:portion:169089:84204",
+    "quantity": 1,
+    "amount": 3.2,
+    "unit": "g",
+    "labelZh": "个（去皮去核）",
+    "labelEn": "piece (without refuse)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169926",
+    "name": "usda:portion:169926:85692",
+    "quantity": 1,
+    "amount": 145,
+    "unit": "g",
+    "labelZh": "杯（1英寸块）",
+    "labelEn": "cup (1 in pieces)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170169",
+    "name": "usda:portion:170169:86163",
+    "quantity": 1,
+    "amount": 80,
+    "unit": "g",
+    "labelZh": "杯（椰肉丝）",
+    "labelEn": "cup (shredded flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169979",
+    "name": "usda:portion:169979:85809",
+    "quantity": 1,
+    "amount": 76,
+    "unit": "g",
+    "labelZh": "杯（切丝）",
+    "labelEn": "cup (shredded)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-323505",
+    "name": "usda:portion:323505:119057",
+    "quantity": 1,
+    "amount": 20.6,
+    "unit": "g",
+    "labelZh": "杯（约1英寸块）",
+    "labelEn": "cup (about 1 in pieces)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170106",
+    "name": "usda:portion:170106:86059",
+    "quantity": 0.5,
+    "amount": 75,
+    "unit": "g",
+    "labelZh": "杯（切碎或切丁）",
+    "labelEn": "cup (chopped or diced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170419",
+    "name": "usda:portion:170419:86613",
+    "quantity": 1,
+    "amount": 145,
+    "unit": "g",
+    "labelZh": "杯（豌豆仁）",
+    "labelEn": "cup (peas)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168448",
+    "name": "usda:portion:168448:83112",
+    "quantity": 1,
+    "amount": 116,
+    "unit": "g",
+    "labelZh": "杯（1英寸块）",
+    "labelEn": "cup (1 in cubes)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168451",
+    "name": "usda:portion:168451:83116",
+    "quantity": 1,
+    "amount": 338,
+    "unit": "g",
+    "labelZh": "根（长7英寸）",
+    "labelEn": "piece (7 in long)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168451",
+    "name": "usda:portion:168451:83115",
+    "quantity": 1,
+    "amount": 116,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (slices)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169246",
+    "name": "usda:portion:169246:84503",
+    "quantity": 1,
+    "amount": 89,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169246",
+    "name": "usda:portion:169246:84505",
+    "quantity": 1,
+    "amount": 6,
+    "unit": "g",
+    "labelZh": "片",
+    "labelEn": "slice"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170005",
+    "name": "usda:portion:170005:85881",
+    "quantity": 1,
+    "amount": 15,
+    "unit": "g",
+    "labelZh": "根（中等，长4⅛英寸）",
+    "labelEn": "piece (medium, 4⅛ in long)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170005",
+    "name": "usda:portion:170005:85878",
+    "quantity": 1,
+    "amount": 100,
+    "unit": "g",
+    "labelZh": "杯（切碎）",
+    "labelEn": "cup (chopped)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169251",
+    "name": "usda:portion:169251:84529",
+    "quantity": 1,
+    "amount": 18,
+    "unit": "g",
+    "labelZh": "朵（中等）",
+    "labelEn": "piece (medium)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169251",
+    "name": "usda:portion:169251:84527",
+    "quantity": 1,
+    "amount": 96,
+    "unit": "g",
+    "labelZh": "杯（整朵）",
+    "labelEn": "cup (whole)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169242",
+    "name": "usda:portion:169242:84500",
+    "quantity": 1,
+    "amount": 19,
+    "unit": "g",
+    "labelZh": "朵（USDA整朵参考）",
+    "labelEn": "piece (whole, USDA reference)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168580",
+    "name": "usda:portion:168580:83363",
+    "quantity": 1,
+    "amount": 86,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (sliced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169382",
+    "name": "usda:portion:169382:84760",
+    "quantity": 1,
+    "amount": 64,
+    "unit": "g",
+    "labelZh": "杯（整根）",
+    "labelEn": "cup (whole)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169999",
+    "name": "usda:portion:169999:85851",
+    "quantity": 1,
+    "amount": 103,
+    "unit": "g",
+    "labelZh": "穗（中等，长6¾–7½英寸，可食粒）",
+    "labelEn": "ear (medium, 6¾–7½ in, edible kernels)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169999",
+    "name": "usda:portion:169999:85853",
+    "quantity": 1,
+    "amount": 149,
+    "unit": "g",
+    "labelZh": "杯（玉米粒）",
+    "labelEn": "cup (cut kernels)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170420",
+    "name": "usda:portion:170420:86614",
+    "quantity": 1,
+    "amount": 160,
+    "unit": "g",
+    "labelZh": "杯（豌豆仁）",
+    "labelEn": "cup (peas)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-167844",
+    "name": "usda:portion:167844:82077",
+    "quantity": 1,
+    "amount": 135,
+    "unit": "g",
+    "labelZh": "杯（切丁）",
+    "labelEn": "cup (diced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-171113",
+    "name": "usda:portion:171113:87996",
+    "quantity": 1,
+    "amount": 174,
+    "unit": "g",
+    "labelZh": "杯（熟肉切块）",
+    "labelEn": "cup (cooked, chopped or diced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-171113",
+    "name": "usda:portion:171113:87998",
+    "quantity": 1,
+    "amount": 75,
+    "unit": "g",
+    "labelZh": "腿份（去骨去皮）",
+    "labelEn": "leg (bone and skin removed)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174219",
+    "name": "usda:portion:174219:93962",
+    "quantity": 1,
+    "amount": 50,
+    "unit": "g",
+    "labelZh": "只（中等，去壳肉）",
+    "labelEn": "piece (medium, edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174214",
+    "name": "usda:portion:174214:93950",
+    "quantity": 1,
+    "amount": 14.5,
+    "unit": "g",
+    "labelZh": "只（中等，去壳肉）",
+    "labelEn": "piece (medium, edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174216",
+    "name": "usda:portion:174216:93957",
+    "quantity": 1,
+    "amount": 16,
+    "unit": "g",
+    "labelZh": "只（中等，去壳肉）",
+    "labelEn": "piece (medium, edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174216",
+    "name": "usda:portion:174216:93954",
+    "quantity": 1,
+    "amount": 150,
+    "unit": "g",
+    "labelZh": "杯（去壳肉）",
+    "labelEn": "cup (edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174250",
+    "name": "usda:portion:174250:94021",
+    "quantity": 1,
+    "amount": 25,
+    "unit": "g",
+    "labelZh": "只（中等，去壳肉）",
+    "labelEn": "piece (medium, edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-171975",
+    "name": "usda:portion:171975:89662",
+    "quantity": 20,
+    "amount": 190,
+    "unit": "g",
+    "labelZh": "只（小，去壳肉）",
+    "labelEn": "piece (small, edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174205",
+    "name": "usda:portion:174205:93929",
+    "quantity": 1,
+    "amount": 135,
+    "unit": "g",
+    "labelZh": "杯（未压实蟹肉）",
+    "labelEn": "cup (not packed crab meat)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174209",
+    "name": "usda:portion:174209:93937",
+    "quantity": 1,
+    "amount": 145,
+    "unit": "g",
+    "labelZh": "杯（龙虾肉）",
+    "labelEn": "cup (lobster meat)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168930",
+    "name": "usda:portion:168930:84018",
+    "quantity": 1,
+    "amount": 186,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168932",
+    "name": "usda:portion:168932:84020",
+    "quantity": 1,
+    "amount": 205,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169704",
+    "name": "usda:portion:169704:85378",
+    "quantity": 1,
+    "amount": 202,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169711",
+    "name": "usda:portion:169711:85385",
+    "quantity": 1,
+    "amount": 174,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168871",
+    "name": "usda:portion:168871:83921",
+    "quantity": 1,
+    "amount": 174,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168917",
+    "name": "usda:portion:168917:83990",
+    "quantity": 1,
+    "amount": 185,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170686",
+    "name": "usda:portion:170686:87082",
+    "quantity": 1,
+    "amount": 168,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170285",
+    "name": "usda:portion:170285:86368",
+    "quantity": 1,
+    "amount": 157,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168909",
+    "name": "usda:portion:168909:83962",
+    "quantity": 1,
+    "amount": 176,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168914",
+    "name": "usda:portion:168914:83974",
+    "quantity": 1,
+    "amount": 176,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169737",
+    "name": "usda:portion:169737:85420",
+    "quantity": 1,
+    "amount": 124,
+    "unit": "g",
+    "labelZh": "杯（长面，未压实）",
+    "labelEn": "cup (spaghetti, not packed)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170028",
+    "name": "usda:portion:170028:85927",
+    "quantity": 1,
+    "amount": 213,
+    "unit": "g",
+    "labelZh": "个（中等，直径约2¼–3¼英寸）",
+    "labelEn": "piece (medium, about 2¼–3¼ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170028",
+    "name": "usda:portion:170028:85925",
+    "quantity": 0.5,
+    "amount": 75,
+    "unit": "g",
+    "labelZh": "杯（切丁）",
+    "labelEn": "cup (diced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169308",
+    "name": "usda:portion:169308:84632",
+    "quantity": 1,
+    "amount": 104,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (sliced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170071",
+    "name": "usda:portion:170071:85996",
+    "quantity": 1,
+    "amount": 150,
+    "unit": "g",
+    "labelZh": "杯（切块）",
+    "labelEn": "cup (cubes)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-169985",
+    "name": "usda:portion:169985:85816",
+    "quantity": 1,
+    "amount": 206,
+    "unit": "g",
+    "labelZh": "杯（木薯肉）",
+    "labelEn": "cup (edible flesh)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170440",
+    "name": "usda:portion:170440:86653",
+    "quantity": 1,
+    "amount": 167,
+    "unit": "g",
+    "labelZh": "个（中等，直径2¼–3¼英寸）",
+    "labelEn": "piece (medium, 2¼–3¼ in diameter)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-170440",
+    "name": "usda:portion:170440:86651",
+    "quantity": 0.5,
+    "amount": 78,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168484",
+    "name": "usda:portion:168484:83173",
+    "quantity": 1,
+    "amount": 151,
+    "unit": "g",
+    "labelZh": "个（中等，去皮）",
+    "labelEn": "piece (medium, peeled)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168484",
+    "name": "usda:portion:168484:83172",
+    "quantity": 1,
+    "amount": 328,
+    "unit": "g",
+    "labelZh": "杯（薯泥）",
+    "labelEn": "cup (mashed)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-168486",
+    "name": "usda:portion:168486:83176",
+    "quantity": 1,
+    "amount": 132,
+    "unit": "g",
+    "labelZh": "杯（切片）",
+    "labelEn": "cup (sliced)"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173728",
+    "name": "usda:portion:173728:93192",
+    "quantity": 1,
+    "amount": 230,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174257",
+    "name": "usda:portion:174257:94032",
+    "quantity": 1,
+    "amount": 202,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173735",
+    "name": "usda:portion:173735:93200",
+    "quantity": 1,
+    "amount": 172,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-175194",
+    "name": "usda:portion:175194:95822",
+    "quantity": 1,
+    "amount": 177,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-173757",
+    "name": "usda:portion:173757:93226",
+    "quantity": 1,
+    "amount": 164,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-172421",
+    "name": "usda:portion:172421:90596",
+    "quantity": 1,
+    "amount": 198,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  },
+  {
+    "foodId": "betterlumi:food:usda-fdc-174271",
+    "name": "usda:portion:174271:94059",
+    "quantity": 1,
+    "amount": 172,
+    "unit": "g",
+    "labelZh": "杯",
+    "labelEn": "cup"
+  }
+]

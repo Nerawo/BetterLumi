@@ -1,10 +1,10 @@
 import {test,expect} from '@playwright/test';
 
 for(const width of [390,430])for(const language of ['zh','en'])test(`Phase 2B categories, preparation, logging and persistence ${width} ${language}`,async({page})=>{
- await page.setViewportSize({width,height:844});await page.goto('/pantry');await expect(page.locator('.pantry-fab')).toBeVisible();await expect(page.locator('.pantry-row')).toHaveCount(32);
+ await page.setViewportSize({width,height:844});await page.goto('/pantry');await expect(page.locator('.pantry-fab')).toBeVisible();await expect(page.locator('.pantry-row')).toHaveCount(206);
  const original=await page.evaluate(async language=>{const d=await import('/src/domain.ts');await d.db.settings.put({key:'language',value:language});const item={...d.stamp(),name:'Fictional user chicken',nameZh:'测试食材',brand:'',basis:'100g',servingGrams:null,...d.unknownNutrition(),tagIds:['betterlumi:ingredient-tag:meat']};await d.db.ingredients.put(item);return {item,tables:(await d.exportAll()).tables}},language);await page.reload();
  const bar=page.locator('.page-pantry .ingredient-tag-bar'),search=page.locator('.page-pantry > .search input');
- for(const [zh,en,count] of [['肉类','Meat',6],['海鲜','Seafood',2],['谷物 / 主食','Grains & Staples',5],['豆类 / 豆制品','Legumes & Soy',2]] as const){await bar.getByRole('tab',{name:`${language==='zh'?zh:en} · ${language==='zh'?'BetterLumi 内置':'BetterLumi Built-in'}`,exact:true}).click();await expect(page.locator('.pantry-row')).toHaveCount(count);await expect(page.locator('.directory-list-heading > span').first()).toHaveText(language==='zh'?`${count} 项食材`:`${count} ingredients`)}
+ for(const [zh,en,count] of [['肉类','Meat',46],['海鲜','Seafood',33],['谷物 / 主食','Grains & Staples',36],['豆类 / 豆制品','Legumes & Soy',16]] as const){await bar.getByRole('tab',{name:`${language==='zh'?zh:en} · ${language==='zh'?'BetterLumi 内置':'BetterLumi Built-in'}`,exact:true}).click();await expect(page.locator('.pantry-row')).toHaveCount(count);await expect(page.locator('.directory-list-heading > span').first()).toHaveText(language==='zh'?`${count} 项食材`:`${count} ingredients`)}
  await bar.getByRole('tab').first().click();
  for(const [query,id,state] of [
   ['鸡胸','builtin-chicken-breast-roasted',language==='zh'?'烤熟':'Roasted'],

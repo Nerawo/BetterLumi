@@ -26,11 +26,11 @@ for(const width of [390,430])for(const language of ['zh','en'])test(`Phase 2A fo
   return {tables:(await d.exportAll()).tables,userId:user.id,historicalId:historical.id};
  },language);await page.reload();
  await page.locator('#today-tab-food').click();await page.locator('.meal-card .section-heading .primary').click();const meal=page.locator('.add-food-modal');await meal.locator('.source-tabs button').nth(1).click();await meal.locator('.ingredient-pick-trigger').click();const picker=page.locator('.ingredient-picker-modal');
- await expect(picker.locator('[data-reference-id]')).toHaveCount(32);await expect(picker.locator('[data-ingredient-id]')).toHaveCount(1);
+ await expect(picker.locator('[data-reference-id]')).toHaveCount(206);await expect(picker.locator('[data-ingredient-id]')).toHaveCount(1);
  const search=picker.locator('input[type=search]');
  for(const [query,id] of [['西兰花','builtin-broccoli-raw'],[' BROCCOLI ','builtin-broccoli-raw'],['酸奶','builtin-greek-yogurt-whole-plain'],['Greek yogurt','builtin-greek-yogurt-whole-plain'],['苹果','builtin-gala-apple-raw'],['Gala','builtin-gala-apple-raw']] as const){await search.fill(query);await expect(picker.locator(`[data-reference-id="${id}"]`)).toBeVisible()}
- await search.fill('vegetables');await expect(picker.locator('[data-reference-id]')).toHaveCount(8);
- await picker.getByRole('tab',{name:language==='zh'?'水果 · BetterLumi 内置':'Fruits · BetterLumi Built-in',exact:true}).click();await expect(picker.locator('.ingredient-picker-result')).toHaveCount(0);await search.fill('');await expect(picker.locator('[data-reference-id]')).toHaveCount(4);
+ await search.fill('vegetables');await expect(picker.locator('[data-reference-id]')).toHaveCount(38);
+ await picker.getByRole('tab',{name:language==='zh'?'水果 · BetterLumi 内置':'Fruits · BetterLumi Built-in',exact:true}).click();await expect(picker.locator('.ingredient-picker-result')).toHaveCount(0);await search.fill('');await expect(picker.locator('[data-reference-id]')).toHaveCount(32);
  await picker.locator('[role=tab]').first().click();await picker.getByRole('tab',{name:'Fictional custom tag',exact:true}).click();await expect(picker.locator('[data-reference-id]')).toHaveCount(0);await expect(picker.locator('[data-ingredient-id]')).toHaveCount(1);await picker.locator('[role=tab]').first().click();
  await search.fill('cucumber');await expect(picker.locator('[data-reference-id="builtin-cucumber-raw"]')).toContainText(language==='zh'?'带皮，生':'With peel, raw');
  await search.fill('broccoli');await expect(picker.locator('.ingredient-picker-result').first()).toHaveAttribute('data-ingredient-id',original.userId);

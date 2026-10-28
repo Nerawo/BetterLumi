@@ -1,0 +1,4509 @@
+{
+  "totalFoods": 206,
+  "foodsWithUnits": 79,
+  "oneUnit": 54,
+  "twoUnits": 25,
+  "gramOnly": 127,
+  "totalHouseholdUnits": 104,
+  "byCategory": {
+    "vegetables": {
+      "total": 38,
+      "withUnits": 18,
+      "units": 25
+    },
+    "fruits": {
+      "total": 32,
+      "withUnits": 18,
+      "units": 27
+    },
+    "dairyEggs": {
+      "total": 3,
+      "withUnits": 2,
+      "units": 2
+    },
+    "meat": {
+      "total": 45,
+      "withUnits": 3,
+      "units": 5
+    },
+    "seafood": {
+      "total": 33,
+      "withUnits": 7,
+      "units": 8
+    },
+    "grains-staples": {
+      "total": 36,
+      "withUnits": 20,
+      "units": 24
+    },
+    "legumes-soy": {
+      "total": 16,
+      "withUnits": 9,
+      "units": 9
+    },
+    "condiments-other": {
+      "total": 3,
+      "withUnits": 2,
+      "units": 4
+    }
+  },
+  "gramOnlyFoods": [
+    {
+      "foodId": "builtin-carrot-raw",
+      "fdcId": "2258586",
+      "name": "Carrot",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-spinach-raw",
+      "fdcId": "1999633",
+      "name": "Spinach",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-roma-tomato-raw",
+      "fdcId": "1999634",
+      "name": "Roma Tomato",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-cucumber-raw",
+      "fdcId": "2346406",
+      "name": "Cucumber",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-gala-apple-raw",
+      "fdcId": "1750341",
+      "name": "Gala Apple",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-strawberry-raw",
+      "fdcId": "2346409",
+      "name": "Strawberry",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-blueberry-raw",
+      "fdcId": "2346411",
+      "name": "Blueberry",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-greek-yogurt-whole-plain",
+      "fdcId": "2259794",
+      "name": "Plain Whole-Milk Greek Yogurt",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-ground-beef-90-lean-broiled",
+      "fdcId": "174031",
+      "name": "90% Lean Ground Beef",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-pork-tenderloin-roasted",
+      "fdcId": "168250",
+      "name": "Pork Tenderloin",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-atlantic-salmon-farmed-cooked",
+      "fdcId": "175168",
+      "name": "Atlantic Salmon (farmed)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-shrimp-cooked",
+      "fdcId": "175180",
+      "name": "Shrimp",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-oats-dry",
+      "fdcId": "173904",
+      "name": "Oats",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": "168483",
+      "name": "Sweet Potato",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": "169736",
+      "name": "Dry Pasta",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-ground-beef-85-lean-raw",
+      "fdcId": "171796",
+      "name": "85% Lean Ground Beef",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-pork-belly-raw",
+      "fdcId": "167812",
+      "name": "Fresh Pork Belly",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "builtin-red-table-wine",
+      "fdcId": "173190",
+      "name": "Red Table Wine",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710832",
+      "fdcId": "2710832",
+      "name": "Seedless mandarin (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346412",
+      "fdcId": "2346412",
+      "name": "Red seedless grapes (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346410",
+      "fdcId": "2346410",
+      "name": "Raspberries (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346399",
+      "fdcId": "2346399",
+      "name": "Dark red sweet cherries (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710837",
+      "fdcId": "2710837",
+      "name": "Black plum (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710815",
+      "fdcId": "2710815",
+      "name": "Apricot (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710833",
+      "fdcId": "2710833",
+      "name": "Tommy Atkins mango (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346398",
+      "fdcId": "2346398",
+      "name": "Pineapple (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710831",
+      "fdcId": "2710831",
+      "name": "Green kiwifruit (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710816",
+      "fdcId": "2710816",
+      "name": "Honeydew melon (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710824",
+      "fdcId": "2710824",
+      "name": "Hass avocado (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685573",
+      "fdcId": "2685573",
+      "name": "Cauliflower (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346407",
+      "fdcId": "2346407",
+      "name": "Green cabbage (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685572",
+      "fdcId": "2685572",
+      "name": "Bok choy (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346388",
+      "fdcId": "2346388",
+      "name": "Iceberg lettuce (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346389",
+      "fdcId": "2346389",
+      "name": "Romaine lettuce (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-1104647",
+      "fdcId": "1104647",
+      "name": "Garlic (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2258590",
+      "fdcId": "2258590",
+      "name": "Red bell pepper (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685577",
+      "fdcId": "2685577",
+      "name": "Eggplant (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685568",
+      "fdcId": "2685568",
+      "name": "Zucchini (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710823",
+      "fdcId": "2710823",
+      "name": "Green asparagus (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346400",
+      "fdcId": "2346400",
+      "name": "Green beans (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685570",
+      "fdcId": "2685570",
+      "name": "Butternut squash (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2747665",
+      "fdcId": "2747665",
+      "name": "Red radish (raw)",
+      "reason": "No official portions in exact FDC record."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685576",
+      "fdcId": "2685576",
+      "name": "Beetroot (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685575",
+      "fdcId": "2685575",
+      "name": "Brussels sprouts (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710826",
+      "fdcId": "2710826",
+      "name": "Sweet corn kernels (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646170",
+      "fdcId": "2646170",
+      "name": "Chicken breast (raw, skinless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646171",
+      "fdcId": "2646171",
+      "name": "Chicken thigh (raw, skinless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172385",
+      "fdcId": "172385",
+      "name": "Chicken thigh (raw, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172373",
+      "fdcId": "172373",
+      "name": "Chicken drumstick (raw, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172390",
+      "fdcId": "172390",
+      "name": "Chicken wings (raw, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171452",
+      "fdcId": "171452",
+      "name": "Chicken skin (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727573",
+      "fdcId": "2727573",
+      "name": "Beef tenderloin steak (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727574",
+      "fdcId": "2727574",
+      "name": "Beef top sirloin steak (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646172",
+      "fdcId": "2646172",
+      "name": "Beef ribeye steak (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170826",
+      "fdcId": "170826",
+      "name": "Beef short ribs (raw, boneless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168664",
+      "fdcId": "168664",
+      "name": "Beef brisket (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646174",
+      "fdcId": "2646174",
+      "name": "Beef chuck roast (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646175",
+      "fdcId": "2646175",
+      "name": "Beef flank steak (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514743",
+      "fdcId": "2514743",
+      "name": "90% lean ground beef (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514744",
+      "fdcId": "2514744",
+      "name": "80% lean ground beef (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646169",
+      "fdcId": "2646169",
+      "name": "Pork tenderloin (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646168",
+      "fdcId": "2646168",
+      "name": "Pork loin (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167843",
+      "fdcId": "167843",
+      "name": "Pork shoulder (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167853",
+      "fdcId": "167853",
+      "name": "Pork spareribs (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514745",
+      "fdcId": "2514745",
+      "name": "Ground pork (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172486",
+      "fdcId": "172486",
+      "name": "Lamb leg (raw, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172493",
+      "fdcId": "172493",
+      "name": "Lamb rib chop (raw, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174515",
+      "fdcId": "174515",
+      "name": "Turkey breast (raw, skinless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172388",
+      "fdcId": "172388",
+      "name": "Chicken thigh (roasted, skinless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173625",
+      "fdcId": "173625",
+      "name": "Chicken thigh (roasted, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173612",
+      "fdcId": "173612",
+      "name": "Chicken drumstick (roasted, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173630",
+      "fdcId": "173630",
+      "name": "Chicken wings (roasted, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171055",
+      "fdcId": "171055",
+      "name": "Chicken skin (roasted)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170237",
+      "fdcId": "170237",
+      "name": "Beef tenderloin steak (grilled)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171209",
+      "fdcId": "171209",
+      "name": "Beef ribeye steak (grilled, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168665",
+      "fdcId": "168665",
+      "name": "Beef brisket (braised)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169569",
+      "fdcId": "169569",
+      "name": "Beef short ribs (braised, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171797",
+      "fdcId": "171797",
+      "name": "80% lean beef patty (broiled)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167854",
+      "fdcId": "167854",
+      "name": "Pork spareribs (braised)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172487",
+      "fdcId": "172487",
+      "name": "Lamb leg (roasted, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172494",
+      "fdcId": "172494",
+      "name": "Lamb rib chop (broiled, lean)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171510",
+      "fdcId": "171510",
+      "name": "White Pekin duck breast (roasted, skin-on)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174516",
+      "fdcId": "174516",
+      "name": "Turkey breast (roasted, skinless)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684441",
+      "fdcId": "2684441",
+      "name": "Farmed Atlantic salmon (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684444",
+      "fdcId": "2684444",
+      "name": "Wild Atlantic cod (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684442",
+      "fdcId": "2684442",
+      "name": "Farmed tilapia (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175159",
+      "fdcId": "175159",
+      "name": "Yellowfin tuna (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175142",
+      "fdcId": "175142",
+      "name": "Sea bass (raw, mixed species)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173717",
+      "fdcId": "173717",
+      "name": "Farmed rainbow trout (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175119",
+      "fdcId": "175119",
+      "name": "Atlantic mackerel (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684443",
+      "fdcId": "2684443",
+      "name": "Farmed shrimp (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174220",
+      "fdcId": "174220",
+      "name": "Scallops (raw, mixed species)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174223",
+      "fdcId": "174223",
+      "name": "Squid (raw, mixed species)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174218",
+      "fdcId": "174218",
+      "name": "Common octopus (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174204",
+      "fdcId": "174204",
+      "name": "Blue crab meat (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171969",
+      "fdcId": "171969",
+      "name": "Queen crab meat (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174208",
+      "fdcId": "174208",
+      "name": "Northern lobster meat (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171956",
+      "fdcId": "171956",
+      "name": "Atlantic cod (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175177",
+      "fdcId": "175177",
+      "name": "Tilapia (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172006",
+      "fdcId": "172006",
+      "name": "Yellowfin tuna (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173694",
+      "fdcId": "173694",
+      "name": "Sea bass (cooked, mixed species)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173718",
+      "fdcId": "173718",
+      "name": "Farmed rainbow trout (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175120",
+      "fdcId": "175120",
+      "name": "Atlantic mackerel (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167742",
+      "fdcId": "167742",
+      "name": "Scallops (steamed)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174217",
+      "fdcId": "174217",
+      "name": "Blue mussels (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174249",
+      "fdcId": "174249",
+      "name": "Common octopus (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172008",
+      "fdcId": "172008",
+      "name": "Queen crab meat (cooked)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512381",
+      "fdcId": "2512381",
+      "name": "Long-grain white rice (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169760",
+      "fdcId": "169760",
+      "name": "Medium-grain white rice (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168931",
+      "fdcId": "168931",
+      "name": "Short-grain white rice (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512380",
+      "fdcId": "2512380",
+      "name": "Long-grain brown rice (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168883",
+      "fdcId": "168883",
+      "name": "Glutinous rice (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169702",
+      "fdcId": "169702",
+      "name": "Millet (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168874",
+      "fdcId": "168874",
+      "name": "Quinoa (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170685",
+      "fdcId": "170685",
+      "name": "Roasted buckwheat groats (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170284",
+      "fdcId": "170284",
+      "name": "Pearled barley (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168908",
+      "fdcId": "168908",
+      "name": "Somen wheat noodles (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169742",
+      "fdcId": "169742",
+      "name": "Rice noodles (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346404",
+      "fdcId": "2346404",
+      "name": "Orange-flesh sweet potato (raw)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173727",
+      "fdcId": "173727",
+      "name": "Adzuki beans (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174256",
+      "fdcId": "174256",
+      "name": "Mung beans (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173734",
+      "fdcId": "173734",
+      "name": "Black beans (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173744",
+      "fdcId": "173744",
+      "name": "Red kidney beans (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644282",
+      "fdcId": "2644282",
+      "name": "Chickpeas (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644283",
+      "fdcId": "2644283",
+      "name": "Lentils (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174270",
+      "fdcId": "174270",
+      "name": "Soybeans (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170286",
+      "fdcId": "170286",
+      "name": "Buckwheat (dry)",
+      "reason": "No suitable reviewed household portion; regulatory/weight-only/ambiguous or variable-cut records remain excluded."
+    }
+  ],
+  "selected": [
+    {
+      "foodId": "builtin-broccoli-raw",
+      "fdcId": 747447,
+      "portionId": 187633,
+      "labelZh": "杯（切碎）",
+      "labelEn": "cup (chopped)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-banana-raw",
+      "fdcId": 1105314,
+      "portionId": 267795,
+      "labelZh": "根（去皮）",
+      "labelEn": "piece (peeled)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-whole-egg",
+      "fdcId": 748967,
+      "portionId": 193781,
+      "labelZh": "个（大号，去壳）",
+      "labelEn": "egg (large, shell removed)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-whole-milk",
+      "fdcId": 746782,
+      "portionId": 187530,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-chicken-breast-roasted",
+      "fdcId": 171477,
+      "portionId": 88817,
+      "labelZh": "杯（切块）",
+      "labelEn": "cup (chopped or diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-chicken-breast-roasted",
+      "fdcId": 171477,
+      "portionId": 88819,
+      "labelZh": "整胸份（去骨去皮）",
+      "labelEn": "breast (bone and skin removed)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-white-rice-cooked",
+      "fdcId": 168878,
+      "portionId": 83928,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-potato-baked",
+      "fdcId": 170093,
+      "portionId": 86029,
+      "labelZh": "个（中等）",
+      "labelEn": "piece (medium)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-potato-baked",
+      "fdcId": 170093,
+      "portionId": 86028,
+      "labelZh": "个（大）",
+      "labelEn": "piece (large)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-edamame-prepared",
+      "fdcId": 168411,
+      "portionId": 83053,
+      "labelZh": "杯（豆仁）",
+      "labelEn": "cup (shelled beans)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-tofu-firm-calcium-set",
+      "fdcId": 172475,
+      "portionId": 90683,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85860,
+      "labelZh": "个（中等，直径2½英寸）",
+      "labelEn": "piece (medium, 2½ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85855,
+      "labelZh": "杯（切碎）",
+      "labelEn": "cup (chopped)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85828,
+      "labelZh": "根（中等，长7½–8英寸）",
+      "labelEn": "stalk (medium, 7½–8 in long)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85824,
+      "labelZh": "杯（切碎）",
+      "labelEn": "cup (chopped)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-tomato-puree",
+      "fdcId": 170460,
+      "portionId": 86700,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-tomato-paste",
+      "fdcId": 170459,
+      "portionId": 86698,
+      "labelZh": "汤匙",
+      "labelEn": "tablespoon",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-tomato-paste",
+      "fdcId": 170459,
+      "portionId": 86697,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-olive-oil",
+      "fdcId": 171413,
+      "portionId": 88667,
+      "labelZh": "汤匙",
+      "labelEn": "tablespoon",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "builtin-olive-oil",
+      "fdcId": 171413,
+      "portionId": 88669,
+      "labelZh": "茶匙",
+      "labelEn": "teaspoon",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "portionId": 187517,
+      "labelZh": "个（中等）",
+      "labelEn": "piece (medium)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "portionId": 187515,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (slices)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746771",
+      "fdcId": 746771,
+      "portionId": 187513,
+      "labelZh": "个（直径2⅞英寸）",
+      "labelEn": "piece (2⅞ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746771",
+      "fdcId": 746771,
+      "portionId": 187512,
+      "labelZh": "杯（橘瓣，去膜）",
+      "labelEn": "cup (sections, no membranes)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173033",
+      "fdcId": 173033,
+      "portionId": 91840,
+      "labelZh": "个（中等，直径约4英寸）",
+      "labelEn": "piece (medium, about 4 in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173033",
+      "fdcId": 173033,
+      "portionId": 91838,
+      "labelZh": "杯（瓣，含汁）",
+      "labelEn": "cup (sections, with juice)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "portionId": 81883,
+      "labelZh": "个（直径2⅛英寸，去皮）",
+      "labelEn": "piece (2⅛ in diameter, peeled)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "portionId": 81882,
+      "labelZh": "杯（瓣）",
+      "labelEn": "cup (sections)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168155",
+      "fdcId": 168155,
+      "portionId": 82570,
+      "labelZh": "个（直径2英寸）",
+      "labelEn": "piece (2 in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173946",
+      "fdcId": 173946,
+      "portionId": 93521,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119284,
+      "labelZh": "个（中等，直径2⅔英寸）",
+      "labelEn": "piece (medium, 2⅔ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119282,
+      "labelZh": "杯（带皮切片）",
+      "labelEn": "cup (slices with skin)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 119532,
+      "labelZh": "个（直径2½英寸）",
+      "labelEn": "piece (2½ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 119530,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (slices)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81933,
+      "labelZh": "杯（切丁）",
+      "labelEn": "cup (diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187503,
+      "labelZh": "杯（切块）",
+      "labelEn": "cup (cubes)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187508,
+      "labelZh": "块（中等瓜的⅛）",
+      "labelEn": "wedge (⅛ of medium melon)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169134",
+      "fdcId": 169134,
+      "portionId": 84309,
+      "labelZh": "杯（石榴籽粒）",
+      "labelEn": "cup (arils)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169941",
+      "fdcId": 169941,
+      "portionId": 85724,
+      "labelZh": "个（直径2½英寸）",
+      "labelEn": "piece (2½ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173021",
+      "fdcId": 173021,
+      "portionId": 91821,
+      "labelZh": "个（中等，直径2¼英寸）",
+      "labelEn": "piece (medium, 2¼ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173021",
+      "fdcId": 173021,
+      "portionId": 91820,
+      "labelZh": "个（大，直径2½英寸）",
+      "labelEn": "piece (large, 2½ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169086",
+      "fdcId": 169086,
+      "portionId": 84201,
+      "labelZh": "个（去皮去核）",
+      "labelEn": "piece (without refuse)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169086",
+      "fdcId": 169086,
+      "portionId": 84200,
+      "labelZh": "杯（果肉）",
+      "labelEn": "cup (edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169089",
+      "fdcId": 169089,
+      "portionId": 84204,
+      "labelZh": "个（去皮去核）",
+      "labelEn": "piece (without refuse)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169926",
+      "fdcId": 169926,
+      "portionId": 85692,
+      "labelZh": "杯（1英寸块）",
+      "labelEn": "cup (1 in pieces)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170169",
+      "fdcId": 170169,
+      "portionId": 86163,
+      "labelZh": "杯（椰肉丝）",
+      "labelEn": "cup (shredded flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169979",
+      "fdcId": 169979,
+      "portionId": 85809,
+      "labelZh": "杯（切丝）",
+      "labelEn": "cup (shredded)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-323505",
+      "fdcId": 323505,
+      "portionId": 119057,
+      "labelZh": "杯（约1英寸块）",
+      "labelEn": "cup (about 1 in pieces)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170106",
+      "fdcId": 170106,
+      "portionId": 86059,
+      "labelZh": "杯（切碎或切丁）",
+      "labelEn": "cup (chopped or diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170419",
+      "fdcId": 170419,
+      "portionId": 86613,
+      "labelZh": "杯（豌豆仁）",
+      "labelEn": "cup (peas)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168448",
+      "fdcId": 168448,
+      "portionId": 83112,
+      "labelZh": "杯（1英寸块）",
+      "labelEn": "cup (1 in cubes)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168451",
+      "fdcId": 168451,
+      "portionId": 83116,
+      "labelZh": "根（长7英寸）",
+      "labelEn": "piece (7 in long)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168451",
+      "fdcId": 168451,
+      "portionId": 83115,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (slices)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169246",
+      "fdcId": 169246,
+      "portionId": 84503,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169246",
+      "fdcId": 169246,
+      "portionId": 84505,
+      "labelZh": "片",
+      "labelEn": "slice",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "portionId": 85881,
+      "labelZh": "根（中等，长4⅛英寸）",
+      "labelEn": "piece (medium, 4⅛ in long)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "portionId": 85878,
+      "labelZh": "杯（切碎）",
+      "labelEn": "cup (chopped)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84529,
+      "labelZh": "朵（中等）",
+      "labelEn": "piece (medium)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84527,
+      "labelZh": "杯（整朵）",
+      "labelEn": "cup (whole)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169242",
+      "fdcId": 169242,
+      "portionId": 84500,
+      "labelZh": "朵（USDA整朵参考）",
+      "labelEn": "piece (whole, USDA reference)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168580",
+      "fdcId": 168580,
+      "portionId": 83363,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (sliced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169382",
+      "fdcId": 169382,
+      "portionId": 84760,
+      "labelZh": "杯（整根）",
+      "labelEn": "cup (whole)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "portionId": 85851,
+      "labelZh": "穗（中等，长6¾–7½英寸，可食粒）",
+      "labelEn": "ear (medium, 6¾–7½ in, edible kernels)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "portionId": 85853,
+      "labelZh": "杯（玉米粒）",
+      "labelEn": "cup (cut kernels)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170420",
+      "fdcId": 170420,
+      "portionId": 86614,
+      "labelZh": "杯（豌豆仁）",
+      "labelEn": "cup (peas)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167844",
+      "fdcId": 167844,
+      "portionId": 82077,
+      "labelZh": "杯（切丁）",
+      "labelEn": "cup (diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171113",
+      "fdcId": 171113,
+      "portionId": 87996,
+      "labelZh": "杯（熟肉切块）",
+      "labelEn": "cup (cooked, chopped or diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171113",
+      "fdcId": 171113,
+      "portionId": 87998,
+      "labelZh": "腿份（去骨去皮）",
+      "labelEn": "leg (bone and skin removed)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174219",
+      "fdcId": 174219,
+      "portionId": 93962,
+      "labelZh": "只（中等，去壳肉）",
+      "labelEn": "piece (medium, edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93950,
+      "labelZh": "只（中等，去壳肉）",
+      "labelEn": "piece (medium, edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93957,
+      "labelZh": "只（中等，去壳肉）",
+      "labelEn": "piece (medium, edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93954,
+      "labelZh": "杯（去壳肉）",
+      "labelEn": "cup (edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174250",
+      "fdcId": 174250,
+      "portionId": 94021,
+      "labelZh": "只（中等，去壳肉）",
+      "labelEn": "piece (medium, edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171975",
+      "fdcId": 171975,
+      "portionId": 89662,
+      "labelZh": "只（小，去壳肉）",
+      "labelEn": "piece (small, edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174205",
+      "fdcId": 174205,
+      "portionId": 93929,
+      "labelZh": "杯（未压实蟹肉）",
+      "labelEn": "cup (not packed crab meat)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174209",
+      "fdcId": 174209,
+      "portionId": 93937,
+      "labelZh": "杯（龙虾肉）",
+      "labelEn": "cup (lobster meat)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168930",
+      "fdcId": 168930,
+      "portionId": 84018,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168932",
+      "fdcId": 168932,
+      "portionId": 84020,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169704",
+      "fdcId": 169704,
+      "portionId": 85378,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169711",
+      "fdcId": 169711,
+      "portionId": 85385,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168871",
+      "fdcId": 168871,
+      "portionId": 83921,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168917",
+      "fdcId": 168917,
+      "portionId": 83990,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170686",
+      "fdcId": 170686,
+      "portionId": 87082,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170285",
+      "fdcId": 170285,
+      "portionId": 86368,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168909",
+      "fdcId": 168909,
+      "portionId": 83962,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168914",
+      "fdcId": 168914,
+      "portionId": 83974,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85420,
+      "labelZh": "杯（长面，未压实）",
+      "labelEn": "cup (spaghetti, not packed)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170028",
+      "fdcId": 170028,
+      "portionId": 85927,
+      "labelZh": "个（中等，直径约2¼–3¼英寸）",
+      "labelEn": "piece (medium, about 2¼–3¼ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170028",
+      "fdcId": 170028,
+      "portionId": 85925,
+      "labelZh": "杯（切丁）",
+      "labelEn": "cup (diced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169308",
+      "fdcId": 169308,
+      "portionId": 84632,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (sliced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170071",
+      "fdcId": 170071,
+      "portionId": 85996,
+      "labelZh": "杯（切块）",
+      "labelEn": "cup (cubes)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169985",
+      "fdcId": 169985,
+      "portionId": 85816,
+      "labelZh": "杯（木薯肉）",
+      "labelEn": "cup (edible flesh)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170440",
+      "fdcId": 170440,
+      "portionId": 86653,
+      "labelZh": "个（中等，直径2¼–3¼英寸）",
+      "labelEn": "piece (medium, 2¼–3¼ in diameter)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170440",
+      "fdcId": 170440,
+      "portionId": 86651,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168484",
+      "fdcId": 168484,
+      "portionId": 83173,
+      "labelZh": "个（中等，去皮）",
+      "labelEn": "piece (medium, peeled)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168484",
+      "fdcId": 168484,
+      "portionId": 83172,
+      "labelZh": "杯（薯泥）",
+      "labelEn": "cup (mashed)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168486",
+      "fdcId": 168486,
+      "portionId": 83176,
+      "labelZh": "杯（切片）",
+      "labelEn": "cup (sliced)",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173728",
+      "fdcId": 173728,
+      "portionId": 93192,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174257",
+      "fdcId": 174257,
+      "portionId": 94032,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173735",
+      "fdcId": 173735,
+      "portionId": 93200,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175194",
+      "fdcId": 175194,
+      "portionId": 95822,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173757",
+      "fdcId": 173757,
+      "portionId": 93226,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172421",
+      "fdcId": 172421,
+      "portionId": 90596,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174271",
+      "fdcId": 174271,
+      "portionId": 94059,
+      "labelZh": "杯",
+      "labelEn": "cup",
+      "edibleBasis": "Exact FDC record household gram weight for edible material without refuse; retain record preparation and portion modifier; no gross-weight/yield substitution.",
+      "status": "verified"
+    }
+  ],
+  "excluded": [
+    {
+      "foodId": "builtin-broccoli-raw",
+      "fdcId": 747447,
+      "portionId": 312822,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-carrot-raw",
+      "fdcId": 2258586,
+      "portionId": 312791,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-spinach-raw",
+      "fdcId": 1999633,
+      "portionId": 312805,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-roma-tomato-raw",
+      "fdcId": 1999634,
+      "portionId": 312806,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-cucumber-raw",
+      "fdcId": 2346406,
+      "portionId": 312785,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-banana-raw",
+      "fdcId": 1105314,
+      "portionId": 312674,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-gala-apple-raw",
+      "fdcId": 1750341,
+      "portionId": 312672,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-strawberry-raw",
+      "fdcId": 2346409,
+      "portionId": 312666,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-blueberry-raw",
+      "fdcId": 2346411,
+      "portionId": 312663,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-whole-egg",
+      "fdcId": 748967,
+      "portionId": 312625,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 50,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-greek-yogurt-whole-plain",
+      "fdcId": 2259794,
+      "portionId": 312623,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 170,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-chicken-breast-roasted",
+      "fdcId": 171477,
+      "portionId": 88818,
+      "officialDescription": "unit (yield from 1 lb ready-to-cook chicken) undetermined",
+      "amount": 1,
+      "gramWeight": 52,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "builtin-ground-beef-90-lean-broiled",
+      "fdcId": 174031,
+      "portionId": 93664,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-pork-tenderloin-roasted",
+      "fdcId": 168250,
+      "portionId": 82753,
+      "officialDescription": "roast undetermined",
+      "amount": 1,
+      "gramWeight": 402,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pork-tenderloin-roasted",
+      "fdcId": 168250,
+      "portionId": 82751,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-pork-tenderloin-roasted",
+      "fdcId": 168250,
+      "portionId": 82752,
+      "officialDescription": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse) undetermined",
+      "amount": 1,
+      "gramWeight": 333,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "builtin-atlantic-salmon-farmed-cooked",
+      "fdcId": 175168,
+      "portionId": 95789,
+      "officialDescription": "fillet undetermined",
+      "amount": 0.5,
+      "gramWeight": 178,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-atlantic-salmon-farmed-cooked",
+      "fdcId": 175168,
+      "portionId": 95788,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-shrimp-cooked",
+      "fdcId": 175180,
+      "portionId": 95807,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-oats-dry",
+      "fdcId": 173904,
+      "portionId": 93454,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 81,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-oats-dry",
+      "fdcId": 173904,
+      "portionId": 93455,
+      "officialDescription": "cup undetermined",
+      "amount": 0.33,
+      "gramWeight": 27,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-potato-baked",
+      "fdcId": 170093,
+      "portionId": 86027,
+      "officialDescription": "NLEA serving undetermined",
+      "amount": 1,
+      "gramWeight": 148,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-potato-baked",
+      "fdcId": 170093,
+      "portionId": 86030,
+      "officialDescription": "potato small undetermined",
+      "amount": 1,
+      "gramWeight": 138,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": 168483,
+      "portionId": 83169,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 180,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": 168483,
+      "portionId": 83171,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 60,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": 168483,
+      "portionId": 83168,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 200,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": 168483,
+      "portionId": 83170,
+      "officialDescription": "medium (2\" dia, 5\" long, raw) undetermined",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Ambiguous preparation or liquid/solid basis."
+    },
+    {
+      "foodId": "builtin-tofu-firm-calcium-set",
+      "fdcId": 172475,
+      "portionId": 90684,
+      "officialDescription": "block undetermined",
+      "amount": 0.25,
+      "gramWeight": 81,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85418,
+      "officialDescription": "cup shells undetermined",
+      "amount": 1,
+      "gramWeight": 64,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85413,
+      "officialDescription": "oz undetermined",
+      "amount": 2,
+      "gramWeight": 57,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85417,
+      "officialDescription": "cup rotini undetermined",
+      "amount": 1,
+      "gramWeight": 96,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85414,
+      "officialDescription": "cup elbows undetermined",
+      "amount": 1,
+      "gramWeight": 122,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85412,
+      "officialDescription": "cup spaghetti undetermined",
+      "amount": 1,
+      "gramWeight": 91,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85415,
+      "officialDescription": "cup penne undetermined",
+      "amount": 1,
+      "gramWeight": 95,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85416,
+      "officialDescription": "cup farfalle undetermined",
+      "amount": 1,
+      "gramWeight": 81,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "portionId": 85419,
+      "officialDescription": "cup lasagna undetermined",
+      "amount": 1,
+      "gramWeight": 90,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-ground-beef-85-lean-raw",
+      "fdcId": 171796,
+      "portionId": 89381,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-pork-belly-raw",
+      "fdcId": 167812,
+      "portionId": 82013,
+      "officialDescription": "lb undetermined",
+      "amount": 1,
+      "gramWeight": 453.6,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-pork-belly-raw",
+      "fdcId": 167812,
+      "portionId": 82012,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85861,
+      "officialDescription": "slice, medium (1/8\" thick) undetermined",
+      "amount": 1,
+      "gramWeight": 14,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85858,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 150,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85864,
+      "officialDescription": "rings undetermined",
+      "amount": 10,
+      "gramWeight": 60,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85857,
+      "officialDescription": "tbsp chopped undetermined",
+      "amount": 1,
+      "gramWeight": 10,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85856,
+      "officialDescription": "cup, sliced undetermined",
+      "amount": 1,
+      "gramWeight": 115,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85863,
+      "officialDescription": "slice, thin undetermined",
+      "amount": 1,
+      "gramWeight": 9,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85862,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 70,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "portionId": 85859,
+      "officialDescription": "slice, large (1/4\" thick) undetermined",
+      "amount": 1,
+      "gramWeight": 38,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85826,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 7.5,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85829,
+      "officialDescription": "stalk, small (5\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 17,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85830,
+      "officialDescription": "strip (4\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 4,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85825,
+      "officialDescription": "NLEA serving undetermined",
+      "amount": 1,
+      "gramWeight": 110,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "portionId": 85827,
+      "officialDescription": "stalk, large (11\"-12\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 64,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-tomato-puree",
+      "fdcId": 170460,
+      "portionId": 86701,
+      "officialDescription": "can (29 oz) (401 x 411) undetermined",
+      "amount": 1,
+      "gramWeight": 822,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-tomato-paste",
+      "fdcId": 170459,
+      "portionId": 86699,
+      "officialDescription": "can (6 oz) undetermined",
+      "amount": 1,
+      "gramWeight": 170,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-tomato-paste",
+      "fdcId": 170459,
+      "portionId": 86696,
+      "officialDescription": "cup undetermined",
+      "amount": 0.25,
+      "gramWeight": 66,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-olive-oil",
+      "fdcId": 171413,
+      "portionId": 88668,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 216,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "builtin-red-table-wine",
+      "fdcId": 173190,
+      "portionId": 92067,
+      "officialDescription": "serving (5 fl oz) undetermined",
+      "amount": 1,
+      "gramWeight": 147,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "builtin-red-table-wine",
+      "fdcId": 173190,
+      "portionId": 92066,
+      "officialDescription": "fl oz undetermined",
+      "amount": 1,
+      "gramWeight": 29.4,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "portionId": 187518,
+      "officialDescription": "large each",
+      "amount": 1,
+      "gramWeight": 230,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "portionId": 187516,
+      "officialDescription": "small each",
+      "amount": 1,
+      "gramWeight": 148,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "portionId": 312682,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746771",
+      "fdcId": 746771,
+      "portionId": 312681,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710832",
+      "fdcId": 2710832,
+      "portionId": 312659,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173033",
+      "fdcId": 173033,
+      "portionId": 91841,
+      "officialDescription": "small (approx 3-1/2\" dia) undetermined",
+      "amount": 0.5,
+      "gramWeight": 100,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173033",
+      "fdcId": 173033,
+      "portionId": 91839,
+      "officialDescription": "large (approx 4-1/2\" dia) undetermined",
+      "amount": 0.5,
+      "gramWeight": 166,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "portionId": 81884,
+      "officialDescription": "fruit (2-3/8\" dia) undetermined",
+      "amount": 1,
+      "gramWeight": 84,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "portionId": 81886,
+      "officialDescription": "NLEA serving undetermined",
+      "amount": 1,
+      "gramWeight": 58,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "portionId": 81885,
+      "officialDescription": "wedge or slice (1/8 of one 2-1/8\" dia lemon) undetermined",
+      "amount": 1,
+      "gramWeight": 7,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168155",
+      "fdcId": 168155,
+      "portionId": 82571,
+      "officialDescription": "NLEA serving undetermined",
+      "amount": 1,
+      "gramWeight": 67,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346412",
+      "fdcId": 2346412,
+      "portionId": 312662,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346410",
+      "fdcId": 2346410,
+      "portionId": 312665,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346399",
+      "fdcId": 2346399,
+      "portionId": 312660,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119283,
+      "officialDescription": "small (2-1/2\" dia) fruit",
+      "amount": 1,
+      "gramWeight": 147,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119285,
+      "officialDescription": "large (2-3/4\" dia) fruit",
+      "amount": 1,
+      "gramWeight": 173,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119286,
+      "officialDescription": "extra large (3\" dia) fruit",
+      "amount": 1,
+      "gramWeight": 225,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 119287,
+      "officialDescription": "NLEA  serving",
+      "amount": 1,
+      "gramWeight": 147,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "portionId": 312680,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 119531,
+      "officialDescription": "2-1/3\" dia each",
+      "amount": 1,
+      "gramWeight": 129,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 119533,
+      "officialDescription": "2-3/4\" dia each",
+      "amount": 1,
+      "gramWeight": 156,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 119534,
+      "officialDescription": "NLEA serving",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "portionId": 312679,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710837",
+      "fdcId": 2710837,
+      "portionId": 312652,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710815",
+      "fdcId": 2710815,
+      "portionId": 312651,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710833",
+      "fdcId": 2710833,
+      "portionId": 312656,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346398",
+      "fdcId": 2346398,
+      "portionId": 312661,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710831",
+      "fdcId": 2710831,
+      "portionId": 312658,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81937,
+      "officialDescription": "NLEA serving undetermined",
+      "amount": 1,
+      "gramWeight": 280,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81936,
+      "officialDescription": "watermelon balls undetermined",
+      "amount": 10,
+      "gramWeight": 122,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81932,
+      "officialDescription": "cup, balls undetermined",
+      "amount": 1,
+      "gramWeight": 154,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81935,
+      "officialDescription": "wedge (approx 1/16 of melon) undetermined",
+      "amount": 1,
+      "gramWeight": 286,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "portionId": 81934,
+      "officialDescription": "melon (15\" long x 7-1/2\" dia) undetermined",
+      "amount": 1,
+      "gramWeight": 4518,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187506,
+      "officialDescription": "large (1/8 of large melon) wedge",
+      "amount": 1,
+      "gramWeight": 102,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187509,
+      "officialDescription": "small (about 4-1/4\" dia) each",
+      "amount": 1,
+      "gramWeight": 441,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187505,
+      "officialDescription": "large (about 6-1/2\" dia) each",
+      "amount": 1,
+      "gramWeight": 814,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187511,
+      "officialDescription": "balls pieces",
+      "amount": 10,
+      "gramWeight": 138,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187504,
+      "officialDescription": "diced cup",
+      "amount": 1,
+      "gramWeight": 156,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187507,
+      "officialDescription": "medium (about 5\" dia) each",
+      "amount": 1,
+      "gramWeight": 552,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 187510,
+      "officialDescription": "small (1/8 of small melon) wedge",
+      "amount": 1,
+      "gramWeight": 55,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "portionId": 312677,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710816",
+      "fdcId": 2710816,
+      "portionId": 312654,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710824",
+      "fdcId": 2710824,
+      "portionId": 312657,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 140,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169134",
+      "fdcId": 169134,
+      "portionId": 84310,
+      "officialDescription": "pomegranate (4\" dia) undetermined",
+      "amount": 1,
+      "gramWeight": 282,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173021",
+      "fdcId": 173021,
+      "portionId": 91822,
+      "officialDescription": "small (1-1/2\" dia) undetermined",
+      "amount": 1,
+      "gramWeight": 40,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169926",
+      "fdcId": 169926,
+      "portionId": 85694,
+      "officialDescription": "fruit, small undetermined",
+      "amount": 1,
+      "gramWeight": 157,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169926",
+      "fdcId": 169926,
+      "portionId": 85695,
+      "officialDescription": "fruit, large undetermined",
+      "amount": 1,
+      "gramWeight": 781,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169926",
+      "fdcId": 169926,
+      "portionId": 85693,
+      "officialDescription": "cup, mashed undetermined",
+      "amount": 1,
+      "gramWeight": 230,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170169",
+      "fdcId": 170169,
+      "portionId": 86164,
+      "officialDescription": "medium undetermined",
+      "amount": 1,
+      "gramWeight": 397,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170169",
+      "fdcId": 170169,
+      "portionId": 86165,
+      "officialDescription": "piece (2\" x 2\" x 1/2\") undetermined",
+      "amount": 1,
+      "gramWeight": 45,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685573",
+      "fdcId": 2685573,
+      "portionId": 312764,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346407",
+      "fdcId": 2346407,
+      "portionId": 312782,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685572",
+      "fdcId": 2685572,
+      "portionId": 312760,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346388",
+      "fdcId": 2346388,
+      "portionId": 312788,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346389",
+      "fdcId": 2346389,
+      "portionId": 312789,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-323505",
+      "fdcId": 323505,
+      "portionId": 312819,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-1104647",
+      "fdcId": 1104647,
+      "portionId": 312811,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2258590",
+      "fdcId": 2258590,
+      "portionId": 312795,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170106",
+      "fdcId": 170106,
+      "portionId": 86058,
+      "officialDescription": "pepper undetermined",
+      "amount": 1,
+      "gramWeight": 45,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685577",
+      "fdcId": 2685577,
+      "portionId": 312762,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685568",
+      "fdcId": 2685568,
+      "portionId": 312775,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710823",
+      "fdcId": 2710823,
+      "portionId": 312759,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346400",
+      "fdcId": 2346400,
+      "portionId": 312781,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685570",
+      "fdcId": 2685570,
+      "portionId": 312767,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685576",
+      "fdcId": 2685576,
+      "portionId": 312763,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685575",
+      "fdcId": 2685575,
+      "portionId": 312766,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169246",
+      "fdcId": 169246,
+      "portionId": 84504,
+      "officialDescription": "leek undetermined",
+      "amount": 1,
+      "gramWeight": 89,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "portionId": 85882,
+      "officialDescription": "small (3\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 5,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "portionId": 85879,
+      "officialDescription": "tbsp chopped undetermined",
+      "amount": 1,
+      "gramWeight": 6,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "portionId": 85880,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 25,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710826",
+      "fdcId": 2710826,
+      "portionId": 312757,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84531,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 10,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84526,
+      "officialDescription": "cup, pieces or slices undetermined",
+      "amount": 1,
+      "gramWeight": 70,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84530,
+      "officialDescription": "slice undetermined",
+      "amount": 1,
+      "gramWeight": 6,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84528,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 23,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "portionId": 84532,
+      "officialDescription": "cup pieces undetermined",
+      "amount": 0.5,
+      "gramWeight": 35,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168580",
+      "fdcId": 168580,
+      "portionId": 83362,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 15,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168580",
+      "fdcId": 168580,
+      "portionId": 83361,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 148,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169382",
+      "fdcId": 169382,
+      "portionId": 84758,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 5,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169382",
+      "fdcId": 169382,
+      "portionId": 84759,
+      "officialDescription": "medium undetermined",
+      "amount": 1,
+      "gramWeight": 3,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169382",
+      "fdcId": 169382,
+      "portionId": 84761,
+      "officialDescription": "cup sliced undetermined",
+      "amount": 1,
+      "gramWeight": 65,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "portionId": 85850,
+      "officialDescription": "ear small (5-1/2\" to 6-1/2\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 89,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "portionId": 85854,
+      "officialDescription": "baby ear undetermined",
+      "amount": 1,
+      "gramWeight": 8,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "portionId": 85852,
+      "officialDescription": "ear large (7-3/4\" to 9\" long) undetermined",
+      "amount": 1,
+      "gramWeight": 118,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646170",
+      "fdcId": 2646170,
+      "portionId": 312730,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646171",
+      "fdcId": 2646171,
+      "portionId": 312731,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172385",
+      "fdcId": 172385,
+      "portionId": 90504,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172385",
+      "fdcId": 172385,
+      "portionId": 90505,
+      "officialDescription": "thigh with skin undetermined",
+      "amount": 1,
+      "gramWeight": 193,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172373",
+      "fdcId": 172373,
+      "portionId": 90469,
+      "officialDescription": "drumstick undetermined",
+      "amount": 1,
+      "gramWeight": 130,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172373",
+      "fdcId": 172373,
+      "portionId": 90468,
+      "officialDescription": "drumstick with skin undetermined",
+      "amount": 1,
+      "gramWeight": 133,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172373",
+      "fdcId": 172373,
+      "portionId": 90467,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172390",
+      "fdcId": 172390,
+      "portionId": 90519,
+      "officialDescription": "package undetermined",
+      "amount": 1,
+      "gramWeight": 1150,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172390",
+      "fdcId": 172390,
+      "portionId": 90517,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172390",
+      "fdcId": 172390,
+      "portionId": 90518,
+      "officialDescription": "piece undetermined",
+      "amount": 1,
+      "gramWeight": 107,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171452",
+      "fdcId": 171452,
+      "portionId": 88760,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171452",
+      "fdcId": 171452,
+      "portionId": 88762,
+      "officialDescription": "chicken, skin only undetermined",
+      "amount": 0,
+      "gramWeight": 79,
+      "reason": "Invalid or zero official portion count/weight."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171452",
+      "fdcId": 171452,
+      "portionId": 88761,
+      "officialDescription": "unit (yield from 1 lb ready-to-cook chicken) undetermined",
+      "amount": 0.5,
+      "gramWeight": 47,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727573",
+      "fdcId": 2727573,
+      "portionId": 312556,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727574",
+      "fdcId": 2727574,
+      "portionId": 312555,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646172",
+      "fdcId": 2646172,
+      "portionId": 312561,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170826",
+      "fdcId": 170826,
+      "portionId": 87332,
+      "officialDescription": "piece undetermined",
+      "amount": 1,
+      "gramWeight": 432,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170826",
+      "fdcId": 170826,
+      "portionId": 87331,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168664",
+      "fdcId": 168664,
+      "portionId": 83524,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168664",
+      "fdcId": 168664,
+      "portionId": 83525,
+      "officialDescription": "lb undetermined",
+      "amount": 1,
+      "gramWeight": 453.6,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646174",
+      "fdcId": 2646174,
+      "portionId": 312560,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646175",
+      "fdcId": 2646175,
+      "portionId": 312558,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514743",
+      "fdcId": 2514743,
+      "portionId": 312562,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514744",
+      "fdcId": 2514744,
+      "portionId": 312563,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 114,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646169",
+      "fdcId": 2646169,
+      "portionId": 312721,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 110,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646168",
+      "fdcId": 2646168,
+      "portionId": 312722,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 110,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167843",
+      "fdcId": 167843,
+      "portionId": 82076,
+      "officialDescription": "lb undetermined",
+      "amount": 1,
+      "gramWeight": 453.6,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167843",
+      "fdcId": 167843,
+      "portionId": 82075,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167853",
+      "fdcId": 167853,
+      "portionId": 82096,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514745",
+      "fdcId": 2514745,
+      "portionId": 312723,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 110,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172486",
+      "fdcId": 172486,
+      "portionId": 90705,
+      "officialDescription": "lb undetermined",
+      "amount": 1,
+      "gramWeight": 453.6,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172486",
+      "fdcId": 172486,
+      "portionId": 90704,
+      "officialDescription": "oz undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172493",
+      "fdcId": 172493,
+      "portionId": 90718,
+      "officialDescription": "oz undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172493",
+      "fdcId": 172493,
+      "portionId": 90719,
+      "officialDescription": "lb undetermined",
+      "amount": 1,
+      "gramWeight": 453.6,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174515",
+      "fdcId": 174515,
+      "portionId": 94496,
+      "officialDescription": "breast undetermined",
+      "amount": 1,
+      "gramWeight": 1150,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174515",
+      "fdcId": 174515,
+      "portionId": 94495,
+      "officialDescription": "oz undetermined",
+      "amount": 4,
+      "gramWeight": 113,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172388",
+      "fdcId": 172388,
+      "portionId": 90513,
+      "officialDescription": "thigh with skin undetermined",
+      "amount": 1,
+      "gramWeight": 137,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172388",
+      "fdcId": 172388,
+      "portionId": 90511,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172388",
+      "fdcId": 172388,
+      "portionId": 90512,
+      "officialDescription": "thigh without skin undetermined",
+      "amount": 1,
+      "gramWeight": 116,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173625",
+      "fdcId": 173625,
+      "portionId": 92972,
+      "officialDescription": "thigh with skin undetermined",
+      "amount": 1,
+      "gramWeight": 137,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173625",
+      "fdcId": 173625,
+      "portionId": 92973,
+      "officialDescription": "thigh without skin undetermined",
+      "amount": 1,
+      "gramWeight": 116,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173625",
+      "fdcId": 173625,
+      "portionId": 92971,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173612",
+      "fdcId": 173612,
+      "portionId": 92937,
+      "officialDescription": "drumstick without skin undetermined",
+      "amount": 1,
+      "gramWeight": 96,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173612",
+      "fdcId": 173612,
+      "portionId": 92936,
+      "officialDescription": "drumstick with skin (yield from 1 lb ready-to-cook chicken) undetermined",
+      "amount": 1,
+      "gramWeight": 105,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173612",
+      "fdcId": 173612,
+      "portionId": 92935,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173630",
+      "fdcId": 173630,
+      "portionId": 92983,
+      "officialDescription": "piece undetermined",
+      "amount": 1,
+      "gramWeight": 85,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173630",
+      "fdcId": 173630,
+      "portionId": 92982,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171055",
+      "fdcId": 171055,
+      "portionId": 87867,
+      "officialDescription": "chicken, skin only undetermined",
+      "amount": 0.5,
+      "gramWeight": 56,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171055",
+      "fdcId": 171055,
+      "portionId": 87866,
+      "officialDescription": "unit (yield from 1 lb ready-to-cook chicken) undetermined",
+      "amount": 1,
+      "gramWeight": 34,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170237",
+      "fdcId": 170237,
+      "portionId": 86301,
+      "officialDescription": "steak undetermined",
+      "amount": 1,
+      "gramWeight": 117,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170237",
+      "fdcId": 170237,
+      "portionId": 86300,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171209",
+      "fdcId": 171209,
+      "portionId": 88170,
+      "officialDescription": "steak undetermined",
+      "amount": 1,
+      "gramWeight": 291,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171209",
+      "fdcId": 171209,
+      "portionId": 88169,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168665",
+      "fdcId": 168665,
+      "portionId": 83526,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168665",
+      "fdcId": 168665,
+      "portionId": 83527,
+      "officialDescription": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse) undetermined",
+      "amount": 1,
+      "gramWeight": 329,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169569",
+      "fdcId": 169569,
+      "portionId": 85125,
+      "officialDescription": "piece undetermined",
+      "amount": 1,
+      "gramWeight": 289,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169569",
+      "fdcId": 169569,
+      "portionId": 85124,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171797",
+      "fdcId": 171797,
+      "portionId": 89382,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167844",
+      "fdcId": 167844,
+      "portionId": 82078,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167854",
+      "fdcId": 167854,
+      "portionId": 82098,
+      "officialDescription": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse) undetermined",
+      "amount": 1,
+      "gramWeight": 177,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167854",
+      "fdcId": 167854,
+      "portionId": 82097,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172487",
+      "fdcId": 172487,
+      "portionId": 90707,
+      "officialDescription": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse) undetermined",
+      "amount": 1,
+      "gramWeight": 238,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172487",
+      "fdcId": 172487,
+      "portionId": 90706,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172494",
+      "fdcId": 172494,
+      "portionId": 90721,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172494",
+      "fdcId": 172494,
+      "portionId": 90720,
+      "officialDescription": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse) undetermined",
+      "amount": 1,
+      "gramWeight": 147,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171510",
+      "fdcId": 171510,
+      "portionId": 88886,
+      "officialDescription": "unit (yield from 1 lb ready-to-cook duck) undetermined",
+      "amount": 1,
+      "gramWeight": 56,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171510",
+      "fdcId": 171510,
+      "portionId": 88888,
+      "officialDescription": "breast, bone removed undetermined",
+      "amount": 0.5,
+      "gramWeight": 120,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171510",
+      "fdcId": 171510,
+      "portionId": 88887,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171113",
+      "fdcId": 171113,
+      "portionId": 87997,
+      "officialDescription": "unit (yield from 1 lb ready-to-cook duck) undetermined",
+      "amount": 1,
+      "gramWeight": 35,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171113",
+      "fdcId": 171113,
+      "portionId": 87995,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174516",
+      "fdcId": 174516,
+      "portionId": 94497,
+      "officialDescription": "breast undetermined",
+      "amount": 1,
+      "gramWeight": 863,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174516",
+      "fdcId": 174516,
+      "portionId": 94498,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684441",
+      "fdcId": 2684441,
+      "portionId": 312643,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 115,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684444",
+      "fdcId": 2684444,
+      "portionId": 312639,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 115,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684442",
+      "fdcId": 2684442,
+      "portionId": 312642,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 115,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175159",
+      "fdcId": 175159,
+      "portionId": 95770,
+      "officialDescription": "cubic inch, boneless undetermined",
+      "amount": 1,
+      "gramWeight": 16,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175159",
+      "fdcId": 175159,
+      "portionId": 95771,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175159",
+      "fdcId": 175159,
+      "portionId": 95769,
+      "officialDescription": "oz, boneless undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175142",
+      "fdcId": 175142,
+      "portionId": 95736,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175142",
+      "fdcId": 175142,
+      "portionId": 95735,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 129,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173717",
+      "fdcId": 173717,
+      "portionId": 93175,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 79,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173717",
+      "fdcId": 173717,
+      "portionId": 93176,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175119",
+      "fdcId": 175119,
+      "portionId": 95678,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175119",
+      "fdcId": 175119,
+      "portionId": 95677,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 112,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684443",
+      "fdcId": 2684443,
+      "portionId": 312641,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 115,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174220",
+      "fdcId": 174220,
+      "portionId": 93964,
+      "officialDescription": "unit 2 large or 5 small undetermined",
+      "amount": 1,
+      "gramWeight": 30,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174220",
+      "fdcId": 174220,
+      "portionId": 93965,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174219",
+      "fdcId": 174219,
+      "portionId": 93963,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93951,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 9,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93949,
+      "officialDescription": "lb (with shell), yield after shell removed undetermined",
+      "amount": 1,
+      "gramWeight": 68,
+      "reason": "Yield-based portion not offered as a household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93947,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93952,
+      "officialDescription": "cup (with liquid and clams) undetermined",
+      "amount": 1,
+      "gramWeight": 227,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "portionId": 93948,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 20,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93958,
+      "officialDescription": "small undetermined",
+      "amount": 1,
+      "gramWeight": 10,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93955,
+      "officialDescription": "oz undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93956,
+      "officialDescription": "large undetermined",
+      "amount": 1,
+      "gramWeight": 20,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "portionId": 93959,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174223",
+      "fdcId": 174223,
+      "portionId": 93968,
+      "officialDescription": "oz, boneless undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174223",
+      "fdcId": 174223,
+      "portionId": 93969,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174218",
+      "fdcId": 174218,
+      "portionId": 93961,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174204",
+      "fdcId": 174204,
+      "portionId": 93926,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174204",
+      "fdcId": 174204,
+      "portionId": 93927,
+      "officialDescription": "crab undetermined",
+      "amount": 1,
+      "gramWeight": 21,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171969",
+      "fdcId": 171969,
+      "portionId": 89648,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174208",
+      "fdcId": 174208,
+      "portionId": 93936,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174208",
+      "fdcId": 174208,
+      "portionId": 93935,
+      "officialDescription": "lobster undetermined",
+      "amount": 1,
+      "gramWeight": 150,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171956",
+      "fdcId": 171956,
+      "portionId": 89622,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171956",
+      "fdcId": 171956,
+      "portionId": 89623,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 180,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175177",
+      "fdcId": 175177,
+      "portionId": 95804,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 87,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172006",
+      "fdcId": 172006,
+      "portionId": 89724,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173694",
+      "fdcId": 173694,
+      "portionId": 93125,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 101,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173694",
+      "fdcId": 173694,
+      "portionId": 93126,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173718",
+      "fdcId": 173718,
+      "portionId": 93177,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 71,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173718",
+      "fdcId": 173718,
+      "portionId": 93178,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175120",
+      "fdcId": 175120,
+      "portionId": 95680,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175120",
+      "fdcId": 175120,
+      "portionId": 95679,
+      "officialDescription": "fillet undetermined",
+      "amount": 1,
+      "gramWeight": 88,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167742",
+      "fdcId": 167742,
+      "portionId": 81878,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174250",
+      "fdcId": 174250,
+      "portionId": 94022,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171975",
+      "fdcId": 171975,
+      "portionId": 89661,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174217",
+      "fdcId": 174217,
+      "portionId": 93960,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174249",
+      "fdcId": 174249,
+      "portionId": 94020,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174205",
+      "fdcId": 174205,
+      "portionId": 93928,
+      "officialDescription": "cup, flaked and pieces undetermined",
+      "amount": 1,
+      "gramWeight": 118,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174205",
+      "fdcId": 174205,
+      "portionId": 93930,
+      "officialDescription": "oz undetermined",
+      "amount": 1,
+      "gramWeight": 28.35,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174205",
+      "fdcId": 174205,
+      "portionId": 93931,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172008",
+      "fdcId": 172008,
+      "portionId": 89727,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174209",
+      "fdcId": 174209,
+      "portionId": 93938,
+      "officialDescription": "oz undetermined",
+      "amount": 3,
+      "gramWeight": 85,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512381",
+      "fdcId": 2512381,
+      "portionId": 312591,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 45,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169760",
+      "fdcId": 169760,
+      "portionId": 85465,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 195,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168931",
+      "fdcId": 168931,
+      "portionId": 84019,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 200,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512380",
+      "fdcId": 2512380,
+      "portionId": 312590,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 45,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168883",
+      "fdcId": 168883,
+      "portionId": 83933,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 185,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169702",
+      "fdcId": 169702,
+      "portionId": 85376,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 200,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168874",
+      "fdcId": 168874,
+      "portionId": 83924,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 170,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170685",
+      "fdcId": 170685,
+      "portionId": 87081,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 164,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170284",
+      "fdcId": 170284,
+      "portionId": 86367,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 200,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168908",
+      "fdcId": 168908,
+      "portionId": 83961,
+      "officialDescription": "oz undetermined",
+      "amount": 2,
+      "gramWeight": 57,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169742",
+      "fdcId": 169742,
+      "portionId": 85439,
+      "officialDescription": "oz undetermined",
+      "amount": 2,
+      "gramWeight": 57,
+      "reason": "Weight-only or gross-weight yield measure, not an additional household unit."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85428,
+      "officialDescription": "cup lasagne undetermined",
+      "amount": 1,
+      "gramWeight": 116,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85427,
+      "officialDescription": "cup shells undetermined",
+      "amount": 1,
+      "gramWeight": 105,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85425,
+      "officialDescription": "cup farfalle undetermined",
+      "amount": 1,
+      "gramWeight": 107,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85423,
+      "officialDescription": "cup elbows packed undetermined",
+      "amount": 1,
+      "gramWeight": 132,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85422,
+      "officialDescription": "cup elbows not packed undetermined",
+      "amount": 1,
+      "gramWeight": 120,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85426,
+      "officialDescription": "cup rotini undetermined",
+      "amount": 1,
+      "gramWeight": 107,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85424,
+      "officialDescription": "cup penne undetermined",
+      "amount": 1,
+      "gramWeight": 107,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "portionId": 85421,
+      "officialDescription": "cup spaghetti packed undetermined",
+      "amount": 1,
+      "gramWeight": 151,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170028",
+      "fdcId": 170028,
+      "portionId": 85928,
+      "officialDescription": "small (1-3/4\" to 2-1/4\" dia.) undetermined",
+      "amount": 1,
+      "gramWeight": 92,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170028",
+      "fdcId": 170028,
+      "portionId": 85926,
+      "officialDescription": "large (3\" to 4-1/4\" dia.) undetermined",
+      "amount": 1,
+      "gramWeight": 369,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346404",
+      "fdcId": 2346404,
+      "portionId": 312780,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 110,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169985",
+      "fdcId": 169985,
+      "portionId": 85817,
+      "officialDescription": "root undetermined",
+      "amount": 1,
+      "gramWeight": 408,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170440",
+      "fdcId": 170440,
+      "portionId": 86654,
+      "officialDescription": "small (1-3/4\" to 2-1/2\" dia.) undetermined",
+      "amount": 1,
+      "gramWeight": 125,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170440",
+      "fdcId": 170440,
+      "portionId": 86652,
+      "officialDescription": "large (3\" to 4-1/4\" dia.) undetermined",
+      "amount": 1,
+      "gramWeight": 300,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173727",
+      "fdcId": 173727,
+      "portionId": 93191,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 197,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174256",
+      "fdcId": 174256,
+      "portionId": 94031,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 13,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174256",
+      "fdcId": 174256,
+      "portionId": 94030,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 207,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173734",
+      "fdcId": 173734,
+      "portionId": 93198,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 194,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173734",
+      "fdcId": 173734,
+      "portionId": 93199,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 12.1,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173744",
+      "fdcId": 173744,
+      "portionId": 93210,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 184,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173744",
+      "fdcId": 173744,
+      "portionId": 93211,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 12.2,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644282",
+      "fdcId": 2644282,
+      "portionId": 312697,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 35,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644283",
+      "fdcId": 2644283,
+      "portionId": 312694,
+      "officialDescription": "RACC",
+      "amount": 1,
+      "gramWeight": 35,
+      "reason": "Regulatory reference amount, not a verified piece/cup."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174270",
+      "fdcId": 174270,
+      "portionId": 94058,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 186,
+      "reason": "Dry/raw grain or legume left gram-only by selection policy."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175194",
+      "fdcId": 175194,
+      "portionId": 95823,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 11,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172421",
+      "fdcId": 172421,
+      "portionId": 90597,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 12.3,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174271",
+      "fdcId": 174271,
+      "portionId": 94060,
+      "officialDescription": "tbsp undetermined",
+      "amount": 1,
+      "gramWeight": 10.7,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170286",
+      "fdcId": 170286,
+      "portionId": 86369,
+      "officialDescription": "cup undetermined",
+      "amount": 1,
+      "gramWeight": 170,
+      "reason": "Not selected: less useful, ambiguous size/preparation, or two-unit limit; no weight fabricated."
+    }
+  ],
+  "conflictPolicy": "Custom units win exact key and localized-label conflicts. A previously selected official unit retains its key with a USDA-qualified label if a later custom label conflicts. No existing preference is rewritten."
+}

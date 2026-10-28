@@ -1,3 +1,4 @@
+import naturalFoods from './natural-foods.generated.json';
 export interface FoodReferenceSource {
  readonly sourceName:string;
  readonly sourceDataType:string;
@@ -13,6 +14,7 @@ export interface BuiltInFood extends FoodReferenceSource {
  readonly id:`builtin-${string}`|`betterlumi:food:${string}`;
  readonly nameZh:string;
  readonly nameEn:string;
+ readonly aliases?:readonly string[];
  readonly category:string;
  readonly tagIds:readonly string[];
  readonly preparationState:string;
@@ -42,7 +44,7 @@ const legacySource={
  * Never seeded into the personal database.
  * Preserve source precision; energy is the supplied USDA value, not a 4/4/9 calculation.
  */
-export const builtInFoods:readonly BuiltInFood[]=Object.freeze([
+const existingBuiltInFoods:readonly BuiltInFood[]=Object.freeze([
  {id:'builtin-broccoli-raw',nameZh:'西兰花',nameEn:'Broccoli',preparationStateZh:'生',preparationStateEn:'Raw',category:'vegetables',usdaDescription:'Broccoli, raw',ndbNumber:'11090',fdcIdSnapshot:'747447',kcalPer100g:31,proteinPer100g:2.57,carbsPer100g:6.27,fatPer100g:0.34},
  {id:'builtin-carrot-raw',nameZh:'胡萝卜',nameEn:'Carrot',preparationStateZh:'生',preparationStateEn:'Raw',category:'vegetables',usdaDescription:'Carrots, mature, raw',ndbNumber:'11124',fdcIdSnapshot:'2258586',kcalPer100g:44.979,proteinPer100g:0.941,carbsPer100g:10.3,fatPer100g:0.351},
  {id:'builtin-spinach-raw',nameZh:'菠菜',nameEn:'Spinach',preparationStateZh:'生',preparationStateEn:'Raw',category:'vegetables',usdaDescription:'Spinach, mature',ndbNumber:'11457',fdcIdSnapshot:'1999633',kcalPer100g:21.6,proteinPer100g:2.91,carbsPer100g:2.64,fatPer100g:0.604},
@@ -81,3 +83,9 @@ export const builtInFoods:readonly BuiltInFood[]=Object.freeze([
  tagIds:Object.freeze([`betterlumi:ingredient-tag:${item.category==='dairyEggs'?'dairy-eggs':item.category}`]),
  sourceUrl:`https://fdc.nal.usda.gov/food-search?query=${item.ndbNumber}`,
 })));
+
+/** Verified additions are static and never seeded into IndexedDB. Existing IDs/values stay intact. */
+export const builtInFoods:readonly BuiltInFood[]=Object.freeze([
+ ...existingBuiltInFoods,
+ ...naturalFoods.map(item=>Object.freeze({...item,id:item.id as BuiltInFood['id'],tagIds:Object.freeze(item.tagIds),aliases:Object.freeze(item.aliases)})),
+]);

@@ -1,0 +1,2360 @@
+{
+  "baselineCount": 32,
+  "baselineCommit": "21b5630",
+  "retrievedAt": "2026-10-28",
+  "selections": [
+    {
+      "fdcId": 746773,
+      "expectedDescription": "Pears, raw, bartlett",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "巴特利特梨（生）",
+      "nameEn": "Bartlett pear (raw)",
+      "preparationStateZh": "带皮，生",
+      "preparationStateEn": "With skin, raw",
+      "aliases": [
+        "梨",
+        "pear"
+      ]
+    },
+    {
+      "fdcId": 746771,
+      "expectedDescription": "Oranges, raw, navels",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "脐橙（生）",
+      "nameEn": "Navel orange (raw)",
+      "preparationStateZh": "去皮可食部分，生",
+      "preparationStateEn": "Peeled edible portion, raw",
+      "aliases": [
+        "橙子",
+        "orange"
+      ]
+    },
+    {
+      "fdcId": 2710832,
+      "expectedDescription": "Mandarin, seedless, peeled, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "无籽橘子（生）",
+      "nameEn": "Seedless mandarin (raw)",
+      "preparationStateZh": "去皮，生",
+      "preparationStateEn": "Peeled, raw",
+      "aliases": [
+        "柑橘",
+        "橘子",
+        "mandarin"
+      ]
+    },
+    {
+      "fdcId": 173033,
+      "expectedDescription": "Grapefruit, raw, pink and red and white, all areas",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "葡萄柚（生）",
+      "nameEn": "Grapefruit (raw)",
+      "preparationStateZh": "粉红、红、白品种，可食部分",
+      "preparationStateEn": "Pink, red and white varieties, raw edible portion",
+      "aliases": [
+        "西柚"
+      ]
+    },
+    {
+      "fdcId": 167746,
+      "expectedDescription": "Lemons, raw, without peel",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "柠檬（生）",
+      "nameEn": "Lemon (raw)",
+      "preparationStateZh": "去皮，生",
+      "preparationStateEn": "Without peel, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 168155,
+      "expectedDescription": "Limes, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "青柠（生）",
+      "nameEn": "Lime (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2346412,
+      "expectedDescription": "Grapes, red, seedless, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "红无籽葡萄（生）",
+      "nameEn": "Red seedless grapes (raw)",
+      "preparationStateZh": "生，无籽",
+      "preparationStateEn": "Raw, seedless",
+      "aliases": [
+        "葡萄",
+        "grapes"
+      ]
+    },
+    {
+      "fdcId": 2346410,
+      "expectedDescription": "Raspberries, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "覆盆子（生）",
+      "nameEn": "Raspberries (raw)",
+      "preparationStateZh": "生",
+      "preparationStateEn": "Raw",
+      "aliases": [
+        "树莓"
+      ]
+    },
+    {
+      "fdcId": 173946,
+      "expectedDescription": "Blackberries, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "黑莓（生）",
+      "nameEn": "Blackberries (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2346399,
+      "expectedDescription": "Cherries, sweet, dark red, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "深红甜樱桃（生）",
+      "nameEn": "Dark red sweet cherries (raw)",
+      "preparationStateZh": "去核可食部分，生",
+      "preparationStateEn": "Pitted edible portion, raw",
+      "aliases": [
+        "樱桃",
+        "cherry"
+      ]
+    },
+    {
+      "fdcId": 325430,
+      "expectedDescription": "Peaches, yellow, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "黄桃（生）",
+      "nameEn": "Yellow peach (raw)",
+      "preparationStateZh": "去核可食部分，生",
+      "preparationStateEn": "Pitted edible portion, raw",
+      "aliases": [
+        "桃子",
+        "peach"
+      ]
+    },
+    {
+      "fdcId": 327357,
+      "expectedDescription": "Nectarines, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "油桃（生）",
+      "nameEn": "Nectarine (raw)",
+      "preparationStateZh": "去核可食部分，生",
+      "preparationStateEn": "Pitted edible portion, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2710837,
+      "expectedDescription": "Plum, black, with skin, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "黑李子（生）",
+      "nameEn": "Black plum (raw)",
+      "preparationStateZh": "带皮，去核可食部分",
+      "preparationStateEn": "With skin, pitted edible portion, raw",
+      "aliases": [
+        "李子",
+        "plum"
+      ]
+    },
+    {
+      "fdcId": 2710815,
+      "expectedDescription": "Apricot, with skin, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "杏（生）",
+      "nameEn": "Apricot (raw)",
+      "preparationStateZh": "带皮，去核可食部分",
+      "preparationStateEn": "With skin, pitted edible portion, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2710833,
+      "expectedDescription": "Mango, Tommy Atkins, peeled, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "汤米阿特金斯芒果（生）",
+      "nameEn": "Tommy Atkins mango (raw)",
+      "preparationStateZh": "去皮，去核可食部分",
+      "preparationStateEn": "Peeled, pitted edible portion, raw",
+      "aliases": [
+        "芒果",
+        "mango"
+      ]
+    },
+    {
+      "fdcId": 2346398,
+      "expectedDescription": "Pineapple, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "菠萝（生）",
+      "nameEn": "Pineapple (raw)",
+      "preparationStateZh": "去皮可食部分，生",
+      "preparationStateEn": "Peeled edible portion, raw",
+      "aliases": [
+        "凤梨"
+      ]
+    },
+    {
+      "fdcId": 2710831,
+      "expectedDescription": "Kiwifruit (kiwi), green, peeled, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "绿猕猴桃（生）",
+      "nameEn": "Green kiwifruit (raw)",
+      "preparationStateZh": "去皮，生",
+      "preparationStateEn": "Peeled, raw",
+      "aliases": [
+        "奇异果",
+        "kiwi"
+      ]
+    },
+    {
+      "fdcId": 167765,
+      "expectedDescription": "Watermelon, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "西瓜（生）",
+      "nameEn": "Watermelon (raw)",
+      "preparationStateZh": "仅可食瓜瓤，生",
+      "preparationStateEn": "Edible flesh, raw",
+      "aliases": [
+        "西瓜",
+        "watermelon"
+      ]
+    },
+    {
+      "fdcId": 746770,
+      "expectedDescription": "Melons, cantaloupe, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "网纹甜瓜（生）",
+      "nameEn": "Cantaloupe (raw)",
+      "preparationStateZh": "去皮去籽可食部分",
+      "preparationStateEn": "Peeled, seeded edible portion, raw",
+      "aliases": [
+        "cantaloupe"
+      ]
+    },
+    {
+      "fdcId": 2710816,
+      "expectedDescription": "Melons, honeydew, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "蜜露甜瓜（生）",
+      "nameEn": "Honeydew melon (raw)",
+      "preparationStateZh": "去皮去籽可食部分",
+      "preparationStateEn": "Peeled, seeded edible portion, raw",
+      "aliases": [
+        "蜜瓜",
+        "honeydew"
+      ]
+    },
+    {
+      "fdcId": 2710824,
+      "expectedDescription": "Avocado, Hass, peeled, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "哈斯牛油果（生）",
+      "nameEn": "Hass avocado (raw)",
+      "preparationStateZh": "去皮去核，生",
+      "preparationStateEn": "Peeled and pitted, raw",
+      "aliases": [
+        "鳄梨",
+        "牛油果",
+        "avocado"
+      ]
+    },
+    {
+      "fdcId": 169134,
+      "expectedDescription": "Pomegranates, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "石榴籽粒（生）",
+      "nameEn": "Pomegranate arils (raw)",
+      "preparationStateZh": "可食籽粒，生",
+      "preparationStateEn": "Edible arils, raw",
+      "aliases": [
+        "石榴"
+      ]
+    },
+    {
+      "fdcId": 169941,
+      "expectedDescription": "Persimmons, japanese, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "柿子（生）",
+      "nameEn": "Japanese persimmon (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 173021,
+      "expectedDescription": "Figs, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "无花果（生）",
+      "nameEn": "Fig (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 169086,
+      "expectedDescription": "Litchis, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "荔枝（生）",
+      "nameEn": "Lychee (raw)",
+      "preparationStateZh": "去皮去核，生",
+      "preparationStateEn": "Peeled and pitted, raw",
+      "aliases": [
+        "litchi"
+      ]
+    },
+    {
+      "fdcId": 169089,
+      "expectedDescription": "Longans, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "龙眼（生）",
+      "nameEn": "Longan (raw)",
+      "preparationStateZh": "去皮去核，生",
+      "preparationStateEn": "Peeled and pitted, raw",
+      "aliases": [
+        "桂圆"
+      ]
+    },
+    {
+      "fdcId": 169926,
+      "expectedDescription": "Papayas, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "木瓜（生）",
+      "nameEn": "Papaya (raw)",
+      "preparationStateZh": "去皮去籽，生",
+      "preparationStateEn": "Peeled and seeded, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 170169,
+      "expectedDescription": "Nuts, coconut meat, raw",
+      "category": "fruits",
+      "state": "raw",
+      "nameZh": "椰肉（生）",
+      "nameEn": "Coconut flesh (raw)",
+      "preparationStateZh": "仅椰肉，生",
+      "preparationStateEn": "Flesh only, raw",
+      "aliases": [
+        "椰子",
+        "coconut"
+      ]
+    },
+    {
+      "fdcId": 2685573,
+      "expectedDescription": "Cauliflower, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "花椰菜（生）",
+      "nameEn": "Cauliflower (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "菜花"
+      ]
+    },
+    {
+      "fdcId": 2346407,
+      "expectedDescription": "Cabbage, green, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "绿卷心菜（生）",
+      "nameEn": "Green cabbage (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "包菜",
+        "圆白菜",
+        "cabbage"
+      ]
+    },
+    {
+      "fdcId": 169979,
+      "expectedDescription": "Cabbage, chinese (pe-tsai), raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "大白菜（生）",
+      "nameEn": "Napa cabbage (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "白菜",
+        "napa"
+      ]
+    },
+    {
+      "fdcId": 2685572,
+      "expectedDescription": "Cabbage, bok choy, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "小白菜（生）",
+      "nameEn": "Bok choy (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "青菜",
+        "上海青",
+        "bok choy"
+      ]
+    },
+    {
+      "fdcId": 2346388,
+      "expectedDescription": "Lettuce, iceberg, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "球生菜（生）",
+      "nameEn": "Iceberg lettuce (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "生菜",
+        "lettuce"
+      ]
+    },
+    {
+      "fdcId": 2346389,
+      "expectedDescription": "Lettuce, romaine, green, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "罗马生菜（生）",
+      "nameEn": "Romaine lettuce (raw)",
+      "preparationStateZh": "绿叶，生",
+      "preparationStateEn": "Green leaves, raw",
+      "aliases": [
+        "lettuce"
+      ]
+    },
+    {
+      "fdcId": 323505,
+      "expectedDescription": "Kale, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "羽衣甘蓝（生）",
+      "nameEn": "Kale (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 1104647,
+      "expectedDescription": "Garlic, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "大蒜（生）",
+      "nameEn": "Garlic (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2258590,
+      "expectedDescription": "Peppers, bell, red, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "红甜椒（生）",
+      "nameEn": "Red bell pepper (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "彩椒",
+        "甜椒",
+        "bell pepper"
+      ]
+    },
+    {
+      "fdcId": 170106,
+      "expectedDescription": "Peppers, hot chili, red, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "红辣椒（生）",
+      "nameEn": "Red hot chili pepper (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2685577,
+      "expectedDescription": "Eggplant, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "茄子（生）",
+      "nameEn": "Eggplant (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2685568,
+      "expectedDescription": "Squash, summer, green, zucchini, includes skin, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "西葫芦（生）",
+      "nameEn": "Zucchini (raw)",
+      "preparationStateZh": "带皮，生",
+      "preparationStateEn": "Includes skin, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2710823,
+      "expectedDescription": "Asparagus, green, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "绿芦笋（生）",
+      "nameEn": "Green asparagus (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "芦笋"
+      ]
+    },
+    {
+      "fdcId": 2346400,
+      "expectedDescription": "Beans, snap, green, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "四季豆（生）",
+      "nameEn": "Green beans (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "菜豆",
+        "青豆角",
+        "snap beans"
+      ]
+    },
+    {
+      "fdcId": 170419,
+      "expectedDescription": "Peas, green, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "豌豆（生）",
+      "nameEn": "Green peas (raw)",
+      "preparationStateZh": "鲜豌豆仁，生",
+      "preparationStateEn": "Fresh edible peas, raw",
+      "aliases": [
+        "青豌豆"
+      ]
+    },
+    {
+      "fdcId": 168448,
+      "expectedDescription": "Pumpkin, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "南瓜（生）",
+      "nameEn": "Pumpkin (raw)",
+      "preparationStateZh": "生 · 可食部分，未指定派南瓜品种",
+      "preparationStateEn": "Raw edible portion; not a pie-pumpkin-specific record",
+      "aliases": [
+        "南瓜",
+        "pumpkin"
+      ]
+    },
+    {
+      "fdcId": 2685570,
+      "expectedDescription": "Squash, winter, butternut, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "奶油南瓜（生）",
+      "nameEn": "Butternut squash (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 2747665,
+      "expectedDescription": "Radishes, red, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "红萝卜（樱桃萝卜，生）",
+      "nameEn": "Red radish (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "樱桃萝卜",
+        "radish"
+      ]
+    },
+    {
+      "fdcId": 168451,
+      "expectedDescription": "Radishes, oriental, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "白萝卜（生）",
+      "nameEn": "Daikon (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "大根",
+        "oriental radish"
+      ]
+    },
+    {
+      "fdcId": 2685576,
+      "expectedDescription": "Beets, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "甜菜根（生）",
+      "nameEn": "Beetroot (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "红菜头",
+        "beet"
+      ]
+    },
+    {
+      "fdcId": 2685575,
+      "expectedDescription": "Brussels sprouts, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "抱子甘蓝（生）",
+      "nameEn": "Brussels sprouts (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 169246,
+      "expectedDescription": "Leeks, (bulb and lower leaf-portion), raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "韭葱（生）",
+      "nameEn": "Leek (raw)",
+      "preparationStateZh": "葱白及下部叶片，生",
+      "preparationStateEn": "Bulb and lower leaf portion, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 170005,
+      "expectedDescription": "Onions, spring or scallions (includes tops and bulb), raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "小葱（生）",
+      "nameEn": "Scallion (raw)",
+      "preparationStateZh": "包括葱白及葱叶，生",
+      "preparationStateEn": "Includes tops and bulb, raw",
+      "aliases": [
+        "青葱",
+        "green onion"
+      ]
+    },
+    {
+      "fdcId": 2710826,
+      "expectedDescription": "Corn, sweet, yellow and white kernels,  fresh, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "甜玉米粒（生）",
+      "nameEn": "Sweet corn kernels (raw)",
+      "preparationStateZh": "黄白玉米粒，鲜，生",
+      "preparationStateEn": "Yellow and white kernels, fresh, raw",
+      "aliases": [
+        "玉米",
+        "corn"
+      ]
+    },
+    {
+      "fdcId": 169251,
+      "expectedDescription": "Mushrooms, white, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "白蘑菇（生）",
+      "nameEn": "White mushrooms (raw)",
+      "preparationStateZh": "生",
+      "preparationStateEn": "Raw",
+      "aliases": [
+        "白口蘑",
+        "button mushroom"
+      ]
+    },
+    {
+      "fdcId": 169242,
+      "expectedDescription": "Mushrooms, shiitake, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "鲜香菇（生）",
+      "nameEn": "Shiitake (raw)",
+      "preparationStateZh": "生，非干香菇",
+      "preparationStateEn": "Raw, not dried",
+      "aliases": []
+    },
+    {
+      "fdcId": 168580,
+      "expectedDescription": "Mushrooms, oyster, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "平菇（生）",
+      "nameEn": "Oyster mushrooms (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 169382,
+      "expectedDescription": "Mushrooms, enoki, raw",
+      "category": "vegetables",
+      "state": "raw",
+      "nameZh": "金针菇（生）",
+      "nameEn": "Enoki mushrooms (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 169999,
+      "expectedDescription": "Corn, sweet, yellow, cooked, boiled, drained, without salt",
+      "category": "vegetables",
+      "state": "cooked",
+      "nameZh": "甜玉米（煮熟）",
+      "nameEn": "Sweet corn (boiled)",
+      "preparationStateZh": "黄玉米，煮熟沥干，无盐",
+      "preparationStateEn": "Yellow, boiled, drained, without salt",
+      "aliases": [
+        "玉米",
+        "corn"
+      ]
+    },
+    {
+      "fdcId": 170420,
+      "expectedDescription": "Peas, green, cooked, boiled, drained, without salt",
+      "category": "vegetables",
+      "state": "cooked",
+      "nameZh": "豌豆（煮熟）",
+      "nameEn": "Green peas (boiled)",
+      "preparationStateZh": "煮熟沥干，无盐",
+      "preparationStateEn": "Boiled, drained, without salt",
+      "aliases": []
+    },
+    {
+      "fdcId": 2646170,
+      "expectedDescription": "Chicken, breast, boneless, skinless, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡胸肉（生，去皮）",
+      "nameEn": "Chicken breast (raw, skinless)",
+      "preparationStateZh": "去骨去皮",
+      "preparationStateEn": "Boneless, skinless, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2646171,
+      "expectedDescription": "Chicken, thigh, boneless, skinless, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡大腿肉（生，去皮）",
+      "nameEn": "Chicken thigh (raw, skinless)",
+      "preparationStateZh": "去骨去皮",
+      "preparationStateEn": "Boneless, skinless, raw",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 172385,
+      "expectedDescription": "Chicken, broilers or fryers, thigh, meat and skin, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡大腿肉（生，带皮）",
+      "nameEn": "Chicken thigh (raw, skin-on)",
+      "preparationStateZh": "仅可食肉和皮",
+      "preparationStateEn": "Meat and skin, raw, edible portion",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 172373,
+      "expectedDescription": "Chicken, broilers or fryers, drumstick, meat and skin, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡小腿（生，带皮）",
+      "nameEn": "Chicken drumstick (raw, skin-on)",
+      "preparationStateZh": "仅可食肉和皮，不含骨",
+      "preparationStateEn": "Meat and skin, raw, excludes bone",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 172390,
+      "expectedDescription": "Chicken, broilers or fryers, wing, meat and skin, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡翅（生，带皮）",
+      "nameEn": "Chicken wings (raw, skin-on)",
+      "preparationStateZh": "仅可食肉和皮，不含骨",
+      "preparationStateEn": "Meat and skin, raw, excludes bone",
+      "aliases": []
+    },
+    {
+      "fdcId": 171452,
+      "expectedDescription": "Chicken, broilers or fryers, skin only, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "鸡皮（生）",
+      "nameEn": "Chicken skin (raw)",
+      "preparationStateZh": "仅皮",
+      "preparationStateEn": "Skin only, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2727573,
+      "expectedDescription": "Beef, tenderloin steak, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "牛里脊牛排（生）",
+      "nameEn": "Beef tenderloin steak (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "菲力",
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 2727574,
+      "expectedDescription": "Beef, top sirloin steak, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "上腰脊牛排（生）",
+      "nameEn": "Beef top sirloin steak (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "西冷",
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 2646172,
+      "expectedDescription": "Beef, ribeye, steak, boneless, choice, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "肋眼牛排（生）",
+      "nameEn": "Beef ribeye steak (raw)",
+      "preparationStateZh": "去骨，USDA Choice",
+      "preparationStateEn": "Boneless, USDA Choice, raw",
+      "aliases": [
+        "眼肉",
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 170826,
+      "expectedDescription": "Beef, chuck, short ribs, boneless, separable lean and fat, trimmed to 0\" fat, all grades, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "牛小排（生，去骨）",
+      "nameEn": "Beef short ribs (raw, boneless)",
+      "preparationStateZh": "肩部小排，可分离肉和脂肪，外脂修至0英寸",
+      "preparationStateEn": "Chuck short ribs, separable lean and fat, trimmed to 0 inch, all grades, raw",
+      "aliases": [
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 168664,
+      "expectedDescription": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "牛胸肉（生）",
+      "nameEn": "Beef brisket (raw)",
+      "preparationStateZh": "整块，可分离肉和脂肪，外脂修至1/8英寸",
+      "preparationStateEn": "Whole, separable lean and fat, trimmed to 1/8 inch, all grades, raw",
+      "aliases": [
+        "牛腩"
+      ]
+    },
+    {
+      "fdcId": 2646174,
+      "expectedDescription": "Beef, chuck, roast, boneless, choice, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "牛肩肉（生）",
+      "nameEn": "Beef chuck roast (raw)",
+      "preparationStateZh": "去骨，USDA Choice",
+      "preparationStateEn": "Boneless, USDA Choice, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2646175,
+      "expectedDescription": "Beef, flank, steak, boneless, choice, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "牛腹胁牛排（生）",
+      "nameEn": "Beef flank steak (raw)",
+      "preparationStateZh": "去骨，USDA Choice",
+      "preparationStateEn": "Boneless, USDA Choice, raw",
+      "aliases": [
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 2514743,
+      "expectedDescription": "Beef, ground, 90% lean meat / 10% fat, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "90%瘦牛肉末（生）",
+      "nameEn": "90% lean ground beef (raw)",
+      "preparationStateZh": "90%瘦肉，10%脂肪",
+      "preparationStateEn": "90% lean / 10% fat, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2514744,
+      "expectedDescription": "Beef, ground, 80% lean meat / 20% fat, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "80%瘦牛肉末（生）",
+      "nameEn": "80% lean ground beef (raw)",
+      "preparationStateZh": "80%瘦肉，20%脂肪",
+      "preparationStateEn": "80% lean / 20% fat, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2646169,
+      "expectedDescription": "Pork, loin, tenderloin, boneless, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "猪里脊（生）",
+      "nameEn": "Pork tenderloin (raw)",
+      "preparationStateZh": "去骨",
+      "preparationStateEn": "Boneless, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2646168,
+      "expectedDescription": "Pork, loin, boneless, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "猪腰脊肉（生）",
+      "nameEn": "Pork loin (raw)",
+      "preparationStateZh": "去骨",
+      "preparationStateEn": "Boneless, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 167843,
+      "expectedDescription": "Pork, fresh, shoulder, whole, separable lean and fat, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "猪肩肉（生）",
+      "nameEn": "Pork shoulder (raw)",
+      "preparationStateZh": "整块，可分离肉和脂肪",
+      "preparationStateEn": "Whole, separable lean and fat, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 167853,
+      "expectedDescription": "Pork, fresh, spareribs, separable lean and fat, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "猪排骨（生）",
+      "nameEn": "Pork spareribs (raw)",
+      "preparationStateZh": "仅可食肉和脂肪，不含骨",
+      "preparationStateEn": "Separable lean and fat, excludes bone, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 2514745,
+      "expectedDescription": "Pork, ground, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "猪肉末（生）",
+      "nameEn": "Ground pork (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 172486,
+      "expectedDescription": "Lamb, leg, shank half, separable lean only, trimmed to 1/4\" fat, choice, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "羊腿肉（生，瘦肉）",
+      "nameEn": "Lamb leg (raw, lean)",
+      "preparationStateZh": "后腿下半部，USDA Choice，可分离瘦肉，外脂修至1/4英寸",
+      "preparationStateEn": "Shank half, USDA Choice, separable lean only, trimmed to 1/4 inch, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 172493,
+      "expectedDescription": "Lamb, rib, separable lean only, trimmed to 1/4\" fat, choice, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "羊肋排（生，瘦肉）",
+      "nameEn": "Lamb rib chop (raw, lean)",
+      "preparationStateZh": "USDA Choice，仅可食瘦肉，外脂修至1/4英寸",
+      "preparationStateEn": "USDA Choice, separable lean only, trimmed to 1/4 inch, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 174515,
+      "expectedDescription": "Turkey, retail parts, breast, meat only, raw",
+      "category": "meat",
+      "state": "raw",
+      "nameZh": "火鸡胸肉（生，去皮）",
+      "nameEn": "Turkey breast (raw, skinless)",
+      "preparationStateZh": "仅肉，无添加溶液",
+      "preparationStateEn": "Meat only, no added solution, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 172388,
+      "expectedDescription": "Chicken, broilers or fryers, thigh, meat only, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "鸡大腿肉（烤熟，去皮）",
+      "nameEn": "Chicken thigh (roasted, skinless)",
+      "preparationStateZh": "仅肉",
+      "preparationStateEn": "Meat only, cooked, roasted",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 173625,
+      "expectedDescription": "Chicken, broilers or fryers, thigh, meat and skin, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "鸡大腿肉（烤熟，带皮）",
+      "nameEn": "Chicken thigh (roasted, skin-on)",
+      "preparationStateZh": "仅可食肉和皮",
+      "preparationStateEn": "Meat and skin, roasted, edible portion",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 173612,
+      "expectedDescription": "Chicken, broilers or fryers, drumstick, meat and skin, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "鸡小腿（烤熟，带皮）",
+      "nameEn": "Chicken drumstick (roasted, skin-on)",
+      "preparationStateZh": "仅可食肉和皮，不含骨",
+      "preparationStateEn": "Meat and skin, roasted, excludes bone",
+      "aliases": [
+        "鸡腿"
+      ]
+    },
+    {
+      "fdcId": 173630,
+      "expectedDescription": "Chicken, broilers or fryers, wing, meat and skin, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "鸡翅（烤熟，带皮）",
+      "nameEn": "Chicken wings (roasted, skin-on)",
+      "preparationStateZh": "仅可食肉和皮，不含骨",
+      "preparationStateEn": "Meat and skin, roasted, excludes bone",
+      "aliases": []
+    },
+    {
+      "fdcId": 171055,
+      "expectedDescription": "Chicken, broilers or fryers, skin only, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "鸡皮（烤熟）",
+      "nameEn": "Chicken skin (roasted)",
+      "preparationStateZh": "仅皮",
+      "preparationStateEn": "Skin only, roasted",
+      "aliases": []
+    },
+    {
+      "fdcId": 170237,
+      "expectedDescription": "Beef, loin, tenderloin steak, boneless, separable lean and fat, trimmed to 0\" fat, all grades, cooked, grilled",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "牛里脊牛排（烤熟）",
+      "nameEn": "Beef tenderloin steak (grilled)",
+      "preparationStateZh": "去骨，可分离肉和脂肪，外脂修至0英寸",
+      "preparationStateEn": "Boneless, separable lean and fat, trimmed to 0 inch, all grades, grilled",
+      "aliases": [
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 171209,
+      "expectedDescription": "Beef, rib eye steak, boneless, lip-on, separable lean only, trimmed to 1/8\" fat, all grades, cooked, grilled",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "肋眼牛排（烤熟，瘦肉）",
+      "nameEn": "Beef ribeye steak (grilled, lean)",
+      "preparationStateZh": "去骨，lip-on，可分离瘦肉，外脂修至1/8英寸",
+      "preparationStateEn": "Boneless, lip-on, separable lean only, trimmed to 1/8 inch, all grades, grilled",
+      "aliases": [
+        "牛排"
+      ]
+    },
+    {
+      "fdcId": 168665,
+      "expectedDescription": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, cooked, braised",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "牛胸肉（炖熟）",
+      "nameEn": "Beef brisket (braised)",
+      "preparationStateZh": "整块，可分离肉和脂肪，外脂修至1/8英寸",
+      "preparationStateEn": "Whole, separable lean and fat, trimmed to 1/8 inch, all grades, braised",
+      "aliases": [
+        "牛腩"
+      ]
+    },
+    {
+      "fdcId": 169569,
+      "expectedDescription": "Beef, chuck, short ribs, boneless, separable lean only, trimmed to 0\" fat, all grades, cooked, braised",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "牛小排（炖熟，瘦肉）",
+      "nameEn": "Beef short ribs (braised, lean)",
+      "preparationStateZh": "去骨，可分离瘦肉，外脂修至0英寸",
+      "preparationStateEn": "Boneless chuck short ribs, separable lean only, trimmed to 0 inch, all grades, braised",
+      "aliases": []
+    },
+    {
+      "fdcId": 171797,
+      "expectedDescription": "Beef, ground, 80% lean meat / 20% fat, patty, cooked, broiled",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "80%瘦牛肉饼（烤熟）",
+      "nameEn": "80% lean beef patty (broiled)",
+      "preparationStateZh": "80%瘦肉，20%脂肪，肉饼",
+      "preparationStateEn": "80% lean / 20% fat, patty, broiled",
+      "aliases": []
+    },
+    {
+      "fdcId": 167844,
+      "expectedDescription": "Pork, fresh, shoulder, whole, separable lean and fat, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "猪肩肉（烤熟）",
+      "nameEn": "Pork shoulder (roasted)",
+      "preparationStateZh": "整块，可分离肉和脂肪",
+      "preparationStateEn": "Whole, separable lean and fat, roasted",
+      "aliases": []
+    },
+    {
+      "fdcId": 167854,
+      "expectedDescription": "Pork, fresh, spareribs, separable lean and fat, cooked, braised",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "猪排骨（炖熟）",
+      "nameEn": "Pork spareribs (braised)",
+      "preparationStateZh": "仅可食肉和脂肪，不含骨",
+      "preparationStateEn": "Separable lean and fat, excludes bone, braised",
+      "aliases": []
+    },
+    {
+      "fdcId": 172487,
+      "expectedDescription": "Lamb, leg, shank half, separable lean only, trimmed to 1/4\" fat, choice, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "羊腿肉（烤熟，瘦肉）",
+      "nameEn": "Lamb leg (roasted, lean)",
+      "preparationStateZh": "后腿下半部，USDA Choice，可分离瘦肉，外脂修至1/4英寸",
+      "preparationStateEn": "Shank half, USDA Choice, separable lean only, trimmed to 1/4 inch, roasted",
+      "aliases": []
+    },
+    {
+      "fdcId": 172494,
+      "expectedDescription": "Lamb, rib, separable lean only, trimmed to 1/4\" fat, choice, cooked, broiled",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "羊肋排（烤熟，瘦肉）",
+      "nameEn": "Lamb rib chop (broiled, lean)",
+      "preparationStateZh": "USDA Choice，可分离瘦肉，外脂修至1/4英寸",
+      "preparationStateEn": "USDA Choice, separable lean only, trimmed to 1/4 inch, broiled",
+      "aliases": []
+    },
+    {
+      "fdcId": 171510,
+      "expectedDescription": "Duck, young duckling, domesticated, White Pekin, breast, meat and skin, boneless, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "北京鸭胸（烤熟，带皮）",
+      "nameEn": "White Pekin duck breast (roasted, skin-on)",
+      "preparationStateZh": "去骨，仅可食肉和皮",
+      "preparationStateEn": "Boneless, meat and skin, roasted",
+      "aliases": []
+    },
+    {
+      "fdcId": 171113,
+      "expectedDescription": "Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "北京鸭腿肉（炖熟，去皮）",
+      "nameEn": "White Pekin duck leg (braised, skinless)",
+      "preparationStateZh": "仅可食肉，不含骨",
+      "preparationStateEn": "Meat only, cooked without skin, excludes bone, braised",
+      "aliases": []
+    },
+    {
+      "fdcId": 174516,
+      "expectedDescription": "Turkey, retail parts, breast, meat only, cooked, roasted",
+      "category": "meat",
+      "state": "cooked",
+      "nameZh": "火鸡胸肉（烤熟，去皮）",
+      "nameEn": "Turkey breast (roasted, skinless)",
+      "preparationStateZh": "仅肉，无添加溶液",
+      "preparationStateEn": "Meat only, no added solution, roasted",
+      "aliases": []
+    },
+    {
+      "fdcId": 2684441,
+      "expectedDescription": "Fish, salmon, Atlantic, farm raised, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "养殖大西洋三文鱼（生）",
+      "nameEn": "Farmed Atlantic salmon (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "鲑鱼",
+        "三文鱼",
+        "salmon"
+      ]
+    },
+    {
+      "fdcId": 2684444,
+      "expectedDescription": "Fish, cod, Atlantic, wild caught, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "野生大西洋鳕鱼（生）",
+      "nameEn": "Wild Atlantic cod (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "鳕鱼",
+        "cod"
+      ]
+    },
+    {
+      "fdcId": 2684442,
+      "expectedDescription": "Fish, tilapia, farm raised, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "养殖罗非鱼（生）",
+      "nameEn": "Farmed tilapia (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 175159,
+      "expectedDescription": "Fish, tuna, fresh, yellowfin, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "黄鳍金枪鱼（生）",
+      "nameEn": "Yellowfin tuna (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "金枪鱼",
+        "tuna"
+      ]
+    },
+    {
+      "fdcId": 175142,
+      "expectedDescription": "Fish, sea bass, mixed species, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "海鲈（生，混合种）",
+      "nameEn": "Sea bass (raw, mixed species)",
+      "preparationStateZh": "海鲈混合种，不作中国淡水鲈鱼替代",
+      "preparationStateEn": "Mixed marine species, not a freshwater bass substitute",
+      "aliases": [
+        "sea bass"
+      ]
+    },
+    {
+      "fdcId": 173717,
+      "expectedDescription": "Fish, trout, rainbow, farmed, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "养殖虹鳟（生）",
+      "nameEn": "Farmed rainbow trout (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "鳟鱼",
+        "trout"
+      ]
+    },
+    {
+      "fdcId": 175119,
+      "expectedDescription": "Fish, mackerel, Atlantic, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "大西洋鲭鱼（生）",
+      "nameEn": "Atlantic mackerel (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": [
+        "鲭鱼",
+        "mackerel"
+      ]
+    },
+    {
+      "fdcId": 2684443,
+      "expectedDescription": "Crustaceans, shrimp, farm raised, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "养殖虾（生）",
+      "nameEn": "Farmed shrimp (raw)",
+      "preparationStateZh": "仅可食虾肉",
+      "preparationStateEn": "Edible flesh only, raw",
+      "aliases": [
+        "虾仁",
+        "shrimp",
+        "prawns"
+      ]
+    },
+    {
+      "fdcId": 174220,
+      "expectedDescription": "Mollusks, scallop, mixed species, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "扇贝（生，混合种）",
+      "nameEn": "Scallops (raw, mixed species)",
+      "preparationStateZh": "仅可食部分",
+      "preparationStateEn": "Edible portion only, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 174219,
+      "expectedDescription": "Mollusks, oyster, Pacific, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "太平洋牡蛎（生）",
+      "nameEn": "Pacific oyster (raw)",
+      "preparationStateZh": "去壳可食部分",
+      "preparationStateEn": "Edible flesh, excludes shell, raw",
+      "aliases": [
+        "生蚝",
+        "牡蛎"
+      ]
+    },
+    {
+      "fdcId": 174214,
+      "expectedDescription": "Mollusks, clam, mixed species, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "蛤蜊（生，混合种）",
+      "nameEn": "Clams (raw, mixed species)",
+      "preparationStateZh": "去壳可食部分",
+      "preparationStateEn": "Edible flesh, excludes shell, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 174216,
+      "expectedDescription": "Mollusks, mussel, blue, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "蓝贻贝（生）",
+      "nameEn": "Blue mussels (raw)",
+      "preparationStateZh": "去壳可食部分",
+      "preparationStateEn": "Edible flesh, excludes shell, raw",
+      "aliases": [
+        "青口",
+        "mussels"
+      ]
+    },
+    {
+      "fdcId": 174223,
+      "expectedDescription": "Mollusks, squid, mixed species, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "鱿鱼（生，混合种）",
+      "nameEn": "Squid (raw, mixed species)",
+      "preparationStateZh": "仅可食部分",
+      "preparationStateEn": "Edible portion only, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 174218,
+      "expectedDescription": "Mollusks, octopus, common, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "普通章鱼（生）",
+      "nameEn": "Common octopus (raw)",
+      "preparationStateZh": "仅可食部分",
+      "preparationStateEn": "Edible portion only, raw",
+      "aliases": []
+    },
+    {
+      "fdcId": 174204,
+      "expectedDescription": "Crustaceans, crab, blue, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "蓝蟹肉（生）",
+      "nameEn": "Blue crab meat (raw)",
+      "preparationStateZh": "去壳可食部分",
+      "preparationStateEn": "Edible flesh, excludes shell, raw",
+      "aliases": [
+        "蟹肉",
+        "crab"
+      ]
+    },
+    {
+      "fdcId": 171969,
+      "expectedDescription": "Crustaceans, crab, queen, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "雪蟹肉（生）",
+      "nameEn": "Queen crab meat (raw)",
+      "preparationStateZh": "USDA queen crab，去壳可食部分",
+      "preparationStateEn": "USDA queen crab, edible flesh only, raw",
+      "aliases": [
+        "雪蟹",
+        "snow crab"
+      ]
+    },
+    {
+      "fdcId": 174208,
+      "expectedDescription": "Crustaceans, lobster, northern, raw",
+      "category": "seafood",
+      "state": "raw",
+      "nameZh": "美洲龙虾肉（生）",
+      "nameEn": "Northern lobster meat (raw)",
+      "preparationStateZh": "去壳可食部分",
+      "preparationStateEn": "Edible flesh, excludes shell, raw",
+      "aliases": [
+        "龙虾",
+        "lobster"
+      ]
+    },
+    {
+      "fdcId": 171956,
+      "expectedDescription": "Fish, cod, Atlantic, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "大西洋鳕鱼（熟）",
+      "nameEn": "Atlantic cod (cooked)",
+      "preparationStateZh": "干热烹调，仅可食鱼肉",
+      "preparationStateEn": "Dry heat, edible flesh only",
+      "aliases": [
+        "鳕鱼"
+      ]
+    },
+    {
+      "fdcId": 175177,
+      "expectedDescription": "Fish, tilapia, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "罗非鱼（熟）",
+      "nameEn": "Tilapia (cooked)",
+      "preparationStateZh": "干热烹调，仅可食鱼肉",
+      "preparationStateEn": "Dry heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 172006,
+      "expectedDescription": "Fish, tuna, yellowfin, fresh, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "黄鳍金枪鱼（熟）",
+      "nameEn": "Yellowfin tuna (cooked)",
+      "preparationStateZh": "干热烹调，仅可食鱼肉",
+      "preparationStateEn": "Dry heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 173694,
+      "expectedDescription": "Fish, sea bass, mixed species, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "海鲈（熟，混合种）",
+      "nameEn": "Sea bass (cooked, mixed species)",
+      "preparationStateZh": "干热烹调，海鲈混合种",
+      "preparationStateEn": "Dry heat, mixed marine species",
+      "aliases": []
+    },
+    {
+      "fdcId": 173718,
+      "expectedDescription": "Fish, trout, rainbow, farmed, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "养殖虹鳟（熟）",
+      "nameEn": "Farmed rainbow trout (cooked)",
+      "preparationStateZh": "干热烹调",
+      "preparationStateEn": "Dry heat",
+      "aliases": []
+    },
+    {
+      "fdcId": 175120,
+      "expectedDescription": "Fish, mackerel, Atlantic, cooked, dry heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "大西洋鲭鱼（熟）",
+      "nameEn": "Atlantic mackerel (cooked)",
+      "preparationStateZh": "干热烹调",
+      "preparationStateEn": "Dry heat",
+      "aliases": []
+    },
+    {
+      "fdcId": 167742,
+      "expectedDescription": "Mollusks, scallop, (bay and sea), cooked, steamed",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "扇贝（蒸熟）",
+      "nameEn": "Scallops (steamed)",
+      "preparationStateZh": "海湾和海扇贝，仅可食部分",
+      "preparationStateEn": "Bay and sea scallops, edible portion, steamed",
+      "aliases": []
+    },
+    {
+      "fdcId": 174250,
+      "expectedDescription": "Mollusks, oyster, Pacific, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "太平洋牡蛎（熟）",
+      "nameEn": "Pacific oyster (cooked)",
+      "preparationStateZh": "湿热烹调，去壳可食部分",
+      "preparationStateEn": "Moist heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 171975,
+      "expectedDescription": "Mollusks, clam, mixed species, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "蛤蜊（熟，混合种）",
+      "nameEn": "Clams (cooked, mixed species)",
+      "preparationStateZh": "湿热烹调，去壳可食部分",
+      "preparationStateEn": "Moist heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 174217,
+      "expectedDescription": "Mollusks, mussel, blue, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "蓝贻贝（熟）",
+      "nameEn": "Blue mussels (cooked)",
+      "preparationStateZh": "湿热烹调，去壳可食部分",
+      "preparationStateEn": "Moist heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 174249,
+      "expectedDescription": "Mollusks, octopus, common, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "普通章鱼（熟）",
+      "nameEn": "Common octopus (cooked)",
+      "preparationStateZh": "湿热烹调，仅可食部分",
+      "preparationStateEn": "Moist heat, edible portion only",
+      "aliases": []
+    },
+    {
+      "fdcId": 174205,
+      "expectedDescription": "Crustaceans, crab, blue, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "蓝蟹肉（熟）",
+      "nameEn": "Blue crab meat (cooked)",
+      "preparationStateZh": "湿热烹调，去壳可食部分",
+      "preparationStateEn": "Moist heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 172008,
+      "expectedDescription": "Crustaceans, crab, queen, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "雪蟹肉（熟）",
+      "nameEn": "Queen crab meat (cooked)",
+      "preparationStateZh": "USDA queen crab，湿热烹调，去壳",
+      "preparationStateEn": "USDA queen crab, moist heat, edible flesh only",
+      "aliases": [
+        "雪蟹",
+        "snow crab"
+      ]
+    },
+    {
+      "fdcId": 174209,
+      "expectedDescription": "Crustaceans, lobster, northern, cooked, moist heat",
+      "category": "seafood",
+      "state": "cooked",
+      "nameZh": "美洲龙虾肉（熟）",
+      "nameEn": "Northern lobster meat (cooked)",
+      "preparationStateZh": "湿热烹调，去壳可食部分",
+      "preparationStateEn": "Moist heat, edible flesh only",
+      "aliases": []
+    },
+    {
+      "fdcId": 2512381,
+      "expectedDescription": "Rice, white, long grain, unenriched, raw",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "长粒白米（生）",
+      "nameEn": "Long-grain white rice (dry)",
+      "preparationStateZh": "未强化，干重",
+      "preparationStateEn": "Unenriched, dry",
+      "aliases": [
+        "大米",
+        "白米",
+        "rice"
+      ]
+    },
+    {
+      "fdcId": 169760,
+      "expectedDescription": "Rice, white, medium-grain, raw, unenriched",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "中粒白米（生）",
+      "nameEn": "Medium-grain white rice (dry)",
+      "preparationStateZh": "未强化，干重",
+      "preparationStateEn": "Unenriched, dry",
+      "aliases": [
+        "大米",
+        "白米",
+        "rice"
+      ]
+    },
+    {
+      "fdcId": 168931,
+      "expectedDescription": "Rice, white, short-grain, raw, unenriched",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "短粒白米（生）",
+      "nameEn": "Short-grain white rice (dry)",
+      "preparationStateZh": "未强化，干重",
+      "preparationStateEn": "Unenriched, dry",
+      "aliases": [
+        "大米",
+        "白米",
+        "rice"
+      ]
+    },
+    {
+      "fdcId": 2512380,
+      "expectedDescription": "Rice, brown, long grain, unenriched, raw",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "长粒糙米（生）",
+      "nameEn": "Long-grain brown rice (dry)",
+      "preparationStateZh": "未强化，干重",
+      "preparationStateEn": "Unenriched, dry",
+      "aliases": [
+        "糙米",
+        "brown rice"
+      ]
+    },
+    {
+      "fdcId": 168883,
+      "expectedDescription": "Rice, white, glutinous, unenriched, uncooked",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "糯米（生）",
+      "nameEn": "Glutinous rice (dry)",
+      "preparationStateZh": "白糯米，未强化，干重",
+      "preparationStateEn": "White, unenriched, dry",
+      "aliases": [
+        "糯米",
+        "sticky rice"
+      ]
+    },
+    {
+      "fdcId": 169702,
+      "expectedDescription": "Millet, raw",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "小米（生）",
+      "nameEn": "Millet (dry)",
+      "preparationStateZh": "干重，未烹调",
+      "preparationStateEn": "Dry, uncooked",
+      "aliases": [
+        "小米",
+        "millet"
+      ]
+    },
+    {
+      "fdcId": 168874,
+      "expectedDescription": "Quinoa, uncooked",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "藜麦（生）",
+      "nameEn": "Quinoa (dry)",
+      "preparationStateZh": "干重 · 未烹调",
+      "preparationStateEn": "Dry · uncooked",
+      "aliases": []
+    },
+    {
+      "fdcId": 170685,
+      "expectedDescription": "Buckwheat groats, roasted, dry",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "烘焙荞麦粒（干）",
+      "nameEn": "Roasted buckwheat groats (dry)",
+      "preparationStateZh": "已烘焙，未煮",
+      "preparationStateEn": "Roasted, dry, not boiled",
+      "aliases": [
+        "荞麦",
+        "kasha"
+      ]
+    },
+    {
+      "fdcId": 170284,
+      "expectedDescription": "Barley, pearled, raw",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "珍珠大麦（生）",
+      "nameEn": "Pearled barley (dry)",
+      "preparationStateZh": "去皮抛光，干重",
+      "preparationStateEn": "Pearled, dry",
+      "aliases": [
+        "大麦",
+        "barley"
+      ]
+    },
+    {
+      "fdcId": 168908,
+      "expectedDescription": "Noodles, japanese, somen, dry",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "日式细麦面（干）",
+      "nameEn": "Somen wheat noodles (dry)",
+      "preparationStateZh": "日式素面，干重",
+      "preparationStateEn": "Japanese somen, dry",
+      "aliases": [
+        "面条",
+        "wheat noodles"
+      ]
+    },
+    {
+      "fdcId": 169742,
+      "expectedDescription": "Rice noodles, dry",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "米粉（干）",
+      "nameEn": "Rice noodles (dry)",
+      "preparationStateZh": "干重",
+      "preparationStateEn": "Dry",
+      "aliases": [
+        "米线",
+        "rice noodles"
+      ]
+    },
+    {
+      "fdcId": 168930,
+      "expectedDescription": "Rice, white, medium-grain, cooked, unenriched",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "中粒白米饭（熟）",
+      "nameEn": "Medium-grain white rice (cooked)",
+      "preparationStateZh": "未强化",
+      "preparationStateEn": "Unenriched, cooked",
+      "aliases": [
+        "大米",
+        "米饭",
+        "rice"
+      ]
+    },
+    {
+      "fdcId": 168932,
+      "expectedDescription": "Rice, white, short-grain, cooked, unenriched",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "短粒白米饭（熟）",
+      "nameEn": "Short-grain white rice (cooked)",
+      "preparationStateZh": "未强化",
+      "preparationStateEn": "Unenriched, cooked",
+      "aliases": [
+        "大米",
+        "米饭",
+        "rice"
+      ]
+    },
+    {
+      "fdcId": 169704,
+      "expectedDescription": "Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "长粒糙米饭（熟）",
+      "nameEn": "Long-grain brown rice (cooked)",
+      "preparationStateZh": "熟，非即食产品",
+      "preparationStateEn": "Cooked, not instant",
+      "aliases": [
+        "糙米",
+        "米饭",
+        "brown rice"
+      ]
+    },
+    {
+      "fdcId": 169711,
+      "expectedDescription": "Rice, white, glutinous, unenriched, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "糯米饭（熟）",
+      "nameEn": "Glutinous rice (cooked)",
+      "preparationStateZh": "白糯米，未强化",
+      "preparationStateEn": "White, unenriched, cooked",
+      "aliases": [
+        "糯米",
+        "米饭",
+        "sticky rice"
+      ]
+    },
+    {
+      "fdcId": 168871,
+      "expectedDescription": "Millet, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "小米饭（熟）",
+      "nameEn": "Millet (cooked)",
+      "preparationStateZh": "熟 · 可食部分",
+      "preparationStateEn": "Cooked · edible portion",
+      "aliases": [
+        "小米",
+        "米饭",
+        "millet"
+      ]
+    },
+    {
+      "fdcId": 168917,
+      "expectedDescription": "Quinoa, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "藜麦（熟）",
+      "nameEn": "Quinoa (cooked)",
+      "preparationStateZh": "熟 · 可食部分",
+      "preparationStateEn": "Cooked · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 170686,
+      "expectedDescription": "Buckwheat groats, roasted, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "烘焙荞麦粒（煮熟）",
+      "nameEn": "Roasted buckwheat groats (cooked)",
+      "preparationStateZh": "已烘焙，煮熟",
+      "preparationStateEn": "Roasted groats, cooked",
+      "aliases": [
+        "荞麦",
+        "kasha"
+      ]
+    },
+    {
+      "fdcId": 170285,
+      "expectedDescription": "Barley, pearled, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "珍珠大麦（熟）",
+      "nameEn": "Pearled barley (cooked)",
+      "preparationStateZh": "熟 · 可食部分",
+      "preparationStateEn": "Cooked · edible portion",
+      "aliases": [
+        "大麦",
+        "barley"
+      ]
+    },
+    {
+      "fdcId": 168909,
+      "expectedDescription": "Noodles, japanese, somen, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "日式细麦面（熟）",
+      "nameEn": "Somen wheat noodles (cooked)",
+      "preparationStateZh": "日式素面，煮熟",
+      "preparationStateEn": "Japanese somen, cooked",
+      "aliases": [
+        "面条",
+        "wheat noodles"
+      ]
+    },
+    {
+      "fdcId": 168914,
+      "expectedDescription": "Rice noodles, cooked",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "米粉（熟）",
+      "nameEn": "Rice noodles (cooked)",
+      "preparationStateZh": "熟 · 可食部分",
+      "preparationStateEn": "Cooked · edible portion",
+      "aliases": [
+        "米线",
+        "rice noodles"
+      ]
+    },
+    {
+      "fdcId": 169737,
+      "expectedDescription": "Pasta, cooked, enriched, without added salt",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "意大利面（熟）",
+      "nameEn": "Pasta (cooked)",
+      "preparationStateZh": "强化，无添加盐",
+      "preparationStateEn": "Enriched, cooked without added salt",
+      "aliases": [
+        "意面",
+        "pasta"
+      ]
+    },
+    {
+      "fdcId": 170028,
+      "expectedDescription": "Potatoes, white, flesh and skin, raw",
+      "category": "grains-staples",
+      "state": "raw",
+      "nameZh": "白土豆（生）",
+      "nameEn": "White potato (raw)",
+      "preparationStateZh": "薯肉及皮，生",
+      "preparationStateEn": "Flesh and skin, raw",
+      "aliases": [
+        "马铃薯",
+        "土豆",
+        "potato"
+      ]
+    },
+    {
+      "fdcId": 2346404,
+      "expectedDescription": "Sweet potatoes, orange flesh, without skin, raw",
+      "category": "grains-staples",
+      "state": "raw",
+      "nameZh": "橙肉红薯（生）",
+      "nameEn": "Orange-flesh sweet potato (raw)",
+      "preparationStateZh": "去皮，生",
+      "preparationStateEn": "Without skin, raw",
+      "aliases": [
+        "番薯",
+        "地瓜",
+        "红薯",
+        "sweet potato"
+      ]
+    },
+    {
+      "fdcId": 169308,
+      "expectedDescription": "Taro, raw",
+      "category": "grains-staples",
+      "state": "raw",
+      "nameZh": "芋头（生）",
+      "nameEn": "Taro (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 170071,
+      "expectedDescription": "Yam, raw",
+      "category": "grains-staples",
+      "state": "raw",
+      "nameZh": "薯蓣（生）",
+      "nameEn": "Yam (raw)",
+      "preparationStateZh": "USDA通用薯蓣，非特指中国山药",
+      "preparationStateEn": "USDA generic yam, not specifically Chinese yam",
+      "aliases": []
+    },
+    {
+      "fdcId": 169985,
+      "expectedDescription": "Cassava, raw",
+      "category": "grains-staples",
+      "state": "raw",
+      "nameZh": "木薯（生）",
+      "nameEn": "Cassava (raw)",
+      "preparationStateZh": "生 · 可食部分",
+      "preparationStateEn": "Raw · edible portion",
+      "aliases": []
+    },
+    {
+      "fdcId": 170440,
+      "expectedDescription": "Potatoes, boiled, cooked without skin, flesh, without salt",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "土豆（煮熟，去皮）",
+      "nameEn": "Potato (boiled, peeled)",
+      "preparationStateZh": "去皮薯肉，无盐",
+      "preparationStateEn": "Flesh, cooked without skin, without salt",
+      "aliases": [
+        "土豆",
+        "马铃薯"
+      ]
+    },
+    {
+      "fdcId": 168484,
+      "expectedDescription": "Sweet potato, cooked, boiled, without skin",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "红薯（煮熟，去皮）",
+      "nameEn": "Sweet potato (boiled, peeled)",
+      "preparationStateZh": "去皮，无盐版本",
+      "preparationStateEn": "Boiled without skin, unsalted version",
+      "aliases": [
+        "番薯",
+        "地瓜"
+      ]
+    },
+    {
+      "fdcId": 168486,
+      "expectedDescription": "Taro, cooked, without salt",
+      "category": "grains-staples",
+      "state": "cooked",
+      "nameZh": "芋头（熟）",
+      "nameEn": "Taro (cooked)",
+      "preparationStateZh": "熟，无盐",
+      "preparationStateEn": "Cooked, without salt",
+      "aliases": []
+    },
+    {
+      "fdcId": 173727,
+      "expectedDescription": "Beans, adzuki, mature seeds, raw",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "红小豆（生，干重）",
+      "nameEn": "Adzuki beans (dry)",
+      "preparationStateZh": "成熟种子，干重",
+      "preparationStateEn": "Mature seeds, dry",
+      "aliases": [
+        "红豆",
+        "赤小豆",
+        "red beans"
+      ]
+    },
+    {
+      "fdcId": 174256,
+      "expectedDescription": "Mung beans, mature seeds, raw",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "绿豆（生，干重）",
+      "nameEn": "Mung beans (dry)",
+      "preparationStateZh": "成熟种子，干重",
+      "preparationStateEn": "Mature seeds, dry",
+      "aliases": []
+    },
+    {
+      "fdcId": 173734,
+      "expectedDescription": "Beans, black, mature seeds, raw",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "黑芸豆（生，干重）",
+      "nameEn": "Black beans (dry)",
+      "preparationStateZh": "成熟黑芸豆，非黑大豆",
+      "preparationStateEn": "Mature black common beans, not black soybeans",
+      "aliases": [
+        "黑豆",
+        "black beans"
+      ]
+    },
+    {
+      "fdcId": 173744,
+      "expectedDescription": "Beans, kidney, red, mature seeds, raw",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "红芸豆（生，干重）",
+      "nameEn": "Red kidney beans (dry)",
+      "preparationStateZh": "成熟种子，干重",
+      "preparationStateEn": "Mature seeds, dry",
+      "aliases": [
+        "芸豆",
+        "kidney beans"
+      ]
+    },
+    {
+      "fdcId": 2644282,
+      "expectedDescription": "Chickpeas, (garbanzo beans, bengal gram), dry",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "鹰嘴豆（生，干重）",
+      "nameEn": "Chickpeas (dry)",
+      "preparationStateZh": "干重 · 未烹调",
+      "preparationStateEn": "Dry · uncooked",
+      "aliases": [
+        "chickpeas",
+        "garbanzo"
+      ]
+    },
+    {
+      "fdcId": 2644283,
+      "expectedDescription": "Lentils, dry",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "小扁豆（生，干重）",
+      "nameEn": "Lentils (dry)",
+      "preparationStateZh": "干重 · 未烹调",
+      "preparationStateEn": "Dry · uncooked",
+      "aliases": [
+        "兵豆",
+        "lentils"
+      ]
+    },
+    {
+      "fdcId": 174270,
+      "expectedDescription": "Soybeans, mature seeds, raw",
+      "category": "legumes-soy",
+      "state": "dry",
+      "nameZh": "黄豆（生，干重）",
+      "nameEn": "Soybeans (dry)",
+      "preparationStateZh": "成熟种子，干重，非毛豆",
+      "preparationStateEn": "Mature seeds, dry, not edamame",
+      "aliases": [
+        "大豆",
+        "soybeans"
+      ]
+    },
+    {
+      "fdcId": 173728,
+      "expectedDescription": "Beans, adzuki, mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "红小豆（煮熟）",
+      "nameEn": "Adzuki beans (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": [
+        "红豆",
+        "赤小豆",
+        "red beans"
+      ]
+    },
+    {
+      "fdcId": 174257,
+      "expectedDescription": "Mung beans, mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "绿豆（煮熟）",
+      "nameEn": "Mung beans (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": []
+    },
+    {
+      "fdcId": 173735,
+      "expectedDescription": "Beans, black, mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "黑芸豆（煮熟）",
+      "nameEn": "Black beans (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐，非黑大豆",
+      "preparationStateEn": "Mature seeds, boiled, without salt, not black soybeans",
+      "aliases": [
+        "黑豆",
+        "black beans"
+      ]
+    },
+    {
+      "fdcId": 175194,
+      "expectedDescription": "Beans, kidney, red, mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "红芸豆（煮熟）",
+      "nameEn": "Red kidney beans (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": [
+        "芸豆",
+        "kidney beans"
+      ]
+    },
+    {
+      "fdcId": 173757,
+      "expectedDescription": "Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "鹰嘴豆（煮熟）",
+      "nameEn": "Chickpeas (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": []
+    },
+    {
+      "fdcId": 172421,
+      "expectedDescription": "Lentils, mature seeds, cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "小扁豆（煮熟）",
+      "nameEn": "Lentils (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": []
+    },
+    {
+      "fdcId": 174271,
+      "expectedDescription": "Soybeans, mature cooked, boiled, without salt",
+      "category": "legumes-soy",
+      "state": "cooked",
+      "nameZh": "黄豆（煮熟）",
+      "nameEn": "Soybeans (boiled)",
+      "preparationStateZh": "成熟种子，煮熟，无盐",
+      "preparationStateEn": "Mature seeds, boiled, without salt",
+      "aliases": [
+        "大豆",
+        "soybeans"
+      ]
+    },
+    {
+      "fdcId": 170286,
+      "expectedDescription": "Buckwheat",
+      "category": "grains-staples",
+      "state": "dry",
+      "nameZh": "荞麦（干）",
+      "nameEn": "Buckwheat (dry)",
+      "preparationStateZh": "干重，未烘焙",
+      "preparationStateEn": "Dry, unroasted",
+      "aliases": [
+        "荞麦",
+        "buckwheat"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "fdcId": 2727581,
+      "description": "Blackberries, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 2747675,
+      "description": "Watermelon, seedless, flesh only, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 2727583,
+      "description": "Cabbage, napa, leaf, destemmed, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 2727578,
+      "description": "Squash, pie pumpkin, peeled, seeded, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 2727584,
+      "description": "Leeks, bulb and greens, root removed, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 2727585,
+      "description": "Green onion, (scallion), bulb and greens, root removed, raw",
+      "reason": "Foundation record lacks required nutrients. Independently selected SR food below uses its own full record, without borrowing values."
+    },
+    {
+      "fdcId": 169757,
+      "description": "Rice, white, long-grain, regular, unenriched, cooked without salt",
+      "reason": "Four core nutrients duplicate existing enriched long-grain cooked rice; fortification-only distinction is outside this model."
+    },
+    {
+      "fdcId": 170072,
+      "description": "Yam, cooked, boiled, drained, or baked, without salt",
+      "reason": "Official cooked record combines boiled/drained or baked; no unambiguous single-method match."
+    },
+    {
+      "fdcId": 2727566,
+      "reason": "Negative USDA carbohydrate-by-difference amount; excluded without clamping. Separate SR record used where an exact edible meat/skin match is available."
+    },
+    {
+      "fdcId": 2727567,
+      "reason": "Negative USDA carbohydrate-by-difference amount; excluded without clamping. Separate SR record used where an exact edible meat/skin match is available."
+    },
+    {
+      "fdcId": 2727568,
+      "reason": "Negative USDA carbohydrate-by-difference amount; excluded without clamping. Separate SR record used where an exact edible meat/skin match is available."
+    },
+    {
+      "fdcId": 2727569,
+      "reason": "Negative USDA carbohydrate-by-difference amount; excluded without clamping. Separate SR record used where an exact edible meat/skin match is available."
+    },
+    {
+      "fdcId": 2727576,
+      "reason": "Negative USDA carbohydrate-by-difference amount; excluded without clamping. Separate SR record used where an exact edible meat/skin match is available."
+    },
+    {
+      "fdcId": 747438,
+      "reason": "0%-moisture research bean sample, not as sold; also missing energy/carbohydrate. Use independently sourced mature dry-seed records instead."
+    },
+    {
+      "fdcId": 747440,
+      "reason": "0%-moisture research bean sample, not as sold; also missing energy/carbohydrate. Use independently sourced mature dry-seed records instead."
+    },
+    {
+      "fdcId": 747443,
+      "reason": "0%-moisture research bean sample, not as sold; also missing energy/carbohydrate. Use independently sourced mature dry-seed records instead."
+    },
+    {
+      "fdcId": 747444,
+      "reason": "0%-moisture research bean sample, not as sold; also missing energy/carbohydrate. Use independently sourced mature dry-seed records instead."
+    }
+  ],
+  "gaps": [
+    {
+      "food": "Dragon fruit / 火龙果",
+      "reason": "No suitable record in the two downloaded official archives; not estimated."
+    },
+    {
+      "food": "Job’s tears / 薏米",
+      "reason": "No suitable record in the two downloaded official archives; no barley substitution."
+    },
+    {
+      "food": "King oyster mushroom / 杏鲍菇",
+      "fdcId": 2003599,
+      "reason": "Complete Foundation record exists but archive description/input samples do not explicitly identify raw/cooked preparation. Held for further source verification."
+    },
+    {
+      "food": "Oat groats, dry/cooked / 燕麦米",
+      "reason": "Generic oats/rolled oats are not an explicit groat match; existing dry rolled oats retained. No exact cooked groat record selected."
+    },
+    {
+      "food": "Sardines / 沙丁鱼",
+      "reason": "Downloaded SR matches are canned preparations with bones; no plain raw/cooked edible-flesh match selected."
+    },
+    {
+      "food": "Duck breast/leg, raw / 生鸭胸鸭腿",
+      "reason": "No matching domestic White Pekin raw breast/leg record in downloaded archives; no wild-duck substitution. Cooked White Pekin records selected."
+    },
+    {
+      "food": "Squid, plain cooked / 原味熟鱿鱼",
+      "reason": "No suitable plain cooked counterpart selected; fried squid is not substituted."
+    },
+    {
+      "food": "Cassava, plain boiled / 煮木薯",
+      "reason": "No exact plain boiled record selected in downloaded archives; raw record is independent."
+    },
+    {
+      "food": "Pork belly, plain cooked / 原味熟五花肉",
+      "reason": "No exact plain cooked record selected; existing raw belly retained."
+    }
+  ],
+  "sources": [
+    {
+      "key": "foundation",
+      "name": "Foundation Foods",
+      "release": "April 2026",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2026-04-30.zip",
+      "jsonFile": "FoodData_Central_foundation_food_json_2026-04-30.json",
+      "zipSha256": "186e988ec542e913f51ef62b86a47758e8cdd0d1dc3889e7b055581f3c09c77a",
+      "jsonSha256": "27d1fe3fd89edfbe528ed915da5619320e1d004d4594603a1b19bdb1511590cc"
+    },
+    {
+      "key": "sr-legacy",
+      "name": "SR Legacy",
+      "release": "April 2018",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip",
+      "jsonFile": "FoodData_Central_sr_legacy_food_json_2018-04.json",
+      "zipSha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef",
+      "jsonSha256": "70d4235ae3a2bdf48a7b9eaa1286a83fa67b6f3270436c9ce8b008213f500129"
+    }
+  ]
+}

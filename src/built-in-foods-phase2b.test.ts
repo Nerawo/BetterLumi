@@ -12,8 +12,8 @@ const tags=ingredientTagOptions([],'en');
 afterEach(async()=>{for(const table of db.tables)await table.clear()});
 
 it('adds exactly eleven foods while retaining all twelve Foundation references and static tag IDs',()=>{
- expect(phase2b).toHaveLength(11);expect(builtInFoods.filter(food=>food.sourceDataType==='Foundation Foods')).toHaveLength(12);expect(builtInFoods).toHaveLength(32);
- expect(new Set(builtInFoods.map(food=>food.id)).size).toBe(32);expect(builtInTags).toHaveLength(9);
+ expect(phase2b).toHaveLength(11);expect(builtInFoods.filter(food=>food.id.startsWith('builtin-')&&food.sourceDataType==='Foundation Foods')).toHaveLength(12);expect(builtInFoods).toHaveLength(206);
+ expect(new Set(builtInFoods.map(food=>food.id)).size).toBe(206);expect(builtInTags).toHaveLength(9);
 });
 it.each(provenance.records)('matches the official USDA record $fdcId, exact description, identifiers and reported nutrients',record=>{
  const food=phase2b.find(food=>food.fdcIdSnapshot===String(record.fdcId))!;expect(food).toBeDefined();

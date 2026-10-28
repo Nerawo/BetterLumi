@@ -32,8 +32,8 @@ it.each([
  const url=new URL(food.sourceUrl);expect(url.origin).toBe('https://fdc.nal.usda.gov');expect(url.searchParams.get('query')).toBe(ndb);
  expect(food.usdaDescription).toBeTruthy();expect(food.preparationStateZh).toBeTruthy();expect(food.preparationStateEn).toBeTruthy();expect(food.tagIds).toHaveLength(1);
 });
-it('contains thirty-two unique frozen food references alongside the exercise library',()=>{
- expect(builtInFoods).toHaveLength(32);expect(new Set(builtInFoods.map(food=>food.id)).size).toBe(32);expect(builtInExercises).toHaveLength(15);
+it('contains 206 unique frozen food references alongside the exercise library',()=>{
+ expect(builtInFoods).toHaveLength(206);expect(new Set(builtInFoods.map(food=>food.id)).size).toBe(206);expect(builtInExercises).toHaveLength(15);
  expect(Object.isFrozen(builtInFoods)).toBe(true);expect(builtInFoods.every(food=>Object.isFrozen(food)&&Object.isFrozen(food.tagIds))).toBe(true);
 });
 it.each([
@@ -47,7 +47,7 @@ it('combines tag and text search and keeps exact personal matches ahead of refer
  expect(searchFoodChoices([personal],'Broccoli','',tags)[0]).toEqual({kind:'user',item:personal});
  expect(searchFoodChoices([personal],'Broccoli','custom',tags)).toEqual([{kind:'user',item:personal}]);
  expect(searchFoodChoices([],'Broccoli','betterlumi:ingredient-tag:fruits',tags)).toEqual([]);
- expect(searchFoodChoices([],'vegetables','betterlumi:ingredient-tag:vegetables',tags)).toHaveLength(8);
+ expect(searchFoodChoices([],'vegetables','betterlumi:ingredient-tag:vegetables',tags)).toHaveLength(38);
 });
 it('scales 50 g precisely without deriving energy from macros or rounding snapshots',()=>{
  const nutrition=builtInFoodNutrition(broccoli,50,'g');

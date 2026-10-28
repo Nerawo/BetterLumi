@@ -1,3 +1,5 @@
+import {householdUnitLabel} from './household-units';
+import {useIngredientPreferences} from './useIngredientPreferences';
 import {RecipeDetailImage} from "./RecipeDetailImage";
 import {isBuiltInRecipe,bologneseCookingExtras} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
@@ -33,7 +35,7 @@ export function RecipeDetail({
   notice: Notice;
   addMeal: (r: Recipe) => void;
 }) {
-  const { t,i18n } = useTranslation();
+  const { t,i18n } = useTranslation(),preferences=useIngredientPreferences();
   const close = () => {
     if (history.state?.recipeOverlay) history.back();
     else navigate("/recipes", true);
@@ -101,7 +103,7 @@ export function RecipeDetail({
                   <strong>{l.name}</strong>
                   <span>
                     {Number(l.quantity.toFixed(3))}{" "}
-                    {l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : l.unit}
+                    {l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
                   </span>
                 </li>
               ))}

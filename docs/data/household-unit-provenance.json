@@ -1,0 +1,7175 @@
+{
+  "sources": [
+    {
+      "key": "foundation",
+      "name": "Foundation Foods",
+      "release": "April 2026",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2026-04-30.zip",
+      "jsonFile": "FoodData_Central_foundation_food_json_2026-04-30.json",
+      "zipSha256": "186e988ec542e913f51ef62b86a47758e8cdd0d1dc3889e7b055581f3c09c77a",
+      "jsonSha256": "27d1fe3fd89edfbe528ed915da5619320e1d004d4594603a1b19bdb1511590cc"
+    },
+    {
+      "key": "sr-legacy",
+      "name": "SR Legacy",
+      "release": "April 2018",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip",
+      "jsonFile": "FoodData_Central_sr_legacy_food_json_2018-04.json",
+      "zipSha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef",
+      "jsonSha256": "70d4235ae3a2bdf48a7b9eaa1286a83fa67b6f3270436c9ce8b008213f500129"
+    }
+  ],
+  "ediblePortionDocumentation": "https://fdc.nal.usda.gov/Foundation_Foods_Documentation/#bkmk-16",
+  "records": [
+    {
+      "foodId": "builtin-broccoli-raw",
+      "fdcId": 747447,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Broccoli, raw",
+      "foodPortions": [
+        {
+          "id": 187633,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "chopped",
+          "gramWeight": 76,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 312822,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-carrot-raw",
+      "fdcId": 2258586,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Carrots, mature, raw",
+      "foodPortions": [
+        {
+          "id": 312791,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-spinach-raw",
+      "fdcId": 1999633,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Spinach, mature",
+      "foodPortions": [
+        {
+          "id": 312805,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-roma-tomato-raw",
+      "fdcId": 1999634,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Tomato, roma",
+      "foodPortions": [
+        {
+          "id": 312806,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-cucumber-raw",
+      "fdcId": 2346406,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Cucumber, with peel, raw",
+      "foodPortions": [
+        {
+          "id": 312785,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-banana-raw",
+      "fdcId": 1105314,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Bananas, ripe and slightly ripe, raw",
+      "foodPortions": [
+        {
+          "id": 267795,
+          "value": 1,
+          "measureUnit": {
+            "id": 1119,
+            "name": "Banana",
+            "abbreviation": "Banana"
+          },
+          "modifier": "Peeled",
+          "gramWeight": 115,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2019
+        },
+        {
+          "id": 312674,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-gala-apple-raw",
+      "fdcId": 1750341,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Apples, gala, with skin, raw",
+      "foodPortions": [
+        {
+          "id": 312672,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-strawberry-raw",
+      "fdcId": 2346409,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Strawberries, raw",
+      "foodPortions": [
+        {
+          "id": 312666,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-blueberry-raw",
+      "fdcId": 2346411,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Blueberries, raw",
+      "foodPortions": [
+        {
+          "id": 312663,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-whole-egg",
+      "fdcId": 748967,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Eggs, Grade A, Large, egg whole",
+      "foodPortions": [
+        {
+          "id": 193781,
+          "value": 1,
+          "measureUnit": {
+            "id": 1099,
+            "name": "egg",
+            "abbreviation": "egg"
+          },
+          "modifier": "whole without shell",
+          "gramWeight": 50.3,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2019
+        },
+        {
+          "id": 312625,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 50,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-whole-milk",
+      "fdcId": 746782,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Milk, whole, 3.25% milkfat, with added vitamin D",
+      "foodPortions": [
+        {
+          "id": 187530,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "",
+          "gramWeight": 249,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2018
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-greek-yogurt-whole-plain",
+      "fdcId": 2259794,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Yogurt, Greek, plain, whole milk",
+      "foodPortions": [
+        {
+          "id": 312623,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 170,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-chicken-breast-roasted",
+      "fdcId": 171477,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, breast, meat only, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 88817,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, chopped or diced",
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 88818,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit (yield from 1 lb ready-to-cook chicken)",
+          "gramWeight": 52,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 88819,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "breast, bone and skin removed",
+          "gramWeight": 86,
+          "sequenceNumber": 3,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-ground-beef-90-lean-broiled",
+      "fdcId": 174031,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, ground, 90% lean meat / 10% fat, patty, cooked, broiled",
+      "foodPortions": [
+        {
+          "id": 93664,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-pork-tenderloin-roasted",
+      "fdcId": 168250,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, loin, tenderloin, separable lean only, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 82753,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "roast",
+          "gramWeight": 402,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 82751,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 82752,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse)",
+          "gramWeight": 333,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-atlantic-salmon-farmed-cooked",
+      "fdcId": 175168,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, salmon, Atlantic, farmed, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 95789,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 178,
+          "sequenceNumber": 2,
+          "amount": 0.5
+        },
+        {
+          "id": 95788,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-shrimp-cooked",
+      "fdcId": 175180,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, shrimp, cooked",
+      "foodPortions": [
+        {
+          "id": 95807,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-white-rice-cooked",
+      "fdcId": 168878,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, long-grain, regular, enriched, cooked",
+      "foodPortions": [
+        {
+          "id": 83928,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 158,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-oats-dry",
+      "fdcId": 173904,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Cereals, oats, regular and quick, not fortified, dry",
+      "foodPortions": [
+        {
+          "id": 93454,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 81,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93455,
+          "value": 0.33,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 27,
+          "sequenceNumber": 2,
+          "amount": 0.33
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-potato-baked",
+      "fdcId": 170093,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Potatoes, baked, flesh and skin, without salt",
+      "foodPortions": [
+        {
+          "id": 86027,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "NLEA serving",
+          "gramWeight": 148,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 86028,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "potato large",
+          "gramWeight": 299,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 86029,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "potato medium",
+          "gramWeight": 173,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 86030,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "potato small",
+          "gramWeight": 138,
+          "sequenceNumber": 4,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-sweet-potato-baked",
+      "fdcId": 168483,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Sweet potato, cooked, baked in skin, flesh, without salt",
+      "foodPortions": [
+        {
+          "id": 83169,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 180,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 83171,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 60,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 83168,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 200,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 83170,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (2\" dia, 5\" long, raw)",
+          "gramWeight": 114,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-edamame-prepared",
+      "fdcId": 168411,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Edamame, frozen, prepared",
+      "foodPortions": [
+        {
+          "id": 83053,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 155,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-tofu-firm-calcium-set",
+      "fdcId": 172475,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Tofu, raw, firm, prepared with calcium sulfate",
+      "foodPortions": [
+        {
+          "id": 90683,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 126,
+          "sequenceNumber": 1,
+          "amount": 0.5
+        },
+        {
+          "id": 90684,
+          "value": 0.25,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "block",
+          "gramWeight": 81,
+          "sequenceNumber": 2,
+          "amount": 0.25
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-pasta-dry-enriched",
+      "fdcId": 169736,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pasta, dry, enriched",
+      "foodPortions": [
+        {
+          "id": 85418,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup shells",
+          "gramWeight": 64,
+          "sequenceNumber": 7,
+          "amount": 1
+        },
+        {
+          "id": 85413,
+          "value": 2,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 57,
+          "sequenceNumber": 2,
+          "amount": 2
+        },
+        {
+          "id": 85417,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup rotini",
+          "gramWeight": 96,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 85414,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup elbows",
+          "gramWeight": 122,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85412,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup spaghetti",
+          "gramWeight": 91,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85415,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup penne",
+          "gramWeight": 95,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85416,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup farfalle",
+          "gramWeight": 81,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 85419,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup lasagna",
+          "gramWeight": 90,
+          "sequenceNumber": 8,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-ground-beef-85-lean-raw",
+      "fdcId": 171796,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, ground, 85% lean meat / 15% fat, raw (Includes foods for USDA's Food Distribution Program)",
+      "foodPortions": [
+        {
+          "id": 89381,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-pork-belly-raw",
+      "fdcId": 167812,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, belly, raw",
+      "foodPortions": [
+        {
+          "id": 82013,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb",
+          "gramWeight": 453.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 82012,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-onion-raw",
+      "fdcId": 170000,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Onions, raw",
+      "foodPortions": [
+        {
+          "id": 85855,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, chopped",
+          "gramWeight": 160,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85861,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "slice, medium (1/8\" thick)",
+          "gramWeight": 14,
+          "sequenceNumber": 7,
+          "amount": 1
+        },
+        {
+          "id": 85860,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (2-1/2\" dia)",
+          "gramWeight": 110,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 85858,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 150,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85864,
+          "value": 10,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "rings",
+          "gramWeight": 60,
+          "sequenceNumber": 10,
+          "amount": 10
+        },
+        {
+          "id": 85857,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp chopped",
+          "gramWeight": 10,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85856,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, sliced",
+          "gramWeight": 115,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85863,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "slice, thin",
+          "gramWeight": 9,
+          "sequenceNumber": 9,
+          "amount": 1
+        },
+        {
+          "id": 85862,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 70,
+          "sequenceNumber": 8,
+          "amount": 1
+        },
+        {
+          "id": 85859,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "slice, large (1/4\" thick)",
+          "gramWeight": 38,
+          "sequenceNumber": 5,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-celery-raw",
+      "fdcId": 169988,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Celery, raw",
+      "foodPortions": [
+        {
+          "id": 85826,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 7.5,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85828,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "stalk, medium (7-1/2\" - 8\" long)",
+          "gramWeight": 40,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 85829,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "stalk, small (5\" long)",
+          "gramWeight": 17,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 85824,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup chopped",
+          "gramWeight": 101,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85830,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "strip (4\" long)",
+          "gramWeight": 4,
+          "sequenceNumber": 7,
+          "amount": 1
+        },
+        {
+          "id": 85825,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "NLEA serving",
+          "gramWeight": 110,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85827,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "stalk, large (11\"-12\" long)",
+          "gramWeight": 64,
+          "sequenceNumber": 4,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-tomato-puree",
+      "fdcId": 170460,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Tomato products, canned, puree, without salt added",
+      "foodPortions": [
+        {
+          "id": 86700,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 250,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 86701,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "can (29 oz) (401 x 411)",
+          "gramWeight": 822,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-tomato-paste",
+      "fdcId": 170459,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Tomato products, canned, paste, without salt added (Includes foods for USDA's Food Distribution Program)",
+      "foodPortions": [
+        {
+          "id": 86699,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "can (6 oz)",
+          "gramWeight": 170,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 86698,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 16,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 86696,
+          "value": 0.25,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 66,
+          "sequenceNumber": 1,
+          "amount": 0.25
+        },
+        {
+          "id": 86697,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 262,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-olive-oil",
+      "fdcId": 171413,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Oil, olive, salad or cooking",
+      "foodPortions": [
+        {
+          "id": 88667,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tablespoon",
+          "gramWeight": 13.5,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 88669,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tsp",
+          "gramWeight": 4.5,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 88668,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 216,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "builtin-red-table-wine",
+      "fdcId": 173190,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Alcoholic beverage, wine, table, red",
+      "foodPortions": [
+        {
+          "id": 92067,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "serving (5 fl oz)",
+          "gramWeight": 147,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 92066,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fl oz",
+          "gramWeight": 29.4,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746773",
+      "fdcId": 746773,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Pears, raw, bartlett",
+      "foodPortions": [
+        {
+          "id": 187515,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "slices",
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 187517,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "medium",
+          "gramWeight": 178,
+          "sequenceNumber": 3,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 187518,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "large",
+          "gramWeight": 230,
+          "sequenceNumber": 4,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 187516,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "small",
+          "gramWeight": 148,
+          "sequenceNumber": 2,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 312682,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746771",
+      "fdcId": 746771,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Oranges, raw, navels",
+      "foodPortions": [
+        {
+          "id": 187512,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "sections no membranes",
+          "gramWeight": 165,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187513,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": " 2-7/8\" dia",
+          "gramWeight": 140,
+          "sequenceNumber": 2,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 312681,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710832",
+      "fdcId": 2710832,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Mandarin, seedless, peeled, raw",
+      "foodPortions": [
+        {
+          "id": 312659,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173033",
+      "fdcId": 173033,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Grapefruit, raw, pink and red and white, all areas",
+      "foodPortions": [
+        {
+          "id": 91838,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup sections, with juice",
+          "gramWeight": 230,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 91841,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small (approx 3-1/2\" dia)",
+          "gramWeight": 100,
+          "sequenceNumber": 4,
+          "amount": 0.5
+        },
+        {
+          "id": 91840,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (approx 4\" dia)",
+          "gramWeight": 128,
+          "sequenceNumber": 3,
+          "amount": 0.5
+        },
+        {
+          "id": 91839,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large (approx 4-1/2\" dia)",
+          "gramWeight": 166,
+          "sequenceNumber": 2,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167746",
+      "fdcId": 167746,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lemons, raw, without peel",
+      "foodPortions": [
+        {
+          "id": 81882,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, sections",
+          "gramWeight": 212,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 81884,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit (2-3/8\" dia)",
+          "gramWeight": 84,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 81883,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit (2-1/8\" dia)",
+          "gramWeight": 58,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 81886,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "NLEA serving",
+          "gramWeight": 58,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 81885,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "wedge or slice (1/8 of one 2-1/8\" dia lemon)",
+          "gramWeight": 7,
+          "sequenceNumber": 4,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168155",
+      "fdcId": 168155,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Limes, raw",
+      "foodPortions": [
+        {
+          "id": 82570,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit (2\" dia)",
+          "gramWeight": 67,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 82571,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "NLEA serving",
+          "gramWeight": 67,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346412",
+      "fdcId": 2346412,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Grapes, red, seedless, raw",
+      "foodPortions": [
+        {
+          "id": 312662,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346410",
+      "fdcId": 2346410,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Raspberries, raw",
+      "foodPortions": [
+        {
+          "id": 312665,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173946",
+      "fdcId": 173946,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Blackberries, raw",
+      "foodPortions": [
+        {
+          "id": 93521,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 144,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346399",
+      "fdcId": 2346399,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Cherries, sweet, dark red, raw",
+      "foodPortions": [
+        {
+          "id": 312660,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-325430",
+      "fdcId": 325430,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Peaches, yellow, raw",
+      "foodPortions": [
+        {
+          "id": 119283,
+          "value": 1,
+          "measureUnit": {
+            "id": 1028,
+            "name": "fruit",
+            "abbreviation": "fruit"
+          },
+          "modifier": "small (2-1/2\" dia)",
+          "gramWeight": 147,
+          "sequenceNumber": 2,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 119282,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "slices with skin",
+          "gramWeight": 154,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 119285,
+          "value": 1,
+          "measureUnit": {
+            "id": 1028,
+            "name": "fruit",
+            "abbreviation": "fruit"
+          },
+          "modifier": "large (2-3/4\" dia)",
+          "gramWeight": 173,
+          "sequenceNumber": 4,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 119286,
+          "value": 1,
+          "measureUnit": {
+            "id": 1028,
+            "name": "fruit",
+            "abbreviation": "fruit"
+          },
+          "modifier": "extra large (3\" dia)",
+          "gramWeight": 225,
+          "sequenceNumber": 5,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 119284,
+          "value": 1,
+          "measureUnit": {
+            "id": 1028,
+            "name": "fruit",
+            "abbreviation": "fruit"
+          },
+          "modifier": "medium (2-2/3\" dia)",
+          "gramWeight": 161,
+          "sequenceNumber": 3,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 119287,
+          "value": 1,
+          "measureUnit": {
+            "id": 1049,
+            "name": "serving",
+            "abbreviation": "serving"
+          },
+          "modifier": "NLEA ",
+          "gramWeight": 147,
+          "sequenceNumber": 6,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 312680,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-327357",
+      "fdcId": 327357,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Nectarines, raw",
+      "foodPortions": [
+        {
+          "id": 119531,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "2-1/3\" dia",
+          "gramWeight": 129,
+          "sequenceNumber": 2,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 119533,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "2-3/4\" dia",
+          "gramWeight": 156,
+          "sequenceNumber": 4,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 119532,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": " 2-1/2\" dia",
+          "gramWeight": 142,
+          "sequenceNumber": 3,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 119534,
+          "value": 1,
+          "measureUnit": {
+            "id": 1049,
+            "name": "serving",
+            "abbreviation": "serving"
+          },
+          "modifier": "NLEA",
+          "gramWeight": 140,
+          "sequenceNumber": 5,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 119530,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": " slices",
+          "gramWeight": 143,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2000
+        },
+        {
+          "id": 312679,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710837",
+      "fdcId": 2710837,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Plum, black, with skin, raw",
+      "foodPortions": [
+        {
+          "id": 312652,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710815",
+      "fdcId": 2710815,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Apricot, with skin, raw",
+      "foodPortions": [
+        {
+          "id": 312651,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710833",
+      "fdcId": 2710833,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Mango, Tommy Atkins, peeled, raw",
+      "foodPortions": [
+        {
+          "id": 312656,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346398",
+      "fdcId": 2346398,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Pineapple, raw",
+      "foodPortions": [
+        {
+          "id": 312661,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710831",
+      "fdcId": 2710831,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Kiwifruit (kiwi), green, peeled, raw",
+      "foodPortions": [
+        {
+          "id": 312658,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167765",
+      "fdcId": 167765,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Watermelon, raw",
+      "foodPortions": [
+        {
+          "id": 81937,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "NLEA serving",
+          "gramWeight": 280,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 81933,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, diced",
+          "gramWeight": 152,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 81936,
+          "value": 10,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "watermelon balls",
+          "gramWeight": 122,
+          "sequenceNumber": 5,
+          "amount": 10
+        },
+        {
+          "id": 81932,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, balls",
+          "gramWeight": 154,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 81935,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "wedge (approx 1/16 of melon)",
+          "gramWeight": 286,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 81934,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "melon (15\" long x 7-1/2\" dia)",
+          "gramWeight": 4518,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-746770",
+      "fdcId": 746770,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Melons, cantaloupe, raw",
+      "foodPortions": [
+        {
+          "id": 187508,
+          "value": 1,
+          "measureUnit": {
+            "id": 1060,
+            "name": "wedge",
+            "abbreviation": "wedge"
+          },
+          "modifier": "medium (1/8 of medium melon)",
+          "gramWeight": 69,
+          "sequenceNumber": 6,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187506,
+          "value": 1,
+          "measureUnit": {
+            "id": 1060,
+            "name": "wedge",
+            "abbreviation": "wedge"
+          },
+          "modifier": "large (1/8 of large melon)",
+          "gramWeight": 102,
+          "sequenceNumber": 4,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187509,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "small (about 4-1/4\" dia)",
+          "gramWeight": 441,
+          "sequenceNumber": 7,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187505,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "large (about 6-1/2\" dia)",
+          "gramWeight": 814,
+          "sequenceNumber": 3,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187503,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "cubes",
+          "gramWeight": 160,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187511,
+          "value": 10,
+          "measureUnit": {
+            "id": 1044,
+            "name": "pieces",
+            "abbreviation": "pieces"
+          },
+          "modifier": "balls",
+          "gramWeight": 138,
+          "sequenceNumber": 9,
+          "amount": 10,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187504,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "diced",
+          "gramWeight": 156,
+          "sequenceNumber": 2,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187507,
+          "value": 1,
+          "measureUnit": {
+            "id": 1071,
+            "name": "each",
+            "abbreviation": "each"
+          },
+          "modifier": "medium (about 5\" dia)",
+          "gramWeight": 552,
+          "sequenceNumber": 5,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 187510,
+          "value": 1,
+          "measureUnit": {
+            "id": 1060,
+            "name": "wedge",
+            "abbreviation": "wedge"
+          },
+          "modifier": "small (1/8 of small melon)",
+          "gramWeight": 55,
+          "sequenceNumber": 8,
+          "amount": 1,
+          "minYearAcquired": 2001
+        },
+        {
+          "id": 312677,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710816",
+      "fdcId": 2710816,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Melons, honeydew, raw",
+      "foodPortions": [
+        {
+          "id": 312654,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710824",
+      "fdcId": 2710824,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Avocado, Hass, peeled, raw",
+      "foodPortions": [
+        {
+          "id": 312657,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 140,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169134",
+      "fdcId": 169134,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pomegranates, raw",
+      "foodPortions": [
+        {
+          "id": 84310,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "pomegranate (4\" dia)",
+          "gramWeight": 282,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 84309,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup arils (seed/juice sacs)",
+          "gramWeight": 87,
+          "sequenceNumber": 1,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169941",
+      "fdcId": 169941,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Persimmons, japanese, raw",
+      "foodPortions": [
+        {
+          "id": 85724,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit (2-1/2\" dia)",
+          "gramWeight": 168,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173021",
+      "fdcId": 173021,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Figs, raw",
+      "foodPortions": [
+        {
+          "id": 91821,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (2-1/4\" dia)",
+          "gramWeight": 50,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 91820,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large (2-1/2\" dia)",
+          "gramWeight": 64,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 91822,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small (1-1/2\" dia)",
+          "gramWeight": 40,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169086",
+      "fdcId": 169086,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Litchis, raw",
+      "foodPortions": [
+        {
+          "id": 84200,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 190,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 84201,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit without refuse",
+          "gramWeight": 9.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169089",
+      "fdcId": 169089,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Longans, raw",
+      "foodPortions": [
+        {
+          "id": 84204,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit without refuse",
+          "gramWeight": 3.2,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169926",
+      "fdcId": 169926,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Papayas, raw",
+      "foodPortions": [
+        {
+          "id": 85694,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit, small",
+          "gramWeight": 157,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85695,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fruit, large",
+          "gramWeight": 781,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85693,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, mashed",
+          "gramWeight": 230,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85692,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup 1\" pieces",
+          "gramWeight": 145,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170169",
+      "fdcId": 170169,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Nuts, coconut meat, raw",
+      "foodPortions": [
+        {
+          "id": 86163,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, shredded",
+          "gramWeight": 80,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 86164,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 397,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 86165,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece (2\" x 2\" x 1/2\")",
+          "gramWeight": 45,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685573",
+      "fdcId": 2685573,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Cauliflower, raw",
+      "foodPortions": [
+        {
+          "id": 312764,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346407",
+      "fdcId": 2346407,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Cabbage, green, raw",
+      "foodPortions": [
+        {
+          "id": 312782,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169979",
+      "fdcId": 169979,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Cabbage, chinese (pe-tsai), raw",
+      "foodPortions": [
+        {
+          "id": 85809,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, shredded",
+          "gramWeight": 76,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685572",
+      "fdcId": 2685572,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Cabbage, bok choy, raw",
+      "foodPortions": [
+        {
+          "id": 312760,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346388",
+      "fdcId": 2346388,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Lettuce, iceberg, raw",
+      "foodPortions": [
+        {
+          "id": 312788,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346389",
+      "fdcId": 2346389,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Lettuce, romaine, green, raw",
+      "foodPortions": [
+        {
+          "id": 312789,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-323505",
+      "fdcId": 323505,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Kale, raw",
+      "foodPortions": [
+        {
+          "id": 119057,
+          "value": 1,
+          "measureUnit": {
+            "id": 1000,
+            "name": "cup",
+            "abbreviation": "cup"
+          },
+          "modifier": "pieces of ~1\"",
+          "gramWeight": 20.6,
+          "sequenceNumber": 1,
+          "amount": 1,
+          "minYearAcquired": 2015
+        },
+        {
+          "id": 312819,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-1104647",
+      "fdcId": 1104647,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Garlic, raw",
+      "foodPortions": [
+        {
+          "id": 312811,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2258590",
+      "fdcId": 2258590,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Peppers, bell, red, raw",
+      "foodPortions": [
+        {
+          "id": 312795,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170106",
+      "fdcId": 170106,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Peppers, hot chili, red, raw",
+      "foodPortions": [
+        {
+          "id": 86058,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "pepper",
+          "gramWeight": 45,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 86059,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, chopped or diced",
+          "gramWeight": 75,
+          "sequenceNumber": 2,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685577",
+      "fdcId": 2685577,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Eggplant, raw",
+      "foodPortions": [
+        {
+          "id": 312762,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685568",
+      "fdcId": 2685568,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Squash, summer, green, zucchini, includes skin, raw",
+      "foodPortions": [
+        {
+          "id": 312775,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710823",
+      "fdcId": 2710823,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Asparagus, green, raw",
+      "foodPortions": [
+        {
+          "id": 312759,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346400",
+      "fdcId": 2346400,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beans, snap, green, raw",
+      "foodPortions": [
+        {
+          "id": 312781,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170419",
+      "fdcId": 170419,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Peas, green, raw",
+      "foodPortions": [
+        {
+          "id": 86613,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 145,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168448",
+      "fdcId": 168448,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pumpkin, raw",
+      "foodPortions": [
+        {
+          "id": 83112,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup (1\" cubes)",
+          "gramWeight": 116,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685570",
+      "fdcId": 2685570,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Squash, winter, butternut, raw",
+      "foodPortions": [
+        {
+          "id": 312767,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2747665",
+      "fdcId": 2747665,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Radishes, red, raw",
+      "foodPortions": []
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168451",
+      "fdcId": 168451,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Radishes, oriental, raw",
+      "foodPortions": [
+        {
+          "id": 83115,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup slices",
+          "gramWeight": 116,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 83116,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "radish (7\" long)",
+          "gramWeight": 338,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685576",
+      "fdcId": 2685576,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beets, raw",
+      "foodPortions": [
+        {
+          "id": 312763,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2685575",
+      "fdcId": 2685575,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Brussels sprouts, raw",
+      "foodPortions": [
+        {
+          "id": 312766,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169246",
+      "fdcId": 169246,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Leeks, (bulb and lower leaf-portion), raw",
+      "foodPortions": [
+        {
+          "id": 84503,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 89,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 84504,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "leek",
+          "gramWeight": 89,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 84505,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "slice",
+          "gramWeight": 6,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170005",
+      "fdcId": 170005,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Onions, spring or scallions (includes tops and bulb), raw",
+      "foodPortions": [
+        {
+          "id": 85882,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small (3\" long)",
+          "gramWeight": 5,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 85879,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp chopped",
+          "gramWeight": 6,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85878,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, chopped",
+          "gramWeight": 100,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85881,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (4-1/8\" long)",
+          "gramWeight": 15,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85880,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 25,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2710826",
+      "fdcId": 2710826,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Corn, sweet, yellow and white kernels,  fresh, raw",
+      "foodPortions": [
+        {
+          "id": 312757,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169251",
+      "fdcId": 169251,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mushrooms, white, raw",
+      "foodPortions": [
+        {
+          "id": 84531,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 10,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 84526,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, pieces or slices",
+          "gramWeight": 70,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 84530,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "slice",
+          "gramWeight": 6,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 84527,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, whole",
+          "gramWeight": 96,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 84529,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 18,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 84528,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 23,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 84532,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup pieces",
+          "gramWeight": 35,
+          "sequenceNumber": 7,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169242",
+      "fdcId": 169242,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mushrooms, shiitake, raw",
+      "foodPortions": [
+        {
+          "id": 84500,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece whole",
+          "gramWeight": 19,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168580",
+      "fdcId": 168580,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mushrooms, oyster, raw",
+      "foodPortions": [
+        {
+          "id": 83362,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 15,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 83361,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 148,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 83363,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup sliced",
+          "gramWeight": 86,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169382",
+      "fdcId": 169382,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mushrooms, enoki, raw",
+      "foodPortions": [
+        {
+          "id": 84758,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 5,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 84759,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 3,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 84761,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup sliced",
+          "gramWeight": 65,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 84760,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup whole",
+          "gramWeight": 64,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169999",
+      "fdcId": 169999,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Corn, sweet, yellow, cooked, boiled, drained, without salt",
+      "foodPortions": [
+        {
+          "id": 85850,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "ear small (5-1/2\" to 6-1/2\" long)",
+          "gramWeight": 89,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85853,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup cut",
+          "gramWeight": 149,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85854,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "baby ear",
+          "gramWeight": 8,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 85851,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "ear medium (6-3/4\" to 7-1/2\" long)",
+          "gramWeight": 103,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85852,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "ear large (7-3/4\" to 9\" long)",
+          "gramWeight": 118,
+          "sequenceNumber": 3,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170420",
+      "fdcId": 170420,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Peas, green, cooked, boiled, drained, without salt",
+      "foodPortions": [
+        {
+          "id": 86614,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 160,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646170",
+      "fdcId": 2646170,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Chicken, breast, boneless, skinless, raw",
+      "foodPortions": [
+        {
+          "id": 312730,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646171",
+      "fdcId": 2646171,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Chicken, thigh, boneless, skinless, raw",
+      "foodPortions": [
+        {
+          "id": 312731,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172385",
+      "fdcId": 172385,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, thigh, meat and skin, raw",
+      "foodPortions": [
+        {
+          "id": 90504,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        },
+        {
+          "id": 90505,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "thigh with skin",
+          "gramWeight": 193,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172373",
+      "fdcId": 172373,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, drumstick, meat and skin, raw",
+      "foodPortions": [
+        {
+          "id": 90469,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "drumstick",
+          "gramWeight": 130,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 90468,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "drumstick with skin",
+          "gramWeight": 133,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 90467,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172390",
+      "fdcId": 172390,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, wing, meat and skin, raw",
+      "foodPortions": [
+        {
+          "id": 90519,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "package",
+          "gramWeight": 1150,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 90517,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        },
+        {
+          "id": 90518,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece",
+          "gramWeight": 107,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171452",
+      "fdcId": 171452,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, skin only, raw",
+      "foodPortions": [
+        {
+          "id": 88760,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        },
+        {
+          "id": 88762,
+          "value": 0,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "chicken, skin only",
+          "gramWeight": 79,
+          "sequenceNumber": 3,
+          "amount": 0
+        },
+        {
+          "id": 88761,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit (yield from 1 lb ready-to-cook chicken)",
+          "gramWeight": 47,
+          "sequenceNumber": 2,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727573",
+      "fdcId": 2727573,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, tenderloin steak, raw",
+      "foodPortions": [
+        {
+          "id": 312556,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2727574",
+      "fdcId": 2727574,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, top sirloin steak, raw",
+      "foodPortions": [
+        {
+          "id": 312555,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646172",
+      "fdcId": 2646172,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, ribeye, steak, boneless, choice, raw",
+      "foodPortions": [
+        {
+          "id": 312561,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170826",
+      "fdcId": 170826,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, chuck, short ribs, boneless, separable lean and fat, trimmed to 0\" fat, all grades, raw",
+      "foodPortions": [
+        {
+          "id": 87332,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece",
+          "gramWeight": 432,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 87331,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168664",
+      "fdcId": 168664,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, raw",
+      "foodPortions": [
+        {
+          "id": 83524,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        },
+        {
+          "id": 83525,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb",
+          "gramWeight": 453.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646174",
+      "fdcId": 2646174,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, chuck, roast, boneless, choice, raw",
+      "foodPortions": [
+        {
+          "id": 312560,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646175",
+      "fdcId": 2646175,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, flank, steak, boneless, choice, raw",
+      "foodPortions": [
+        {
+          "id": 312558,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514743",
+      "fdcId": 2514743,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, ground, 90% lean meat / 10% fat, raw",
+      "foodPortions": [
+        {
+          "id": 312562,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514744",
+      "fdcId": 2514744,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Beef, ground, 80% lean meat / 20% fat, raw",
+      "foodPortions": [
+        {
+          "id": 312563,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 114,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646169",
+      "fdcId": 2646169,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Pork, loin, tenderloin, boneless, raw",
+      "foodPortions": [
+        {
+          "id": 312721,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 110,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2646168",
+      "fdcId": 2646168,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Pork, loin, boneless, raw",
+      "foodPortions": [
+        {
+          "id": 312722,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 110,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167843",
+      "fdcId": 167843,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, shoulder, whole, separable lean and fat, raw",
+      "foodPortions": [
+        {
+          "id": 82076,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb",
+          "gramWeight": 453.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 82075,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167853",
+      "fdcId": 167853,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, spareribs, separable lean and fat, raw",
+      "foodPortions": [
+        {
+          "id": 82096,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2514745",
+      "fdcId": 2514745,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Pork, ground, raw",
+      "foodPortions": [
+        {
+          "id": 312723,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 110,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172486",
+      "fdcId": 172486,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lamb, leg, shank half, separable lean only, trimmed to 1/4\" fat, choice, raw",
+      "foodPortions": [
+        {
+          "id": 90705,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb",
+          "gramWeight": 453.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 90704,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 28.35,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172493",
+      "fdcId": 172493,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lamb, rib, separable lean only, trimmed to 1/4\" fat, choice, raw",
+      "foodPortions": [
+        {
+          "id": 90718,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 28.35,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 90719,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb",
+          "gramWeight": 453.6,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174515",
+      "fdcId": 174515,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Turkey, retail parts, breast, meat only, raw",
+      "foodPortions": [
+        {
+          "id": 94496,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "breast",
+          "gramWeight": 1150,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 94495,
+          "value": 4,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 113,
+          "sequenceNumber": 1,
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172388",
+      "fdcId": 172388,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, thigh, meat only, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 90513,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "thigh with skin",
+          "gramWeight": 137,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 90511,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 90512,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "thigh without skin",
+          "gramWeight": 116,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173625",
+      "fdcId": 173625,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, thigh, meat and skin, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 92972,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "thigh with skin",
+          "gramWeight": 137,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 92973,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "thigh without skin",
+          "gramWeight": 116,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 92971,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173612",
+      "fdcId": 173612,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, drumstick, meat and skin, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 92937,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "drumstick without skin",
+          "gramWeight": 96,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 92936,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "drumstick with skin (yield from 1 lb ready-to-cook chicken)",
+          "gramWeight": 105,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 92935,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173630",
+      "fdcId": 173630,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, wing, meat and skin, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 92983,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 92982,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171055",
+      "fdcId": 171055,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chicken, broilers or fryers, skin only, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 87867,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "chicken, skin only",
+          "gramWeight": 56,
+          "sequenceNumber": 2,
+          "amount": 0.5
+        },
+        {
+          "id": 87866,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit (yield from 1 lb ready-to-cook chicken)",
+          "gramWeight": 34,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170237",
+      "fdcId": 170237,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, loin, tenderloin steak, boneless, separable lean and fat, trimmed to 0\" fat, all grades, cooked, grilled",
+      "foodPortions": [
+        {
+          "id": 86301,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "steak",
+          "gramWeight": 117,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 86300,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171209",
+      "fdcId": 171209,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, rib eye steak, boneless, lip-on, separable lean only, trimmed to 1/8\" fat, all grades, cooked, grilled",
+      "foodPortions": [
+        {
+          "id": 88170,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "steak",
+          "gramWeight": 291,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 88169,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168665",
+      "fdcId": 168665,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, cooked, braised",
+      "foodPortions": [
+        {
+          "id": 83526,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 83527,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse)",
+          "gramWeight": 329,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169569",
+      "fdcId": 169569,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, chuck, short ribs, boneless, separable lean only, trimmed to 0\" fat, all grades, cooked, braised",
+      "foodPortions": [
+        {
+          "id": 85125,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece",
+          "gramWeight": 289,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85124,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171797",
+      "fdcId": 171797,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beef, ground, 80% lean meat / 20% fat, patty, cooked, broiled",
+      "foodPortions": [
+        {
+          "id": 89382,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167844",
+      "fdcId": 167844,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, shoulder, whole, separable lean and fat, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 82077,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, diced",
+          "gramWeight": 135,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 82078,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167854",
+      "fdcId": 167854,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pork, fresh, spareribs, separable lean and fat, cooked, braised",
+      "foodPortions": [
+        {
+          "id": 82098,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse)",
+          "gramWeight": 177,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 82097,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172487",
+      "fdcId": 172487,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lamb, leg, shank half, separable lean only, trimmed to 1/4\" fat, choice, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 90707,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse)",
+          "gramWeight": 238,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 90706,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172494",
+      "fdcId": 172494,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lamb, rib, separable lean only, trimmed to 1/4\" fat, choice, cooked, broiled",
+      "foodPortions": [
+        {
+          "id": 90721,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 90720,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "piece, cooked, excluding refuse (yield from 1 lb raw meat with refuse)",
+          "gramWeight": 147,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171510",
+      "fdcId": 171510,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Duck, young duckling, domesticated, White Pekin, breast, meat and skin, boneless, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 88886,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit (yield from 1 lb ready-to-cook duck)",
+          "gramWeight": 56,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 88888,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "breast, bone removed",
+          "gramWeight": 120,
+          "sequenceNumber": 3,
+          "amount": 0.5
+        },
+        {
+          "id": 88887,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171113",
+      "fdcId": 171113,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised",
+      "foodPortions": [
+        {
+          "id": 87997,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit (yield from 1 lb ready-to-cook duck)",
+          "gramWeight": 35,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 87996,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup chopped or diced, cooked",
+          "gramWeight": 174,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 87995,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 87998,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "leg, bone and skin removed",
+          "gramWeight": 75,
+          "sequenceNumber": 4,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174516",
+      "fdcId": 174516,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Turkey, retail parts, breast, meat only, cooked, roasted",
+      "foodPortions": [
+        {
+          "id": 94497,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "breast",
+          "gramWeight": 863,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 94498,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684441",
+      "fdcId": 2684441,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Fish, salmon, Atlantic, farm raised, raw",
+      "foodPortions": [
+        {
+          "id": 312643,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 115,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684444",
+      "fdcId": 2684444,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Fish, cod, Atlantic, wild caught, raw",
+      "foodPortions": [
+        {
+          "id": 312639,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 115,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684442",
+      "fdcId": 2684442,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Fish, tilapia, farm raised, raw",
+      "foodPortions": [
+        {
+          "id": 312642,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 115,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175159",
+      "fdcId": 175159,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, tuna, fresh, yellowfin, raw",
+      "foodPortions": [
+        {
+          "id": 95770,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cubic inch, boneless",
+          "gramWeight": 16,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 95771,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 3,
+          "amount": 3
+        },
+        {
+          "id": 95769,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz, boneless",
+          "gramWeight": 28.35,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175142",
+      "fdcId": 175142,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, sea bass, mixed species, raw",
+      "foodPortions": [
+        {
+          "id": 95736,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 95735,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 129,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173717",
+      "fdcId": 173717,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, trout, rainbow, farmed, raw",
+      "foodPortions": [
+        {
+          "id": 93175,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 79,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93176,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175119",
+      "fdcId": 175119,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, mackerel, Atlantic, raw",
+      "foodPortions": [
+        {
+          "id": 95678,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 95677,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 112,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2684443",
+      "fdcId": 2684443,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Crustaceans, shrimp, farm raised, raw",
+      "foodPortions": [
+        {
+          "id": 312641,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 115,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174220",
+      "fdcId": 174220,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, scallop, mixed species, raw",
+      "foodPortions": [
+        {
+          "id": 93964,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "unit 2 large or 5 small",
+          "gramWeight": 30,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93965,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174219",
+      "fdcId": 174219,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, oyster, Pacific, raw",
+      "foodPortions": [
+        {
+          "id": 93962,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 50,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93963,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174214",
+      "fdcId": 174214,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, clam, mixed species, raw",
+      "foodPortions": [
+        {
+          "id": 93951,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 9,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 93950,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 14.5,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 93949,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lb (with shell), yield after shell removed",
+          "gramWeight": 68,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 93947,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 93952,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup (with liquid and clams)",
+          "gramWeight": 227,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 93948,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 20,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174216",
+      "fdcId": 174216,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, mussel, blue, raw",
+      "foodPortions": [
+        {
+          "id": 93958,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 10,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 93955,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 28.35,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 93956,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large",
+          "gramWeight": 20,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 93954,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 150,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93959,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 6,
+          "amount": 3
+        },
+        {
+          "id": 93957,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 16,
+          "sequenceNumber": 4,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174223",
+      "fdcId": 174223,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, squid, mixed species, raw",
+      "foodPortions": [
+        {
+          "id": 93968,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz, boneless",
+          "gramWeight": 28.35,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93969,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174218",
+      "fdcId": 174218,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, octopus, common, raw",
+      "foodPortions": [
+        {
+          "id": 93961,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174204",
+      "fdcId": 174204,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, crab, blue, raw",
+      "foodPortions": [
+        {
+          "id": 93926,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 93927,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "crab",
+          "gramWeight": 21,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171969",
+      "fdcId": 171969,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, crab, queen, raw",
+      "foodPortions": [
+        {
+          "id": 89648,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174208",
+      "fdcId": 174208,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, lobster, northern, raw",
+      "foodPortions": [
+        {
+          "id": 93936,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 93935,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "lobster",
+          "gramWeight": 150,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171956",
+      "fdcId": 171956,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, cod, Atlantic, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 89622,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        },
+        {
+          "id": 89623,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 180,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175177",
+      "fdcId": 175177,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, tilapia, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 95804,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 87,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172006",
+      "fdcId": 172006,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, tuna, yellowfin, fresh, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 89724,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173694",
+      "fdcId": 173694,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, sea bass, mixed species, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 93125,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 101,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93126,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173718",
+      "fdcId": 173718,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, trout, rainbow, farmed, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 93177,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 71,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93178,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175120",
+      "fdcId": 175120,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Fish, mackerel, Atlantic, cooked, dry heat",
+      "foodPortions": [
+        {
+          "id": 95680,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 95679,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "fillet",
+          "gramWeight": 88,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-167742",
+      "fdcId": 167742,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, scallop, (bay and sea), cooked, steamed",
+      "foodPortions": [
+        {
+          "id": 81878,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174250",
+      "fdcId": 174250,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, oyster, Pacific, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 94022,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        },
+        {
+          "id": 94021,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 25,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-171975",
+      "fdcId": 171975,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, clam, mixed species, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 89662,
+          "value": 20,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small",
+          "gramWeight": 190,
+          "sequenceNumber": 2,
+          "amount": 20
+        },
+        {
+          "id": 89661,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174217",
+      "fdcId": 174217,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, mussel, blue, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 93960,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174249",
+      "fdcId": 174249,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mollusks, octopus, common, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 94020,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174205",
+      "fdcId": 174205,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, crab, blue, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 93929,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup (not packed)",
+          "gramWeight": 135,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 93928,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, flaked and pieces",
+          "gramWeight": 118,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93930,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 28.35,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 93931,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 4,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172008",
+      "fdcId": 172008,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, crab, queen, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 89727,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 1,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174209",
+      "fdcId": 174209,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Crustaceans, lobster, northern, cooked, moist heat",
+      "foodPortions": [
+        {
+          "id": 93937,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 145,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93938,
+          "value": 3,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 85,
+          "sequenceNumber": 2,
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512381",
+      "fdcId": 2512381,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Rice, white, long grain, unenriched, raw",
+      "foodPortions": [
+        {
+          "id": 312591,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 45,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169760",
+      "fdcId": 169760,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, medium-grain, raw, unenriched",
+      "foodPortions": [
+        {
+          "id": 85465,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 195,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168931",
+      "fdcId": 168931,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, short-grain, raw, unenriched",
+      "foodPortions": [
+        {
+          "id": 84019,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 200,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2512380",
+      "fdcId": 2512380,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Rice, brown, long grain, unenriched, raw",
+      "foodPortions": [
+        {
+          "id": 312590,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 45,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168883",
+      "fdcId": 168883,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, glutinous, unenriched, uncooked",
+      "foodPortions": [
+        {
+          "id": 83933,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 185,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169702",
+      "fdcId": 169702,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Millet, raw",
+      "foodPortions": [
+        {
+          "id": 85376,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 200,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168874",
+      "fdcId": 168874,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Quinoa, uncooked",
+      "foodPortions": [
+        {
+          "id": 83924,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 170,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170685",
+      "fdcId": 170685,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Buckwheat groats, roasted, dry",
+      "foodPortions": [
+        {
+          "id": 87081,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 164,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170284",
+      "fdcId": 170284,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Barley, pearled, raw",
+      "foodPortions": [
+        {
+          "id": 86367,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 200,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168908",
+      "fdcId": 168908,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Noodles, japanese, somen, dry",
+      "foodPortions": [
+        {
+          "id": 83961,
+          "value": 2,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 57,
+          "sequenceNumber": 1,
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169742",
+      "fdcId": 169742,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice noodles, dry",
+      "foodPortions": [
+        {
+          "id": 85439,
+          "value": 2,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "oz",
+          "gramWeight": 57,
+          "sequenceNumber": 1,
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168930",
+      "fdcId": 168930,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, medium-grain, cooked, unenriched",
+      "foodPortions": [
+        {
+          "id": 84018,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 186,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168932",
+      "fdcId": 168932,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, short-grain, cooked, unenriched",
+      "foodPortions": [
+        {
+          "id": 84020,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 205,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169704",
+      "fdcId": 169704,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)",
+      "foodPortions": [
+        {
+          "id": 85378,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 202,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169711",
+      "fdcId": 169711,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice, white, glutinous, unenriched, cooked",
+      "foodPortions": [
+        {
+          "id": 85385,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 174,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168871",
+      "fdcId": 168871,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Millet, cooked",
+      "foodPortions": [
+        {
+          "id": 83921,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 174,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168917",
+      "fdcId": 168917,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Quinoa, cooked",
+      "foodPortions": [
+        {
+          "id": 83990,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 185,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170686",
+      "fdcId": 170686,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Buckwheat groats, roasted, cooked",
+      "foodPortions": [
+        {
+          "id": 87082,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 168,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170285",
+      "fdcId": 170285,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Barley, pearled, cooked",
+      "foodPortions": [
+        {
+          "id": 86368,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 157,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168909",
+      "fdcId": 168909,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Noodles, japanese, somen, cooked",
+      "foodPortions": [
+        {
+          "id": 83962,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 176,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168914",
+      "fdcId": 168914,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Rice noodles, cooked",
+      "foodPortions": [
+        {
+          "id": 83974,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 176,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169737",
+      "fdcId": 169737,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Pasta, cooked, enriched, without added salt",
+      "foodPortions": [
+        {
+          "id": 85428,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup lasagne",
+          "gramWeight": 116,
+          "sequenceNumber": 9,
+          "amount": 1
+        },
+        {
+          "id": 85427,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup shells",
+          "gramWeight": 105,
+          "sequenceNumber": 8,
+          "amount": 1
+        },
+        {
+          "id": 85425,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup farfalle",
+          "gramWeight": 107,
+          "sequenceNumber": 6,
+          "amount": 1
+        },
+        {
+          "id": 85420,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup spaghetti not packed",
+          "gramWeight": 124,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85423,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup elbows packed",
+          "gramWeight": 132,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85422,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup elbows not packed",
+          "gramWeight": 120,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85426,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup rotini",
+          "gramWeight": 107,
+          "sequenceNumber": 7,
+          "amount": 1
+        },
+        {
+          "id": 85424,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup penne",
+          "gramWeight": 107,
+          "sequenceNumber": 5,
+          "amount": 1
+        },
+        {
+          "id": 85421,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup spaghetti packed",
+          "gramWeight": 151,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170028",
+      "fdcId": 170028,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Potatoes, white, flesh and skin, raw",
+      "foodPortions": [
+        {
+          "id": 85928,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small (1-3/4\" to 2-1/4\" dia.)",
+          "gramWeight": 92,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 85926,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large (3\" to 4-1/4\" dia.)",
+          "gramWeight": 369,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 85927,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (2+-1/4\" to 3-1/4\" dia.)",
+          "gramWeight": 213,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 85925,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, diced",
+          "gramWeight": 75,
+          "sequenceNumber": 1,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2346404",
+      "fdcId": 2346404,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Sweet potatoes, orange flesh, without skin, raw",
+      "foodPortions": [
+        {
+          "id": 312780,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 110,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169308",
+      "fdcId": 169308,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Taro, raw",
+      "foodPortions": [
+        {
+          "id": 84632,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, sliced",
+          "gramWeight": 104,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170071",
+      "fdcId": 170071,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Yam, raw",
+      "foodPortions": [
+        {
+          "id": 85996,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, cubes",
+          "gramWeight": 150,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-169985",
+      "fdcId": 169985,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Cassava, raw",
+      "foodPortions": [
+        {
+          "id": 85816,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 206,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 85817,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "root",
+          "gramWeight": 408,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170440",
+      "fdcId": 170440,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Potatoes, boiled, cooked without skin, flesh, without salt",
+      "foodPortions": [
+        {
+          "id": 86654,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "small (1-3/4\" to 2-1/2\" dia.)",
+          "gramWeight": 125,
+          "sequenceNumber": 4,
+          "amount": 1
+        },
+        {
+          "id": 86652,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "large (3\" to 4-1/4\" dia.)",
+          "gramWeight": 300,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 86653,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium (2-1/4\" to 3-1/4\" dia.)",
+          "gramWeight": 167,
+          "sequenceNumber": 3,
+          "amount": 1
+        },
+        {
+          "id": 86651,
+          "value": 0.5,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 78,
+          "sequenceNumber": 1,
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168484",
+      "fdcId": 168484,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Sweet potato, cooked, boiled, without skin",
+      "foodPortions": [
+        {
+          "id": 83173,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "medium",
+          "gramWeight": 151,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 83172,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, mashed",
+          "gramWeight": 328,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-168486",
+      "fdcId": 168486,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Taro, cooked, without salt",
+      "foodPortions": [
+        {
+          "id": 83176,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup, sliced",
+          "gramWeight": 132,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173727",
+      "fdcId": 173727,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, adzuki, mature seeds, raw",
+      "foodPortions": [
+        {
+          "id": 93191,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 197,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174256",
+      "fdcId": 174256,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mung beans, mature seeds, raw",
+      "foodPortions": [
+        {
+          "id": 94031,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 13,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 94030,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 207,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173734",
+      "fdcId": 173734,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, black, mature seeds, raw",
+      "foodPortions": [
+        {
+          "id": 93198,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 194,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93199,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 12.1,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173744",
+      "fdcId": 173744,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, kidney, red, mature seeds, raw",
+      "foodPortions": [
+        {
+          "id": 93210,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 184,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 93211,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 12.2,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644282",
+      "fdcId": 2644282,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Chickpeas, (garbanzo beans, bengal gram), dry",
+      "foodPortions": [
+        {
+          "id": 312697,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 35,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-2644283",
+      "fdcId": 2644283,
+      "dataset": "Foundation Foods",
+      "release": "April 2026",
+      "description": "Lentils, dry",
+      "foodPortions": [
+        {
+          "id": 312694,
+          "value": 1,
+          "measureUnit": {
+            "id": 1121,
+            "name": "RACC",
+            "abbreviation": "RACC"
+          },
+          "gramWeight": 35,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174270",
+      "fdcId": 174270,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Soybeans, mature seeds, raw",
+      "foodPortions": [
+        {
+          "id": 94058,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 186,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173728",
+      "fdcId": 173728,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, adzuki, mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 93192,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 230,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174257",
+      "fdcId": 174257,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Mung beans, mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 94032,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 202,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173735",
+      "fdcId": 173735,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, black, mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 93200,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 172,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-175194",
+      "fdcId": 175194,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Beans, kidney, red, mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 95823,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 11,
+          "sequenceNumber": 2,
+          "amount": 1
+        },
+        {
+          "id": 95822,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 177,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-173757",
+      "fdcId": 173757,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 93226,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 164,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-172421",
+      "fdcId": 172421,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Lentils, mature seeds, cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 90596,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 198,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 90597,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 12.3,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-174271",
+      "fdcId": 174271,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Soybeans, mature cooked, boiled, without salt",
+      "foodPortions": [
+        {
+          "id": 94059,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 172,
+          "sequenceNumber": 1,
+          "amount": 1
+        },
+        {
+          "id": 94060,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "tbsp",
+          "gramWeight": 10.7,
+          "sequenceNumber": 2,
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "foodId": "betterlumi:food:usda-fdc-170286",
+      "fdcId": 170286,
+      "dataset": "SR Legacy",
+      "release": "April 2018",
+      "description": "Buckwheat",
+      "foodPortions": [
+        {
+          "id": 86369,
+          "value": 1,
+          "measureUnit": {
+            "id": 9999,
+            "name": "undetermined",
+            "abbreviation": "undetermined"
+          },
+          "modifier": "cup",
+          "gramWeight": 170,
+          "sequenceNumber": 1,
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

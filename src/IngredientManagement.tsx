@@ -10,7 +10,7 @@ import {NumberInput} from './NumberInput';
 import {db,type PantryItem} from './domain';
 import {builtInFoods} from './data/builtInFoods';
 import {referenceName,referenceNutritionSummary,type FoodChoice} from './reference-library';
-import {baseUnit,personalUnits,saveIngredientPreference,validIngredientPreference,type IngredientPreference} from './ingredient-preferences';
+import {baseUnit,personalUnits,householdUnits,foodUnitLabel,saveIngredientPreference,validIngredientPreference,type IngredientPreference} from './ingredient-preferences';
 import {useIngredientPreferences} from './useIngredientPreferences';
 /** Native top-layer menu: outside dismissal without changing the scroll layout. */
 function UnitOptions({label,edit,remove}:{label:string;edit:()=>void;remove:()=>void}){
@@ -44,6 +44,7 @@ export function IngredientManagement({choice,preference,close,notice}:{choice:Fo
  <section className="ingredient-units-section" aria-label={t('servingUnits')}><h3>{t('servingUnits')} <small>— {t('unitSelectDefault')}</small></h3><div className="ingredient-unit-list">
  <div className="ingredient-unit-item" data-unit={base}>{unitChoice(base,t(base==='g'?'unitGramLabel':'unitMilliliterLabel'),t('unitBaseDescription'))}</div>
  {choice.kind==='user'&&choice.item.basis==='serving'&&<div className="ingredient-unit-item" data-unit="serving">{unitChoice('serving',t('servingUnit'),t('unitBaseDescription'))}</div>}
+ {householdUnits(choice,{version:1,units,preferred,archived:false}).map(unit=><div className="ingredient-unit-item" data-household="true" data-unit={unit.name} key={unit.name}>{unitChoice(unit.name,foodUnitLabel(choice,unit.name,i18n.language,{version:1,units,preferred,archived:false}),number(unit.quantity)+' '+foodUnitLabel(choice,unit.name,i18n.language,{version:1,units,preferred,archived:false})+' ≈ '+number(unit.amount)+' g · USDA')}</div>)}
  {units.map((unit,index)=><div className="ingredient-unit-item" data-custom="true" data-unit={unit.name} key={index}>
  {unitChoice(unit.name,unit.name,number(unit.quantity)+' '+unit.name+' ≈ '+number(unit.amount)+' '+unit.unit)}
  <UnitOptions label={t('unitOptions',{unit:unit.name})} edit={()=>editUnit(index)} remove={()=>{setUnits(old=>old.filter((_,n)=>n!==index));if(preferred===unit.name)setPreferred(base);setEditing(null);setError('')}}/>

@@ -18,8 +18,8 @@ it('offers nine stable bilingual default tags without translating custom names',
 });
 it('composes static references without seeding records and supports an empty reference catalog',async()=>{
  const existing=userItem();await db.ingredients.put(existing);await db.activities.put({...stamp(),date:'2020-01-06',type:'other',name:'Fictional custom movement',duration:null,caloriesBurned:null,distance:null,notes:'Keep'});await db.settings.put({key:'language',value:'en'});
- const before=await exportAll();expect(builtInFoods).toHaveLength(32);expect(builtInExercises).toHaveLength(15);expect(Object.isFrozen(builtInFoods)).toBe(true);expect(Object.isFrozen(builtInExercises)).toBe(true);
- const options=ingredientTagOptions([], 'en');expect(searchFoodChoices([existing],'','',options,[])).toEqual([{kind:'user',item:existing}]);expect(searchFoodChoices([],'','',options,[])).toEqual([]);expect(searchFoodChoices([],'','',options)).toHaveLength(32);expect(await ingredientTags.count()).toBe(0);expect((await exportAll()).tables).toEqual(before.tables);expect(db.verno).toBe(6);
+ const before=await exportAll();expect(builtInFoods).toHaveLength(206);expect(builtInExercises).toHaveLength(15);expect(Object.isFrozen(builtInFoods)).toBe(true);expect(Object.isFrozen(builtInExercises)).toBe(true);
+ const options=ingredientTagOptions([], 'en');expect(searchFoodChoices([existing],'','',options,[])).toEqual([{kind:'user',item:existing}]);expect(searchFoodChoices([],'','',options,[])).toEqual([]);expect(searchFoodChoices([],'','',options)).toHaveLength(206);expect(await ingredientTags.count()).toBe(0);expect((await exportAll()).tables).toEqual(before.tables);expect(db.verno).toBe(6);
 });
 it('persists only explicitly chosen associations and preserves defaults through backup roundtrip',async()=>{
  const custom=await saveIngredientTag('Fictional custom tag'),defaultId=builtInTags[0].id,item=userItem([defaultId,custom.id]);await putTaggedIngredient(item);

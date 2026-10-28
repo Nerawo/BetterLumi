@@ -11,7 +11,7 @@ export type FoodChoice={kind:'user';item:PantryItem}|{kind:'built-in';item:Built
 /** Read-only composition; reference entries never become personal ingredients. */
 export function searchFoodChoices(items:PantryItem[],query:string,tagId:string,tags:IngredientTagOption[],references:readonly BuiltInFood[]=builtInFoods):FoodChoice[]{
  const q=query.trim().toLowerCase();
- return [...filterIngredients(items,query,tagId,tags).map(item=>({kind:'user' as const,item})),...references.filter(item=>(!tagId||item.tagIds.includes(tagId))&&(!q||[item.nameZh,item.nameEn,item.usdaDescription,item.category,...builtInTags.filter(tag=>item.tagIds.includes(tag.id)).flatMap(tag=>[tag.nameZh,tag.nameEn]),...tags.filter(tag=>item.tagIds.includes(tag.id)).map(tag=>tag.name)].some(name=>name.toLowerCase().includes(q)))).map(item=>({kind:'built-in' as const,item}))];
+ return [...filterIngredients(items,query,tagId,tags).map(item=>({kind:'user' as const,item})),...references.filter(item=>(!tagId||item.tagIds.includes(tagId))&&(!q||[item.nameZh,item.nameEn,item.usdaDescription,item.category,...(item.aliases??[]),...builtInTags.filter(tag=>item.tagIds.includes(tag.id)).flatMap(tag=>[tag.nameZh,tag.nameEn]),...tags.filter(tag=>item.tagIds.includes(tag.id)).map(tag=>tag.name)].some(name=>name.toLowerCase().includes(q)))).map(item=>({kind:'built-in' as const,item}))];
 }
 /** Reuse existing scaling; null means unknown, never zero. History stores the copy. */
 export function builtInFoodNutrition(item:BuiltInFood,quantity:number,unit:string):Nutrition{

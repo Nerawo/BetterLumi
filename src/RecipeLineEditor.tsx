@@ -1,5 +1,5 @@
 import {useIngredientPreferences} from './useIngredientPreferences';
-import {personalUnits,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
+import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods,type BuiltInFood} from './data/builtInFoods';
 import {referenceName,referencePreparation} from './reference-library';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
@@ -25,7 +25,7 @@ export function RecipeLineEditor({lines,setLines,pantry,compact=false}:{lines:Re
  return <div className={'line-editor'+(compact?' compact-lines':'')}>
   {lines.map((line,index)=>{
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
-   const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?personalUnits(choice,preferences[line.ingredientId]):[];
+   const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
    return <div className="recipe-line ingredient-editor-row" key={index}>
     <div className="recipe-line-heading"><div className="grow"><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small><ReferenceSourceInfo source={reference}/></>}{!item&&!reference&&<small>{t('sourceMissing')}</small>}</div><div className="actions">
      <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+line.name} onClick={()=>setPicking(index)}><ArrowLeftRight size={16}/></button>
@@ -38,7 +38,7 @@ export function RecipeLineEditor({lines,setLines,pantry,compact=false}:{lines:Re
     }}/></label><label>{t('unit')}<select aria-label={line.name+' '+t('unit')} value={line.unit} onChange={event=>{
      const unit=event.target.value;if(unit===line.unit)return;const quantity=choice?personalQuantity(choice,unit):defaultIngredientQuantity(item,unit);
      setLines(lines.map((old,n)=>n===index?{...old,unit,quantity,nutrition:choice?personalNutrition(choice,quantity,unit,preferences[line.ingredientId]):unknownNutrition()}:old));
-    }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{line.unit}</option>}</select></label></div>
+    }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[line.ingredientId])}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{foodUnitLabel(choice,line.unit,i18n.language,preferences[line.ingredientId])}</option>}</select></label></div>
    </div>;
   })}
   <div className="line-add"><button type="button" className="secondary ingredient-add-trigger" onClick={()=>setPicking('add')}><Plus size={16}/>{t('ingredientPickerAdd')}</button></div>

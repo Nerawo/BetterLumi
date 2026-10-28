@@ -1,5 +1,5 @@
 import {useIngredientPreferences} from './useIngredientPreferences';
-import {personalUnits,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
+import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods} from './data/builtInFoods';
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 import {isBuiltInRecipe} from './data/builtInRecipes';
@@ -159,7 +159,7 @@ export function AddFood({
     }
   };
   const ingredient = pantry.find((i) => i.id === ingredientId),builtIn=builtInFoods.find(item=>item.id===ingredientId);
-  const choice=ingredient?userChoice(ingredient):builtIn?{kind:'built-in' as const,item:builtIn}:null,units=choice?personalUnits(choice,preferences[ingredientId]):[];
+  const choice=ingredient?userChoice(ingredient):builtIn?{kind:'built-in' as const,item:builtIn}:null,units=choice?availableUnits(choice,preferences[ingredientId]):[];
   const totals =
     source === "quick"
       ? nutrition
@@ -400,8 +400,8 @@ export function AddFood({
                       >
                         <option value="g">{t("gramsUnit")}</option>{!builtIn&&<option value="mL">mL</option>}
                         {!builtIn&&<option value="serving">{t("servingUnit")}</option>}
-                        {units.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
-                        {!["g","mL","serving",...units.map(u=>u.name)].includes(unit) && <option value={unit}>{unit}</option>}
+                        {units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[ingredientId])}</option>)}
+                        {!["g","mL","serving",...units.map(u=>u.name)].includes(unit) && <option value={unit}>{foodUnitLabel(choice,unit,i18n.language,preferences[ingredientId])}</option>}
                       </select>
                     </label>
                   )}
