@@ -5,7 +5,7 @@ import type {FoodChoice} from './reference-library';
 import {DirectoryListHeader} from './DirectoryListHeader';
 import {IngredientTagNavigation,IngredientTagAssignment,IngredientTagManager,useIngredientTags} from "./IngredientTags";
 import {putTaggedIngredient} from "./ingredient-tags";
-import {searchFoodChoices,referenceName,referencePreparation,referenceCategory} from './reference-library';
+import {searchFoodChoices,referenceName} from './reference-library';
 import {sortPantryFoods} from './pantry-foods';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {NumberInput} from "./NumberInput";
@@ -49,7 +49,7 @@ export function Pantry({
   const [tag,setTag]=useState(''),[tagPanel,setTagPanel]=useState<'manage'|null>(null);
   const activeTag=tags.some(item=>item.id===tag)?tag:'';
   const [sort, setSort] = useState<PantrySort>("name-asc");
-  const filtered=sortPantryFoods(searchFoodChoices(items,search,activeTag,tags).filter(c=>!preferences[c.item.id]?.archived),sort,i18n.language);
+  const filtered=sortPantryFoods(searchFoodChoices(items,search,activeTag,tags).filter(c=>!preferences[c.item.id]?.archived),sort,i18n.language,search);
   const [editing, setEditing] = useState<PantryItem | null | undefined>();
   return (
     <>
@@ -74,7 +74,7 @@ export function Pantry({
               <PantryRowContent
                 title={<button type="button" className="ingredient-name" onClick={()=>setManagingIngredient(choice)}>{referenceName(food,i18n.language)}</button>}
                 energy={<><NumberUnit value={food.kcalPer100g===null?'—':Math.round(food.kcalPer100g)} unit="kcal"/> / 100 g</>}
-                metadata={<>{referencePreparation(food,i18n.language)} · {referenceCategory(food,i18n.language)} · <ReferenceSourceInfo source={food}/></>}
+                metadata={<ReferenceSourceInfo source={food}/>}
                 macros={(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}{t(key)} <NumberUnit value={food[`${key}Per100g`]?.toFixed(1)??'—'} unit="g"/></Fragment>)}
               />
             </article>;

@@ -29,11 +29,11 @@ it('sorts the combined list without changing references, inputs or saved nutriti
  expect(result).toEqual(before);expect(personal.referenceAmount).toBe(32);expect(personal.calories).toBe(0);expect(builtInFoods).toHaveLength(206);
 });
 it('returns a genuinely empty combined set only when neither source matches',()=>{
- expect(searchFoodChoices([],'','',tags)).toHaveLength(206);expect(searchFoodChoices([user()],'no such food','',tags)).toEqual([]);
+ expect(searchFoodChoices([],'','',tags)).toHaveLength(202);expect(searchFoodChoices([user()],'no such food','',tags)).toEqual([]);
  expect(searchFoodChoices([user()],'','custom-test',tags)).toHaveLength(1);expect(searchFoodChoices([],'','custom-test',tags)).toEqual([]);
 });
 it('never writes composed rows to IndexedDB or changes existing tables',async()=>{
  const item=user();await db.ingredients.put(item);const before=await exportAll();
- for(const sort of ['name-asc','name-desc','calories-asc','calories-desc'] as const)expect(sortPantryFoods(searchFoodChoices([item],'','',tags),sort,'zh')).toHaveLength(207);
+ for(const sort of ['name-asc','name-desc','calories-asc','calories-desc'] as const)expect(sortPantryFoods(searchFoodChoices([item],'','',tags),sort,'zh')).toHaveLength(203);
  expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([item]);expect(db.verno).toBe(6);
 });

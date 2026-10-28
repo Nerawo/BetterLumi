@@ -21,6 +21,11 @@
 .pantry-list .pantry-row-content .ingredient-title-line { align-items:flex-start; }
 .pantry-list .pantry-row-content .ingredient-title-line h3 { min-height:28px; }
 .pantry-list .pantry-row-content .ingredient-energy { flex:none; white-space:nowrap; padding-top:5px; }
+/* Give the wrapping name and non-wrapping kcal value explicit column bounds. */
+.page-pantry .pantry-row-content { min-width:0; max-width:100%; }
+.page-pantry .pantry-row-content .ingredient-title-line { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+.page-pantry .pantry-row-content .ingredient-title-line h3 { min-width:0; }
+.page-pantry .pantry-row-content .macro-summary { overflow-wrap:anywhere; }
 .pantry-list .pantry-secondary-line { position:relative; }
 .pantry-list .has-secondary-actions :is(.pantry-source-line,.macro-summary) { padding-right:88px; }
 .pantry-list .pantry-secondary-line > .actions { position:absolute; top:0; right:0; }
