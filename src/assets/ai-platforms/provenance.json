@@ -1,0 +1,35 @@
+{
+  "retrieved": "2026-10-29",
+  "purpose": "Unmodified platform identification for external destination links; no endorsement or partnership implied. Trademarks remain property of their respective owners. Not offered as an open-source logo pack.",
+  "assets": [
+    {
+      "file": "chatgpt.svg",
+      "source": "https://cdn.oaistatic.com/assets/favicon-l4nq08hd.svg",
+      "website": "https://chatgpt.com/",
+      "guidelines": "https://openai.com/brand/",
+      "processing": "None; original official CDN SVG, including its light/dark variants.",
+      "sha256": "8f2de046d22cfecfe3917cf87ff1ce49a48d79956f6b18be3b37db29148a0aeb"
+    },
+    {
+      "file": "doubao.png",
+      "source": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/favicon/new-doubao/192x192.png",
+      "website": "https://www.doubao.com/chat/",
+      "processing": "None; original current icon linked by the official website.",
+      "sha256": "dabb2abd94e3a6c11e7f1a42c9343839b6ef643c086751b71afbc68f615aec38"
+    },
+    {
+      "file": "deepseek.png",
+      "source": "https://www.deepseek.com/favicon.ico",
+      "website": "https://www.deepseek.com/",
+      "processing": "Original 225x225 favicon decoded and losslessly encoded as PNG; no crop, redraw, recolor or change of proportions.",
+      "sha256": "7a11680dcbfb015b9bd5fbe5538be14ff872883eb3566b6025c70821774500dc"
+    },
+    {
+      "file": "qwen.png",
+      "source": "https://img.alicdn.com/imgextra/i2/O1CN01taBbMS1CfyJoOt0lB_!!6000000000109-2-tps-80-80.png",
+      "website": "https://www.qianwen.com/",
+      "processing": "None; original light-mode icon linked by the preserved Chinese destination, rather than the separate international Qwen site.",
+      "sha256": "cd9390bc4209c319121d111f3a1f535b3c7dd909b8f860d41acc9744138d58df"
+    }
+  ]
+}

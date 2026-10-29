@@ -1,3 +1,6 @@
+import {AIAssistant} from './AIAssistant';
+import type {AIImportReceipt} from './ai-meal-import';
+import {Sparkles} from 'lucide-react';
 import {PwaUpdatePrompt} from './PwaUpdatePrompt';
 import './recipe-yield.css';
 import {builtInRecipeItems} from './data/builtInRecipes';
@@ -33,7 +36,7 @@ import {measurementDate,formatMeasurementTime} from './weight-time';
 import { WeightEntry } from "./WeightEntry";
 import { ActivityCard, ActivityEditor, type ActivityDraft } from "./Activity";
 import { StorageBoundary } from "./StorageBoundary";
-import React, { useState, useEffect, useLayoutEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -81,7 +84,7 @@ import "./journal-shared.css";
 const Pantry = React.lazy(async () => ({
   default: (await import("./Pantry")).Pantry,
 }));
-type Page = "today" | "recipes" | "pantry" | "journal" | "more" | "weight";
+type Page = "today" | "recipes" | "pantry" | "journal" | "more" | "weight" | "assistant";
 const navigation = [
   ["today", Home],
   ["recipes", CircleDot],
@@ -107,6 +110,8 @@ function App() {
   const [activityDraft, setActivityDraft] = useState<ActivityDraft | null>(
     null,
   );
+  const [aiArrival,setAIArrival]=useState<AIImportReceipt|null>(null),aiScrolled=useRef<string|null>(null);
+  useEffect(()=>{if(!aiArrival)return;const timer=setTimeout(()=>setAIArrival(null),6500);return()=>clearTimeout(timer)},[aiArrival]);
   const [toast,setToastState]=useState<{message:string;duration:number}|null>(null);
   const setToast=useCallback((message:string,duration=5000)=>setToastState(message?{message,duration}:null),[]);
 
@@ -125,6 +130,12 @@ function App() {
   const logs = useLiveQuery(() =>
     foodLogs.filter((l) => !l.deletedAt).toArray(),
   );
+  useEffect(()=>{
+    if(!aiArrival||aiScrolled.current===aiArrival.importId||page!=='today'||selected!==aiArrival.latestDate||!logs)return;
+    const ids=aiArrival.records.filter(r=>r.date===selected).map(r=>r.id);if(!ids.every(id=>logs.some(log=>log.id===id)))return;
+    const frame=requestAnimationFrame(()=>{aiScrolled.current=aiArrival.importId;const row=[...document.querySelectorAll<HTMLElement>('[data-food-log-id]')].find(el=>ids.includes(el.dataset.foodLogId??''));(row?.closest('.meal-group')??row)?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})});
+    return()=>cancelAnimationFrame(frame);
+  },[aiArrival,page,selected,logs]);
   const planItems = useLiveQuery(() =>
     plans.filter((p) => !p.deletedAt).toArray(),
   );
@@ -204,12 +215,13 @@ function App() {
     journal: ["journalTitle", "journalSub"],
     more: ["moreTitle", "moreSub"],
     weight: ["weightJournal", "weightPrivacy"],
+    assistant: ["aiAssistant", "aiMealAbout"],
   } as const;
   return (
     <div className="app">
       <main>
         {page !== "today" && !["recipes","pantry","more"].includes(page) && (
-          <header className="editorial-masthead">
+          <header className={"editorial-masthead"+(page==="assistant"?" ai-masthead":"")}>
             {page === "weight" ? <button className="secondary-back" onClick={() => backToOrigin("/more")}><ArrowLeft size={19}/><span>{t("backNavigation")}</span></button> : <span>BETTERLUMI</span>}
             <button
               className="language-toggle"
@@ -223,7 +235,7 @@ function App() {
         )}
         <div className={"page page-" + page}>
           {["recipes","pantry","more"].includes(page)&&<JournalMasthead onLanguageSwitch={()=>{void preference("language",i18n.language==="zh"?"en":"zh")}}/>}
-          {page !== "today" && (
+          {page !== "today" && page !== "assistant" && (
             <div className="page-title">
               <h1>{t(titles[page][0])}</h1>
             </div>
@@ -240,6 +252,7 @@ function App() {
                 <>
                   <TodayHeader date={selected} onLanguageSwitch={()=>{void preference("language",i18n.language==="zh"?"en":"zh")}}/>
                   <TodayProgress model={overview}/>
+                  <button type="button" className="ai-assistant-entry" onClick={()=>{persistPageSession();navigate("/assistant")}}><Sparkles size={16}/>{t("aiAssistant")}<ArrowUpRight size={14}/></button>
                   {draft && (
                     <AddFood
                       key={
@@ -275,6 +288,7 @@ function App() {
                         {dailyTotals.foodCount>0&&<p className="section-totals" data-testid="meal-section-total">{dailyTotals.nutrition.calories===null?t("notRecorded"):<NumberUnit value={dailyTotals.nutrition.calories.toLocaleString(undefined,{maximumFractionDigits:1})} unit="kcal"/>}{dailyTotals.nutrients.calories.missing>0&&dailyTotals.nutrition.calories!==null&&" · "+t("partialData")}</p>}
                         <MealList
                           logs={todayLogs}
+                          highlightedIds={aiArrival?.latestDate===selected?aiArrival.records.map(r=>r.id):[]}
                           edit={(log) => setDraft({ date: log.date, log })}
                         />
                       </section></div></div>,
@@ -319,6 +333,7 @@ function App() {
                   </TodayTabs>
                 </>
               )}
+              {page === "assistant" && <AIAssistant meals={route.assistantMeals} pantry={pantry!} recipes={recipeItems!} settings={settings!} onImported={receipt=>{setAIArrival(receipt);setTodayTab("food");navigate("/today?date="+receipt.latestDate,false,true);setToast(t("aiImportSuccess",{count:receipt.records.length}))}}/>}
               {page === "recipes" && (
                 <Recipes
                   items={recipeItems!}

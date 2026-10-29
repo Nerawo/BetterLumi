@@ -428,3 +428,10 @@
 .page-today .compact-daily-overview .macro-goal-slot { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(44px,auto) 32px auto; }
 .page-today .compact-daily-overview .macro-goal-name { white-space:normal; overflow-wrap:anywhere; text-align:center; }
 .page-today .compact-daily-overview .macro-actual { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(16px,auto) 24px; }
+
+/* viewport-fit=cover is already enabled: inset Today once, not the body and hero again. */
+@media(max-width:767px){
+ .page-today {padding-top:calc(18px + env(safe-area-inset-top,0px));}
+ html:has(.page-today) {scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));}
+}
+@media(max-width:600px){.page-today {padding-top:calc(12px + env(safe-area-inset-top,0px));}}

@@ -1,0 +1,153 @@
+/* Scoped to the assistant feature; existing directory and shared keyboard styles stay untouched. */
+.editorial-masthead.ai-masthead {max-width:760px;padding:18px 32px 0;}
+.page-assistant {max-width:760px;padding-top:4px;}
+.ai-assistant {max-width:680px;margin-inline:auto;color:var(--ink);padding-bottom:20px;}
+.ai-assistant-entry {margin:8px 0 16px;padding-inline:0;color:var(--action);font-size:13px;}
+.ai-assistant .ai-page-heading {height:auto;min-height:56px;display:flex;align-items:center;gap:10px;padding:0;margin:0 0 16px;border:0;}
+.ai-page-heading h1 {min-width:0;margin:0;font-size:clamp(29px,5vw,38px);line-height:1.2;letter-spacing:-.035em;font-weight:400;}
+.ai-assistant .ai-page-heading .secondary-back {flex:none;width:44px;min-height:44px;padding:0;margin:0 0 0 -10px;justify-content:center;}
+.ai-landing {display:grid;gap:0;border-top:1px solid var(--line);}
+.ai-assistant .ai-feature {display:flex;align-items:center;gap:12px;padding:18px 0;border-bottom:1px solid var(--line);}
+.ai-feature>div {flex:1;min-width:0;}
+.ai-feature>small:first-child {flex:0 0 32px;font-size:10px;letter-spacing:.08em;align-self:flex-start;padding-top:4px;}
+.ai-assistant .ai-feature h2 {margin:0;font-size:20px;line-height:1.4;letter-spacing:-.02em;font-weight:500;}
+.ai-feature p {font:400 12px/1.6 var(--font-ui);color:var(--muted);margin:5px 0 0;}
+.ai-feature-primary>svg {flex:none;align-self:flex-start;margin-top:4px;color:var(--action);}
+.ai-assistant .ai-coming {padding:15px 0;color:var(--muted);}
+.ai-assistant .ai-coming h2 {font-size:15px;line-height:1.5;letter-spacing:0;font-weight:400;}
+.ai-coming-label {flex:none;font:400 11px/1.5 var(--font-ui);}
+.ai-entry-step {display:grid;gap:8px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+.ai-entry-step>header {height:auto;min-height:28px;display:flex;gap:10px;align-items:baseline;margin:0;padding:0;border:0;}
+.ai-entry-step>header>small {font-size:10px;letter-spacing:.08em;}
+.ai-entry-step h2 {font-size:20px;line-height:1.4;letter-spacing:-.025em;}
+.ai-copy-actions {display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;}
+.ai-copy-actions>.primary {min-height:44px;padding:10px 17px;font-size:12px;}
+.ai-copy-actions>small {font:400 11px/1.5 var(--font-ui);}
+.ai-meal-entry .ai-entry-step>label {margin:0;}
+.ai-paste {width:100%;min-height:132px;resize:vertical;max-height:45dvh;font-size:14px;line-height:1.6;}
+.ai-platforms {display:grid;gap:12px;margin-top:4px;}
+.ai-shortcuts {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.ai-shortcuts a {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:2px 0 4px;color:var(--ink);font:400 11px/1.4 var(--font-ui);text-decoration:none;}
+.ai-platform-icon {display:grid;place-items:center;width:48px;height:48px;border-radius:12px;}
+.ai-platform-icon img {display:block;width:34px;height:34px;object-fit:contain;color-scheme:light;}
+.ai-shortcuts a:focus-visible {outline:2px solid var(--action);outline-offset:2px;border-radius:4px;}
+.ai-shortcuts a:hover .ai-platform-icon {background:var(--soft);}
+.ai-platform-hint {margin:0;color:var(--muted);font:400 10px/1.6 var(--font-ui);}
+.ai-entry-actions {display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;}
+.ai-entry-actions>button {border:1px solid var(--line);padding-inline:16px;}
+.ai-helper {font-size:12px;line-height:1.6;color:var(--muted);margin:4px 0;overflow-wrap:anywhere;}
+.ai-preview-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.ai-preview-heading h2 {font-size:25px;}
+.ai-preview-total {font-size:clamp(25px,5vw,34px);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ai-preview-total span {font-size:13px;color:var(--muted);}
+.ai-preview-list {max-height:65dvh;min-height:90px;overflow-y:auto;overscroll-behavior:contain;scroll-padding-block:12px;margin-top:14px;}
+.ai-meal-group {border-top:1px solid var(--line);margin-top:10px;}
+.ai-group-heading {display:flex;justify-content:space-between;align-items:center;gap:4px;min-height:50px;}
+.ai-group-heading>button {padding-left:0;min-width:0;gap:6px;}
+.ai-group-heading strong {font-size:14px;font-weight:600;}
+.ai-group-heading .ai-closed {transform:rotate(-90deg);}
+.ai-group-date {flex:0 1 145px;min-width:0;}
+.ai-group-date input {width:100%;min-width:0;min-height:40px;background:transparent;border-color:transparent;padding:6px 2px;text-align:right;font-size:13px;}
+.ai-group-summary {font-size:12px;line-height:1.6;color:var(--muted);padding:0 8px 10px;overflow-wrap:anywhere;}
+.ai-food-row {display:flex;align-items:center;gap:0;min-width:0;border-bottom:1px solid var(--line);padding:4px 0;}
+.ai-drag-handle {flex:0 0 36px;padding:8px 4px;touch-action:none;cursor:grab;color:var(--muted);}
+.ai-food-main {display:flex;align-items:center;flex:1;min-width:0;text-align:left;padding:8px 0;gap:8px;justify-content:space-between;}
+.ai-food-description {display:grid;gap:3px;min-width:0;flex:1;}
+.ai-food-name {font-size:14px;line-height:1.4;overflow-wrap:anywhere;}
+.ai-food-description small {font-size:11px;line-height:1.4;overflow-wrap:anywhere;}
+.ai-row-calories {font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap;}
+.ai-row-calories small {font-size:10px;}
+.ai-food-main>svg {flex:none;color:var(--muted);}
+.ai-move-button {flex:0 0 36px;padding:8px 4px;color:var(--muted);}
+.ai-flat-drop {padding:16px 8px;min-height:48px;text-align:center;font-size:11px;color:var(--muted);border-bottom:1px dashed var(--line);}
+.ai-drop-active {outline:1px dashed var(--action);outline-offset:-2px;background:var(--soft);}
+.ai-drag-ghost {position:fixed;z-index:1000;max-width:230px;padding:8px 12px;pointer-events:none;background:var(--surface);border:1px solid var(--line);font-size:13px;box-shadow:0 4px 12px #0001;overflow-wrap:anywhere;}
+.ai-confirmation {position:sticky;bottom:calc(65px + env(safe-area-inset-bottom));z-index:3;display:grid;gap:8px;padding:14px 0 10px;background:var(--bg);border-top:1px solid var(--line);}
+.ai-confirmation small {font-size:11px;line-height:1.5;}
+.ai-confirmation .primary {width:100%;}
+.ai-split-undo {display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;border-bottom:1px solid var(--line);}
+.ai-split-undo>span {min-width:0;overflow-wrap:anywhere;}
+.ai-food-editor,.ai-move-editor {width:min(560px,calc(100vw - 24px));max-height:calc(var(--food-viewport-height,100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:0;}
+.ai-food-editor>form,.ai-move-editor>form {display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+.ai-food-editor .modal-head,.ai-move-editor .modal-head {flex:none;padding:14px 18px;border-bottom:1px solid var(--line);}
+.ai-food-editor .modal-head h2,.ai-move-editor .modal-head h2 {font-size:23px;}
+.ai-editor-body {overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:14px 18px;display:grid;align-content:start;gap:12px;}
+.ai-food-editor .ai-editor-body label,.ai-move-editor .ai-editor-body label {display:grid;gap:4px;margin:0;color:var(--muted);font:400 12px/1.5 var(--font-ui);min-width:0;}
+.ai-editor-body input,.ai-editor-body select,.ai-editor-body textarea {width:100%;min-width:0;min-height:44px;padding:9px 10px;font-size:16px;color:var(--ink);border:1px solid var(--line);border-radius:5px;background:var(--surface);}
+.ai-editor-body textarea {min-height:64px;resize:vertical;}
+.ai-food-editor .form-actions,.ai-move-editor .form-actions {flex:none;margin:0;padding:12px 18px max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface);}
+.ai-fields-two,.ai-nutrition-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;}
+.ai-nutrition-fields {border:0;padding:0;margin:0;}
+.ai-nutrition-fields legend {font-size:12px;color:var(--muted);padding:0;margin-bottom:8px;}
+.ai-source-line {min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;}
+.ai-source-line>span {min-width:0;overflow-wrap:anywhere;}
+.ai-source-line button {flex-shrink:0;font-size:12px;}
+.ai-source-picker {padding:0;display:grid;gap:10px;}
+.ai-source-results {max-height:190px;overflow-y:auto;overscroll-behavior:contain;}
+.ai-source-results button {display:flex;text-align:left;justify-content:space-between;gap:12px;width:100%;border-bottom:1px solid var(--line);font-size:13px;}
+.ai-source-results button>span {min-width:0;overflow-wrap:anywhere;}
+.ai-source-results button>small {flex-shrink:0;font-size:10px;}
+.ai-source-results [aria-pressed=true] {background:var(--soft);}
+.ai-inline-actions {display:flex;flex-wrap:wrap;gap:4px 12px;}
+.ai-inline-actions button,.ai-remove {font-size:12px;text-align:left;justify-content:flex-start;padding-left:0;}
+.ai-split-editor {border-top:1px solid var(--line);padding-top:10px;}
+.ai-split-editor summary {min-height:44px;padding:10px 0;cursor:pointer;font-size:13px;}
+.ai-split-comparison {display:grid;gap:5px;font-size:12px;color:var(--muted);margin:8px 0;}
+.ai-component {display:flex;align-items:center;border-bottom:1px solid var(--line);}
+.ai-component>button:first-child {flex:1;min-width:0;justify-content:space-between;gap:10px;text-align:left;font-size:12px;}
+.ai-component span:first-child {min-width:0;overflow-wrap:anywhere;}
+.ai-component span:last-child {flex-shrink:0;}
+.ai-food-editor .ai-editor-body .ai-check {display:flex;flex-direction:row;align-items:center;gap:8px;margin:0;min-height:44px;font-size:12px;color:var(--ink);}
+.ai-editor-body .ai-check input {width:18px;min-height:18px;flex:none;}
+@media(min-width:800px){.ai-confirmation {bottom:20px}.ai-preview-list {max-height:620px}.ai-landing {grid-template-columns:minmax(0,1fr);gap:0}}
+@media(max-width:350px){.ai-drag-handle,.ai-move-button {flex-basis:32px}.ai-food-main {gap:4px}.ai-row-calories {font-size:13px}.ai-group-date {flex-basis:132px}.ai-editor-body {padding:14px}.ai-feature {gap:10px}.ai-assistant .ai-feature-primary h2 {font-size:19px}}
+.ai-split-comparison>span {display:grid;gap:2px;}
+.ai-split-comparison small {font-size:10px;}
+
+/* Compact assistant-specific dialog chrome; the existing modal behavior is unchanged. */
+.modal.ai-food-editor>.modal-head {min-height:58px;padding:7px 14px 7px 18px;}
+.modal.ai-food-editor>.modal-head h2 {font-size:21px;font-weight:400;}
+.modal.ai-food-editor>.modal-head .icon-button {width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;}
+.modal.ai-food-editor>.modal-head .icon-button:focus {outline:none;}
+.modal.ai-food-editor>.modal-head .icon-button:focus-visible svg {outline:2px solid var(--action);outline-offset:4px;border-radius:2px;}
+.modal.ai-food-editor>.modal-head .icon-button:hover {color:var(--action);}
+.ai-source-dialog .ai-source-body {flex:1;}
+.ai-source-picker>button:first-child {justify-self:start;padding-left:0;font-size:12px;color:var(--action);}
+.ai-source-dialog .ai-source-body {padding-bottom:10px;}
+.ai-source-actions {display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px;margin-top:0;padding-top:8px;border-top:1px solid var(--line);}
+.ai-source-actions button {min-height:44px;font-size:12px;}
+.ai-source-actions>.primary {max-width:100%;white-space:normal;}
+.ai-food-editor .ai-inline-actions {gap:0 12px;}
+.ai-food-editor .ai-split-editor {padding-top:4px;}
+.ai-food-editor .ai-split-editor>label {margin-top:10px;}
+.ai-food-editor .ai-component {min-height:44px;}
+@media(max-width:767px){.editorial-masthead.ai-masthead {padding:14px 22px 0;}}
+
+/* Make split actions explicit while keeping the compact editorial list. */
+.ai-food-editor .ai-component>button:first-child {min-height:44px;padding:8px 4px 8px 0;}
+.ai-component>button:first-child>span:first-child {flex:1;}
+.ai-component>button:first-child>svg {flex:none;color:var(--muted);}
+.ai-food-editor .ai-component-remove {flex:0 0 44px;width:44px;min-height:44px;padding:10px;color:var(--muted);}
+.ai-food-editor .ai-component-add {min-height:44px;padding-left:0;gap:5px;font-size:12px;color:var(--action);}
+.ai-food-editor .ai-editor-body .ai-check {margin-top:6px;padding-block:10px;border-top:1px solid var(--line);gap:10px;font-size:13px;line-height:1.5;}
+.ai-check span {min-width:0;overflow-wrap:anywhere;}
+.ai-editor-body .ai-check input {height:18px;margin:0;accent-color:var(--action);}
+
+/* Stage 4 uses the approved preview layout; only status and result feedback are added. */
+.ai-meal-entry>fieldset {border:0;padding:0;margin:0;min-width:0;}
+.ai-import-validation {display:grid;gap:4px;}
+.ai-import-validation>button {font-size:12px;min-height:44px;justify-content:flex-start;padding-left:0;text-align:left;}
+.ai-food-description .ai-import-issue {color:var(--ink);font-size:11px;}
+.ai-duplicate-review {display:grid;gap:8px;}
+.ai-duplicate-review>div {display:flex;justify-content:flex-end;gap:10px;}
+.ai-duplicate-review button {font-size:12px;min-height:44px;}
+.meal-row.ai-import-highlight {background:var(--soft);box-shadow:inset 3px 0 var(--action);}
+.meal-group:has(.ai-import-highlight) {scroll-margin-top:100px;}
+
+/* Explicit chrome reset also prevents iOS sticky hover from painting square buttons. */
+.editorial-masthead.ai-masthead .language-toggle {appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:flex-end;min-width:64px;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font:400 11px/1.4 var(--font-ui);letter-spacing:0;color:var(--muted);}
+.ai-assistant .ai-page-heading .secondary-back {appearance:none;-webkit-appearance:none;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;}
+.editorial-masthead.ai-masthead .language-toggle:is(:hover,:active),.ai-assistant .ai-page-heading .secondary-back:is(:hover,:active) {background:transparent;box-shadow:none;}
+.editorial-masthead.ai-masthead .language-toggle:focus-visible,.ai-assistant .ai-page-heading .secondary-back:focus-visible {outline:2px solid var(--action);outline-offset:2px;}
+.ai-copy-dialog .ai-editor-body textarea {height:min(45dvh,340px);min-height:180px;resize:none;font:400 16px/1.5 var(--font-ui);user-select:text;-webkit-user-select:text;}
+.ai-copy-dialog .form-actions button {min-height:44px;font-size:12px;white-space:normal;}

@@ -571,8 +571,10 @@ export function AddFood({
 export function MealList({
   logs,
   edit,
+  highlightedIds=[],
 }: {
   logs: FoodLog[];
+  highlightedIds?:string[];
   edit: (l: FoodLog) => void;
 }) {
   const { t } = useTranslation();
@@ -584,7 +586,7 @@ export function MealList({
           <div className="meal-group" key={category}>
             <span className="eyebrow">{t(category)}</span>
             {entries.map((log) => (
-              <article className="meal-row" key={log.id}>
+              <article className={"meal-row"+(highlightedIds.includes(log.id)?" ai-import-highlight":"")} data-food-log-id={log.id} key={log.id}>
                 <div className="grow">
                   <h3>
                     {log.name || t("unnamedFood")}

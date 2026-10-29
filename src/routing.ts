@@ -45,11 +45,13 @@ export function parseRoute(href: string) {
     "journal",
     "more",
     "weight",
+    "assistant",
   ].includes(paths[0])
     ? paths[0]
     : "today";
   return {
     page: section,
+    assistantMeals: section === "assistant" && paths[1] === "meals",
     recipeId:
       section === "recipes" && paths.length === 2 ? decodeId(paths[1]) : null,
     selectedDate: validLocalDate(u.searchParams.get("date"))
