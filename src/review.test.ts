@@ -48,20 +48,24 @@ it("v3 upgrades every table in place and maps legacy category labels without los
   await db.open();
   const name = "v3-preserve-" + crypto.randomUUID();
   const old = new Dexie(name);
-  old
-    .version(3)
-    .stores(
-      Object.fromEntries(
-        db.tables
-          .filter((t) => !["recipeCategories", "exercisePlans", "exerciseOccurrences", "ingredientTags"].includes(t.name))
-          .map((t) => [
-            t.name,
-            [t.schema.primKey.src, ...t.schema.indexes.map((i) => i.src)].join(
-              ",",
-            ),
-          ]),
-      ),
-    );
+  // Exact cumulative v1-v3 schema from db.ts; never infer historical stores
+  // from the current database, which also contains later feature stores.
+  old.version(3).stores({
+    ingredients: "id,name,nameZh,updatedAt,deletedAt",
+    activities: "id,date,updatedAt,deletedAt",
+    supplements: "id,updatedAt,deletedAt",
+    checks: "id,[supplementId+date],date,updatedAt",
+    settings: "key",
+    recipes: "id,updatedAt,deletedAt",
+    meals: "id,date,updatedAt,deletedAt",
+    images: "id,updatedAt,deletedAt",
+    recipeCards: "id,name,updatedAt,deletedAt",
+    foodLogs: "id,date,updatedAt,deletedAt",
+    plans: "id,date,kind,updatedAt,deletedAt",
+    weights: "id,date,updatedAt,deletedAt",
+    recipeNotes: "id,recipeId,updatedAt,deletedAt",
+    goals: "id,startDate,endDate,updatedAt,deletedAt",
+  });
   const rows = new Map();
   for (const t of old.tables) {
     const row =
@@ -89,6 +93,10 @@ it("v3 upgrades every table in place and maps legacy category labels without los
       } else expect(actual).toEqual(row);
     }
     expect(await upgraded.table("recipeCategories").count()).toBe(1);
+    expect(upgraded.verno).toBe(7);
+    for (const table of ["exercisePlans", "exerciseOccurrences", "ingredientTags", "foodBatches", "inventoryTransactions"]) {
+      expect(await upgraded.table(table).count(), table).toBe(0);
+    }
   } finally {
     await upgraded.delete();
   }
