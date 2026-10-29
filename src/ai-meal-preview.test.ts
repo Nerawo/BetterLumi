@@ -2,7 +2,7 @@ import {parseRoute} from './routing';
 import {validPageSession} from './session-state';
 import {expect,it} from 'vitest';
 import {createAIMealDraft,aiMealDraftTotals,editAIMealDraftNutrition,editAIMealDraftRow,validateAIMealDraft,restoreAIMealEstimate} from './ai-meal-state';
-import {acceptAIMealSplit,undoAIMealSplit,splitSuggestionRows,newSplitComponent,moveAIMealRow,editAIMealGroupDate,aiMealPreviewWarnings} from './ai-meal-preview';
+import {assignMissingAIMealContext,acceptAIMealSplit,undoAIMealSplit,splitSuggestionRows,newSplitComponent,moveAIMealRow,editAIMealGroupDate,aiMealPreviewWarnings} from './ai-meal-preview';
 const make=()=>createAIMealDraft(JSON.stringify({format:'betterlumi-meal',version:1,meals:[{date:'2026-11-01',mealType:'lunch',items:[{name:'Synthetic parent',date:null,mealType:null,amount:2,unit:'serving',weightG:200,consumedFraction:.5,nutrition:{calories:201.123456,protein:null,carbs:20,fat:0},estimated:true,notes:'Keep note',splitSuggestions:[{name:'Synthetic component',amount:1,unit:'piece',weightG:80,nutrition:{calories:81.1234,protein:null,carbs:0,fat:1},estimated:true}]}]},{date:null,mealType:null,items:[{name:'Synthetic flat',date:null,mealType:null,amount:null,unit:'',weightG:null,consumedFraction:null,nutrition:{calories:50,protein:0,carbs:10,fat:0},estimated:true,notes:null,splitSuggestions:[]}]}]}),'preview');
 it('accepts split components as replacements, never adds them alongside the original and keeps null/precision',()=>{
  const d=make(),parent=d.rows[0],parts=splitSuggestionRows(parent),split=acceptAIMealSplit(d,parent,parts);expect(split.rows.map(r=>r.item.name)).toEqual(['Synthetic component','Synthetic flat']);expect(aiMealDraftTotals(split).nutrition).toEqual({calories:131.1234,protein:null,carbs:10,fat:1});expect(split.rows[0].item.consumedFraction).toBeNull();expect(d.rows[0].item.nutrition.calories).toBe(201.123456);
@@ -39,4 +39,16 @@ it('recognizes both assistant hash routes under Pages and retains their session 
 
 it('surfaces zero/duplicate advisories without changing or removing foods',()=>{
  const draft=make();draft.rows[1]=editAIMealDraftRow(draft.rows[1],{name:draft.rows[0].item.name,date:draft.rows[0].item.date,mealType:draft.rows[0].item.mealType,amount:0});draft.rows[0]=editAIMealDraftRow(draft.rows[0],{amount:0});const before=structuredClone(draft),warnings=aiMealPreviewWarnings(draft);expect(warnings[draft.rows[0].item.path]).toBe('zero');expect(warnings[draft.rows[1].item.path]).toBe('duplicate');expect(draft).toEqual(before);
+});
+
+it('batch context only fills missing fields and preserves supplied group and item context',()=>{
+ const d=make(),before=structuredClone(d),dated=assignMissingAIMealContext(d,{date:'2026-11-06'});
+ expect(d).toEqual(before);expect(dated.rows[0]).toEqual(d.rows[0]);expect(dated.rows[1].item.date).toBe('2026-11-06');expect(dated.rows[1].item.mealType).toBeNull();
+ for(const mealType of ['breakfast','lunch','dinner','snack'] as const){const filled=assignMissingAIMealContext(dated,{mealType});expect(filled.rows[0]).toEqual(d.rows[0]);expect(filled.rows[1].item).toEqual({...d.rows[1].item,date:'2026-11-06',mealType});expect(filled.rows[1].baseline).toEqual(d.rows[1].baseline);expect(assignMissingAIMealContext(filled,{date:'2026-11-07',mealType:'snack'})).toEqual(filled)}
+});
+it('batch context preserves split undo metadata and exact null versus zero nutrition',()=>{
+ const d=make();d.rows[0]=editAIMealDraftRow(d.rows[0],{date:null,mealType:null});const split=acceptAIMealSplit(d,d.rows[0],splitSuggestionRows(d.rows[0]));const next=assignMissingAIMealContext(split,{date:'2026-11-08',mealType:'dinner'});expect(next.splits).toEqual(split.splits);expect(next.raw).toEqual(split.raw);next.rows.forEach((row,i)=>expect(row).toEqual({...split.rows[i],item:{...split.rows[i].item,date:'2026-11-08',mealType:'dinner'}}));expect(next.rows[0].item.nutrition).toEqual({calories:81.1234,protein:null,carbs:0,fat:1});
+});
+it('batch context rejects invalid dates and unsupported meal types without mutating the draft',()=>{
+ const d=make(),before=structuredClone(d);for(const date of ['', '2026-02-30','not-a-date'])expect(()=>assignMissingAIMealContext(d,{date})).toThrow();expect(()=>assignMissingAIMealContext(d,{mealType:'brunch' as any})).toThrow();expect(d).toEqual(before);
 });

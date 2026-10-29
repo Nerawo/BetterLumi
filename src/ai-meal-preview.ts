@@ -1,3 +1,5 @@
+import {validLocalDate} from './routing';
+import {aiMealTypes} from './ai-meal-model';
 import {createAIMealDraftRow,validateAIMealDraft,type AIMealDraft,type AIMealDraftRow} from './ai-meal-state';
 import type {AIConsumedPortion,ParsedAIMealItem} from './ai-meal-model';
 
@@ -38,4 +40,13 @@ export function aiMealPreviewWarnings(draft:AIMealDraft):Record<string,'zero'|'d
   if(i.amount===0||i.weightG===0||i.consumedFraction===0||Object.values(i.nutrition).every(n=>n===0))warnings[i.path]='zero';
   if(seen.has(key))warnings[i.path]='duplicate';seen.add(key);
  }return warnings;
+}
+
+/** Explicit action fills missing context only; supplied values and nutrition remain untouched. */
+export function assignMissingAIMealContext(draft:AIMealDraft,context:{date?:string;mealType?:typeof aiMealTypes[number]}):AIMealDraft {
+ if(context.date!==undefined&&!validLocalDate(context.date))throw Error('Choose a valid local meal date');
+ if(context.mealType!==undefined&&!aiMealTypes.includes(context.mealType))throw Error('Choose a supported meal type');
+ const next=structuredClone(draft);
+ next.rows=next.rows.map(row=>({...row,item:{...row.item,...(row.item.date===null&&context.date!==undefined?{date:context.date}:{}),...(row.item.mealType===null&&context.mealType!==undefined?{mealType:context.mealType}:{})}}));
+ return validateAIMealDraft(next);
 }

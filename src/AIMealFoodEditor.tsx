@@ -79,7 +79,7 @@ export function AIMealFoodEditor({initial,catalog,close,save,remove,component=fa
  const known=aiMealTotals(parts.map(p=>p.item));
  return <Modal title={t(component?'aiSplitEdit':'aiEdit')} close={close} className="goal-editor-modal ai-food-editor">
   <form onSubmit={submit}>
-   <div className="ai-editor-body">
+   <div className="ai-editor-body modal-scroll">
     <label>{t('aiName')}<input required value={row.item.name} maxLength={200} onChange={e=>{const name=e.target.value;setRow({...row,item:{...row.item,name}});setError('')}}/></label>
     <div className="ai-source-line"><span><small>{t('aiSource')}</small><br/>{row.baseline.kind==='ai'?t('aiEstimate'):row.baseline.name}</span><button type="button" aria-haspopup="dialog" onClick={()=>setSourceOpen(true)}>{t('aiChangeSource')}</button></div>
     <div className="ai-fields-two"><AINumberField label={t('aiAmount')} value={row.item.amount} change={amount=>patch({amount})}/><label>{t('aiUnit')}<input value={unitBuffer??displayAIMealUnit(row,i18n.language,catalog.preferences)} maxLength={80} onChange={e=>setUnitText(e.target.value)} onBlur={()=>setUnitBuffer(null)}/></label></div>

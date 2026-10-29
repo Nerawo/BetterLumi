@@ -50,7 +50,7 @@
 .ai-group-date input {width:100%;min-width:0;min-height:40px;background:transparent;border-color:transparent;padding:6px 2px;text-align:right;font-size:13px;}
 .ai-group-summary {font-size:12px;line-height:1.6;color:var(--muted);padding:0 8px 10px;overflow-wrap:anywhere;}
 .ai-food-row {display:flex;align-items:center;gap:0;min-width:0;border-bottom:1px solid var(--line);padding:4px 0;}
-.ai-drag-handle {flex:0 0 36px;padding:8px 4px;touch-action:none;cursor:grab;color:var(--muted);}
+.ai-drag-handle {flex:0 0 36px;padding:8px 4px;touch-action:pan-y;cursor:grab;color:var(--muted);}
 .ai-food-main {display:flex;align-items:center;flex:1;min-width:0;text-align:left;padding:8px 0;gap:8px;justify-content:space-between;}
 .ai-food-description {display:grid;gap:3px;min-width:0;flex:1;}
 .ai-food-name {font-size:14px;line-height:1.4;overflow-wrap:anywhere;}
@@ -59,16 +59,17 @@
 .ai-row-calories small {font-size:10px;}
 .ai-food-main>svg {flex:none;color:var(--muted);}
 .ai-move-button {flex:0 0 36px;padding:8px 4px;color:var(--muted);}
-.ai-flat-drop {padding:16px 8px;min-height:48px;text-align:center;font-size:11px;color:var(--muted);border-bottom:1px dashed var(--line);}
-.ai-drop-active {outline:1px dashed var(--action);outline-offset:-2px;background:var(--soft);}
-.ai-drag-ghost {position:fixed;z-index:1000;max-width:230px;padding:8px 12px;pointer-events:none;background:var(--surface);border:1px solid var(--line);font-size:13px;box-shadow:0 4px 12px #0001;overflow-wrap:anywhere;}
+.ai-flat-drop {padding:10px 8px;min-height:40px;text-align:center;font-size:11px;color:var(--muted);border-bottom:1px solid var(--line);}
+.ai-drop-active {box-shadow:inset 0 2px var(--action);background:var(--soft);}
+.ai-food-row.ai-dragging {opacity:.7;}
 .ai-confirmation {position:sticky;bottom:calc(65px + env(safe-area-inset-bottom));z-index:3;display:grid;gap:8px;padding:14px 0 10px;background:var(--bg);border-top:1px solid var(--line);}
 .ai-confirmation small {font-size:11px;line-height:1.5;}
 .ai-confirmation .primary {width:100%;}
 .ai-split-undo {display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;border-bottom:1px solid var(--line);}
 .ai-split-undo>span {min-width:0;overflow-wrap:anywhere;}
 .ai-food-editor,.ai-move-editor {width:min(560px,calc(100vw - 24px));max-height:calc(var(--food-viewport-height,100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:0;}
-.ai-food-editor>form,.ai-move-editor>form {display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+/* Intrinsic basis prevents zero-height forms in max-height-only Safari dialogs. */
+.modal.ai-food-editor>form,.modal.ai-move-editor>form {display:flex;flex-direction:column;flex:0 1 auto;min-height:0;overflow:hidden;}
 .ai-food-editor .modal-head,.ai-move-editor .modal-head {flex:none;padding:14px 18px;border-bottom:1px solid var(--line);}
 .ai-food-editor .modal-head h2,.ai-move-editor .modal-head h2 {font-size:23px;}
 .ai-editor-body {overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:14px 18px;display:grid;align-content:start;gap:12px;}
@@ -151,3 +152,9 @@
 .editorial-masthead.ai-masthead .language-toggle:focus-visible,.ai-assistant .ai-page-heading .secondary-back:focus-visible {outline:2px solid var(--action);outline-offset:2px;}
 .ai-copy-dialog .ai-editor-body textarea {height:min(45dvh,340px);min-height:180px;resize:none;font:400 16px/1.5 var(--font-ui);user-select:text;-webkit-user-select:text;}
 .ai-copy-dialog .form-actions button {min-height:44px;font-size:12px;white-space:normal;}
+
+.ai-missing-context {display:grid;gap:8px;padding:10px 0;border-block:1px solid var(--line);margin-block:8px;}
+.ai-missing-row {display:flex;align-items:flex-end;gap:8px;min-width:0;}
+.ai-missing-row label {display:grid;gap:4px;flex:1;min-width:0;margin:0;color:var(--muted);font:400 11px/1.5 var(--font-ui);}
+.ai-missing-row input,.ai-missing-row select {width:100%;min-width:0;min-height:44px;padding:8px;font-size:16px;}
+.ai-missing-row button {flex:none;min-height:44px;padding:8px 10px;font-size:12px;}
