@@ -392,7 +392,10 @@ export async function restoreAll(data: unknown) {
         throw Error("Invalid checklist");
       if (
         table.name === "recipeNotes" &&
-        (typeof row.recipeId !== "string" || typeof row.text !== "string")
+        (typeof row.recipeId !== "string" || typeof row.text !== "string" ||
+          row.origin !== undefined && !["recipe", "meal"].includes(row.origin) ||
+          row.mealId !== undefined && (typeof row.mealId !== "string" || !row.mealId.trim()) ||
+          row.mealDate !== undefined && !validLocalDate(row.mealDate))
       )
         throw Error("Invalid recipe note");
       if (

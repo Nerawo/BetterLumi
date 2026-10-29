@@ -1,0 +1,4 @@
+import i18n from './locale';
+const en={sharedNotes:'Sticky notes',noteRecipeOrigin:'Recipe',noteMealOrigin:'Meal log',noteMealDate:'Meal {{date}}',noteCreated:'Created {{date}}',noteSharedHint:'Shared with the linked recipe. Changes are saved with this meal.',notePrivateHint:'Saved with this meal only.',noteDetails:'Meal details',noteConflict:'The meal or a note changed elsewhere. Reopen it to review the latest version before saving.'};
+const zh:Record<keyof typeof en,string>={sharedNotes:'便利贴',noteRecipeOrigin:'食谱',noteMealOrigin:'餐食记录',noteMealDate:'餐食 {{date}}',noteCreated:'创建于 {{date}}',noteSharedHint:'与关联食谱共享，修改将在保存餐食时生效。',notePrivateHint:'仅保存于本条餐食记录。',noteDetails:'餐食详情',noteConflict:'餐食或便利贴已在其他位置修改，请重新打开核对最新内容后再保存。'};
+i18n.addResourceBundle('en','translation',en,true,true);i18n.addResourceBundle('zh','translation',zh,true,true);

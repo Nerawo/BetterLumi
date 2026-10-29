@@ -1,3 +1,6 @@
+import {StickyNotes,useStickyNotes,useStickyNoteChanges} from './StickyNotes';
+import {commitStickyNoteChanges,assertMealNoteRevision,StickyNoteConflict} from './sticky-notes';
+import {recipeNotes} from './goals';
 import {StorageMealForm, BatchDetail, storageErrorMessage, useStorageOperation} from './FoodStorage';
 import {FoodStorage} from './food-storage';
 import {FoodStorageError} from './food-storage-model';
@@ -92,6 +95,9 @@ export function AddFood({
   const [ingredientId, setIngredientId] = useState(
     initial?.source === "pantry" ? (initial.sourceId ?? "") : "",
   );
+  const noteRecipeId=source==='recipe'?recipeId:'';
+  const sharedNotes=useStickyNotes(noteRecipeId,initial?.id??mealIdentity.id);
+  const noteDraft=useStickyNoteChanges();
   const [recipeBasis,setRecipeBasis]=useState<"recipe"|"snapshot">(initial?.source==="recipe"?"snapshot":"recipe");
   const [quantity, setQuantity] = useState(initial?.quantity ?? 1);
   const [lineServings,setLineServings]=useState(1);
@@ -227,7 +233,7 @@ export function AddFood({
           consumptionPercent,
           lines: source === "recipe" ? lines : [],
           photo,
-          cookingNote: String(f.get("cookingNote")).trim(),
+          cookingNote: initial?.cookingNote??"",
           estimated,
         };
   };
@@ -250,7 +256,8 @@ export function AddFood({
     }
     setBusy(true);submitLock.current=true;setOriginConflict(false);
     try {
-      await db.transaction("rw", [foodLogs, plans, db.foodBatches, db.inventoryTransactions], async () => {
+      await db.transaction("rw", [foodLogs, plans, db.foodBatches, db.inventoryTransactions, recipeNotes, recipeTable], async () => {
+        await assertMealNoteRevision(initial);
         const record=buildMealRecord(f);
         const storage=new FoodStorage();
         if(initial?.leftoverBatchId){
@@ -262,20 +269,21 @@ export function AddFood({
           const input={meal:record,saveLeftovers:true,batchId:leftoverIdentity.id,cookedWeightGrams:cookedWeight===''?undefined:Number(cookedWeight)};
           await storage.saveMealWithLeftovers({...input,operationId:storageOperation(input)});
         }else await foodLogs.put(record);
+        await commitStickyNoteChanges(noteDraft.changes,record);
         await draft.onSaved?.();
       });
       close();
       notify(t("savedMessage"));
     } catch(error) {
       if(initial?.leftoverBatchId&&error instanceof FoodStorageError&&error.code==='CONFLICT'&&error.batchId===initial.leftoverBatchId){setOriginConflict(true);notice(t('storageOriginConflict'))}
-      else notice(storageErrorMessage(error,t));
+      else notice(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t));
     } finally {
       setBusy(false);submitLock.current=false;
     }
   };
   const correctOrigin=async()=>{
     if(!initial||!originRetry.current||submitLock.current||!mealForm.current||!mealForm.current.reportValidity())return;submitLock.current=true;setBusy(true);
-    try{const input={...originRetry.current,meal:buildMealRecord(new FormData(mealForm.current)),expectedMealRevision:initial.revision,strategy:'meal-only' as const};await db.transaction('rw',[foodLogs,plans,db.foodBatches,db.inventoryTransactions],async()=>{await new FoodStorage().editLeftoverOrigin({...input,operationId:storageOperation(input)});await draft.onSaved?.()});close();notify(t('savedMessage'))}catch(error){notice(storageErrorMessage(error,t));setCorrectingOrigin(false)}finally{submitLock.current=false;setBusy(false)}
+    try{const input={...originRetry.current,meal:buildMealRecord(new FormData(mealForm.current)),expectedMealRevision:initial.revision,strategy:'meal-only' as const};await db.transaction('rw',[foodLogs,plans,db.foodBatches,db.inventoryTransactions,recipeNotes,recipeTable],async()=>{await assertMealNoteRevision(initial);await new FoodStorage().editLeftoverOrigin({...input,operationId:storageOperation(input)});await commitStickyNoteChanges(noteDraft.changes,input.meal);await draft.onSaved?.()});close();notify(t('savedMessage'))}catch(error){notice(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t));setCorrectingOrigin(false)}finally{submitLock.current=false;setBusy(false)}
   };
   return (
     <Modal title={t(initial ? "editMeal" : "addFood")} close={close} className="add-food-modal">
@@ -533,14 +541,8 @@ export function AddFood({
                 </button>
               </div>
             )}
-            <label>
-              {t("cookingNote")}
-              <textarea
-                name="cookingNote"
-                rows={2}
-                defaultValue={initial?.cookingNote}
-              />
-            </label>
+            {initial?.id.startsWith('ai-meal:')&&initial.cookingNote&&<div className="meal-note-details"><small>{t('noteDetails')}</small><div className="preserved-text">{initial.cookingNote}</div></div>}
+            <StickyNotes notes={sharedNotes} recipeId={noteRecipeId} meal={{id:initial?.id??mealIdentity.id,date:initial?.date??draft.date}} changes={noteDraft.changes} onChange={noteDraft.stage} staged/>
             <label className="checkbox-label">
               <input
                 type="checkbox"

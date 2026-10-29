@@ -1,3 +1,6 @@
+import {StickyNotes,useStickyNotes,useStickyNoteChanges} from './StickyNotes';
+import {commitStickyNoteChanges,StickyNoteConflict} from './sticky-notes';
+import {recipeNotes} from './goals';
 import {householdUnitLabel} from './household-units';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {useLiveQuery} from 'dexie-react-hooks';
@@ -34,7 +37,8 @@ export function StorageRatioSlider({value,onChange}:{value:string;onChange:(v:st
 }
 export function StorageMealForm({initial,defaultBatchId='',date,hidden=false,onSaved,close,notice}:{initial?:FoodLog;defaultBatchId?:string;date:string;hidden?:boolean;onSaved?:()=>Promise<void>;close:()=>void;notice:Notice}){
  const {t}=useTranslation(),operation=useStorageOperation();const [identity]=useState(stamp);
- const batches=useLiveQuery(()=>storage.batches.toArray());const [batchId,setBatchId]=useState(initial?.storageConsumption?.batchId??defaultBatchId),[amount,setAmount]=useState(''),[mealDate,setMealDate]=useState(initial?.date??date),[category,setCategory]=useState(initial?.category??'uncategorized'),[notes,setNotes]=useState(initial?.cookingNote??'');
+ const sharedNotes=useStickyNotes('',initial?.id??identity.id),noteDraft=useStickyNoteChanges();
+ const batches=useLiveQuery(()=>storage.batches.toArray());const [batchId,setBatchId]=useState(initial?.storageConsumption?.batchId??defaultBatchId),[amount,setAmount]=useState(''),[mealDate,setMealDate]=useState(initial?.date??date),[category,setCategory]=useState(initial?.category??'uncategorized'),[notes]=useState(initial?.cookingNote??'');
  const [error,setError]=useState(''),[busy,setBusy]=useState(false),[ready,setReady]=useState(false),lock=useRef(false),initialized=useRef(false);
  const batch=batches?.find(b=>b.id===batchId),own=initial?.storageConsumption?.batchId===batchId?initial.storageConsumption.originalFraction:0;
  const available=batch?batch.remainingQuantity+own/batch.fractionPerUnit:0;
@@ -45,7 +49,7 @@ export function StorageMealForm({initial,defaultBatchId='',date,hidden=false,onS
  return <form hidden={hidden} className="storage-meal-form" onSubmit={async e=>{
   e.preventDefault();if(lock.current)return;if(!batch||amount===''||!Number.isFinite(quantity)||quantity<=0){setError(t(batch?.mode==='ratio'?'storageZero':'storageInvalid'));return}
   lock.current=true;setBusy(true);setError('');
-  try{const input={mealId:initial?.id??identity.id,batchId,portion:{unit:batch.mode==='weight'?'g' as const:'percent' as const,quantity},date:mealDate,category,notes,expectedRevision:initial?.revision};await db.transaction('rw',[db.foodBatches,db.inventoryTransactions,storage.meals,db.table('plans')],async()=>{await storage.saveMeal({...input,operationId:operation(input)});await onSaved?.()});close();notice(t('savedMessage'))}catch(error){setError(storageErrorMessage(error,t))}finally{lock.current=false;setBusy(false)}
+  try{const input={mealId:initial?.id??identity.id,batchId,portion:{unit:batch.mode==='weight'?'g' as const:'percent' as const,quantity},date:mealDate,category,notes,expectedRevision:initial?.revision};await db.transaction('rw',[db.foodBatches,db.inventoryTransactions,storage.meals,db.table('plans'),recipeNotes,db.table('recipeCards')],async()=>{await storage.saveMeal({...input,operationId:operation(input)});const saved=await storage.meals.get(input.mealId);if(!saved)throw Error('Meal was not saved');await commitStickyNoteChanges(noteDraft.changes,saved);await onSaved?.()});close();notice(t('savedMessage'))}catch(error){setError(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t))}finally{lock.current=false;setBusy(false)}
  }}>
   <div className="add-food-scroll modal-scroll"><fieldset disabled={busy} className="storage-fields">
    <div className="form-grid meal-date-row"><label>{t('date')}<DateInput value={mealDate} onChange={e=>setMealDate(e.target.value)} required/></label><label>{t('mealCategory')}<select value={category} onChange={e=>setCategory(e.target.value)}>{['uncategorized','breakfast','lunch','dinner','snack'].map(c=><option value={c} key={c}>{t(c)}</option>)}</select></label></div>
@@ -53,7 +57,7 @@ export function StorageMealForm({initial,defaultBatchId='',date,hidden=false,onS
    {!choices.length&&<p className="muted">{t('storageEmpty')}</p>}
    {batch&&ready&&<><p className="storage-footnote">{t('storageAvailable',{value:batch.mode==='weight'?round(available)+' g':round(available*100)+'%'})}</p>{batch.mode==='weight'?<label>{t('storageGrams')}<NumberInput key={batchId+'weight'} name="storageGrams" value={amount} min="0.000001" max={available} step="any" required onChange={e=>setAmount(e.target.value)}/></label>:<StorageRatioSlider value={amount||'0'} onChange={setAmount}/>}
    <div className="meal-nutrition-preview"><RecipeNutritionStrip value={preview}/></div></>}
-   <label>{t('storageNotes')}<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label>
+   <StickyNotes notes={sharedNotes} meal={{id:initial?.id??identity.id,date:mealDate}} changes={noteDraft.changes} onChange={noteDraft.stage} staged/>
   </fieldset>{error&&<p role="alert" className="storage-error">{error}</p>}</div>
   <div className="form-actions add-food-footer"><button type="button" disabled={busy} onClick={close}>{t('cancel')}</button><button className="primary" disabled={busy||!batch}>{t('save')}</button></div>
  </form>;

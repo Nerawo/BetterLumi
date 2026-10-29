@@ -1,28 +1,24 @@
+import {StickyNotes,useStickyNotes} from './StickyNotes';
+import {commitStickyNoteChanges} from './sticky-notes';
 import {householdUnitLabel} from './household-units';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import {RecipeDetailImage} from "./RecipeDetailImage";
 import {isBuiltInRecipe,bologneseCookingExtras} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
-import {confirmDelete} from "./DeleteConfirmation";
 import {recipeYield,recipeServingLines,recipeServingNutrition} from "./recipe-nutrition";
 import './recipe-yield-locale';
 import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import {
-  recipes,
-  stamp,
-  softDelete,
   type Recipe,
   type PantryItem,
 } from "./domain";
-import { recipeNotes } from "./goals";
 import { navigate } from "./routing";
 import { RecipeCategoryPicker } from "./RecipeCategoryPicker";
 import { assignCategoryRecipes } from "./categories";
 import { RecipeEditor } from "./Recipes";
-import { Modal, changed, type Notice } from "./ui";
+import { Modal, type Notice } from "./ui";
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 export function RecipeDetail({
   recipe,
@@ -40,19 +36,9 @@ export function RecipeDetail({
     if (history.state?.recipeOverlay) history.back();
     else navigate("/recipes", true);
   };
-  const notes =
-    useLiveQuery(
-      () =>
-        recipeNotes
-          .where("recipeId")
-          .equals(recipe?.id ?? "")
-          .filter((n) => !n.deletedAt)
-          .toArray(),
-      [recipe?.id],
-    ) ?? [];
+  const notes=useStickyNotes(recipe?.id??'');
   const [edit, setEdit] = useState(false);
   const [cookingServings,setCookingServings]=useState('1');
-  const [note, setNote] = useState<{ id?: string; text: string } | null>(null);
   if (!recipe)
     return (
       <Modal
@@ -63,17 +49,9 @@ export function RecipeDetail({
         <></>
       </Modal>
     );
-  const allNotes = [
-    ...(recipe.stickyNote ? [{ id: "legacy", text: recipe.stickyNote }] : []),
-    ...notes,
-  ];
   const amount=Number(cookingServings),validAmount=Number.isFinite(amount)&&amount>0;
   const cookingLines=validAmount?recipeServingLines(recipe,amount):[];
   const builtIn=isBuiltInRecipe(recipe),zh=i18n.language.startsWith('zh');
-  const removeNote = (id: string) => confirmDelete("note",allNotes.find(note=>note.id===id)?.text??recipe.name,async()=>{
-    if(id==="legacy") await recipes.put({...changed(recipe),stickyNote:""});
-    else await softDelete(recipeNotes,id);
-  });
   return (
     <Modal title={recipe.name} close={close} className="recipe-detail-modal">
       <div className="recipe-detail-scroll">{builtIn?<div className="recipe-reference-detail"><span>{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</span><span> · </span><BuiltInRecipeSource/></div>:<RecipeCategoryPicker className="detail-category-row" value={recipe.categoryIds ?? []} onToggle={(categoryId, included) => assignCategoryRecipes(categoryId, {[recipe.id]: included})} />}
@@ -118,29 +96,7 @@ export function RecipeDetail({
             </div>
           </section>
         </div>
-        <section className="little-notes">
-          <button className="text-link" onClick={() => setNote({ text: "" })}>
-            {t("writeNote")}
-          </button>
-          <div className="notes-grid">
-            {allNotes.map((n) => (
-              <div className="paper-note" key={n.id}>
-                <button
-                  className="note-text preserved-text"
-                  onClick={() => setNote(n)}
-                >
-                  {n.text}
-                </button>
-                <details className="note-menu">
-                  <summary aria-label={t("noteMenu")}>⋯</summary>
-                  <button onClick={() => removeNote(n.id)}>
-                    {t("delete")}
-                  </button>
-                </details>
-              </div>
-            ))}
-          </div>
-        </section>
+        <StickyNotes notes={notes} recipeId={recipe.id} onChange={async change=>{await commitStickyNoteChanges([change]);notice(t('savedMessage'))}}/>
         {edit && (
           <RecipeEditor
             item={recipe}
@@ -148,53 +104,6 @@ export function RecipeDetail({
             close={() => setEdit(false)}
             notice={notice}
           />
-        )}
-        {note && (
-          <Modal
-            title={t(note.id ? "edit" : "addNote")}
-            close={() => setNote(null)}
-          >
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const f = new FormData(e.currentTarget);
-                const text = String(f.get("text")).trim();
-                if (!text) return;
-                try {
-                  if (note.id === "legacy")
-                    await recipes.put({ ...changed(recipe), stickyNote: text });
-                  else {
-                    const old = note.id ? await recipeNotes.get(note.id) : null;
-                    await recipeNotes.put({
-                      ...(old ? changed(old) : stamp()),
-                      recipeId: recipe.id,
-                      text,
-                    });
-                  }
-                  setNote(null);
-                  notice(t("savedMessage"));
-                } catch {
-                  notice(t("failedMessage"));
-                }
-              }}
-            >
-              <label>
-                {t("noteText")}
-                <textarea
-                  name="text"
-                  rows={5}
-                  required
-                  defaultValue={note.text}
-                />
-              </label>
-              <div className="form-actions">
-                <button type="button" onClick={() => setNote(null)}>
-                  {t("cancel")}
-                </button>
-                <button className="primary">{t("save")}</button>
-              </div>
-            </form>
-          </Modal>
         )}
       </article></div>
         <div className="form-actions recipe-detail-actions detail-toolbar">

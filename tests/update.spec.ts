@@ -403,15 +403,14 @@ test("sticky notes CRUD and Log Once do not overwrite the original recipe", asyn
   await page.locator(".meal-advanced > summary").click();
   await page.locator(".add-food .recipe-line input[type=number]").fill("75");
   await page.locator(".meal-extras > summary").click();
-  await page
-    .locator(".add-food textarea[name=cookingNote]")
-    .fill("Only this meal");
+  await page.locator('.add-food .unified-sticky-notes>.text-link').click();
+  await page.locator('.sticky-note-editor textarea').fill('Shared cooking note');
+  await page.locator('.sticky-note-editor .primary').click();
   await page.locator(".add-food-footer .primary").click();
-  await expect(page.locator(".meal-card .meal-row")).toContainText(
-    "Only this meal",
-  );
+  await expect(page.locator('.add-food-modal')).toHaveCount(0);
   await page.goto("/recipes");
   await page.getByRole("link", { name: "Reading recipe" }).click();
+  await expect(page.locator('.recipe-detail-modal .note-text').filter({hasText:'Shared cooking note'})).toHaveCount(1);
   // The detail defaults to one serving of this two-serving recipe.
   await expect(page.locator(".detail-ingredients")).toContainText("50 g");
   const original = await page.evaluate(async () => {
