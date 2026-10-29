@@ -19,7 +19,7 @@ it('uses the unified latest weight, snapshots context, survives backup and never
  expect(snapshot.weightSource).toBe('recorded');expect(snapshot.weightRecordId).toBe(w.id);
  const logged={...stamp(),type:'swimming' as const,name:preset.nameEn,date:'2038-04-12',duration:60,distance:null,notes:'',calorieSource:'automatic' as const,caloriesBurned:snapshot.estimatedKcal,exerciseEstimate:snapshot};await db.activities.put(logged);
  await weights.put({...w,kg:80});exerciseEstimateSnapshot({...preset,met:99},60,(await readWeightState()).latestWeight);
- expect(await db.activities.get(logged.id)).toEqual(logged);expect(await db.activities.get(existing.id)).toEqual(existing);expect(await db.activities.count()).toBe(2);expect(db.verno).toBe(6);
+ expect(await db.activities.get(logged.id)).toEqual(logged);expect(await db.activities.get(existing.id)).toEqual(existing);expect(await db.activities.count()).toBe(2);expect(db.verno).toBe(7);
  const backup=await exportAll();await restoreAll(backup);expect(await db.activities.get(logged.id)).toEqual(logged);expect(await db.activities.get(existing.id)).toEqual(existing);
  expect(exerciseEstimateSnapshot(preset,60,null)?.weightSource).toBe('reference');expect(exerciseEstimateSnapshot(preset,null,null)).toBeUndefined();
 });

@@ -19,7 +19,7 @@ it('ignores edit timestamps and creation order when measurement times are known'
  expect([early,late].sort(compareMeasurements)[0].id).toBe(late.id);expect(latestBmiWeight([early,late],date)!.id).toBe(late.id);
 });
 it('keeps legacy rows exact without a destructive migration or invented time',async()=>{
- const legacy:Weight={...stamp(),date:'2026-10-01',kg:55,notes:'Legacy'};await weights.add(legacy);await saveWeightMeasurement({date,measuredAt:localMeasurementIso(date,'15:20'),kg:64.4,notes:''});expect(await weights.get(legacy.id)).toEqual(legacy);expect(db.verno).toBe(6);expect(weights.schema.indexes.find(i=>i.name==='date')!.unique).toBe(false);
+ const legacy:Weight={...stamp(),date:'2026-10-01',kg:55,notes:'Legacy'};await weights.add(legacy);await saveWeightMeasurement({date,measuredAt:localMeasurementIso(date,'15:20'),kg:64.4,notes:''});expect(await weights.get(legacy.id)).toEqual(legacy);expect(db.verno).toBe(7);expect(weights.schema.indexes.find(i=>i.name==='date')!.unique).toBe(false);
  const edited=await saveWeightMeasurement({date:legacy.date,kg:54.9,notes:'Legacy edited'},legacy);expect(edited.measuredAt).toBeUndefined();expect(edited.date).toBe(legacy.date);
 });
 it('preserves full ISO precision through edits, backup round trips, and old backups',async()=>{

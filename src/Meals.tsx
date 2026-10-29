@@ -1,3 +1,6 @@
+import {StorageMealForm, BatchDetail, storageErrorMessage, useStorageOperation} from './FoodStorage';
+import {FoodStorage} from './food-storage';
+import {FoodStorageError} from './food-storage-model';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods} from './data/builtInFoods';
@@ -23,7 +26,6 @@ import {
   recipes as recipeTable,
   foodLogs,
   stamp,
-  localDate,
   sumNutrition,
   scaleNutrition,
   unknownNutrition,
@@ -72,13 +74,19 @@ export function AddFood({
   notice: Notice;
 }) {
   const { t,i18n } = useTranslation(),preferences=useIngredientPreferences();
+  const storageOperation=useStorageOperation();
+  const [mealIdentity]=useState(stamp),[leftoverIdentity]=useState(stamp);
+  const [storageOpened,setStorageOpened]=useState(!!draft.log?.storageConsumption);
+  const [saveLeftovers,setSaveLeftovers]=useState(false),[cookedWeight,setCookedWeight]=useState(''),[originConflict,setOriginConflict]=useState(false),[correctingOrigin,setCorrectingOrigin]=useState(false),[reviewBatch,setReviewBatch]=useState(false);
+  const originRetry=useRef<{meal:FoodLog;expectedBatchRevision:number}|null>(null);
+  const submitLock=useRef(false),mealForm=useRef<HTMLFormElement>(null);
   const [ingredientPicking,setIngredientPicking]=useState(false);
   const [message, setMessage] = useState("");
   const notice: Notice = message => { setMessage(message); };
   const initial = draft.log;
   const r = draft.recipe ?? recipes.find((r) => r.id === initial?.sourceId);
-  const [source, setSource] = useState<"quick" | "recipe" | "pantry">(
-    initial?.source ?? "recipe",
+  const [source, setSource] = useState<"quick" | "recipe" | "pantry" | "storage">(
+    initial?.storageConsumption?"storage":initial?.source ?? "recipe",
   );
   const [recipeId, setRecipeId] = useState(r?.id ?? initial?.sourceId ?? "");
   const [ingredientId, setIngredientId] = useState(
@@ -112,6 +120,7 @@ export function AddFood({
   const tabDrafts=useRef<Partial<Record<typeof source,typeof tabDraft>>>({});
   const switchSource=(key:typeof source)=>{
     if(key===source)return;
+    if(key==='storage')setStorageOpened(true);
     tabDrafts.current[source]=tabDraft;
     const next:typeof tabDraft=tabDrafts.current[key]??{recipeId:'',ingredientId:'',recipeBasis:'recipe',quantity:1,lineServings:1,unit:'serving',nutrition:unknownNutrition(),lines:[],name:'',photo:'',consumptionPercent:100,renaming:false,estimated:false};
     setSource(key);setRecipeId(next.recipeId);setIngredientId(next.ingredientId);setRecipeBasis(next.recipeBasis);
@@ -149,7 +158,7 @@ export function AddFood({
     }
   };
   const chooseRecipe = (id: string) => {
-    setRenaming(false);
+    setRenaming(false);setSaveLeftovers(false);setCookedWeight('');
     setRecipeId(id);setRecipeBasis("recipe");setConsumptionPercent(100);
     const recipe = recipes.find((r) => r.id === id);
     if (recipe) {
@@ -191,32 +200,11 @@ export function AddFood({
             : unknownNutrition();
   const retained=source==="recipe"&&recipeBasis==="snapshot"&&initial&&lines===initial.lines;
   const preview=retained?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,consumptionPercent,initial.baseNutrition):consumedNutrition(totals,consumptionPercent);
-  const submit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if(retained&&(initial.consumptionPercent??100)===0&&!initial.baseNutrition&&consumptionPercent!==0){notice(t("legacyNutritionUnavailable"));return}
-    const f = new FormData(e.currentTarget);
-    const date = String(f.get("date"));
-    if (date > localDate()) {
-      notice(t("errorDate"));
-      return;
-    }
-    if (source !== "quick" && !name.trim()) {
-      notice(t("requiredName"));
-      return;
-    }
-    if (
-      (source==='recipe'&&recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)) ||
-      (source === "recipe" && !lines.length && !retained) ||
-      (source === "pantry" && !ingredient && !builtIn && !initial)
-    ) {
-      notice(t("invalid"));
-      return;
-    }
-    setBusy(true);
-    try {
-      await db.transaction("rw", [foodLogs, plans], async () => {
-        await foodLogs.put({
-          ...(initial ? changed(initial) : stamp()),
+  const buildMealRecord=(f:FormData):FoodLog=>{
+    if(source==='storage')throw new FoodStorageError('INVALID','Use the storage form');
+    const date=String(f.get('date'));
+    return {
+          ...(initial ? changed(initial) : mealIdentity),
           date,
           category: String(f.get("category")),
           name: name.trim(),
@@ -241,42 +229,79 @@ export function AddFood({
           photo,
           cookingNote: String(f.get("cookingNote")).trim(),
           estimated,
-        });
+        };
+  };
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if(source==='storage'||submitLock.current)return;
+    if(retained&&(initial.consumptionPercent??100)===0&&!initial.baseNutrition&&consumptionPercent!==0){notice(t("legacyNutritionUnavailable"));return}
+    const f = new FormData(e.currentTarget);
+    if (source !== "quick" && !name.trim()) {
+      notice(t("requiredName"));
+      return;
+    }
+    if (
+      (source==='recipe'&&recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)) ||
+      (source === "recipe" && !lines.length && !retained) ||
+      (source === "pantry" && !ingredient && !builtIn && !initial)
+    ) {
+      notice(t("invalid"));
+      return;
+    }
+    setBusy(true);submitLock.current=true;setOriginConflict(false);
+    try {
+      await db.transaction("rw", [foodLogs, plans, db.foodBatches, db.inventoryTransactions], async () => {
+        const record=buildMealRecord(f);
+        const storage=new FoodStorage();
+        if(initial?.leftoverBatchId){
+          const batch=await storage.batches.get(initial.leftoverBatchId);
+          if(!batch)throw new FoodStorageError('NOT_FOUND','Missing leftover batch');
+          originRetry.current={meal:record,expectedBatchRevision:batch.revision};
+          await storage.editLeftoverOrigin({operationId:storageOperation({record,batchRevision:batch.revision,strategy:'sync'}),meal:record,expectedMealRevision:initial.revision,expectedBatchRevision:batch.revision,strategy:'sync'});
+        }else if(!initial&&source==='recipe'&&saveLeftovers&&consumptionPercent<100){
+          const input={meal:record,saveLeftovers:true,batchId:leftoverIdentity.id,cookedWeightGrams:cookedWeight===''?undefined:Number(cookedWeight)};
+          await storage.saveMealWithLeftovers({...input,operationId:storageOperation(input)});
+        }else await foodLogs.put(record);
         await draft.onSaved?.();
       });
       close();
       notify(t("savedMessage"));
-    } catch {
-      notice(t("failedMessage"));
+    } catch(error) {
+      if(initial?.leftoverBatchId&&error instanceof FoodStorageError&&error.code==='CONFLICT'&&error.batchId===initial.leftoverBatchId){setOriginConflict(true);notice(t('storageOriginConflict'))}
+      else notice(storageErrorMessage(error,t));
     } finally {
-      setBusy(false);
+      setBusy(false);submitLock.current=false;
     }
+  };
+  const correctOrigin=async()=>{
+    if(!initial||!originRetry.current||submitLock.current||!mealForm.current||!mealForm.current.reportValidity())return;submitLock.current=true;setBusy(true);
+    try{const input={...originRetry.current,meal:buildMealRecord(new FormData(mealForm.current)),expectedMealRevision:initial.revision,strategy:'meal-only' as const};await db.transaction('rw',[foodLogs,plans,db.foodBatches,db.inventoryTransactions],async()=>{await new FoodStorage().editLeftoverOrigin({...input,operationId:storageOperation(input)});await draft.onSaved?.()});close();notify(t('savedMessage'))}catch(error){notice(storageErrorMessage(error,t));setCorrectingOrigin(false)}finally{submitLock.current=false;setBusy(false)}
   };
   return (
     <Modal title={t(initial ? "editMeal" : "addFood")} close={close} className="add-food-modal">
     <section className="add-food">
       <div className="segments source-tabs">
-        {(["recipe", "pantry", "quick"] as const).map((key, index) => (
+        {(["recipe", "pantry", "storage", "quick"] as const).map((key, index) => (
           <button
             type="button"
             aria-pressed={source === key}
             className={source === key ? "selected" : ""}
             key={key}
-            aria-label={t({recipe:"savedRecipe",pantry:"savedIngredient",quick:"quick"}[key])}
+            aria-label={t({recipe:"savedRecipe",pantry:"savedIngredient",storage:"storageTab",quick:"quick"}[key])}
+            disabled={!!initial&&(initial.storageConsumption?key!=="storage":key==="storage"||!!initial.leftoverBatchId&&key!=="recipe")}
             onClick={() => switchSource(key)}
           >
-            {t(["foodTabRecipe", "foodTabPantry", "quick"][index])}
+            {t(["storageMealRecipes", "storageMealPantry", "storageTab", "storageMealQuick"][index])}
           </button>
         ))}
       </div>
-          <form onSubmit={submit}>
+          <form ref={mealForm} onSubmit={submit} hidden={source==='storage'}>
             <div className="add-food-scroll">
             <div className="form-grid meal-date-row">
               <label>
                 {t("date")}
                 <DateInput
                   name="date"
-                  max={localDate()}
                   required
                   defaultValue={initial?.date ?? draft.date}
                 />
@@ -476,6 +501,9 @@ export function AddFood({
 
               </>
             )}
+            {source==='recipe'&&!initial&&consumptionPercent<100&&<div className="leftover-fields"><label className="leftover-option"><input type="checkbox" checked={saveLeftovers} onChange={e=>setSaveLeftovers(e.target.checked)}/><span>{t('storageSaveLeftovers')}</span></label>{saveLeftovers&&<label>{t('storageCompleteWeight')}<NumberInput name="leftoverCookedWeight" min="0.000001" step="any" value={cookedWeight} onChange={e=>setCookedWeight(e.target.value)}/></label>}</div>}
+            {initial?.leftoverBatchId&&<p className="storage-footnote">{t('storageOriginLinked')}</p>}
+            {originConflict&&<div className="storage-conflict-actions"><button type="button" onClick={()=>setCorrectingOrigin(true)}>{t('storageCorrectMeal')}</button><button type="button" onClick={()=>setReviewBatch(true)}>{t('storageReviewBatch')}</button></div>}
             <details className="meal-extras">
               <summary>{t("mealExtras")}</summary>
             <label className="meal-photo-input">
@@ -533,7 +561,10 @@ export function AddFood({
               </button>
             </div>
           </form>
+      {storageOpened&&<StorageMealForm hidden={source!=='storage'} initial={initial?.storageConsumption?initial:undefined} date={draft.date} close={close} notice={notify} onSaved={draft.onSaved}/>}
     </section>
+    {correctingOrigin&&<Modal title={t('storageCorrectTitle')} close={()=>{if(!busy)setCorrectingOrigin(false)}} className="recipe-editor-modal food-storage-modal"><div className="modal-scroll"><p>{t('storageCorrectHelp')}</p></div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setCorrectingOrigin(false)}>{t('cancel')}</button><button type="button" className="primary" disabled={busy} onClick={()=>void correctOrigin()}>{t('storageConfirmCorrection')}</button></div></Modal>}
+    {reviewBatch&&initial?.leftoverBatchId&&<BatchDetail batchId={initial.leftoverBatchId} close={()=>setReviewBatch(false)} notice={notify}/>}
     </Modal>
   );
 }

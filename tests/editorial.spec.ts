@@ -126,7 +126,7 @@ test("meal photos are real records, optional photographs survive reload and cons
 }) => {
   const file = await imageFile(page, "real-meal.png", 900, 700);
   await page.getByRole("button", { name: "添加餐食", exact: true }).click();
-  await page.locator(".add-food .source-tabs button").nth(2).click();
+  await page.locator(".add-food .source-tabs button").last().click();
   await page.locator(".add-food .nutrition-fields input").first().fill("200");
   await page.locator(".add-food input[name=consumptionPercent]").fill("50.5");
   await page.locator(".meal-extras > summary").click();

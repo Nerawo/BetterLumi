@@ -22,6 +22,6 @@ it('defines one bilingual recipe of six canonical servings and no invented final
 });
 it('never seeds references; cooking and logging keep user records and historical snapshots intact across backup',async()=>{
  const old={...stamp(),name:'Synthetic old recipe',lines:[],instructions:'Keep',stickyNote:''};await recipes.put(old as never);const log={...stamp(),date:'2020-02-02',name:'Synthetic meal',category:'lunch',source:'recipe' as const,sourceId:bologneseRecipeId,quantity:1,unit:'serving',nutrition:{calories:123,protein:4,carbs:null,fat:2},lines:[],cookingNote:'Keep'};await foodLogs.put(log);
- const before=await exportAll();for(const language of ['zh','en']){const reference=builtInRecipeItems(language)[0];recipeServingLines(reference,3);recipeServingNutrition(reference,.5)}expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.count()).toBe(0);expect(await recipes.count()).toBe(1);expect(db.verno).toBe(6);expect(before.version).toBe(9);
+ const before=await exportAll();for(const language of ['zh','en']){const reference=builtInRecipeItems(language)[0];recipeServingLines(reference,3);recipeServingNutrition(reference,.5)}expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.count()).toBe(0);expect(await recipes.count()).toBe(1);expect(db.verno).toBe(7);expect(before.version).toBe(10);
  await restoreAll(before);expect(await recipes.get(old.id)).toEqual(old);expect(await foodLogs.get(log.id)).toEqual(log);expect(recipeYield((await recipes.get(old.id))!)).toBe(1);
 });

@@ -267,7 +267,6 @@ function App() {
                           <button
                             className="primary"
                             onClick={() => setDraft({ date: selected })}
-                            disabled={selected > today}
                           >
                             <Plus size={15} />
                             {t("addFood")}

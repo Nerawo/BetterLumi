@@ -63,5 +63,5 @@ it('does not seed or change user records; meal and recipe snapshots survive a re
  const meal={...stamp(),date:'2035-03-06',category:'lunch',name:line.name,source:'pantry' as const,sourceId:broccoli.id,quantity:50,unit:'g',nutrition:line.nutrition,baseNutrition:{...line.nutrition},lines:[],cookingNote:''};
  await foodLogs.put(meal);await db.recipes.put({...stamp(),name:'Fictional reference recipe',servings:1,lines:[line],instructions:'',stickyNote:''});
  const before=await exportAll();searchFoodChoices([personal],'','',tags);builtInFoodLine({...broccoli,kcalPer100g:44.979},50,'zh');
- expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([personal]);expect(await foodLogs.get(meal.id)).toEqual(meal);expect(line.nutrition.calories).toBe(15.5);expect(db.verno).toBe(6);
+ expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([personal]);expect(await foodLogs.get(meal.id)).toEqual(meal);expect(line.nutrition.calories).toBe(15.5);expect(db.verno).toBe(7);
 });

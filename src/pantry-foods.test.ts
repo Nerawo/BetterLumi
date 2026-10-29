@@ -35,5 +35,5 @@ it('returns a genuinely empty combined set only when neither source matches',()=
 it('never writes composed rows to IndexedDB or changes existing tables',async()=>{
  const item=user();await db.ingredients.put(item);const before=await exportAll();
  for(const sort of ['name-asc','name-desc','calories-asc','calories-desc'] as const)expect(sortPantryFoods(searchFoodChoices([item],'','',tags),sort,'zh')).toHaveLength(203);
- expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([item]);expect(db.verno).toBe(6);
+ expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([item]);expect(db.verno).toBe(7);
 });

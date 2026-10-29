@@ -3,6 +3,8 @@ import {reconcileIngredientTags} from "./ingredient-tag-data";
 import { validConsumptionUnit, type ConsumptionUnit } from "./consumption-units";
 import {newId} from "./ids";
 import Dexie, { type Table } from "dexie";
+import type {FoodBatch, StorageTransaction} from "./food-storage-model";
+export const SCHEMA_VERSION = 7;
 export interface RecordBase {
   id: string;
   createdAt: string;
@@ -79,6 +81,8 @@ export class LumiDB extends Dexie {
   recipes!: Table<FutureRecord>;
   meals!: Table<FutureRecord>;
   images!: Table<FutureRecord>;
+  foodBatches!: Table<FoodBatch>;
+  inventoryTransactions!: Table<StorageTransaction>;
   constructor(name = "BetterLumi") {
     super(name);
     this.version(1).stores({
@@ -159,6 +163,11 @@ export class LumiDB extends Dexie {
     });
     // Additive only: existing records remain untouched.
     this.version(6).stores({ingredientTags:"id,name,updatedAt,deletedAt"});
+    // Food Storage is additive: no upgrade callback, reseeding or rewrites of existing rows.
+    this.version(SCHEMA_VERSION).stores({
+      foodBatches: "id,name,sourceRecipeId,preparedOn,updatedAt,deletedAt",
+      inventoryTransactions: "id,*batchIds,mealId,targetBatchId,createdAt",
+    });
   }
 }
 export const db = new LumiDB();
@@ -213,6 +222,7 @@ export const tableNames = [
 export async function makeBackup(database = db) {
   const tables: Record<string, unknown[]> = {};
   await database.transaction("r", database.tables, async () => {
+    if (await database.foodBatches.count() || await database.inventoryTransactions.count()) throw Error("Food Storage requires the full exportAll backup");
     for (const name of tableNames)
       tables[name] = await database.table(name).toArray();
   });
@@ -325,6 +335,7 @@ export async function restoreBackup(value: unknown, database = db) {
   copy.tables.ingredientTags??=[];
   reconcileIngredientTags(copy.tables);
   await database.transaction("rw", database.tables, async () => {
+    if (await database.foodBatches.count() || await database.inventoryTransactions.count()) throw Error("Food Storage requires the full restoreAll backup");
     for (const name of tableNames) {
       await database.table(name).clear();
       await database.table(name).bulkPut(copy.tables[name]);

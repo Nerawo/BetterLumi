@@ -5,13 +5,13 @@ import {referenceName,referencePreparation} from './reference-library';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {defaultIngredientQuantity} from './consumption-units';
 import {NumberInput} from './NumberInput';
-import {useState} from 'react';
+import {useState,type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Plus,Trash2,ArrowLeftRight} from 'lucide-react';
 import {IngredientPicker} from './IngredientPicker';
 import {scaleNutrition,unknownNutrition,type RecipeLine,type PantryItem} from './domain';
 
-export function RecipeLineEditor({lines,setLines,pantry,compact=false}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean}){
+export function RecipeLineEditor({lines,setLines,pantry,compact=false,additionalAction}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
  const [picking,setPicking]=useState<number|'add'|null>(null);
  const choose=(item:PantryItem)=>{
@@ -41,7 +41,7 @@ export function RecipeLineEditor({lines,setLines,pantry,compact=false}:{lines:Re
     }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[line.ingredientId])}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{foodUnitLabel(choice,line.unit,i18n.language,preferences[line.ingredientId])}</option>}</select></label></div>
    </div>;
   })}
-  <div className="line-add"><button type="button" className="secondary ingredient-add-trigger" onClick={()=>setPicking('add')}><Plus size={16}/>{t('ingredientPickerAdd')}</button></div>
+  <div className="line-add"><button type="button" className="secondary ingredient-add-trigger" onClick={()=>setPicking('add')}><Plus size={16}/>{t('ingredientPickerAdd')}</button>{additionalAction}</div>
   {picking!==null&&<IngredientPicker items={pantry} close={()=>setPicking(null)} onSelect={choose} onSelectBuiltIn={chooseBuiltIn}/>}
  </div>;
 }

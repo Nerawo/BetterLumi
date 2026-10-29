@@ -12,7 +12,7 @@ it('applies nutrition then exercise independently without losing either override
  const before=await goalTable.toArray();await applyInteractiveGoals(input,{exerciseEnabled:true},'nutrition',date);let current=activeGoal(await goalTable.toArray(),date)!;expect(current.calorieMin).toBe(2239);expect(current.exerciseMinutes).toBe(30);expect(current.exerciseMode).toBe('daily');
  await applyInteractiveGoals(input,{exerciseEnabled:true},'exercise',date);current=activeGoal(await goalTable.toArray(),date)!;expect(current.nutritionGoals!.protein.min).toBe(70);expect(current.calorieMin).toBe(2239);expect(current.exerciseMinutes).toBe(150);expect(current.exerciseKcal).toBe(638);expect(current.exerciseMode).toBe('weekly');expect(await goalTable.get(before[0].id)).toEqual(before[0]);expect(await goalTable.count()).toBe(3);
  expect(activeGoal(await goalTable.toArray(),'2026-10-20')!.exerciseMinutes).toBe(30);expect(activeGoal(await goalTable.toArray(),'2026-11-03')!.nutritionGoals!.protein.mode).toBe('off');
- const backup=await exportAll();expect(backup.version).toBe(9);await restoreAll(backup);expect(activeGoal(await goalTable.toArray(),date)!.calorieMin).toBe(2239);expect(sectionGoal(await goalTable.toArray(),date,date,'exercise')!.scope).toBe('exercise');
+ const backup=await exportAll();expect(backup.version).toBe(10);await restoreAll(backup);expect(activeGoal(await goalTable.toArray(),date)!.calorieMin).toBe(2239);expect(sectionGoal(await goalTable.toArray(),date,date,'exercise')!.scope).toBe('exercise');
  const bad=structuredClone(backup);bad.version=8;const all=await goalTable.toArray();await expect(restoreAll(bad)).rejects.toThrow();expect(await goalTable.toArray()).toEqual(all);
 });
 it('exercise first cannot suppress a later calorie override or extend expired macros',async()=>{
@@ -23,7 +23,7 @@ it('unsafe values, excluded profiles and disabled exercise cannot write goals',a
  await expect(applyInteractiveGoals(input,{exerciseEnabled:false},'exercise',date)).rejects.toThrow();expect(await goalTable.count()).toBe(1);
 });
 it('legacy v8 backups remain exact and custom drafts round trip separately',async()=>{
- const old=await exportAll();old.version=8;await restoreAll(old);expect(await goalTable.toArray()).toEqual(old.tables.goals);expect(db.verno).toBe(6);
+ const old=await exportAll();old.version=8;await restoreAll(old);expect(await goalTable.toArray()).toEqual(old.tables.goals);expect(db.verno).toBe(7);
 });
 
 it('cannot use a legacy manual calorie override when applying computed goals',async()=>{

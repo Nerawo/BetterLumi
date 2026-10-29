@@ -1,3 +1,4 @@
+import {FoodStorageList} from './FoodStorage';
 import {PantrySortMenu,type PantrySort} from './PantrySortMenu';
 import {sortRecipes} from './recipe-sort';
 import {recipeListNutrition} from './recipe-list-nutrition';
@@ -57,6 +58,7 @@ export function Recipes({
   notice: Notice;
 }) {
   const { t,i18n } = useTranslation();
+  const [view,setView]=useState<'recipes'|'storage'>('recipes');
   const [editing, setEditing] = useState<Recipe | null | undefined>();
   const [search, setSearch] = useState("");
   const [sort,setSort]=useState<PantrySort>('name-asc');
@@ -76,6 +78,9 @@ export function Recipes({
   ),sort,i18n.language);
   return (
     <>
+      <div className="recipes-view-tabs" role="tablist" aria-label={t('recipes')}><button type="button" role="tab" aria-selected={view==='recipes'} aria-controls="recipes-library-panel" id="recipes-library-tab" className={view==='recipes'?'selected':''} onClick={()=>setView('recipes')}>{t('storageMyRecipes')}</button><button type="button" role="tab" aria-selected={view==='storage'} aria-controls="recipes-storage-panel" id="recipes-storage-tab" className={view==='storage'?'selected':''} onClick={()=>setView('storage')}>{t('storageTab')}</button></div>
+      <div className="recipes-page-panel" id="recipes-storage-panel" role="tabpanel" aria-labelledby="recipes-storage-tab" hidden={view!=='storage'}><FoodStorageList recipes={[...items,...builtInRecipeItems(i18n.language)]} pantry={pantry} notice={notice}/></div>
+      <div className="recipes-page-panel" id="recipes-library-panel" role="tabpanel" aria-labelledby="recipes-library-tab" hidden={view!=='recipes'}>
       <div className="search">
         <Search size={18} />
         <input
@@ -101,6 +106,7 @@ export function Recipes({
         <Empty heading={t("noRecipesYet")} />
       )}
       {!filtered.length && <p className="collection-empty">{t("emptySearch")}</p>}
+      </div>
       {manage&&<RecipeCategoryManager items={categoryItems} close={closeCategoryManager} onDeleted={id=>{if(tab===id)setTab("")}}/>}
       {manageRecipes && <CategoryRecipeManager key={manageRecipes.id} category={manageRecipes} close={() => setManageRecipes(null)} notice={notice} />}
       {editing !== undefined && (

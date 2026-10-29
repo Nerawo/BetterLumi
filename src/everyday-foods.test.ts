@@ -62,5 +62,5 @@ it('keeps hidden variants resolvable with their custom units, archives, defaults
  expect(personalNutrition(choice,1,'bowl',pref).calories).toBeCloseTo(f.kcalPer100g!*1.77,12);
  expect((await exportAll()).tables).toEqual(before.tables);await restoreAll(before);
  expect(await recipes.get(recipe.id)).toEqual(recipe);expect(await foodLogs.get(log.id)).toEqual(log);
- expect(ingredientPreferenceRows(await db.settings.toArray())[f.id]).toEqual(pref);expect(before.version).toBe(9);expect(db.verno).toBe(6);expect(db.name).toBe('BetterLumi');
+ expect(ingredientPreferenceRows(await db.settings.toArray())[f.id]).toEqual(pref);expect(before.version).toBe(10);expect(db.verno).toBe(7);expect(db.name).toBe('BetterLumi');
 });

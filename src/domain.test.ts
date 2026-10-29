@@ -118,7 +118,7 @@ describe("Olive vertical slice", () => {
     expect(w.kg).toBeCloseTo(70, 6);
     expect(displayWeight(w.kg, "lb")).toBeCloseTo(154.32358, 4);
     const backup = await exportAll();
-    expect(Object.keys(backup.tables)).toHaveLength(18);
+    expect(Object.keys(backup.tables)).toHaveLength(20);
     await db.ingredients.clear();
     await restoreAll(JSON.parse(JSON.stringify(backup)));
     expect(((await db.ingredients.get(i.id)) as PantryItem)?.photo).toBe(
