@@ -11,7 +11,7 @@ export interface AIMealDraftRow {
  original:ParsedAIMealItem;item:ParsedAIMealItem;baseline:AIMealBaseline;splitParent?:string;
  overrides:Partial<Nutrition>;scaling:'amount'|'weight';status:'ready'|'unresolved-portion';
 }
-export interface AIMealDraft {version:1;id:string;revision:number;importId?:string;raw:string;rows:AIMealDraftRow[];parseError:string|null;splits?:Record<string,AIMealDraftRow>}
+export interface AIMealDraft {version:1;id:string;revision:number;importId?:string;raw:string;reviewedRaw?:string;rows:AIMealDraftRow[];parseError:string|null;splits?:Record<string,AIMealDraftRow>}
 export type AIMealPortion=Pick<ParsedAIMealItem,'amount'|'unit'|'weightG'>;
 const same=(a:unknown,b:unknown)=>JSON.stringify(a)===JSON.stringify(b);
 const numeric=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n)&&n>=0;
@@ -83,10 +83,16 @@ export function selectAIMealDraftSource(row:AIMealDraftRow,source:AIMealBaseline
 export function recalculateAIMealDraftRow(row:AIMealDraftRow):AIMealDraftRow {return calculate({...structuredClone(row),overrides:{}})}
 export function restoreAIMealEstimate(row:AIMealDraftRow):AIMealDraftRow {return {...createAIMealDraftRow(row.original),...(row.splitParent?{splitParent:row.splitParent}:{})}}
 export function createAIMealDraft(raw='',id=newId()):AIMealDraft {return parseAIMealDraft({version:1,id,revision:0,importId:newId(),raw,rows:[],parseError:null})}
-/** Explicit parse action; a bad paste retains the last valid, edited preview for recovery. */
+/** Parse a response; a bad paste retains the last valid, edited preview for recovery. */
 export function parseAIMealDraft(draft:AIMealDraft):AIMealDraft {
  const next=structuredClone(draft);if(!next.raw.trim()){next.parseError='Paste the AI response first';return next}
- try{next.rows=parseAIMealResponse(next.raw).items.map(createAIMealDraftRow);next.parseError=null;next.splits={}}catch(error){next.parseError=error instanceof Error?error.message:'Invalid AI response'}return next;
+ try{next.rows=parseAIMealResponse(next.raw).items.map(createAIMealDraftRow);next.parseError=null;next.splits={};next.reviewedRaw=next.raw}catch(error){next.parseError=error instanceof Error?error.message:'Invalid AI response'}return next;
+}
+/** Compare against the reviewed response, including removals, grouping, sources and split state. */
+export function hasAIMealDraftEdits(draft:AIMealDraft):boolean {
+ if(draft.reviewedRaw===undefined)return !!draft.rows.length||!!Object.keys(draft.splits??{}).length;
+ const original=parseAIMealDraft({...draft,raw:draft.reviewedRaw});
+ return !!original.parseError||!!Object.keys(draft.splits??{}).length||!same(draft.rows,original.rows);
 }
 export const aiMealDraftTotals=(draft:AIMealDraft)=>aiMealTotals(draft.rows.map(row=>row.item));
 /** Unresolved items stay flat, outside complete date/meal groups. No default context is assigned. */
@@ -99,6 +105,7 @@ export function validateAIMealDraft(value:unknown):AIMealDraft {
  if(!value||typeof value!=='object')throw Error('Invalid AI meal draft');const d=value as AIMealDraft;
  if(d.version!==1||typeof d.id!=='string'||!d.id||d.id.length>100||!Number.isSafeInteger(d.revision)||d.revision<0||typeof d.raw!=='string'||d.raw.length>AI_MEAL_LIMITS.text||!Array.isArray(d.rows)||d.rows.length>AI_MEAL_LIMITS.items||(d.parseError!==null&&typeof d.parseError!=='string'))throw Error('Invalid AI meal draft');
  if(d.importId!==undefined&&(typeof d.importId!=='string'||!/^[-A-Za-z0-9]{1,100}$/.test(d.importId)))throw Error('Invalid import identity');
+ if(d.reviewedRaw!==undefined&&(typeof d.reviewedRaw!=='string'||d.reviewedRaw.length>AI_MEAL_LIMITS.text))throw Error('Invalid reviewed response');
  const rows=d.rows.map(row=>{
   const original=parsedItem(row.original),item=parsedItem(row.item),baseline=validateBaseline(row.baseline);
   if(!['amount','weight'].includes(row.scaling)||original.path!==item.path||!row.overrides||typeof row.overrides!=='object'||Array.isArray(row.overrides))throw Error('Invalid draft row');
@@ -119,5 +126,5 @@ export function validateAIMealDraft(value:unknown):AIMealDraft {
   }
  }
  for(const row of rows)if(row.splitParent&&!splits[row.splitParent])throw Error('Missing split history');
- return {version:1,id:d.id,revision:d.revision,...(d.importId?{importId:d.importId}:{}),raw:d.raw,rows,parseError:d.parseError,...(d.splits!==undefined?{splits}:{})};
+ return {version:1,id:d.id,revision:d.revision,...(d.importId?{importId:d.importId}:{}),raw:d.raw,...(d.reviewedRaw!==undefined?{reviewedRaw:d.reviewedRaw}:{}),rows,parseError:d.parseError,...(d.splits!==undefined?{splits}:{})};
 }

@@ -322,7 +322,7 @@ export function AddFood({
                 >
                   {categories.map((c) => (
                     <option key={c} value={c}>
-                      {t(c)}
+                      {t(c==='uncategorized'?'aiUnresolved':c)}
                     </option>
                   ))}
                 </select>
@@ -586,7 +586,7 @@ export function MealList({
         const entries = logs.filter((l) => l.category === category);
         return entries.length ? (
           <div className="meal-group" key={category}>
-            <span className="eyebrow">{t(category)}</span>
+            <span className="eyebrow">{t(category==='uncategorized'?'unclassifiedMeals':category)}</span>
             {entries.map((log) => (
               <article className={"meal-row"+(highlightedIds.includes(log.id)?" ai-import-highlight":"")} data-food-log-id={log.id} key={log.id}>
                 <div className="grow">

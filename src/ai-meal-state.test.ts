@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {createAIMealDraft,editAIMealDraftRow,editAIMealDraftNutrition,parseAIMealDraft,selectAIMealDraftSource,recalculateAIMealDraftRow,restoreAIMealEstimate,validateAIMealDraft,groupAIMealDraft,aiMealDraftTotals,type AIMealBaseline} from './ai-meal-state';
+import {hasAIMealDraftEdits,createAIMealDraft,editAIMealDraftRow,editAIMealDraftNutrition,parseAIMealDraft,selectAIMealDraftSource,recalculateAIMealDraftRow,restoreAIMealEstimate,validateAIMealDraft,groupAIMealDraft,aiMealDraftTotals,type AIMealBaseline} from './ai-meal-state';
 const raw=()=>JSON.stringify({format:'betterlumi-meal',version:1,meals:[{date:null,mealType:null,items:[{name:'Synthetic dish',date:null,mealType:null,amount:2,unit:'piece',weightG:120,consumedFraction:.5,nutrition:{calories:201.123456,protein:null,carbs:20,fat:0},estimated:true,notes:null,splitSuggestions:[{name:'Optional component',amount:1,unit:'piece',nutrition:{calories:7,protein:1,carbs:1,fat:1},estimated:true}]}]}]});
 const draft=()=>createAIMealDraft(raw(),'synthetic');
 const row=()=>draft().rows[0];
@@ -29,4 +29,23 @@ it('preserves a wholly unknown amount and nutrition as a valid draft without sub
 it.each([NaN,Infinity,-1])('rejects invalid numeric edits %s without changing the previous row',amount=>{const r=row(),before=structuredClone(r);expect(()=>editAIMealDraftRow(r,{amount})).toThrow();expect(()=>editAIMealDraftNutrition(r,{fat:amount})).toThrow();expect(r).toEqual(before)});
 it('rejects overflow and tampered stored snapshots, original baselines and unsupported draft versions',()=>{
  expect(()=>editAIMealDraftRow(row(),{amount:Number.MAX_VALUE})).toThrow();let d=draft();d.rows[0].item.nutrition.calories=8;expect(()=>validateAIMealDraft(d)).toThrow(/differs/);d=draft();d.rows[0].baseline.nutrition.calories=8;expect(()=>validateAIMealDraft(d)).toThrow(/baseline/);expect(()=>validateAIMealDraft({...draft(),version:2})).toThrow();d=draft();d.rows.push(structuredClone(d.rows[0]));expect(()=>validateAIMealDraft(d)).toThrow(/Duplicate/);
+});
+
+it('persists reviewed response metadata without changing edited meals, including old drafts',()=>{
+ const d=draft();expect(d.reviewedRaw).toBe(d.raw);
+ d.rows[0]=editAIMealDraftNutrition(d.rows[0],{calories:17.123456});
+ const edited=structuredClone(d.rows);d.raw='incomplete new response';
+ const failed=parseAIMealDraft(d);expect(failed.reviewedRaw).not.toBe(failed.raw);expect(failed.rows).toEqual(edited);
+ expect(validateAIMealDraft(JSON.parse(JSON.stringify(failed)))).toEqual(failed);
+ const kept={...failed,reviewedRaw:failed.raw,parseError:null};expect(validateAIMealDraft(kept).rows).toEqual(edited);
+ const legacy={...d};delete legacy.reviewedRaw;expect(validateAIMealDraft(legacy)).toEqual(legacy);
+ expect(()=>validateAIMealDraft({...d,reviewedRaw:42})).toThrow(/reviewed response/);
+});
+
+it('detects edits, complete removals and source changes while allowing an untouched response to refresh',()=>{
+ const d=draft();expect(hasAIMealDraftEdits(d)).toBe(false);
+ expect(hasAIMealDraftEdits({...d,raw:'new raw text'})).toBe(false);
+ expect(hasAIMealDraftEdits({...d,rows:[]})).toBe(true);
+ expect(hasAIMealDraftEdits({...d,rows:[editAIMealDraftNutrition(d.rows[0],{calories:12})]})).toBe(true);
+ expect(hasAIMealDraftEdits({...d,rows:[selectAIMealDraftSource(d.rows[0],local,{amount:2,unit:'g',weightG:2})]})).toBe(true);
 });

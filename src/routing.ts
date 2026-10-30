@@ -3,6 +3,11 @@ import { useSyncExternalStore } from "react";
 import {currentRoute,logicalRoute,routeHref} from './route-urls';
 export {currentRoute,routeHref} from './route-urls';
 const scrollPositions = new Map<string, number>();
+type RouteLeaveGuard=(target:string)=>boolean;
+let routeLeaveGuard:RouteLeaveGuard|null=null;
+export function registerRouteLeaveGuard(guard:RouteLeaveGuard){routeLeaveGuard=guard;return()=>{if(routeLeaveGuard===guard)routeLeaveGuard=null}}
+let lastEntry:{route:string;url:string;state:any}|null=null,restoringEntry=false;
+const rememberEntry=()=>{lastEntry={route:currentRoute(),url:location.href,state:history.state}};
 import { localDate } from "./db";
 export function navigate(url: string, replace = false, preserveScroll = false) {
   const next = new URL(url, location.origin);
@@ -11,10 +16,12 @@ export function navigate(url: string, replace = false, preserveScroll = false) {
   const current = currentRoute();
   if (target === current)
     return;
+  if(routeLeaveGuard&&!routeLeaveGuard(target))return;
   window.history.replaceState({...history.state, scrollY:window.scrollY}, "");
   window.history[replace ? "replaceState" : "pushState"](
     {
       ...(replace ? history.state : {}),
+      routeIndex:(Number.isSafeInteger(history.state?.routeIndex)?history.state.routeIndex:0)+(replace?0:1),
       ...(replace ? {} : {from: current, appNavigation: true, navKey: newId(), scrollY: preserveScroll ? window.scrollY : 0}),
       recipeOverlay:
         /^\/recipes\/[^/?]+(?:\?|$)/.test(target) &&
@@ -23,6 +30,7 @@ export function navigate(url: string, replace = false, preserveScroll = false) {
     "",
     routeHref(target),
   );
+  rememberEntry();
   window.dispatchEvent(new PopStateEvent("popstate", {state: {inPlace: preserveScroll}}));
 }
 const subscribe = (fn: () => void) => {
@@ -99,4 +107,23 @@ if (typeof window !== "undefined") window.addEventListener("popstate", (event) =
 if (typeof window !== "undefined") {
   if (!history.state?.navKey) history.replaceState({...history.state,navKey:newId()}, "");
   window.addEventListener("scroll", () => scrollPositions.set(history.state?.navKey ?? currentRoute(), window.scrollY), {passive:true});
+}
+
+// Cancel native back/forward before React observes the changed route. Restore the same history entry on cancellation.
+if(typeof window!=='undefined'){
+ if(!Number.isSafeInteger(history.state?.routeIndex))history.replaceState({...history.state,routeIndex:0},'');
+ rememberEntry();
+ const check=(event:Event)=>{
+  if(restoringEntry){event.stopImmediatePropagation();if(currentRoute()===lastEntry?.route)restoringEntry=false;return}
+  const target=currentRoute(),previous=lastEntry;if(!previous||target===previous.route)return;
+  if(routeLeaveGuard&&!routeLeaveGuard(target)){
+   event.stopImmediatePropagation();const from=previous.state?.routeIndex,to=history.state?.routeIndex;
+   if(Number.isSafeInteger(from)&&Number.isSafeInteger(to)&&from!==to){restoringEntry=true;history.go(from-to)}
+   else history.replaceState(previous.state,'',previous.url);
+   return;
+  }
+  if(!Number.isSafeInteger(history.state?.routeIndex))history.replaceState({...history.state,routeIndex:(previous.state?.routeIndex??0)+1},'');
+  rememberEntry();
+ };
+ window.addEventListener('popstate',check,true);window.addEventListener('hashchange',check,true);
 }

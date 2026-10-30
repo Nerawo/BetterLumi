@@ -9,7 +9,7 @@ import {Modal} from './ui';
 import {aiMealImportIssues,type AIImportIssueCode} from './ai-meal-import';
 const issueKeys:Record<AIImportIssueCode,string>={empty:'aiIssueEmpty',date:'aiIssueDate',type:'aiIssueType',amount:'aiIssueAmount',unit:'aiIssueUnit',weight:'aiIssueWeight',nutrition:'aiIssueNutrition',name:'aiIssueName',portion:'aiIssuePortion',split:'aiIssueSplit',draft:'aiIssueDraft',parse:'aiIssueParse'};
 import {aiMealTypes} from './ai-meal-model';
-import {aiMealDraftTotals,groupAIMealDraft,type AIMealDraft,type AIMealDraftRow} from './ai-meal-state';
+import {aiMealDraftTotals,editAIMealDraftRow,groupAIMealDraft,type AIMealDraft,type AIMealDraftRow} from './ai-meal-state';
 import {assignMissingAIMealContext,moveAIMealRow,editAIMealGroupDate,undoAIMealSplit,aiMealPreviewWarnings,type AIMealGroupTarget} from './ai-meal-preview';
 import {aiMealTypeKey,formatAINumber,displayAIMealUnit} from './AIMealFoodEditor';
 function MoveFood({draft,row,close,move}:{draft:AIMealDraft;row:AIMealDraftRow;close:()=>void;move:(target:AIMealGroupTarget|null,before?:string)=>void}) {
@@ -55,12 +55,12 @@ export function AIMealPreview({draft,change,edit,preferences,importMeals,importi
  const {groups,unresolved}=groupAIMealDraft(draft),totals=aiMealDraftTotals(draft),complete=totals.nutrition.calories!==null,warnings=aiMealPreviewWarnings(draft);
  const foodRow=(row:AIMealDraftRow)=><div className={"ai-food-row"+(dragged===row.item.path?" ai-dragging":"")} key={row.item.path} data-ai-drop data-ai-before={row.item.path} data-ai-date={row.item.date??''} data-ai-type={row.item.mealType??''}>
   <button type="button" className="ai-drag-handle" aria-label={t('aiDrag')+' '+row.item.name} onPointerDown={e=>start(e,row)} onPointerMove={pointerMove} onPointerUp={finish} onPointerCancel={cleanup} onLostPointerCapture={()=>{if(drag.current)cleanup()}}><GripVertical size={17}/></button>
-  <button type="button" className="ai-food-main" onClick={()=>edit(row)}><span className="ai-food-description"><span className="ai-food-name">{row.item.name}</span><small>{row.item.amount===null?t('aiUnknown'):formatAINumber(row.item.amount,i18n.language)} {displayAIMealUnit(row,i18n.language,preferences)}{row.item.weightG!==null&&!(canonicalGrams(row.item.unit)&&row.item.amount===row.item.weightG)?' · '+formatAINumber(row.item.weightG,i18n.language)+' g':''}</small>{issues.filter(i=>i.path===row.item.path).map(i=><small className="ai-import-issue" key={i.code}>{t(issueKeys[i.code])}</small>)}{warnings[row.item.path]&&<small>{t(warnings[row.item.path]==='zero'?'aiCheckZero':'aiCheckDuplicate')}</small>}</span><span className="ai-row-calories">{formatAINumber(row.item.nutrition.calories,i18n.language)} <small>kcal</small></span><ChevronRight size={14}/></button>
+  <div className="ai-food-entry"><button type="button" className="ai-food-main" onClick={()=>edit(row)}><span className="ai-food-description"><span className="ai-food-name">{row.item.name}</span><small>{row.item.amount===null?t('aiUnknown'):formatAINumber(row.item.amount,i18n.language)} {displayAIMealUnit(row,i18n.language,preferences)}{row.item.weightG!==null&&!(canonicalGrams(row.item.unit)&&row.item.amount===row.item.weightG)?' · '+formatAINumber(row.item.weightG,i18n.language)+' g':''}</small>{issues.filter(i=>i.path===row.item.path).map(i=><small className="ai-import-issue" key={i.code}>{t(issueKeys[i.code])}</small>)}{warnings[row.item.path]&&<small>{t(warnings[row.item.path]==='zero'?'aiCheckZero':'aiCheckDuplicate')}</small>}</span><span className="ai-row-calories">{formatAINumber(row.item.nutrition.calories,i18n.language)} <small>kcal</small></span><ChevronRight size={14}/></button><select className="ai-row-meal-type" aria-label={t('aiMealType')+' · '+row.item.name} value={row.item.mealType??''} onChange={e=>{const mealType=e.target.value as typeof aiMealTypes[number]|'';change(d=>({...d,rows:d.rows.map(r=>r.item.path===row.item.path?editAIMealDraftRow(r,{mealType:mealType||null}):r)}))}}><option value="">{t('aiUnresolved')}</option>{aiMealTypes.map(type=><option key={type} value={type}>{t(aiMealTypeKey[type])}</option>)}</select></div>
   <button type="button" className="ai-move-button" aria-label={t('aiMove')+' '+row.item.name} onClick={()=>setMoving(row)}><ArrowRightLeft size={15}/></button>
  </div>;
  return <section className="ai-preview" aria-label={t('aiPreviewTitle')}>
   <header className="ai-preview-heading"><div><h2>{t('aiPreviewTitle')}</h2><small>{t('aiItems',{count:draft.rows.length})}</small></div><div className="ai-preview-total">{formatAINumber(complete?totals.nutrition.calories:totals.knownNutrition.calories,i18n.language)} <span>kcal</span></div></header>
-  {draft.rows.some(r=>r.item.date===null||r.item.mealType===null)&&<MissingMealContext draft={draft} change={change}/>}
+  {draft.rows.some(r=>r.item.date===null)&&<MissingMealContext draft={draft} change={change}/>}
   {!complete&&<p className="ai-helper">{t('aiTotalIncomplete')}</p>}
   {Object.entries(draft.splits??{}).map(([path,parent])=><div className="ai-split-undo" key={path}><span>{parent.item.name}</span><button type="button" onClick={()=>change(d=>undoAIMealSplit(d,path))}>{t('aiSplitUndo')}</button></div>)}
   <div className="ai-preview-list" ref={list}>
@@ -87,10 +87,9 @@ export function AIMealPreview({draft,change,edit,preferences,importMeals,importi
 const canonicalGrams=(unit:string)=>['g','克','gram','grams'].includes(unit.toLowerCase());
 
 function MissingMealContext({draft,change}:{draft:AIMealDraft;change:(fn:(draft:AIMealDraft)=>AIMealDraft)=>void}){
- const {t}=useTranslation(),[date,setDate]=useState(()=>readSession(pageSessionKey,validPageSession)?.todayDate??localDate()),[type,setType]=useState('');
- const dates=draft.rows.filter(r=>r.item.date===null).length,types=draft.rows.filter(r=>r.item.mealType===null).length;
+ const {t}=useTranslation(),[date,setDate]=useState(()=>readSession(pageSessionKey,validPageSession)?.todayDate??localDate());
+ const dates=draft.rows.filter(r=>r.item.date===null).length;
  return <section className="ai-missing-context" aria-label={t('aiResolveMissing')}>
   {dates>0&&<div className="ai-missing-row"><label>{t('aiMissingDates',{count:dates})}<input aria-label={t('aiBatchDate')} type="date" value={date} onChange={e=>setDate(e.target.value)}/></label><button type="button" disabled={!validLocalDate(date)} onClick={()=>change(d=>assignMissingAIMealContext(d,{date}))}>{t('aiApplyMissingDate')}</button></div>}
-  {types>0&&<div className="ai-missing-row"><label>{t('aiMissingTypes',{count:types})}<select aria-label={t('aiBatchMealType')} value={type} onChange={e=>setType(e.target.value)}><option value="">{t('aiUnresolved')}</option>{aiMealTypes.map(value=><option key={value} value={value}>{t(aiMealTypeKey[value])}</option>)}</select></label><button type="button" disabled={!type} onClick={()=>change(d=>assignMissingAIMealContext(d,{mealType:type as typeof aiMealTypes[number]}))}>{t('aiApplyMissingType')}</button></div>}
  </section>;
 }
