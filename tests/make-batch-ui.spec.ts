@@ -1,9 +1,10 @@
+import {chooseSavedRecipe} from './recipe-picker-helper';
 import {test,expect,type Page} from '@playwright/test';
 test.use({browserName:'webkit',channel:'',isMobile:true,hasTouch:true,viewport:{width:390,height:844}});
 async function open(page:Page,language='en',count=1,mockViewport=false){
  await page.goto('/today');await expect(page.locator('.meal-card')).toBeVisible();
  const recipe=await page.evaluate(async({language,count})=>{const d=await import('/src/domain.ts');await d.db.settings.put({key:'language',value:language});const item={...d.stamp(),name:'Batch UI ingredient',brand:'',basis:'100g',servingGrams:null,calories:200,protein:10,carbs:20,fat:8};await d.db.ingredients.put(item);const recipe={...d.stamp(),name:'Batch UI recipe',servings:1,lines:Array.from({length:count},()=>({ingredientId:item.id,name:item.name,quantity:100,unit:'g',nutrition:{calories:200,protein:10,carbs:20,fat:8}})),instructions:'Unchanged',stickyNote:''};await d.recipes.put(recipe);return recipe},{language,count});
- await page.reload();await page.goto('/recipes');await page.locator('#recipes-storage-tab').click();if(mockViewport)await page.evaluate(()=>{const v=new EventTarget();Object.assign(v,{height:innerHeight,width:innerWidth,offsetTop:0,offsetLeft:0,scale:1});Object.defineProperty(window,'visualViewport',{value:v,configurable:true})});await page.locator('.storage-make-trigger').click();await page.locator('.storage-make-modal .meal-selection-control select').selectOption(recipe.id);return recipe;
+ await page.reload();await page.goto('/recipes');await page.locator('#recipes-storage-tab').click();if(mockViewport)await page.evaluate(()=>{const v=new EventTarget();Object.assign(v,{height:innerHeight,width:innerWidth,offsetTop:0,offsetLeft:0,scale:1});Object.defineProperty(window,'visualViewport',{value:v,configurable:true})});await page.locator('.storage-make-trigger').click();await chooseSavedRecipe(page.locator('.storage-make-modal'),recipe.id);return recipe;
 }
 for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`batch compact layout ${width} ${language}`,async({page})=>{
  await page.setViewportSize({width,height:844});await open(page,language);const modal=page.locator('.storage-make-modal');

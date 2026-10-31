@@ -25,7 +25,7 @@ it('persists only explicitly chosen associations and preserves defaults through 
  const custom=await saveIngredientTag('Fictional custom tag'),defaultId=builtInTags[0].id,item=userItem([defaultId,custom.id]);await putTaggedIngredient(item);
  expect(await ingredientTags.count()).toBe(1);expect(await db.ingredients.get(item.id)).toEqual(item);
  const tags=ingredientTagOptions([custom],'en');expect(filterIngredients([item],'vegetables',defaultId,tags)).toEqual([item]);expect(searchFoodChoices([item],'fictional',custom.id,tags)).toHaveLength(1);
- const backup=await exportAll();await restoreAll(backup);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await ingredientTags.count()).toBe(1);expect(backup.version).toBe(10);
+ const backup=await exportAll();await restoreAll(backup);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await ingredientTags.count()).toBe(1);expect(backup.version).toBe(11);
  await deleteIngredientTag(custom);expect((await db.ingredients.get(item.id))?.tagIds).toEqual([defaultId]);expect(await db.ingredients.count()).toBe(1);
 });
 it('accepts older backups without tag definitions without inserting defaults',async()=>{

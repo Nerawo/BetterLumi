@@ -80,8 +80,8 @@ export function RecipeDetail({
                 <li key={i}>
                   <strong>{l.name}</strong>
                   <span>
-                    {Number(l.quantity.toFixed(3))}{" "}
-                    {l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
+                    {Number((l.source==='batch'&&l.unit==='fraction'?l.quantity*100:l.quantity).toFixed(3))}{" "}
+                    {l.source==='batch'&&l.unit==='fraction'?'% '+t('storageReference'):l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
                   </span>
                 </li>
               ))}

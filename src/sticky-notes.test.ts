@@ -51,7 +51,7 @@ it('rolls back both meal and note writes on an injected failure and preserves th
  expect(await foodLogs.get(m.id)).toEqual(m);expect(await recipeNotes.count()).toBe(0);expect(changes).toEqual(copy);
 });
 it('orders notes chronologically and preserves note metadata through Backup 10 restore',async()=>{
- const r={...recipe(),createdAt:'2020-01-01T12:00:00Z',stickyNote:'Old recipe'},m=meal(r.id);await recipes.put(r);await foodLogs.put(m);await add(r,m);const notes=await loadStickyNotes(r.id);expect(notes[0].text).toBe('Old recipe');const backup=await exportAll();expect(backup.version).toBe(10);expect(db.verno).toBe(7);expect(db.name).toBe('BetterLumi');await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);expect(await loadStickyNotes(r.id)).toEqual(notes);
+ const r={...recipe(),createdAt:'2020-01-01T12:00:00Z',stickyNote:'Old recipe'},m=meal(r.id);await recipes.put(r);await foodLogs.put(m);await add(r,m);const notes=await loadStickyNotes(r.id);expect(notes[0].text).toBe('Old recipe');const backup=await exportAll();expect(backup.version).toBe(11);expect(db.verno).toBe(7);expect(db.name).toBe('BetterLumi');await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);expect(await loadStickyNotes(r.id)).toEqual(notes);
  const bad=structuredClone(backup);(bad.tables.recipeNotes[0] as any).mealDate='not a date';await expect(restoreAll(bad)).rejects.toThrow('Invalid recipe note');expect((await exportAll()).tables).toEqual(backup.tables);
 });
 

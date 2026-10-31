@@ -32,6 +32,12 @@ export interface StorageConsumption {
   originalFraction: number;
   transactionId: string;
 }
+export interface RecipeAllocation extends StorageConsumption {
+  lineId: string;
+  quantity: number;
+  unit: 'g' | 'fraction';
+  nutrition: Nutrition;
+}
 export interface InventoryMovement {
   batchId: string;
   mode: InventoryMode;
@@ -115,8 +121,16 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
       const source = byId.get(l.sourceBatchId!);
       if (!source || source.id === b.id || !source.everUsed || !storageNutritionEqual(l.nutrition, Object.fromEntries(nutritionFields.map(k => [k, source.totalNutrition[k] === null ? null : source.totalNutrition[k]! * l.sourceFraction!])) as Nutrition)) throw new FoodStorageError('INVALID', 'Invalid source batch link/snapshot');
     }
-    if (b.originMealId !== null && (meals.get(b.originMealId)?.leftoverBatchId !== b.id || !meals.get(b.originMealId)!.leftoverInventoryUnchanged && !storageClose((meals.get(b.originMealId)!.consumptionPercent ?? 100) / 100, b.initialConsumedFraction))) throw new FoodStorageError('INVALID', 'Invalid leftover origin link');
+    if (b.originMealId !== null && (meals.get(b.originMealId)?.leftoverBatchId !== b.id || !meals.get(b.originMealId)!.leftoverInventoryUnchanged && !(meals.get(b.originMealId)!.deletedAt && b.initialConsumedFraction===0 && b.ingredients.some(l=>l.source==='batch') && transactions.some(t=>t.kind==='delete-meal'&&t.mealId===b.originMealId&&t.targetBatchId===b.id)) && !storageClose((meals.get(b.originMealId)!.consumptionPercent ?? 100) / 100, b.initialConsumedFraction))) throw new FoodStorageError('INVALID', 'Invalid leftover origin link');
   }
+  const validateRecipeReferences=(lines:RecipeLine[])=>{
+    const ids=new Set<string>();
+    for(const line of lines)if(line.source==='batch'){
+      if(!id(line.lineId)||ids.has(line.lineId)||!byId.has(line.sourceBatchId!)||line.ingredientId!==line.sourceBatchId||!positive(line.quantity)||!validStorageNutrition(line.nutrition)||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))throw new FoodStorageError('INVALID','Invalid stored-food recipe reference');
+      ids.add(line.lineId);
+    }
+  };
+  for(const r of (tables.recipeCards??[]) as {lines:RecipeLine[]}[])validateRecipeReferences(r.lines??[]);
   // Source references must be a DAG; prepared food must never recursively become itself.
   const done = new Set<string>(), visiting = new Set<string>();
   const visit = (b: FoodBatch) => {
@@ -128,11 +142,26 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
   batches.forEach(visit);
   for (const t of transactions) if (t.batchIds.some(id => !byId.has(id)) || t.targetBatchId !== null && !byId.has(t.targetBatchId) || t.mealId !== null && !meals.has(t.mealId)) throw new FoodStorageError('INVALID', 'Orphan inventory transaction');
   for (const m of meals.values()) {
+    validateRecipeReferences(m.lines);
+    if(m.lines.some(l=>l.source==='batch')&&!m.leftoverBatchId&&m.recipeAllocations===undefined)throw new FoodStorageError('INVALID','Missing recipe inventory allocations');
+    if(m.recipeAllocations!==undefined){
+      if(m.leftoverBatchId)throw new FoodStorageError('INVALID','Preparation origins cannot also be direct allocations');
+      if(m.source!=='recipe'||m.storageConsumption||!Array.isArray(m.recipeAllocations))throw new FoodStorageError('INVALID','Invalid recipe inventory allocations');
+      const ids=new Set<string>();
+      for(const a of m.recipeAllocations){const source=byId.get(a.batchId),receipt=txById.get(a.transactionId),line=m.lines.find(l=>l.lineId===a.lineId);
+        if(!validStorageConsumption(a)||!positive(a.quantity)||!['g','fraction'].includes(a.unit)||!validStorageNutrition(a.nutrition)||ids.has(a.lineId)||!line||line.source!=='batch'||line.sourceBatchId!==a.batchId||!source?.everUsed||receipt?.kind!=='meal'||receipt.mealId!==m.id||!receipt.batchIds.includes(a.batchId)||!storageNutritionEqual(a.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,source.totalNutrition[k]===null?null:source.totalNutrition[k]!*a.originalFraction])) as Nutrition))throw new FoodStorageError('INVALID','Invalid recipe allocation link or snapshot');
+        if(!storageClose(a.originalFraction,a.quantity*(a.unit==='g'?source.fractionPerUnit:1))||!storageClose(a.originalFraction,line.quantity*(line.quantityBasis==='g'?source.fractionPerUnit:1)*(m.consumptionPercent??100)/100)||!storageNutritionEqual(a.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,line.nutrition[k]===null?null:line.nutrition[k]!*(m.consumptionPercent??100)/100])) as Nutrition))throw new FoodStorageError('INVALID','Allocation differs from recipe line');
+        ids.add(a.lineId);
+      }
+      const portion=(m.consumptionPercent??100)/100;
+      if(!finiteNonnegative(portion)||portion>1||!m.baseNutrition||!storageNutritionEqual(m.baseNutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>l.nutrition[k]===null)?null:m.lines.reduce((sum,l)=>sum+l.nutrition[k]!,0)])) as Nutrition))throw new FoodStorageError('INVALID','Invalid recipe portion snapshot');
+      if(!storageNutritionEqual(m.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>l.nutrition[k]===null)?null:m.lines.reduce((sum,l)=>sum+l.nutrition[k]!,0)*portion])) as Nutrition)||m.lines.some(l=>l.source==='batch'&&portion>0&&!ids.has(l.lineId!)))throw new FoodStorageError('INVALID','Recipe allocations do not cover the consumed snapshot');
+    }
     if (m.storageConsumption !== undefined) {
       const c = m.storageConsumption;
       if (!validStorageConsumption(c) || !byId.get(c.batchId)?.everUsed || txById.get(c.transactionId)?.kind !== 'meal' || txById.get(c.transactionId)?.mealId !== m.id || !txById.get(c.transactionId)?.batchIds.includes(c.batchId) || !storageNutritionEqual(m.nutrition, Object.fromEntries(nutritionFields.map(k => [k, byId.get(c.batchId)!.totalNutrition[k] === null ? null : byId.get(c.batchId)!.totalNutrition[k]! * c.originalFraction])) as Nutrition)) throw new FoodStorageError('INVALID', 'Invalid meal inventory link');
     }
-    if (m.leftoverInventoryUnchanged !== undefined && (m.leftoverInventoryUnchanged !== true || !m.leftoverBatchId || !transactions.some(t => t.kind === 'edit-origin' && t.mealId === m.id && t.targetBatchId === m.leftoverBatchId && JSON.parse(t.request).input?.strategy === 'meal-only'))) throw new FoodStorageError('INVALID', 'Unconfirmed leftover inventory correction');
+    if (m.leftoverInventoryUnchanged !== undefined && (m.leftoverInventoryUnchanged !== true || !m.leftoverBatchId || !transactions.some(t => (t.kind === 'edit-origin'||t.kind==='delete-meal'&&!!m.deletedAt) && t.mealId === m.id && t.targetBatchId === m.leftoverBatchId && JSON.parse(t.request).input?.strategy === 'meal-only'))) throw new FoodStorageError('INVALID', 'Unconfirmed leftover inventory correction');
     if (m.leftoverBatchId !== undefined && (!id(m.leftoverBatchId) || byId.get(m.leftoverBatchId)?.originMealId !== m.id || m.storageConsumption !== undefined)) throw new FoodStorageError('INVALID', 'Invalid initial leftover meal');
   }
 }

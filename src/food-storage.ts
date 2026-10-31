@@ -8,8 +8,8 @@ import {
   type StorageTransaction, type StorageTransactionKind, type InventoryMovement,
 } from './food-storage-model';
 
-export type InventoryPortion = {unit: 'g' | 'percent'; quantity: number};
-export type BatchIngredientInput = {source: 'pantry'; line: RecipeLine} | {source: 'batch'; batchId: string; portion: InventoryPortion};
+export type InventoryPortion = {unit: 'g' | 'percent' | 'fraction'; quantity: number};
+export type BatchIngredientInput = {source: 'pantry'; line: RecipeLine} | {source: 'batch'; batchId: string; portion: InventoryPortion; expectedNutrition?: Nutrition};
 export interface MakeBatchInput {
   operationId: string; id: string; name: string; preparedOn: string; notes?: string;
   sourceRecipeId?: string | null; ingredients: BatchIngredientInput[]; cookedYieldGrams: number;
@@ -45,13 +45,24 @@ export function batchRemainingNutrition(batch: FoodBatch): Nutrition {
 /** A detached editable copy; saving it never modifies the recipe template. */
 export function copyRecipeForBatch(recipe: Recipe, servings = recipe.servings ?? 1): BatchIngredientInput[] {
   if (!positive(servings)) fail('INVALID', 'Invalid recipe servings');
-  return structuredClone(recipeServingLines(recipe, servings)).map(line => ({source: 'pantry', line}));
+  return recipeBatchInputs(recipeServingLines(recipe, servings));
+}
+export function recipeBatchInputs(lines:RecipeLine[]):BatchIngredientInput[]{
+  return structuredClone(lines).map(line=>{
+    if(line.source==='batch'){
+      if(!line.lineId||line.ingredientId!==line.sourceBatchId||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))fail('INVALID','Invalid stored-food recipe reference');
+      return {source:'batch',batchId:line.sourceBatchId!,portion:{unit:line.quantityBasis==='g'?'g':'fraction',quantity:line.quantity},expectedNutrition:line.nutrition};
+    }
+    if(line.source!==undefined&&line.source!=='pantry')fail('INVALID','Invalid recipe source');
+    return {source:'pantry',line};
+  });
 }
 
 export function batchHasInventoryActivity(batch: FoodBatch, history: StorageTransaction[]) {
   return history.filter(t => t.batchIds.includes(batch.id)).some(t => !((t.kind === 'create' || t.kind === 'leftovers') && t.targetBatchId === batch.id || ['metadata','archive','restore'].includes(t.kind) || t.kind === 'edit-origin' && t.mealId === batch.originMealId && t.reason === 'sync'));
 }
 export function canCancelBatch(batch: FoodBatch, history: StorageTransaction[]) {
+  if(batch.originMealId && batch.ingredients.some(l=>l.source==='batch'))return false;
   return !['canceled','discarded'].includes(batch.archiveReason ?? '') && !(batch.everUsed && !batch.originMealId) && !batchHasInventoryActivity(batch, history);
 }
 export function batchInventoryProgress(batch: FoodBatch, history: StorageTransaction[]) {
@@ -101,6 +112,7 @@ export class FoodStorage {
   }
   private portion(b: FoodBatch, p: InventoryPortion) {
     if (!p || !positive(p.quantity)) return fail('INVALID', 'Consumption must be finite and positive', b.id);
+    if(p.unit==='fraction')return p.quantity/b.fractionPerUnit;
     if (b.mode === 'weight' && p.unit === 'g') return p.quantity;
     if (b.mode === 'ratio' && p.unit === 'percent' && p.quantity <= 100) return p.quantity === 100 ? b.remainingQuantity : b.remainingQuantity * p.quantity / 100;
     return fail('INVALID', 'Unsupported inventory unit or percentage', b.id);
@@ -136,6 +148,7 @@ export class FoodStorage {
         const source = await this.batch(input.batchId);
         const quantity = this.portion(source, input.portion), fraction = quantity * source.fractionPerUnit;
         const line: BatchIngredient = {source: 'batch', ingredientId: source.id, sourceBatchId: source.id, sourceFraction: fraction, name: source.name, quantity, unit: source.mode === 'weight' ? 'g' : 'fraction', nutrition: scaleNutrition(source.totalNutrition, fraction)};
+        if(input.expectedNutrition&&!storageNutritionEqual(input.expectedNutrition,line.nutrition))fail('CONFLICT','Source composition changed; explicitly resolve this batch again',source.id);
         if (!validBatchIngredient(line)) fail('INVALID', 'Invalid source batch snapshot');
         await this.move(source, -quantity, tx, true); lines.push(line);
       } else fail('INVALID', 'Only Pantry and Food Storage ingredients are supported');
@@ -164,9 +177,12 @@ export class FoodStorage {
       if (await this.meals.get(meal.id)) fail('CONFLICT', 'Initial meal already exists; reconcile leftovers explicitly before editing');
       const percent = meal.consumptionPercent ?? 100;
       if (!finiteNonnegative(percent) || percent > 100 || !validStorageNutrition(meal.baseNutrition) || !Array.isArray(meal.lines) || !meal.lines.length) fail('INVALID', 'A complete portion snapshot and valid percentage are required');
-      const lines: BatchIngredient[] = meal.lines.map(l => ({...structuredClone(l), source: 'pantry'}));
+      const mixed=meal.lines.some(l=>l.source==='batch');
+      if(mixed&&!input.saveLeftovers)fail('INVALID','Direct recipe consumption must use saveRecipeMeal');
+      const lines: BatchIngredient[] = mixed?await this.ingredients(recipeBatchInputs(meal.lines),tx,input.batchId!):meal.lines.map(l => ({...structuredClone(l), source: 'pantry'}));
       if (!lines.every(validBatchIngredient)) fail('INVALID', 'Invalid complete portion ingredients');
       if (!storageNutritionEqual(sumNutrition(lines.map(l => l.nutrition)), meal.baseNutrition!)) fail('INVALID', 'Complete portion nutrition does not match ingredient snapshots');
+      delete meal.recipeAllocations;
       meal.nutrition = scaleNutrition(meal.baseNutrition!, percent / 100);
       if (!validStorageNutrition(meal.nutrition)) fail('INVALID', 'Invalid consumed nutrition');
       if (input.saveLeftovers) {
@@ -216,12 +232,58 @@ export class FoodStorage {
       await this.meals.put(meal); tx.mealId = meal.id; tx.targetBatchId = batch.id;
     });
   }
-  async deleteMeal(input: {operationId: string; mealId: string; expectedRevision: number}) {
+  /** Recipe templates never call this service. Only a confirmed actual meal changes stock. */
+  async saveRecipeMeal(input:{operationId:string;meal:FoodLog;expectedRevision?:number}){
+    input=structuredClone(input);
+    return this.run(input.operationId,'meal',input,async tx=>{
+      const meal=input.meal;validateMealFields(meal.date,meal.category);
+      if(meal.source!=='recipe'||!meal.id?.trim()||!meal.name?.trim()||!positive(meal.quantity)||!meal.unit?.trim()||!Array.isArray(meal.lines)||!meal.lines.length||meal.storageConsumption||meal.leftoverBatchId)fail('INVALID','Invalid recipe meal');
+      const old=await this.meals.get(meal.id);
+      if(old?(old.deletedAt||old.revision!==input.expectedRevision||old.source!=='recipe'||!!old.leftoverBatchId||!!old.storageConsumption):input.expectedRevision!==undefined)fail('CONFLICT','Recipe meal changed');
+      const percent=meal.consumptionPercent??100;if(!finiteNonnegative(percent)||percent>100)fail('INVALID','Invalid consumption percent');
+      const allocations:NonNullable<FoodLog['recipeAllocations']>=[],ids=new Set<string>();
+      const lines:RecipeLine[]=[];
+      for(const line of meal.lines){
+        if(!line.ingredientId?.trim()||!line.name?.trim()||!line.unit?.trim()||line.source!==undefined&&line.source!=='pantry'&&line.source!=='batch'||!positive(line.quantity)||!validStorageNutrition(line.nutrition))fail('INVALID','Invalid recipe line');
+        if(line.source!=='batch'){lines.push(structuredClone(line));continue}
+        if(!line.lineId||ids.has(line.lineId)||line.ingredientId!==line.sourceBatchId||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))fail('INVALID','Invalid batch recipe line');ids.add(line.lineId);
+        const b=await this.batch(line.sourceBatchId!),fullQuantity=this.portion(b,{unit:line.unit==='g'?'g':'fraction',quantity:line.quantity}),fullFraction=fullQuantity*b.fractionPerUnit,fraction=fullFraction*percent/100;
+        if(!storageNutritionEqual(line.nutrition,scaleNutrition(b.totalNutrition,fullFraction)))fail('CONFLICT','Source composition changed; explicitly resolve this batch again',b.id);
+        lines.push({...line,nutrition:scaleNutrition(b.totalNutrition,fullFraction)});
+        if(fraction>0)allocations.push({lineId:line.lineId,batchId:b.id,quantity:fullQuantity*percent/100,unit:b.mode==='weight'?'g':'fraction',originalFraction:fraction,transactionId:tx.id,nutrition:scaleNutrition(b.totalNutrition,fraction)});
+      }
+      const previous=new Map<string,number>(),next=new Map<string,number>();for(const a of old?.recipeAllocations??[])previous.set(a.batchId,(previous.get(a.batchId)??0)+a.originalFraction);for(const a of allocations)next.set(a.batchId,(next.get(a.batchId)??0)+a.originalFraction);
+      for(const id of new Set([...previous.keys(),...next.keys()])){const b=await this.batch(id),difference=(next.get(id)??0)-(previous.get(id)??0);if(!same(difference,0))await this.move(b,-difference/b.fractionPerUnit,tx,difference>0);tx.batchIds.push(id)}
+      const baseNutrition=sumNutrition(lines.map(l=>l.nutrition)),nutrition=scaleNutrition(baseNutrition,percent/100);if(!validStorageNutrition(nutrition))fail('INVALID','Invalid recipe nutrition');
+      await this.meals.put({...meal,...(old?changed(old):{}),source:'recipe',sourceId:meal.sourceId,date:meal.date,category:meal.category,name:meal.name,quantity:meal.quantity,unit:meal.unit,lines,baseNutrition,nutrition,consumptionPercent:percent,photo:meal.photo,cookingNote:meal.cookingNote,estimated:meal.estimated,recipeAllocations:allocations});tx.mealId=meal.id;
+    });
+  }
+  async deleteMeal(input: {operationId: string; mealId: string; expectedRevision: number; strategy?: 'meal-only'}) {
     input = structuredClone(input);
     return this.run(input.operationId, 'delete-meal', input, async tx => {
       const meal = await this.meals.get(input.mealId);
       if (!meal || meal.deletedAt || meal.revision !== input.expectedRevision) fail('CONFLICT', 'Meal changed or was deleted');
-      if (!meal.storageConsumption && !meal.leftoverBatchId) fail('INVALID', 'Not a Food Storage linked meal');
+      if (!meal.storageConsumption && !meal.recipeAllocations && !meal.leftoverBatchId) fail('INVALID', 'Not a Food Storage linked meal');
+      if(input.strategy!==undefined&&input.strategy!=='meal-only'||meal.leftoverBatchId&&meal.recipeAllocations)fail('INVALID','Invalid deletion strategy or inventory links');
+      let preparedOrigin=false;
+      if(meal.leftoverBatchId){
+        const b=await this.batch(meal.leftoverBatchId);
+        if(b.ingredients.some(l=>l.source==='batch')){
+          preparedOrigin=true;
+          if(input.strategy==='meal-only'){
+            // Explicit confirmation: the transformed dish and all its inventory history stay intact.
+            meal.leftoverInventoryUnchanged=true;tx.reason='meal-only';
+          }else{
+          if(!await this.untouched(b)||['canceled','discarded'].includes(b.archiveReason??''))fail('CONFLICT','Prepared leftovers have downstream activity; review inventory explicitly',b.id);
+          const remaining=1/b.fractionPerUnit;
+          await this.putBatch(changed({...b,remainingQuantity:remaining,initialConsumedFraction:0,archived:b.archiveReason==='exhausted'?false:b.archived,archiveReason:b.archiveReason==='exhausted'?null:b.archiveReason}));
+          tx.movements.push({batchId:b.id,mode:b.mode,before:b.remainingQuantity,after:remaining,fractionPerUnit:b.fractionPerUnit,fractionDelta:1-b.remainingQuantity*b.fractionPerUnit});
+          // Tombstone the meal without rewriting its historical nutrition snapshot.
+          }
+        }
+      }
+      if(input.strategy&&!preparedOrigin)fail('INVALID','Meal-only deletion is only for a prepared mixed-recipe origin');
+      if(meal.recipeAllocations){const returned=new Map<string,number>();for(const a of meal.recipeAllocations)returned.set(a.batchId,(returned.get(a.batchId)??0)+a.originalFraction);for(const[id,fraction]of returned){const b=await this.batch(id);await this.move(b,fraction/b.fractionPerUnit,tx)}}
       if (meal.storageConsumption) {
         const b = await this.batch(meal.storageConsumption.batchId);
         await this.move(b, meal.storageConsumption.originalFraction / b.fractionPerUnit, tx);
@@ -302,7 +364,10 @@ export class FoodStorage {
       validateMealFields(meal.date, meal.category);
       const percent = meal.consumptionPercent ?? 100;
       if (meal.source !== 'recipe' || meal.storageConsumption || !meal.name.trim() || !positive(meal.quantity) || !finiteNonnegative(percent) || percent > 100 || !validStorageNutrition(meal.baseNutrition) || !Array.isArray(meal.lines) || !meal.lines.length) fail('INVALID', 'Invalid origin meal correction');
-      const ingredients: BatchIngredient[] = meal.lines.map(l => ({...structuredClone(l), source:'pantry'}));
+      const mixed=b.ingredients.some(l=>l.source==='batch');
+      // Prepared source ingredients are irreversible here. Only the consumed/remaining split may change.
+      if(mixed&&(canonical(meal.lines)!==canonical(old.lines)||!storageNutritionEqual(meal.baseNutrition!,b.totalNutrition)))fail('CONFLICT','Prepared formula is frozen; only the consumed split can be synchronized',b.id);
+      const ingredients: BatchIngredient[] = mixed?structuredClone(b.ingredients):meal.lines.map(l => ({...structuredClone(l), source:'pantry'}));
       if (!ingredients.every(validBatchIngredient) || !storageNutritionEqual(sumNutrition(ingredients.map(l => l.nutrition)), meal.baseNutrition!)) fail('INVALID', 'Invalid complete prepared portion');
       meal.nutrition = scaleNutrition(meal.baseNutrition!, percent / 100);
       if (input.strategy === 'sync') {
@@ -326,6 +391,7 @@ export class FoodStorage {
     return this.run(input.operationId, 'cancel-batch', input, async tx => {
       let b = await this.batch(input.batchId);
       if (b.revision !== input.expectedRevision) fail('CONFLICT', 'Batch changed', b.id);
+      if(b.originMealId&&b.ingredients.some(l=>l.source==='batch'))fail('CONFLICT','Prepared meal sources cannot be returned by canceling leftovers',b.id);
       if (b.archiveReason === 'canceled' || b.archiveReason === 'discarded' || b.everUsed && !b.originMealId || !await this.untouched(b)) fail('CONFLICT', 'Only an unused, unadjusted, unconverted preparation can be canceled', b.id);
       for (const line of b.ingredients) if (line.source === 'batch') {
         const source = await this.batch(line.sourceBatchId!);

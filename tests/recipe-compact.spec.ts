@@ -1,3 +1,4 @@
+import {chooseSavedRecipe} from './recipe-picker-helper';
 import { test, expect } from '@playwright/test';
 const output='./work/screenshots/';
 for(const width of [320,360,390]) {
@@ -15,11 +16,13 @@ for(const width of [320,360,390]) {
   await page.getByRole('button',{name:'添加餐食',exact:true}).click();
   const modal=page.locator('.add-food-modal');
   await modal.locator('.source-tabs button').first().click();
-  await modal.locator('.add-food-scroll > label select').selectOption(ids.recipe);
+  await chooseSavedRecipe(modal,ids.recipe);
   const advanced=modal.locator('.meal-advanced');
   await expect(advanced).not.toHaveAttribute('open');
   await expect(modal.locator('input:not([type])')).toHaveCount(0);
-  await expect(modal.locator('.source-tabs button')).toHaveCount(3);
+  const sourceTabs=modal.locator('.source-tabs button');
+  await expect(sourceTabs).toHaveCount(4);
+  await expect(sourceTabs).toHaveText(['已存食谱','食材库','食物仓库','快速记录']);
   await expect(modal).not.toContainText('截图');
   const stepper=modal.locator('.recipe-serving-input');
   await expect(stepper).toBeVisible();
@@ -29,9 +32,9 @@ for(const width of [320,360,390]) {
   await page.screenshot({path:output+`食谱记录-${width}px-默认.png`});
   await advanced.locator('summary').click();
   await expect(advanced).toHaveAttribute('open','');
-  await modal.locator('.add-food-scroll > label select').selectOption(ids.other);
+  await chooseSavedRecipe(modal,ids.other);
   await expect(advanced).not.toHaveAttribute('open');
-  await modal.locator('.add-food-scroll > label select').selectOption(ids.recipe);
+  await chooseSavedRecipe(modal,ids.recipe);
   await expect(advanced).not.toHaveAttribute('open');
   await modal.locator('.recipe-amounts input[type=number]').first().fill('2');
   await modal.getByRole('slider').press('Home');for(let value=0;value<50;value+=5)await modal.getByRole('slider').press('ArrowRight');
@@ -62,7 +65,7 @@ for(const width of [320,360,390]) {
   await expect(row.locator('input')).toHaveValue('100');
   await row.locator('input').fill('60');
   await expect(modal.locator('.meal-nutrition-preview .nutrition-strip > div').first()).toContainText('120');
-  await advanced.locator('.line-add button').click();
+  await advanced.locator('.ingredient-add-trigger').click();
   await page.locator(`.ingredient-picker-modal [data-ingredient-id="${ids.ingredient}"]`).click();
   await expect(advanced.locator('.recipe-line')).toHaveCount(2);
   await advanced.locator('.recipe-line').last().getByRole('button',{name:/删除/}).click();
@@ -83,3 +86,4 @@ for(const width of [320,360,390]) {
   await expect(modal.locator('.recipe-rename')).toContainText('重命名');
  });
 }
+

@@ -1,3 +1,6 @@
+import {StoredFoodPicker} from './StoredFoodPicker';
+import {storedRecipeLine} from './recipe-storage';
+import './food-storage-locale';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods,type BuiltInFood} from './data/builtInFoods';
@@ -11,8 +14,9 @@ import {Plus,Trash2,ArrowLeftRight} from 'lucide-react';
 import {IngredientPicker} from './IngredientPicker';
 import {scaleNutrition,unknownNutrition,type RecipeLine,type PantryItem} from './domain';
 
-export function RecipeLineEditor({lines,setLines,pantry,compact=false,additionalAction,showSourceInfo=true}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean}){
+export function RecipeLineEditor({lines,setLines,pantry,compact=false,additionalAction,showSourceInfo=true,allowStored=true}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean;allowStored?:boolean}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
+ const [storedPicking,setStoredPicking]=useState<number|'add'|null>(null);
  const [picking,setPicking]=useState<number|'add'|null>(null);
  const choose=(item:PantryItem)=>{
   const unit=preferredFoodUnit(userChoice(item),preferences[item.id]);
@@ -27,21 +31,22 @@ export function RecipeLineEditor({lines,setLines,pantry,compact=false,additional
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
    const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
    return <div className="recipe-line ingredient-editor-row" key={index}>
-    <div className="recipe-line-heading"><div className="grow"><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{!item&&!reference&&<small>{t('sourceMissing')}</small>}</div><div className="actions">
-     <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+line.name} onClick={()=>setPicking(index)}><ArrowLeftRight size={16}/></button>
+    <div className="recipe-line-heading"><div className="grow"><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{line.source==='batch'?<small className="ingredient-line-brand"> · {t('storageTab')}</small>:!item&&!reference&&<small>{t('sourceMissing')}</small>}</div><div className="actions">
+     <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+line.name} onClick={()=>line.source==='batch'?setStoredPicking(index):setPicking(index)}><ArrowLeftRight size={16}/></button>
      <button type="button" aria-label={t('delete')+' '+line.name} onClick={()=>setLines(lines.filter((_,n)=>n!==index))}><Trash2 size={15}/></button>
     </div></div>
     <div className="recipe-line-amounts"><label>{t('quantity')}<NumberInput aria-label={line.name+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit} value={line.quantity} onChange={event=>{
      event.currentTarget.setCustomValidity(event.target.value!==''&&Number(event.target.value)<=0?t('invalid'):'');
      const quantity=Number(event.target.value);if(!Number.isFinite(quantity)||quantity<=0)return;
      setLines(lines.map((old,n)=>n===index?{...old,quantity,nutrition:scaleNutrition(old.nutrition,quantity/old.quantity)}:old));
-    }}/></label><label>{t('unit')}<select aria-label={line.name+' '+t('unit')} value={line.unit} onChange={event=>{
+    }}/></label><label>{t('unit')}<select disabled={line.source==='batch'} aria-label={line.name+' '+t('unit')} value={line.unit} onChange={event=>{
      const unit=event.target.value;if(unit===line.unit)return;const quantity=choice?personalQuantity(choice,unit):defaultIngredientQuantity(item,unit);
      setLines(lines.map((old,n)=>n===index?{...old,unit,quantity,nutrition:choice?personalNutrition(choice,quantity,unit,preferences[line.ingredientId]):unknownNutrition()}:old));
-    }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[line.ingredientId])}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{foodUnitLabel(choice,line.unit,i18n.language,preferences[line.ingredientId])}</option>}</select></label></div>
+    }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[line.ingredientId])}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{line.unit==='fraction'?t('storageFractionUnit'):foodUnitLabel(choice,line.unit,i18n.language,preferences[line.ingredientId])}</option>}</select></label></div>
    </div>;
   })}
-  <div className="line-add"><button type="button" className="secondary ingredient-add-trigger" onClick={()=>setPicking('add')}><Plus size={16}/>{t('ingredientPickerAdd')}</button>{additionalAction}</div>
+  <div className="line-add"><button type="button" className="secondary ingredient-add-trigger" onClick={()=>setPicking('add')}><Plus size={16}/>{t('ingredientPickerAdd')}</button>{allowStored&&<button type="button" className="secondary storage-add-source" onClick={()=>setStoredPicking('add')}><Plus size={16}/>{t('storageAddBatch')}</button>}{additionalAction}</div>
+  {storedPicking!==null&&<StoredFoodPicker close={()=>setStoredPicking(null)} onSelect={b=>{const previous=typeof storedPicking==='number'?lines[storedPicking]:undefined,line=storedRecipeLine(b,previous);setLines(storedPicking==='add'?[...lines,line]:lines.map((l,i)=>i===storedPicking?line:l));setStoredPicking(null)}}/>}
   {picking!==null&&<IngredientPicker items={pantry} close={()=>setPicking(null)} onSelect={choose} onSelectBuiltIn={chooseBuiltIn}/>}
  </div>;
 }

@@ -1,3 +1,4 @@
+import {chooseSavedRecipe} from './recipe-picker-helper';
 import {test,expect,type Page,type Locator} from '@playwright/test';
 test.use({browserName:'webkit',channel:'',viewport:{width:390,height:844},isMobile:true,hasTouch:true});
 const now=new Date('2026-10-29T16:00:00Z'),tomorrow='2026-10-30',later='2026-11-05';
@@ -9,7 +10,7 @@ async function openMeal(page:Page,date='2026-10-29'){await page.goto('/today?dat
 async function save(modal:Locator){await modal.locator('form:visible .form-actions .primary').click();await expect(modal).toHaveCount(0)}
 for(const source of ['recipe','pantry','storage','quick'] as const)test(`future ${source} saves, edits, reopens and deletes on its own calendar day`,async({page,context})=>{
  const fixture=await seed(page);let modal=await openMeal(page);await modal.locator('.source-tabs button').nth(['recipe','pantry','storage','quick'].indexOf(source)).click();
- if(source==='recipe')await modal.locator('.add-food-scroll > label select').selectOption(fixture.recipe.id);
+ if(source==='recipe')await chooseSavedRecipe(modal,fixture.recipe.id);
  if(source==='pantry'){await modal.locator('.ingredient-pick-trigger').click();const picker=page.locator('.ingredient-picker-modal');await picker.locator('input[type=search]').fill(fixture.ingredient.name);await picker.locator(`[data-ingredient-id="${fixture.ingredient.id}"]`).click();await expect(picker).toHaveCount(0);await modal.locator('.meal-amounts input[type=number]').first().fill('100')}
  if(source==='storage'){await modal.locator('.storage-meal-form select').last().selectOption(fixture.batchId);await modal.locator('[name=storageGrams]').fill('100')}
  if(source==='quick')for(const [index,value] of ['123','10','12','3'].entries())await modal.locator('.nutrition-fields input').nth(index).fill(value);
@@ -25,7 +26,7 @@ for(const source of ['recipe','pantry','storage','quick'] as const)test(`future 
  const final=await reopened.evaluate(async ids=>{const d=await import('/src/domain.ts');return{old:await d.foodLogs.get(ids.old),deleted:await d.foodLogs.get(ids.meal),stock:(await d.db.foodBatches.get(ids.batch))!.remainingQuantity}},{old:fixture.old.id,meal:meal.id,batch:fixture.batchId});expect(final.old).toEqual(fixture.old);expect(final.deleted!.deletedAt).toBeTruthy();expect(final.stock).toBe(600);
 });
 test('future recipe leftovers are immediately available with today as preparation date; future-day meals become visible when that day arrives',async({page})=>{
- const fixture=await seed(page),modal=await openMeal(page,tomorrow);await expect(modal.locator('[name=date]')).toHaveValue(tomorrow);await modal.locator('.add-food-scroll > label select').selectOption(fixture.recipe.id);await modal.getByRole('slider').evaluate(el=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')!.set!.call(el,'50');el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});await modal.locator('.leftover-option input').check();await modal.locator('[name=leftoverCookedWeight]').fill('600');await save(modal);
+ const fixture=await seed(page),modal=await openMeal(page,tomorrow);await expect(modal.locator('[name=date]')).toHaveValue(tomorrow);await chooseSavedRecipe(modal,fixture.recipe.id);await modal.getByRole('slider').evaluate(el=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')!.set!.call(el,'50');el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});await modal.locator('.leftover-option input').check();await modal.locator('[name=leftoverCookedWeight]').fill('600');await save(modal);
  const state=await page.evaluate(async()=>{const d=await import('/src/domain.ts');const meal=(await d.foodLogs.toArray()).find(m=>m.leftoverBatchId)!;return{meal,batch:await d.db.foodBatches.get(meal.leftoverBatchId!)}});expect(state.meal.date).toBe(tomorrow);expect(state.batch).toMatchObject({preparedOn:'2026-10-29',remainingQuantity:300});await page.goto('/today?date=2026-10-29');await expect(page.getByTestId('meal-section-total')).toContainText('77');
  await page.clock.setSystemTime(new Date('2026-10-30T16:00:00Z'));await page.goto('/today');await page.locator('#today-tab-food').click();await expect(page.locator('.meal-row')).toContainText(fixture.recipe.name);await expect(page.getByTestId('meal-section-total')).toContainText('300');
 });

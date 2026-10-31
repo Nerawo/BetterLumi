@@ -1,5 +1,5 @@
-import {storageTables, validateStorageBackup, type StorageConsumption} from "./food-storage-model";
-export const BACKUP_VERSION = 10;
+import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
+export const BACKUP_VERSION = 11;
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {parseToleranceEvents} from './goal-tolerance-model';
@@ -35,6 +35,11 @@ export const unknownNutrition = (): Nutrition => ({
   fat: null,
 });
 export interface RecipeLine {
+  /** Missing source means a legacy Pantry line. Batch sources are explicit snapshots. */
+  source?: 'pantry' | 'batch';
+  lineId?: string;
+  sourceBatchId?: string;
+  quantityBasis?: 'g' | 'original-fraction';
   ingredientId: string;
   name: string;
   quantity: number;
@@ -68,6 +73,7 @@ export interface FoodLog extends RecordBase {
   baseNutrition?: Nutrition;
   /** Inventory consumption and initial-leftover linkage deliberately have different semantics. */
   storageConsumption?: StorageConsumption;
+  recipeAllocations?: RecipeAllocation[];
   leftoverBatchId?: string;
   /** Explicit origin-meal correction that deliberately leaves downstream stock untouched. */
   leftoverInventoryUnchanged?: true;
@@ -145,7 +151,7 @@ export async function softDelete<T extends RecordBase>(
   id: string,
 ) {
   const row = await table.get(id);
-  if (row && table.name === 'foodLogs' && ('storageConsumption' in row || 'leftoverBatchId' in row)) {
+  if (row && table.name === 'foodLogs' && ('storageConsumption' in row || 'recipeAllocations' in row || 'leftoverBatchId' in row)) {
     if (row.deletedAt) return;
     const {FoodStorage} = await import('./food-storage');
     await new FoodStorage(table.db as typeof db).deleteMeal({operationId: 'delete-storage-meal:' + row.id + ':' + row.revision, mealId: row.id, expectedRevision: row.revision});
@@ -164,6 +170,7 @@ export async function exportAll() {
   await db.transaction("r", db.tables, async () => {
     for (const table of db.tables) tables[table.name] = await table.toArray();
   });
+  if((tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined))validateStorageBackup(tables);
   return {
     app: "BetterLumi",
     version: BACKUP_VERSION,
@@ -175,11 +182,12 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )
     throw Error("Invalid backup");
+  if(x.version<11&&(['recipeCards','foodLogs'].some(name=>Array.isArray(x.tables[name])&&x.tables[name].some((r:any)=>r.recipeAllocations!==undefined||r.lines?.some((l:any)=>l.source==='batch')))))throw Error('Stored-food recipes require backup version 11');
   if(x.version<10) {
     if (storageTables.some(name => x.tables[name] !== undefined && (!Array.isArray(x.tables[name]) || x.tables[name].length > 0)) ||
         Array.isArray(x.tables.foodLogs) && x.tables.foodLogs.some((m:any) => m?.storageConsumption !== undefined || m?.leftoverBatchId !== undefined || m?.leftoverInventoryUnchanged !== undefined)) throw Error('Food Storage requires backup version 10');
@@ -477,7 +485,7 @@ function validLines(lines: any) {
         Number.isFinite(l.quantity) &&
         l.quantity > 0 &&
         typeof l.unit === "string" && l.unit.trim().length > 0 && l.unit.length <= 40 &&
-        validNutrition(l.nutrition),
+        validNutrition(l.nutrition) && (l.source===undefined||l.source==='pantry'||l.source==='batch'&&typeof l.lineId==='string'&&l.lineId.trim()&&typeof l.sourceBatchId==='string'&&l.sourceBatchId.trim()&&l.ingredientId===l.sourceBatchId&&((l.quantityBasis==='g'&&l.unit==='g')||(l.quantityBasis==='original-fraction'&&l.unit==='fraction'))),
     )
   );
 }

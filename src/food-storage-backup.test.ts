@@ -27,8 +27,8 @@ it('upgrades every v6 store in place, without changing any existing rows, IDs, p
  for(const [name,rows]of Object.entries(snapshots))expect(await updated.table(name).toArray(),name).toEqual(rows);
  expect(await updated.foodBatches.count()).toBe(0);expect(await updated.inventoryTransactions.count()).toBe(0);expect(db.name).toBe('BetterLumi');
 });
-it('round trips v10 inventory, lineage, conversion history, meals, recipe snapshots and preferences exactly',async()=>{
- const {item,recipe,batch}=await fixture();const before=await exportAll();expect(before.version).toBe(10);expect(db.verno).toBe(7);expect(Object.keys(before.tables)).toHaveLength(20);
+it('round trips v11 inventory, lineage, conversion history, meals, recipe snapshots and preferences exactly',async()=>{
+ const {item,recipe,batch}=await fixture();const before=await exportAll();expect(before.version).toBe(11);expect(db.verno).toBe(7);expect(Object.keys(before.tables)).toHaveLength(20);
  await restoreAll(JSON.parse(JSON.stringify(before)));expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.table('recipeCards').get(recipe.id)).toEqual(recipe);
  expect(batchRemainingNutrition((await store.batches.get(batch.id))!)).toEqual(batchRemainingNutrition(batch));
  const meal=(await store.meals.get('first-meal'))!;await store.deleteMeal({operationId:'delete-after-restore',mealId:meal.id,expectedRevision:meal.revision});expect((await store.batches.get(batch.id))!.remainingQuantity).toBe(250);
@@ -36,7 +36,7 @@ it('round trips v10 inventory, lineage, conversion history, meals, recipe snapsh
 it.each([2,3,4,5,6,7,8,9])('accepts a valid v%s backup without inventory and preserves its historical records',async version=>{
  const item=ingredient();await db.ingredients.put(item);await db.settings.put({key:'language',value:'zh'});const old=await exportAll();old.version=version;delete old.tables.foodBatches;delete old.tables.inventoryTransactions;
  if(version===2){delete old.tables.recipeNotes;delete old.tables.goals}if(version<4)delete old.tables.recipeCategories;if(version<5){delete old.tables.exercisePlans;delete old.tables.exerciseOccurrences}if(version<6)delete old.tables.ingredientTags;
- await restoreAll(old);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.settings.get('language')).toEqual({key:'language',value:'zh'});expect(await store.batches.count()).toBe(0);expect(await store.transactions.count()).toBe(0);expect(SCHEMA_VERSION).toBe(7);expect(BACKUP_VERSION).toBe(10);
+ await restoreAll(old);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.settings.get('language')).toEqual({key:'language',value:'zh'});expect(await store.batches.count()).toBe(0);expect(await store.transactions.count()).toBe(0);expect(SCHEMA_VERSION).toBe(7);expect(BACKUP_VERSION).toBe(11);
 });
 it.each(['missing-table','negative-balance','invalid-nutrition','dangling-meal','dangling-source','cycle','broken-origin','bad-movement','duplicate-transaction','missing-history','wrong-total','wrong-consumption','lost-lock','downgrade'] as const)('rejects %s backup before changing any data',async defect=>{
  await fixture();const original=await exportAll(),bad=structuredClone(original);const b=(bad.tables.foodBatches as FoodBatch[])[0],tx=(bad.tables.inventoryTransactions as StorageTransaction[])[0];

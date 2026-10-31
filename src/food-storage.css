@@ -133,3 +133,15 @@
 .storage-detail-modal .storage-detail-nutrition-title { font:400 12px/1.5 var(--font-ui); color:var(--muted); margin:8px 0 4px; }
 .storage-history-details { margin:10px 0; border-block:1px solid var(--line); padding:6px 0; }
 .storage-history-details > summary { cursor:pointer; min-height:44px; align-content:center; font:500 14px/1.5 var(--font-ui); }
+.stored-recipe-sources { min-width:0; margin:10px 0; border-block:1px solid var(--line); padding:8px 0; }
+.stored-recipe-sources h3 { font:500 13px/1.5 var(--font-ui); margin:0 0 6px; }
+.stored-recipe-source { display:flex; align-items:center; gap:10px; padding:6px 0; }
+.stored-recipe-source > div { flex:1; min-width:0; overflow-wrap:anywhere; }
+.stored-recipe-source strong { font-size:14px; }
+.stored-recipe-source small { display:block; color:var(--muted); font-size:11px; }
+.stored-recipe-source button { flex:none; min-height:44px; }
+.stored-food-picker .storage-row-heading { gap:10px; }
+.stored-food-picker .storage-row-heading strong { min-width:0; overflow-wrap:anywhere; }
+
+.storage-origin-conflict .form-actions { flex-wrap:wrap; }
+.storage-origin-conflict .form-actions button { flex:1; min-width:110px; min-height:44px; white-space:normal; }

@@ -1,3 +1,5 @@
+import {RecipeSelection} from './RecipePicker';
+import {StoredRecipeSources} from './StoredFoodPicker';
 import {MealConsumptionControl} from './MealConsumptionControl';
 import {StickyNotes,useStickyNotes,useStickyNoteChanges} from './StickyNotes';
 import {commitStickyNoteChanges,assertMealNoteRevision,StickyNoteConflict} from './sticky-notes';
@@ -267,7 +269,9 @@ export function AddFood({
         }else if(!initial&&source==='recipe'&&saveLeftovers&&consumptionPercent<100){
           const input={meal:record,saveLeftovers:true,batchId:leftoverIdentity.id,cookedWeightGrams:cookedWeight===''?undefined:Number(cookedWeight)};
           await storage.saveMealWithLeftovers({...input,operationId:storageOperation(input)});
-        }else await foodLogs.put(record);
+        }else if(source==='recipe'&&(record.lines.some(l=>l.source==='batch')||initial?.recipeAllocations)){
+          await storage.saveRecipeMeal({operationId:storageOperation({record,expectedRevision:initial?.revision}),meal:record,expectedRevision:initial?.revision});
+        }else{if(initial?.recipeAllocations)throw new FoodStorageError('CONFLICT','Change recipe allocations before changing meal source');await foodLogs.put(record);}
         await commitStickyNoteChanges(noteDraft.changes,record);
         await draft.onSaved?.();
       });
@@ -295,7 +299,7 @@ export function AddFood({
             className={source === key ? "selected" : ""}
             key={key}
             aria-label={t({recipe:"savedRecipe",pantry:"savedIngredient",storage:"storageTab",quick:"quick"}[key])}
-            disabled={!!initial&&(initial.storageConsumption?key!=="storage":key==="storage"||!!initial.leftoverBatchId&&key!=="recipe")}
+            disabled={!!initial&&(initial.storageConsumption?key!=="storage":key==="storage"||!!(initial.leftoverBatchId||initial.recipeAllocations)&&key!=="recipe")}
             onClick={() => switchSource(key)}
           >
             {t(["storageMealRecipes", "storageMealPantry", "storageTab", "storageMealQuick"][index])}
@@ -329,23 +333,8 @@ export function AddFood({
             </div>
             {source === "recipe" && (
               <>
-                <label>
-                  {t("selectRecipe")}
-                  <span className="meal-selection-control">
-                  <select
-                    value={recipeId}
-                    onChange={(e) => chooseRecipe(e.target.value)}
-                  >
-                    <option value="">{t("selectRecipe")}</option>
-                    {recipes.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/>
-                  </span>
-                </label>
+                <RecipeSelection recipes={recipes} value={recipeId} onChange={chooseRecipe} label={t('selectRecipe')} disabled={!!initial?.leftoverBatchId&&initial.lines.some(l=>l.source==='batch')}/>
+
                 {!recipes.length && <p>{t("noRecipes")}</p>}
               </>
             )}
@@ -438,6 +427,7 @@ export function AddFood({
                 </div>
                 </>}
             {source==="recipe"&&recipeBasis==="snapshot"&&<p className="muted text-small">{t("legacyRecipeSnapshot")}</p>}
+            {source==='recipe'&&lines.some(l=>l.source==='batch')&&<StoredRecipeSources lines={lines} setLines={setLines} percent={consumptionPercent} initial={initial} prepared={saveLeftovers||!!initial?.leftoverBatchId}/>}
             <MealConsumptionControl value={consumptionPercent} onChange={setConsumptionPercent}/>
                 </div>
                 <div className="meal-nutrition-preview">
@@ -445,7 +435,7 @@ export function AddFood({
                   value={preview}
                 />
                 </div>
-                {source === "recipe" && (
+                {source === "recipe" && !(initial?.leftoverBatchId&&initial.lines.some(l=>l.source==='batch')) && (
                   <details className="meal-advanced" key={recipeId}>
                     <summary>{t("advancedRecipe")}</summary>
                     <div className="info-note">
@@ -455,6 +445,7 @@ export function AddFood({
                       compact
                       lines={lines}
                       setLines={setLines}
+                      allowStored={!initial?.leftoverBatchId}
                       pantry={pantry}
                     />
                     {!isBuiltInRecipe({id:recipeId})&&<div className="explicit-recipe-actions">
@@ -550,7 +541,9 @@ export function MealList({
   edit: (l: FoodLog) => void;
 }) {
   const { t } = useTranslation();
+  const [deleteConflict,setDeleteConflict]=useState<{batchId:string;log:FoodLog}|null>(null),[reviewSource,setReviewSource]=useState<string|null>(null);
   return logs.length ? (
+    <>
     <div className="meal-groups">
       {categories.map((category) => {
         const entries = logs.filter((l) => l.category === category);
@@ -575,7 +568,7 @@ export function MealList({
                 <Actions
                   edit={() => edit(log)}
                   remove={async () => {
-                    await confirmDelete("meal",log.name,async()=>{await softDelete(foodLogs, log.id)});
+                    await confirmDelete("meal",log.name,async()=>{try{await softDelete(foodLogs, log.id)}catch(error){if(error instanceof FoodStorageError&&error.code==='CONFLICT'&&error.batchId&&log.leftoverBatchId){setDeleteConflict({batchId:error.batchId,log});return}throw error}});
                   }}
                 />
               </article>
@@ -584,6 +577,9 @@ export function MealList({
         ) : null;
       })}
     </div>
+    {deleteConflict&&<Modal title={t('storageOriginConflict')} close={()=>setDeleteConflict(null)} className="recipe-detail-modal food-storage-modal storage-origin-conflict"><div className="modal-scroll"><p>{t('storageDeleteOriginConflict')}</p></div><div className="form-actions"><button type="button" className="primary" onClick={()=>{setReviewSource(deleteConflict.batchId);setDeleteConflict(null)}}>{t('storageReviewBatch')}</button><button type="button" onClick={async()=>{const input={operationId:stamp().id,mealId:deleteConflict.log.id,expectedRevision:deleteConflict.log.revision,strategy:'meal-only' as const},name=deleteConflict.log.name;setDeleteConflict(null);await confirmDelete('meal',name,()=>new FoodStorage().deleteMeal(input))}}>{t('storageDeleteMealOnly')}</button></div></Modal>}
+    {reviewSource&&<BatchDetail batchId={reviewSource} close={()=>setReviewSource(null)} notice={()=>undefined}/>}
+    </>
   ) : (
     <Empty icon={<Utensils />} heading={t("emptyFood")} />
   );

@@ -19,7 +19,7 @@ it('persists an interleaved stable-ID preference without rewriting tag definitio
  await moveIngredientTag(ids()[2],a.id);expect((await visible()).map(tag=>tag.id).slice(0,4)).toEqual([ids()[0],ids()[2],a.id,ids()[1]]);
  await moveIngredientTag(a.id,-1);expect((await visible()).map(tag=>tag.id).slice(0,3)).toEqual([ids()[0],a.id,ids()[2]]);
  const after=await exportAll();for(const name of Object.keys(before.tables).filter(name=>name!=='settings'))expect(after.tables[name]).toEqual(before.tables[name]);expect(await ingredientTags.toArray()).toHaveLength(2);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await ingredientTags.get(b.id)).toEqual(b);
- expect(parseIngredientTagOrder((await db.settings.get(ingredientTagOrderKey))?.value)).toHaveLength(11);expect(db.verno).toBe(7);expect(after.version).toBe(10);
+ expect(parseIngredientTagOrder((await db.settings.get(ingredientTagOrderKey))?.value)).toHaveLength(11);expect(db.verno).toBe(7);expect(after.version).toBe(11);
 });
 it('appends future built-in/custom tags and ignores removed or duplicate preferred IDs',()=>{
  const available=[...ingredientTagOptions([{id:'custom-a',name:'A'}],'en'),{id:'future-built-in',name:'Future',builtIn:true},{id:'new-custom',name:'New'}];const order=['custom-a',...ids(),'missing','custom-a'];
