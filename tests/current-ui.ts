@@ -1,5 +1,10 @@
 import {expect,type Page} from '@playwright/test';
-import {builtInFoods} from '../src/data/builtInFoods';
+import {createRequire} from 'node:module';
+
+// This helper runs in Playwright's Node worker, outside Vite. Use its CommonJS
+// transform path so the catalog's JSON dependency is loaded as JSON by require,
+// rather than as an unannotated Node ESM import. The production catalog is shared.
+const {builtInFoods}=createRequire(import.meta.url)('../src/data/builtInFoods.ts') as typeof import('../src/data/builtInFoods');
 
 // Reference catalogs may grow; the UI must show every reference plus every
 // matching user record, without copying either source into the other.

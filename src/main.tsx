@@ -72,7 +72,7 @@ import { WeightJournal } from "./Weight";
 import { ExercisePlans } from "./ExercisePlans";
 import { PlanList } from "./Journal";
 import { Journal } from "./JournalView";
-import { SupplementCard } from "./Rituals";
+import { SupplementCard, SupplementHeadingStatus } from "./Rituals";
 import { Actions } from "./ui";
 import "./fonts.css";
 import "./olive.css";
@@ -267,7 +267,7 @@ function App() {
                     />
                   )}
                   <Journal logs={logs!} activity={activities!} planItems={planItems!} selected={selected} setSelected={setSelected} goals={goals}/>
-                  <TodayTabs active={todayTab} onChange={setTodayTab}>
+                  <TodayTabs active={todayTab} onChange={setTodayTab} supplementStatus={<SupplementHeadingStatus items={supplements!} checks={checks!} date={selected}/>}>
                    {{
                     food: <div className="today-layout"><div>
                       <section className="card meal-card">

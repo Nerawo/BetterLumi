@@ -43,4 +43,14 @@
 .ingredient-management-modal .ingredient-archive-action { border-top:1px solid var(--line); margin-top:4px; padding-top:2px; }
 .ingredient-archive-action button { min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--muted); font:400 11px/1.5 var(--font-ui); }
 
-.supplement-title .supplement-reminder-dot { display:inline-block; flex:none; width:7px; height:7px; margin-inline-start:8px; border-radius:50%; background:color-mix(in srgb,var(--graphic-orange,var(--warm)) 75%,var(--surface)); }
+#today-tab-supplements .supplement-reminder-dot { display:inline-block; flex:none; width:7px; height:7px; margin-inline-start:8px; border-radius:50%; background:color-mix(in srgb,var(--graphic-orange,var(--warm)) 75%,var(--surface)); }
+
+#today-tab-supplements { display:inline-flex; align-items:center; gap:6px; }
+#today-tab-supplements .supplement-count { font:400 11px/1.4 var(--font-ui); opacity:.8; font-variant-numeric:tabular-nums; }
+#today-tab-supplements .supplement-reminder-dot { margin-inline-start:0; }
+.page-today .supplement-section > .supplement-heading { justify-content:flex-end; min-height:44px; border:0; padding:0; margin-bottom:4px; }
+.page-today .supplement-section .supplement-row { min-height:0; padding:8px 0; }
+.page-today .supplement-section .supplement-row-heading .grow { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; }
+.page-today .supplement-section .supplement-row-heading .grow small { margin:0; }
+.page-today .supplement-section .supplement-status-segments { margin-top:3px; }
+.page-today .supplement-section .supplement-status-segments button { min-height:44px; padding:4px 6px; }

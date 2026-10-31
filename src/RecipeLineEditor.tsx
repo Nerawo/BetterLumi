@@ -11,7 +11,7 @@ import {Plus,Trash2,ArrowLeftRight} from 'lucide-react';
 import {IngredientPicker} from './IngredientPicker';
 import {scaleNutrition,unknownNutrition,type RecipeLine,type PantryItem} from './domain';
 
-export function RecipeLineEditor({lines,setLines,pantry,compact=false,additionalAction}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode}){
+export function RecipeLineEditor({lines,setLines,pantry,compact=false,additionalAction,showSourceInfo=true}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
  const [picking,setPicking]=useState<number|'add'|null>(null);
  const choose=(item:PantryItem)=>{
@@ -27,7 +27,7 @@ export function RecipeLineEditor({lines,setLines,pantry,compact=false,additional
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
    const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
    return <div className="recipe-line ingredient-editor-row" key={index}>
-    <div className="recipe-line-heading"><div className="grow"><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small><ReferenceSourceInfo source={reference}/></>}{!item&&!reference&&<small>{t('sourceMissing')}</small>}</div><div className="actions">
+    <div className="recipe-line-heading"><div className="grow"><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{!item&&!reference&&<small>{t('sourceMissing')}</small>}</div><div className="actions">
      <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+line.name} onClick={()=>setPicking(index)}><ArrowLeftRight size={16}/></button>
      <button type="button" aria-label={t('delete')+' '+line.name} onClick={()=>setLines(lines.filter((_,n)=>n!==index))}><Trash2 size={15}/></button>
     </div></div>

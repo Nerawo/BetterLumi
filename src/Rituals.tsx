@@ -6,7 +6,7 @@ import {SupplementStatusMenu} from "./SupplementStatusMenu";
 import { useState, useEffect } from "react";
 import { isScheduled } from "./goals";
 import { useTranslation } from "react-i18next";
-import { Pill, Plus, ChevronDown, Settings2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { db, stamp, localDate, softDelete } from "./domain";
 import type { Supplement, Check as SupplementCheck } from "./db";
 import {WeekdayPicker} from "./WeekdayPicker";
@@ -24,7 +24,6 @@ export function SupplementCard({
 }) {
   const { t } = useTranslation();
   const [editing, setEditing] = useState<Supplement | null | undefined>();
-  const [expanded, setExpanded] = useState(true);
   const [managing, setManaging] = useState(false);
   const [schedule, setSchedule] = useState<Supplement["schedule"]>("daily");
   const [days, setDays] = useState<number[]>([]);
@@ -33,26 +32,18 @@ export function SupplementCard({
     setDays(editing?.days ?? []);
   }, [editing]);
   const due = items.filter((s) => isScheduled(s, date));
-  const pendingToday=date===localDate()&&due.some(s=>{const status=checks.find(c=>c.date===date&&c.supplementId===s.id)?.status;return status===undefined||status==='unconfirmed'});
   return (
     <section className="card ritual-card supplement-section">
-      <div className="section-heading supplement-heading">
-        <h3 className="supplement-title"><Pill size={18}/>{t("supplements")}{pendingToday&&<span className="supplement-reminder-dot" role="img" aria-label={t("supplementPendingToday")}/>}</h3>
-        <button type="button" className="primary" onClick={()=>setEditing(null)}><Plus size={18}/>{t("addProfile")}</button>
-      </div>
-      <div className="supplement-toolbar">
-        {due.length>0&&<small className="supplement-count">{due.filter(s=>checks.find(c=>c.date===date&&c.supplementId===s.id)?.status==="taken").length}/{due.length}</small>}
-        <div className="inline-actions"><button type="button" className="icon-button" aria-label={t("manageSupplements")} title={t("manageSupplements")} onClick={()=>setManaging(true)}><Settings2 size={17}/></button><button type="button" className="icon-button supplement-chevron" aria-label={t(expanded?"collapseSupplements":"expandSupplements")} aria-expanded={expanded} aria-controls="supplement-entries" onClick={()=>setExpanded(!expanded)}><ChevronDown size={16}/></button></div>
-      </div>
-      {expanded&&<div id="supplement-entries">
+      <div className="section-heading supplement-heading"><button type="button" className="primary" onClick={()=>setManaging(true)}>{t('manageSupplements')}</button></div>
+      <div id="supplement-entries">
        {!due.length&&<p className="muted text-small">{t(date===localDate()?"supplementNoScheduleToday":"supplementNoScheduleDate")}</p>}
        {due.map(s=><div className="supplement-row" key={s.id}>
-        <div className="supplement-row-heading"><div className="grow"><strong>{s.name}</strong><small>{s.dosage} {s.unit}</small></div><Actions edit={()=>setEditing(s)} remove={async()=>{await confirmDelete("supplement",s.name,async()=>{await softDelete(db.supplements,s.id)})}}/></div>
+        <div className="supplement-row-heading"><div className="grow"><strong>{s.name}</strong><small>{s.dosage} {s.unit}</small></div></div>
         <SupplementStatusMenu name={s.name} value={checks.find(c=>c.date===date&&c.supplementId===s.id)?.status??"unconfirmed"} disabled={date>localDate()} onChange={async status=>{
           try{const id=s.id+":"+date;const old=await db.checks.get(id);await db.checks.put({...old?changed(old):stamp(),id,supplementId:s.id,date,status})}catch{notice(t("failedMessage"))}
         }}/>
        </div>)}
-      </div>}
+      </div>
       {managing&&<Modal title={t("manageSupplements")} close={()=>setManaging(false)} className="supplement-manager">
        <button type="button" className="text-link" onClick={()=>{setManaging(false);setEditing(null)}}><Plus size={16}/>{t("addProfile")}</button>
        {items.map(s=><div className="simple-row" key={s.id}><div className="grow"><strong>{s.name}</strong><small>{s.dosage} {s.unit} · {t(s.schedule==="daily"?"dailySchedule":s.schedule==="weekdays"?"weekdays":"customDays")}</small></div><Actions edit={()=>{setManaging(false);setEditing(s)}} remove={async()=>{await confirmDelete("supplement",s.name,async()=>{await softDelete(db.supplements,s.id)})}}/></div>)}
@@ -131,4 +122,12 @@ export function SupplementCard({
       )}
     </section>
   );
+}
+
+/** Presentation only: completion counts taken; skipped resolves the reminder without counting as taken. */
+export function SupplementHeadingStatus({items,checks,date}:{items:Supplement[];checks:SupplementCheck[];date:string}){
+ const {t}=useTranslation(),due=items.filter(s=>isScheduled(s,date));
+ const status=(id:string)=>checks.find(c=>c.date===date&&c.supplementId===id)?.status;
+ const pending=date===localDate()&&due.some(s=>status(s.id)===undefined||status(s.id)==='unconfirmed');
+ return <>{due.length>0&&<small className="supplement-count">{due.filter(s=>status(s.id)==='taken').length}/{due.length}</small>}{pending&&<span className="supplement-reminder-dot" role="img" aria-label={t('supplementPendingToday')}/>}</>;
 }

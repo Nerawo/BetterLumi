@@ -86,3 +86,18 @@
 .storage-make-modal .recipe-editor-footer .primary { flex:1; }
 
 .storage-make-modal .line-editor.compact-lines .recipe-line-amounts label { font:500 13px/1.5 var(--font-ui); gap:4px; }
+
+/* Local editorial hierarchy; inventory actions retain their existing handlers. */
+.storage-make-modal .line-editor.compact-lines .line-add { border-top:1px solid var(--line); padding-top:18px; margin-top:8px; }
+.storage-detail-modal .storage-detail-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:16px 0; }
+.storage-detail-modal .storage-primary-action,.storage-detail-modal .storage-wide-action { grid-column:1/-1; }
+.storage-detail-modal .storage-detail-actions button,.storage-management-actions button { min-height:44px; padding:10px; border:1px solid var(--line); border-radius:5px; font:500 13px/1.4 var(--font-ui); white-space:normal; }
+.storage-detail-modal .storage-detail-actions button.secondary,.storage-management-actions button { background:transparent; color:var(--ink); }
+.storage-ingredient-details { border-block:1px solid var(--line); padding:6px 0; margin:12px 0; }
+.storage-ingredient-details summary { cursor:pointer; min-height:44px; display:list-item; align-content:center; font:500 14px/1.5 var(--font-ui); }
+.storage-ingredient-details summary span { color:var(--muted); }
+.storage-management { border-top:1px solid var(--line); margin-top:18px; padding-top:4px; }
+.storage-management-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.storage-management-actions .storage-destructive { color:var(--graphic-orange,var(--ink)); }
+.modal.standard-modal.storage-action-modal { top:calc(var(--food-viewport-top,0px) + (var(--food-viewport-height,100dvh) + max(10px,env(safe-area-inset-top)) - max(10px,env(safe-area-inset-bottom))) / 2); transform:translate(-50%,-50%); width:min(460px,calc(100% - 20px)); }
+.storage-action-modal > form,.storage-action-modal > form > .modal-scroll { flex:0 1 auto; min-height:0; }
