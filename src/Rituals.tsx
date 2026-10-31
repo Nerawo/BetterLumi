@@ -33,10 +33,11 @@ export function SupplementCard({
     setDays(editing?.days ?? []);
   }, [editing]);
   const due = items.filter((s) => isScheduled(s, date));
+  const pendingToday=date===localDate()&&due.some(s=>{const status=checks.find(c=>c.date===date&&c.supplementId===s.id)?.status;return status===undefined||status==='unconfirmed'});
   return (
     <section className="card ritual-card supplement-section">
       <div className="section-heading supplement-heading">
-        <h3 className="supplement-title"><Pill size={18}/>{t("supplements")}</h3>
+        <h3 className="supplement-title"><Pill size={18}/>{t("supplements")}{pendingToday&&<span className="supplement-reminder-dot" role="img" aria-label={t("supplementPendingToday")}/>}</h3>
         <button type="button" className="primary" onClick={()=>setEditing(null)}><Plus size={18}/>{t("addProfile")}</button>
       </div>
       <div className="supplement-toolbar">

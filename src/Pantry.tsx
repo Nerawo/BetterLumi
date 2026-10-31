@@ -1,3 +1,4 @@
+import {useRef} from 'react';
 import {IngredientManagement} from './IngredientManagement';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {useIngredientPreferences} from './useIngredientPreferences';
@@ -118,14 +119,20 @@ export function Pantry({
 function PantryRowContent({title,titleDescription,energy,metadata,macros,actions}:{title:ReactNode;titleDescription?:string;energy:ReactNode;metadata:ReactNode;macros:ReactNode;actions?:ReactNode}){
  return <div className={'grow pantry-row-content'+(actions?' has-secondary-actions':'')}><div className="ingredient-title-line"><h3 title={titleDescription}>{title}</h3><span className="ingredient-energy">{energy}</span></div><div className="pantry-secondary-line"><div className="pantry-source-line">{metadata}</div>{actions}</div><p className="macro-summary">{macros}</p></div>;
 }
-function PantryEditor({
+export function PantryEditor({
   item,
   preference,
+  statusMessage="",
+  initialName="",
+  onCreated,
   close,
   notice,
 }: {
   item: PantryItem | null;
   preference?:IngredientPreference;
+  statusMessage?:string;
+  initialName?:string;
+  onCreated?:(item:PantryItem)=>void;
   close: () => void;
   notice: Notice;
 }) {
@@ -163,8 +170,11 @@ function PantryEditor({
   const conversionEnabled=conversionQuantity!==null||conversionName.trim()!==''||conversionAmount!==null;
   const conversion={quantity:conversionQuantity!,name:conversionName.trim(),amount:conversionAmount!,unit:conversionUnit};
   const [busy, setBusy] = useState(false);
+  const saveLock=useRef(false);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    if(saveLock.current)return;
     const f = new FormData(e.currentTarget);
     const name = String(f.get("name")).trim();
     if (!name) {
@@ -174,7 +184,7 @@ function PantryEditor({
     if (basis === "100g" && (referenceAmount == null || !Number.isFinite(referenceAmount) || referenceAmount <= 0)) { notice(t("invalidReferenceAmount")); return; }
     if (servingGrams != null && (!Number.isFinite(servingGrams) || servingGrams <= 0)) { notice(t("invalidReferenceAmount")); return; }
     if (conversionEnabled && (!validConsumptionUnit(conversion) || conversion.unit !== ingredientBaseUnit({basis,referenceUnit,servingUnit}))) { setConversionOpen(true); notice(t("invalidConsumptionUnit")); return; }
-    setBusy(true);
+    saveLock.current=true;setBusy(true);
     try {
       const row: PantryItem = {
         ...(item ? changed(item) : stamp()),
@@ -196,22 +206,24 @@ function PantryEditor({
         const saved=parseIngredientPreference((await db.settings.get(ingredientPreferencePrefix+row.id))?.value);
         if(saved){const units=[...(conversionEnabled?[conversion]:[]),...saved.units.slice(1)];const preferred=[row.basis==='serving'?'serving':row.referenceUnit??'g',...units.map(u=>u.name)].includes(saved.preferred)?saved.preferred:row.basis==='serving'?'serving':row.referenceUnit??'g';await saveIngredientPreference(userChoice(row),{...saved,units,preferred})}
       });
+      // Keep the disabled creation dialog over the editor during a double-tap sequence.
+      if(!item&&onCreated){await new Promise(resolve=>setTimeout(resolve,350));onCreated(row)}
       close();
       notice(t("savedMessage"));
     } catch {
       notice(t("failedMessage"));
     } finally {
-      setBusy(false);
+      saveLock.current=false;setBusy(false);
     }
   };
   return (
     <Modal title={t(item ? "edit" : "newItem")} close={close} className="pantry-editor-modal">
       <form onSubmit={submit}>
-        <div className="pantry-editor-body"><section className="ingredient-form-section"><h3>{t("basicInformation")}</h3>
+        <div className="pantry-editor-body">{statusMessage&&<p role="alert">{statusMessage}</p>}<section className="ingredient-form-section"><h3>{t("basicInformation")}</h3>
         <div className="form-grid">
           <label>
             {t("name")}
-            <input name="name" required defaultValue={item?.name} />
+            <input name="name" required defaultValue={item?.name??initialName} />
           </label>
           <label>
             {t("nameZh")}

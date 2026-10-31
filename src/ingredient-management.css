@@ -42,3 +42,5 @@
 .ingredient-unit-editor-actions button { min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--action); font:400 12px/1.5 var(--font-ui); }
 .ingredient-management-modal .ingredient-archive-action { border-top:1px solid var(--line); margin-top:4px; padding-top:2px; }
 .ingredient-archive-action button { min-height:44px; padding:4px 0; border:0; background:transparent; color:var(--muted); font:400 11px/1.5 var(--font-ui); }
+
+.supplement-title .supplement-reminder-dot { display:inline-block; flex:none; width:7px; height:7px; margin-inline-start:8px; border-radius:50%; background:color-mix(in srgb,var(--graphic-orange,var(--warm)) 75%,var(--surface)); }
