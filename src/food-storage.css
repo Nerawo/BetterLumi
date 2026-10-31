@@ -101,3 +101,35 @@
 .storage-management-actions .storage-destructive { color:var(--graphic-orange,var(--ink)); }
 .modal.standard-modal.storage-action-modal { top:calc(var(--food-viewport-top,0px) + (var(--food-viewport-height,100dvh) + max(10px,env(safe-area-inset-top)) - max(10px,env(safe-area-inset-bottom))) / 2); transform:translate(-50%,-50%); width:min(460px,calc(100% - 20px)); }
 .storage-action-modal > form,.storage-action-modal > form > .modal-scroll { flex:0 1 auto; min-height:0; }
+/* Storage-only: one actual amount, one full-batch inventory axis. */
+.storage-consumption-control { min-width:0; }
+.storage-consumption-context { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 10px; font:400 12px/1.5 var(--font-ui); }
+.storage-consumption-context dt { color:var(--muted); }
+.storage-consumption-context dd { margin:2px 0 0; font-weight:500; }
+.storage-actual-amount { max-width:240px; }
+.storage-consumption-caption { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 8px; margin-top:10px; font:500 13px/1.5 var(--font-ui); }
+.storage-consumption-caption small { font:400 11px/1.5 var(--font-ui); color:var(--muted); }
+.storage-inventory-range { position:relative; height:44px; min-width:0; }
+.storage-inventory-track { position:absolute; inset-inline:9px; top:19px; height:6px; display:flex; border-radius:3px; background:var(--line); }
+.storage-segment-selected { width:var(--storage-selected); background:var(--action); border-radius:3px 0 0 3px; }
+.storage-segment-available { width:var(--storage-available); background:var(--soft); }
+.storage-segment-unavailable { flex:1; background:var(--muted); border-radius:0 3px 3px 0; }
+.storage-original-mark { position:absolute; top:-3px; height:12px; border-left:1px solid var(--ink); }
+.storage-inventory-range input[type=range] { appearance:none; -webkit-appearance:none; display:block; position:relative; width:100%; min-width:0; height:44px; padding:0; margin:0; border:0; border-radius:0; background:transparent; box-shadow:none; cursor:pointer; touch-action:pan-y; }
+.storage-inventory-range input[type=range]::-webkit-slider-runnable-track { height:6px; background:transparent; border:0; }
+.storage-inventory-range input[type=range]::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:18px; height:18px; margin-top:-6px; border:2px solid var(--surface); border-radius:50%; background:var(--action); box-shadow:0 0 0 1px var(--action); }
+.storage-inventory-range input[type=range]::-moz-range-track { height:6px; background:transparent; border:0; }
+.storage-inventory-range input[type=range]::-moz-range-thumb { width:14px; height:14px; border:2px solid var(--surface); border-radius:50%; background:var(--action); box-shadow:0 0 0 1px var(--action); }
+.storage-inventory-range input[type=range]:focus-visible { outline:2px solid var(--action); outline-offset:2px; }
+.storage-inventory-scale { display:flex; justify-content:space-between; padding-inline:9px; margin-top:-7px; font:400 10px/1.4 var(--font-ui); color:var(--muted); }
+.storage-inventory-legend { display:flex; flex-wrap:wrap; gap:4px 12px; margin:8px 0; font:400 11px/1.5 var(--font-ui); color:var(--muted); }
+.storage-inventory-legend > span::before { content:''; display:inline-block; width:6px; height:6px; margin-inline-end:4px; background:var(--action); }
+.storage-inventory-legend > .available::before { background:var(--soft); outline:1px solid var(--line); }
+.storage-inventory-legend > .unavailable::before { background:var(--muted); }
+.storage-detail-modal .storage-summary { display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; margin:8px 0 12px; }
+.storage-detail-modal .storage-summary .storage-remaining-emphasis { grid-column:1/-1; grid-row:1; }
+.storage-detail-modal .storage-summary .storage-remaining-emphasis dd { font:500 32px/1.2 var(--font-ui); color:var(--ink); margin-top:3px; }
+.storage-detail-modal .storage-summary > div:not(.storage-remaining-emphasis) { font:400 12px/1.5 var(--font-ui); }
+.storage-detail-modal .storage-detail-nutrition-title { font:400 12px/1.5 var(--font-ui); color:var(--muted); margin:8px 0 4px; }
+.storage-history-details { margin:10px 0; border-block:1px solid var(--line); padding:6px 0; }
+.storage-history-details > summary { cursor:pointer; min-height:44px; align-content:center; font:500 14px/1.5 var(--font-ui); }

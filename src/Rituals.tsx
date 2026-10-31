@@ -34,7 +34,7 @@ export function SupplementCard({
   const due = items.filter((s) => isScheduled(s, date));
   return (
     <section className="card ritual-card supplement-section">
-      <div className="section-heading supplement-heading"><button type="button" className="primary" onClick={()=>setManaging(true)}>{t('manageSupplements')}</button></div>
+      <div className="section-heading supplement-heading"><h2>{t("supplements")}</h2><button type="button" className="primary" onClick={()=>setManaging(true)}>{t('manageSupplements')}</button></div>
       <div id="supplement-entries">
        {!due.length&&<p className="muted text-small">{t(date===localDate()?"supplementNoScheduleToday":"supplementNoScheduleDate")}</p>}
        {due.map(s=><div className="supplement-row" key={s.id}>
