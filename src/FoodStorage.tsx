@@ -1,5 +1,5 @@
 import {StorageConsumptionControl} from './StorageConsumptionControl';
-import {initialConsumptionAmount,consumptionMemoryKey} from './storage-consumption-ui';
+import {initialConsumptionAmount,consumptionMemoryKey,newConsumptionGrams} from './storage-consumption-ui';
 import {StickyNotes,useStickyNotes,useStickyNoteChanges} from './StickyNotes';
 import {commitStickyNoteChanges,StickyNoteConflict} from './sticky-notes';
 import {recipeNotes} from './goals';
@@ -17,7 +17,7 @@ import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 import {NumberInput} from './NumberInput';
 import {DateInput} from './DateInput';
 import {formatLocalDate} from './dates';
-import {Modal, type Notice} from './ui';
+import {Modal, changed, type Notice} from './ui';
 import './food-storage-locale';
 import './food-storage.css';
 
@@ -38,24 +38,26 @@ export function StorageMealForm({initial,defaultBatchId='',date,hidden=false,onS
  const {t}=useTranslation(),operation=useStorageOperation();const [identity]=useState(stamp);
  const sharedNotes=useStickyNotes('',initial?.id??identity.id),noteDraft=useStickyNoteChanges();
  const batches=useLiveQuery(()=>storage.batches.toArray());const [batchId,setBatchId]=useState(initial?.storageConsumption?.batchId??defaultBatchId),[amount,setAmount]=useState(''),[mealDate,setMealDate]=useState(initial?.date??date),[category,setCategory]=useState(initial?.category??'uncategorized'),[notes]=useState(initial?.cookingNote??'');
+ const [quantityEdited,setQuantityEdited]=useState(false);
  const history=useLiveQuery(()=>storage.transactions.toArray()),memories=useLiveQuery(()=>db.settings.toArray());
  const [error,setError]=useState(''),[busy,setBusy]=useState(false),[ready,setReady]=useState(false),lock=useRef(false),initialized=useRef(false);
  const batch=batches?.find(b=>b.id===batchId),own=initial?.storageConsumption?.batchId===batchId?initial.storageConsumption.originalFraction:0;
  const available=batch?batch.remainingQuantity+own/batch.fractionPerUnit:0;
  useEffect(()=>{if(!batch||!history||!memories||initialized.current)return;initialized.current=true;setAmount(initialConsumptionAmount(batch,available,initial?.storageConsumption?.batchId===batch.id?own:undefined,history,memories.find(row=>row.key===consumptionMemoryKey(batch.id))?.value,initial?.storageConsumption?.batchId===batch.id&&initial.unit==='g'?initial.quantity:undefined));setReady(true)},[batch,history,memories,initial,own,available]);
- const quantity=Number(amount),fraction=batch&&Number.isFinite(quantity)&&quantity>=0?(batch.mode==='weight'?quantity*batch.fractionPerUnit:available*batch.fractionPerUnit*quantity/100):NaN;
- const preview=batch&&Number.isFinite(fraction)?scaleNutrition(batch.totalNutrition,fraction):unknownNutrition();
+ const preserveQuantity=!!initial&&initial.storageConsumption?.batchId===batchId&&!quantityEdited;
+ const rawQuantity=Number(amount),quantity=batch?.mode==='weight'&&!preserveQuantity&&rawQuantity>=0&&rawQuantity<=available?newConsumptionGrams(rawQuantity,available):rawQuantity,fraction=batch&&Number.isFinite(quantity)&&quantity>=0?(batch.mode==='weight'?quantity*batch.fractionPerUnit:available*batch.fractionPerUnit*quantity/100):NaN;
+ const preview=preserveQuantity?initial!.nutrition:batch&&Number.isFinite(fraction)?scaleNutrition(batch.totalNutrition,fraction):unknownNutrition();
  const choices=(batches??[]).filter(b=>!b.deletedAt&&(!b.archived&&b.remainingQuantity>0||b.id===initial?.storageConsumption?.batchId));
  return <form hidden={hidden} className="storage-meal-form" onSubmit={async e=>{
   e.preventDefault();if(lock.current)return;if(!batch||amount===''||!Number.isFinite(quantity)||quantity<=0){setError(t(batch?.mode==='ratio'?'storageZero':'storageInvalid'));return}
   lock.current=true;setBusy(true);setError('');
-  try{const input={mealId:initial?.id??identity.id,batchId,portion:{unit:batch.mode==='weight'?'g' as const:'percent' as const,quantity},date:mealDate,category,notes,expectedRevision:initial?.revision};await db.transaction('rw',[db.foodBatches,db.inventoryTransactions,storage.meals,db.settings,db.table('plans'),recipeNotes,db.table('recipeCards')],async()=>{await storage.saveMeal({...input,operationId:operation(input)});const saved=await storage.meals.get(input.mealId);if(!saved)throw Error('Meal was not saved');if(!initial&&batch.mode==='weight')await db.settings.put({key:consumptionMemoryKey(batch.id),value:JSON.stringify({version:1,grams:quantity})});await commitStickyNoteChanges(noteDraft.changes,saved);await onSaved?.()});close();notice(t('savedMessage'))}catch(error){setError(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t))}finally{lock.current=false;setBusy(false)}
+  try{const input={mealId:initial?.id??identity.id,batchId,portion:{unit:batch.mode==='weight'?'g' as const:'percent' as const,quantity},date:mealDate,category,notes,expectedRevision:initial?.revision};await db.transaction('rw',[db.foodBatches,db.inventoryTransactions,storage.meals,db.settings,db.table('plans'),recipeNotes,db.table('recipeCards')],async()=>{if(preserveQuantity){const current=await storage.meals.get(input.mealId);if(!current||current.deletedAt||current.revision!==initial!.revision)throw new FoodStorageError('CONFLICT','Meal changed');if(current.date!==mealDate||current.category!==category||current.cookingNote!==notes)await storage.meals.put({...changed(current),date:mealDate,category,cookingNote:notes});}else await storage.saveMeal({...input,operationId:operation(input)});const saved=await storage.meals.get(input.mealId);if(!saved)throw Error('Meal was not saved');if(!initial&&batch.mode==='weight')await db.settings.put({key:consumptionMemoryKey(batch.id),value:JSON.stringify({version:1,grams:quantity})});await commitStickyNoteChanges(noteDraft.changes,saved);await onSaved?.()});close();notice(t('savedMessage'))}catch(error){setError(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t))}finally{lock.current=false;setBusy(false)}
  }}>
   <div className="add-food-scroll modal-scroll"><fieldset disabled={busy} className="storage-fields">
    <div className="form-grid meal-date-row"><label>{t('date')}<DateInput value={mealDate} onChange={e=>setMealDate(e.target.value)} required/></label><label>{t('mealCategory')}<select value={category} onChange={e=>setCategory(e.target.value)}>{['uncategorized','breakfast','lunch','dinner','snack'].map(c=><option value={c} key={c}>{t(c)}</option>)}</select></label></div>
-   <StorageSelect label={t('storageSelectBatch')} value={batchId} onChange={id=>{setBatchId(id);initialized.current=false;setReady(false);setAmount('');setError('')}}><option value="">{t('storageSelectBatch')}</option>{choices.map(b=><option key={b.id} value={b.id}>{b.name} · {batchQuantity(b)}</option>)}</StorageSelect>
+   <StorageSelect label={t('storageSelectBatch')} value={batchId} onChange={id=>{setBatchId(id);setQuantityEdited(true);initialized.current=false;setReady(false);setAmount('');setError('')}}><option value="">{t('storageSelectBatch')}</option>{choices.map(b=><option key={b.id} value={b.id}>{b.name} · {batchQuantity(b)}</option>)}</StorageSelect>
    {!choices.length&&<p className="muted">{t('storageEmpty')}</p>}
-   {batch&&ready&&<><StorageConsumptionControl batch={batch} available={available} amount={amount} onChange={setAmount}/>
+   {batch&&ready&&<><StorageConsumptionControl batch={batch} available={available} amount={amount} edited={quantityEdited} onChange={value=>{setQuantityEdited(true);setAmount(value)}}/>
    <div className="meal-nutrition-preview"><RecipeNutritionStrip value={preview}/></div></>}
    <StickyNotes notes={sharedNotes} meal={{id:initial?.id??identity.id,date:mealDate}} changes={noteDraft.changes} onChange={noteDraft.stage} staged/>
   </fieldset>{error&&<p role="alert" className="storage-error">{error}</p>}</div>

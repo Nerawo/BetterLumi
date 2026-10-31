@@ -2,9 +2,9 @@ import {useId,type CSSProperties} from 'react';
 import {useTranslation} from 'react-i18next';
 import type {FoodBatch} from './food-storage-model';
 import {NumberInput} from './NumberInput';
-import {consumptionView,sliderAmount} from './storage-consumption-ui';
+import {consumptionView,sliderAmount,gramDisplay,newConsumptionGrams} from './storage-consumption-ui';
 
-export function StorageConsumptionControl({batch,available,amount,onChange}:{batch:FoodBatch;available:number;amount:string;onChange:(value:string)=>void}){
+export function StorageConsumptionControl({batch,available,amount,onChange,edited=false}:{batch:FoodBatch;available:number;amount:string;onChange:(value:string)=>void;edited?:boolean}){
  const {t,i18n}=useTranslation(),id=useId(),view=consumptionView(batch,available,amount);
  const format=(n:number)=>Number.isFinite(n)?new Intl.NumberFormat(i18n.language,{maximumFractionDigits:1}).format(n):'—';
  const quantity=(n:number)=>format(batch.mode==='weight'?n:n*100)+(batch.mode==='weight'?' g':'%');
@@ -13,7 +13,7 @@ export function StorageConsumptionControl({batch,available,amount,onChange}:{bat
  const style={'--storage-selected':view.selectedWidth+'%','--storage-available':view.availableWidth+'%'} as CSSProperties;
  return <section className="storage-consumption-control" aria-label={t('storageRecord')}>
   <dl className="storage-consumption-context"><div><dt>{t(reference)}</dt><dd>{quantity(view.original)}</dd></div><div><dt>{t('storageAvailableLabel')}</dt><dd>{quantity(available)}</dd></div></dl>
-  <label className="storage-actual-amount">{t(batch.mode==='weight'?'storageGrams':'storagePercent')}<NumberInput name={batch.mode==='weight'?'storageGrams':'storageStockPercent'} required min="0.000001" max={batch.mode==='weight'?available:100} step="any" value={amount} onChange={e=>onChange(e.target.value)}/></label>
+  <label className="storage-actual-amount">{t(batch.mode==='weight'?'storageGrams':'storagePercent')}<NumberInput name={batch.mode==='weight'?'storageGrams':'storageStockPercent'} required min="0" max={batch.mode==='weight'?(edited?available:Math.max(available,Number(gramDisplay(amount))||0)):100} step="any" value={batch.mode==='weight'?gramDisplay(amount):amount} onChange={e=>onChange(e.target.value)} onBlur={e=>{if(edited&&batch.mode==='weight'&&e.target.value!==''&&Number(e.target.value)>=0&&Number(e.target.value)<=available){const next=String(newConsumptionGrams(Number(e.target.value),available));e.target.value=next;onChange(next)}}}/></label>
   <div className="storage-consumption-caption"><span>{t('storageSelected')}: {quantity(selected)}</span><strong>{format(view.percent)}% <small>{t(batch.originalCookedYield===null&&batch.mode==='weight'?'storageOfEquivalent':'storageOfOriginal')}</small></strong></div>
   <div className="storage-inventory-range" style={style}>
    <div className="storage-inventory-track" aria-hidden="true"><span className="storage-segment-selected"/><span className="storage-segment-available"/><span className="storage-segment-unavailable"/>{view.overflow>0&&<i className="storage-original-mark" style={{left:view.original/view.axis*100+'%'}}/>}</div>
