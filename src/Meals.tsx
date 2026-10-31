@@ -1,3 +1,4 @@
+import {MealConsumptionControl} from './MealConsumptionControl';
 import {StickyNotes,useStickyNotes,useStickyNoteChanges} from './StickyNotes';
 import {commitStickyNoteChanges,assertMealNoteRevision,StickyNoteConflict} from './sticky-notes';
 import {recipeNotes} from './goals';
@@ -44,7 +45,6 @@ import { consumedNutrition } from "./consumption";
 import {
   Modal,
   NutritionFields,
-  NutritionStrip,
   Empty,
   Actions,
   changed,
@@ -105,8 +105,9 @@ export function AddFood({
     initial?.unit ?? "serving",
   );
   const [nutrition, setNutrition] = useState<Nutrition>(
-    initial?.baseNutrition ?? initial?.nutrition ?? unknownNutrition(),
+    initial?.source==='quick'&&!initial.storageConsumption?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,100,initial.baseNutrition):initial?.baseNutrition ?? initial?.nutrition ?? unknownNutrition(),
   );
+  const quickOriginalNutrition=useRef(nutrition).current;
   const [lines, setLines] = useState<RecipeLine[]>(
     initial?.lines ??
       (r?recipeServingLines(r):undefined) ??
@@ -134,10 +135,7 @@ export function AddFood({
     setLines(next.lines);setName(next.name);setPhoto(next.photo);setConsumptionPercent(next.consumptionPercent);
     setRenaming(next.renaming);setEstimated(next.estimated);setMessage('');setIngredientPicking(false);
   };
-  // Do not sanitize legacy decimal/>100 percentages just by opening a record.
-  const savedPercent=initial?.consumptionPercent??100;
-  const legacyRecipePercent=recipeBasis==='snapshot'&&initial?.source==='recipe'&&(savedPercent<0||savedPercent>100||savedPercent%5!==0);
-  const NutritionPreview=source==='recipe'?RecipeNutritionStrip:NutritionStrip;
+  const NutritionPreview=RecipeNutritionStrip;
   const saveRecipeVersion = async (update: boolean) => {
     if(isBuiltInRecipe({id:recipeId}))return;
     if (!lines.length || quantity <= 0) {
@@ -205,7 +203,8 @@ export function AddFood({
           : choice?personalNutrition(choice,quantity,unit,preferences[ingredientId])
             : unknownNutrition();
   const retained=source==="recipe"&&recipeBasis==="snapshot"&&initial&&lines===initial.lines;
-  const preview=retained?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,consumptionPercent,initial.baseNutrition):consumedNutrition(totals,consumptionPercent);
+  const retainedQuick=source==='quick'&&initial?.source==='quick'&&!initial.baseNutrition&&nutrition===quickOriginalNutrition;
+  const preview=(retained||retainedQuick)?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,consumptionPercent,initial.baseNutrition):consumedNutrition(totals,consumptionPercent);
   const buildMealRecord=(f:FormData):FoodLog=>{
     if(source==='storage')throw new FoodStorageError('INVALID','Use the storage form');
     const date=String(f.get('date'));
@@ -229,7 +228,7 @@ export function AddFood({
                 ? "entry"
                 : unit,
           nutrition: preview,
-          baseNutrition:retained?initial.baseNutrition:totals,
+          baseNutrition:retained||retainedQuick?initial.baseNutrition:totals,
           consumptionPercent,
           lines: source === "recipe" ? lines : [],
           photo,
@@ -240,7 +239,7 @@ export function AddFood({
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(source==='storage'||submitLock.current)return;
-    if(retained&&(initial.consumptionPercent??100)===0&&!initial.baseNutrition&&consumptionPercent!==0){notice(t("legacyNutritionUnavailable"));return}
+    if((retained||retainedQuick)&&(initial.consumptionPercent??100)===0&&!initial.baseNutrition&&consumptionPercent!==0){notice(t("legacyNutritionUnavailable"));return}
     const f = new FormData(e.currentTarget);
     if (source !== "quick" && !name.trim()) {
       notice(t("requiredName"));
@@ -390,20 +389,8 @@ export function AddFood({
             {source === "quick" ? (
               <>
                 <NutritionFields value={nutrition} onChange={setNutrition} />
-            <label className="consumption-control">
-              {t("consumptionPercent")}
-              <NumberInput
-                name="consumptionPercent"
-                required
-                type="number"
-                min="0"
-                step="any"
-                value={consumptionPercent}
-                onChange={(e) =>
-                  e.target.value !== "" && setConsumptionPercent(Number(e.target.value))
-                }
-              />
-            </label>
+            <MealConsumptionControl value={consumptionPercent} onChange={setConsumptionPercent}/>
+            <div className="meal-nutrition-preview"><NutritionPreview value={preview}/></div>
 
               </>
             ) : (
@@ -451,24 +438,7 @@ export function AddFood({
                 </div>
                 </>}
             {source==="recipe"&&recipeBasis==="snapshot"&&<p className="muted text-small">{t("legacyRecipeSnapshot")}</p>}
-            {source==='recipe'&&!legacyRecipePercent?<label className="consumption-control recipe-consumption-control">
-              <span className="recipe-consumption-heading"><span>{t('consumptionPercent')}</span><span className="recipe-consumption-value" aria-hidden="true">{consumptionPercent}%</span></span>
-              <input className="meal-consumption-slider" name="consumptionPercent" type="range" min="0" max="100" step="5" value={consumptionPercent} aria-valuetext={`${consumptionPercent}%`} onChange={e=>setConsumptionPercent(Number(e.target.value))}/>
-              <span className="recipe-consumption-scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></span>
-            </label>:<label className="consumption-control">
-              {t("consumptionPercent")}
-              <NumberInput
-                name="consumptionPercent"
-                required
-                type="number"
-                min="0"
-                step="any"
-                value={consumptionPercent}
-                onChange={(e) =>
-                  e.target.value !== "" && setConsumptionPercent(Number(e.target.value))
-                }
-              />
-            </label>}
+            <MealConsumptionControl value={consumptionPercent} onChange={setConsumptionPercent}/>
                 </div>
                 <div className="meal-nutrition-preview">
                 <NutritionPreview

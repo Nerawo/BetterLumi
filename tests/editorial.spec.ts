@@ -121,35 +121,36 @@ test("four icon-only destinations, four real themes, text pantry and two-column 
     500,
   );
 });
-test("meal photos are real records, optional photographs survive reload and consumption preserves decimal, zero and above-100 values", async ({
+test("meal photos survive reload and shared consumption slider saves half, zero and full snapshots", async ({
   page,
 }) => {
   const file = await imageFile(page, "real-meal.png", 900, 700);
   await page.getByRole("button", { name: "添加餐食", exact: true }).click();
   await page.locator(".add-food .source-tabs button").last().click();
   await page.locator(".add-food .nutrition-fields input").first().fill("200");
-  await page.locator(".add-food input[name=consumptionPercent]").fill("50.5");
+  const slider=page.locator(".add-food input[name=consumptionPercent]");
+  await slider.focus();await slider.press("Home");for(let i=0;i<10;i++)await slider.press("ArrowRight");
   await page.locator(".meal-extras > summary").click();
   await page.locator(".meal-photo-input input[type=file]").setInputFiles(file);
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
   await expect(page.locator(".meal-card .meal-photo")).toHaveCount(0);
-  await expect(page.getByTestId("food-progress")).toContainText("101");
+  await expect(page.getByTestId("food-progress")).toContainText("100");
   await page.reload();
   await expect(page.locator(".meal-card .meal-photo")).toHaveCount(0);
   await page
     .locator(".meal-card .meal-row")
     .getByRole("button", { name: "编辑", exact: true })
     .click();
-  await page.locator(".add-food input[name=consumptionPercent]").fill("0");
+  await page.locator(".add-food input[name=consumptionPercent]").press("Home");
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
   await expect(page.getByTestId("food-progress")).toContainText("0kcal");
   await page
     .locator(".meal-card .meal-row")
     .getByRole("button", { name: "编辑", exact: true })
     .click();
-  await page.locator(".add-food input[name=consumptionPercent]").fill("150");
+  await page.locator(".add-food input[name=consumptionPercent]").press("End");
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
-  await expect(page.getByTestId("food-progress")).toContainText("300");
+  await expect(page.getByTestId("food-progress")).toContainText("200");
   const saved = await page.evaluate(async () => {
     const d = await import("/src/domain.ts");
     return (await d.foodLogs.toArray())[0];
@@ -158,5 +159,5 @@ test("meal photos are real records, optional photographs survive reload and cons
     "data:image/png;base64," + file.buffer.toString("base64"),
   );
   expect(saved.baseNutrition.calories).toBe(200);
-  expect(saved.nutrition.calories).toBe(300);
+  expect(saved.nutrition.calories).toBe(200);
 });

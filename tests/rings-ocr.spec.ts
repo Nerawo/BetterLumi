@@ -187,14 +187,15 @@ for(const hasRecognition of [true,false])test('legacy label/photo metadata survi
  expect(after.count).toBe(1);expect(after.item).toMatchObject({id:original.id,calories:123,protein:7,carbs:37,fat:8,servingGrams:40,photo,labelPhoto:photo,labelRecognition:original.labelRecognition});expect(remote).toEqual([]);await expect(page.locator('.pantry-row[data-user-food-id]')).toContainText('123 kcal');
 });
 
-test("consumption above 100% is saved, displayed, editable and used in progress", async ({
+test("historical consumption above 100% remains displayed, editable and used in progress", async ({
   page,
 }) => {
   await page.getByRole("button", { name: "添加餐食", exact: true }).click();
   await page.locator(".add-food .source-tabs button").last().click();
   await page.locator(".add-food .nutrition-fields input").first().fill("60");
-  await page.locator("input[name=consumptionPercent]").fill("150");
+  await expect(page.locator("input[name=consumptionPercent]")).toHaveValue("100");
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
+  await page.evaluate(async()=>{const d=await import('/src/domain.ts');const meal=(await d.foodLogs.toArray())[0];await d.foodLogs.put({...meal,consumptionPercent:150,nutrition:d.scaleNutrition(meal.baseNutrition!,1.5)})});
   await expect(page.getByTestId("food-progress")).toContainText("90kcal");
   await expect(page.locator(".meal-card .meal-row")).toContainText("150");
   await page.reload();

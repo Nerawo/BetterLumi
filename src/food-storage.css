@@ -59,8 +59,9 @@
 .modal.storage-make-modal { width:min(560px,calc(100% - 16px)); }
 .storage-make-modal > .modal-head { padding:10px 16px; }
 .modal.storage-make-modal > .modal-head h2 { font-size:24px; }
-.storage-make-modal .storage-make-form { flex:1; min-height:0; }
-.storage-make-modal .storage-make-form .storage-make-scroll { flex:1; min-height:0; padding:2px 16px 12px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scroll-padding:12px; }
+/* Content-based flex bases avoid a zero-height form in auto-sized native dialogs. */
+.storage-make-modal .storage-make-form { flex:0 1 auto; min-height:0; }
+.storage-make-modal .storage-make-form .storage-make-scroll { flex:0 1 auto; min-height:0; padding:2px 16px 12px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scroll-padding:12px; }
 .storage-make-modal .storage-fields { gap:10px; }
 .storage-make-modal label { font:500 13px/1.5 var(--font-ui); gap:4px; }
 .storage-make-modal :is(input:not([type=range]),select,textarea) { min-height:44px; padding:8px 10px; border:1px solid var(--line); border-radius:5px; font:400 16px/1.4 var(--font-ui); }
