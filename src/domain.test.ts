@@ -35,7 +35,7 @@ afterEach(async () => {
   for (const table of db.tables) await table.clear();
 });
 describe("Olive vertical slice", () => {
-  it("defaults optional macros with known calories and refuses ambiguous unit conversion", () => {
+  it("defaults each blank custom nutrient independently and refuses ambiguous unit conversion", () => {
     const i = ingredient();
     expect(ingredientNutrition(i, 80, "g")).toEqual({
       calories: 300,
@@ -45,10 +45,10 @@ describe("Olive vertical slice", () => {
     });
     expect(i.fat).toBeNull();
     expect(ingredientNutrition({ ...i, calories: null }, 80, "g")).toEqual({
-      calories: null,
+      calories: 0,
       protein: 10,
       carbs: 54,
-      fat: null,
+      fat: 0,
     });
     expect(
       ingredientNutrition({ ...i, servingGrams: null }, 80, "g").calories,

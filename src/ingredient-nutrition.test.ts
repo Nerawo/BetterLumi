@@ -9,6 +9,23 @@ import {wholeRecipeNutrition} from './recipe-nutrition';
 const item=(nutrition:Partial<PantryItem>={}):PantryItem=>({...stamp(),name:'Synthetic optional macros',nameZh:'',brand:'',basis:'100g',referenceAmount:100,referenceUnit:'g',servingGrams:null,calories:200,protein:10,carbs:20,fat:5,...nutrition});
 afterEach(async()=>{for(const table of db.tables)await table.clear()});
 
+it.each([null,undefined,'','  '])('normalizes all four blank custom fields %s independently without changing their stored records',async blank=>{
+ const raw=item({calories:blank,protein:blank,carbs:blank,fat:blank} as Partial<PantryItem>),before=structuredClone(raw);
+ expect(normalizeIngredientNutrition(raw)).toEqual({calories:0,protein:0,carbs:0,fat:0});
+ expect(wholeRecipeNutrition([{ingredientId:'egg',name:'Egg',quantity:1,unit:'serving',nutrition:{calories:70,protein:6,carbs:0,fat:5}},{ingredientId:raw.id,name:raw.name,quantity:100,unit:'g',nutrition:personalNutrition(userChoice(raw),100,'g')}])).toEqual({calories:70,protein:6,carbs:0,fat:5});
+ expect(raw).toEqual(before);
+});
+it('retains supplied macros when calories are blank and preserves true unknown snapshots',()=>{
+ expect(normalizeIngredientNutrition({calories:null,protein:3.14159,carbs:0,fat:null})).toEqual({calories:0,protein:3.14159,carbs:0,fat:0});
+ expect(sumNutrition([normalizeIngredientNutrition({}),{calories:70,protein:null,carbs:0,fat:5}])).toEqual({calories:70,protein:null,carbs:0,fat:5});
+});
+it('mixes legacy blank custom nutrition with a stored-food source without changing source or historical snapshots',async()=>{
+ const {FoodStorage}=await import('./food-storage'),{storedRecipeLine}=await import('./recipe-storage');const service=new FoodStorage(),custom=item({calories:null,protein:null,carbs:null,fat:null});await db.ingredients.put(custom);
+ const zero={ingredientId:custom.id,name:custom.name,quantity:100,unit:'g',nutrition:ingredientNutrition(custom,100,'g')},known={ingredientId:'known',name:'Egg snapshot',quantity:100,unit:'g',nutrition:{calories:70,protein:6,carbs:0,fat:5}},id=stamp().id;
+ await service.makeBatch({operationId:stamp().id,id,name:'Known batch',preparedOn:'2026-11-01',ingredients:[{source:'pantry',line:known}],cookedYieldGrams:100});const b=(await service.batches.get(id))!,lines=[storedRecipeLine(b),zero];expect(wholeRecipeNutrition(lines)).toEqual(known.nutrition);
+ const meal={...stamp(),source:'recipe' as const,sourceId:null,date:'2026-11-01',category:'lunch',name:'Mixed blank regression',quantity:1,unit:'serving',lines,nutrition:known.nutrition,cookingNote:'',consumptionPercent:100};await service.saveRecipeMeal({operationId:stamp().id,meal});expect((await foodLogs.get(meal.id))!.nutrition).toEqual(known.nutrition);expect(await db.ingredients.get(custom.id)).toEqual(custom);expect((await service.batches.get(id))!.totalNutrition).toEqual(b.totalNutrition);
+});
+
 it('preserves explicit calories, zero, full precision and populated macros rather than deriving energy',()=>{
  const value={calories:201.12345,protein:0,carbs:2.34567,fat:8.90123};expect(normalizeIngredientNutrition(value)).toEqual(value);expect(ingredientNutrition(item(value),25,'g')).toEqual({calories:50.2808625,protein:0,carbs:0.5864175,fat:2.2253075});
 });
@@ -16,9 +33,9 @@ it.each([null,undefined,'','  '])('normalizes blank %s optional macros on a copy
  const input={calories:200,protein:blank,carbs:blank,fat:blank},before={...input};expect(normalizeIngredientNutrition(input)).toEqual({calories:200,protein:0,carbs:0,fat:0});expect(input).toEqual(before);
  const legacy=item(input as Partial<PantryItem>),copy=structuredClone(legacy);expect(personalNutrition(userChoice(legacy),37.5,'g')).toEqual({calories:75,protein:0,carbs:0,fat:0});expect(legacy).toEqual(copy);
 });
-it('fills only missing macros and keeps wholly unknown food/unsupported units unknown',()=>{
+it('normalizes all custom blanks while keeping unsupported units unknown',()=>{
  expect(normalizeIngredientNutrition({calories:0,protein:null,carbs:0,fat:0})).toEqual({calories:0,protein:0,carbs:0,fat:0});expect(ingredientNutrition(item({protein:null,carbs:3.25,fat:0}),50,'g')).toEqual({calories:100,protein:0,carbs:1.625,fat:0});
- expect(normalizeIngredientNutrition({calories:null,protein:null,carbs:undefined,fat:''})).toEqual({calories:null,protein:null,carbs:null,fat:null});expect(ingredientNutrition(item({protein:null}),100,'mL')).toEqual({calories:null,protein:null,carbs:null,fat:null});
+ expect(normalizeIngredientNutrition({calories:null,protein:null,carbs:undefined,fat:''})).toEqual({calories:0,protein:0,carbs:0,fat:0});expect(ingredientNutrition(item({protein:null}),100,'mL')).toEqual({calories:null,protein:null,carbs:null,fat:null});
 });
 it.each([NaN,Infinity,-Infinity,-1,'NaN','12.5',{},false])('rejects invalid nutrient %s without coercing it to zero',invalid=>{
  for(const key of ['calories','protein','carbs','fat']as const)expect(()=>normalizeIngredientNutrition({calories:200,protein:1,carbs:2,fat:3,[key]:invalid})).toThrow('Invalid ingredient nutrition');
