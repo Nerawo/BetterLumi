@@ -231,7 +231,7 @@ export function RecipeEditor({
         <label className="recipe-yield-editor">{t('recipeYield')}<span className="recipe-serving-input"><input name="servings" type="number" inputMode="decimal" min="0.01" step="any" required defaultValue={recipeYield(item??{})}/><span>{t('recipeYieldUnit')}</span></span><small className="muted">{t('recipeYieldHelp')}</small></label>
         <fieldset className="category-assignments">
           <legend>{t("recipeCategoriesMultiple")}</legend>
-          <RecipeCategoryPicker value={categoryIds} onToggle={(id, included) => setCategoryIds(previous => included ? [...new Set([...previous, id])] : previous.filter(value => value !== id))} />
+          <RecipeCategoryPicker pills value={categoryIds} onToggle={(id, included) => setCategoryIds(previous => included ? [...new Set([...previous, id])] : previous.filter(value => value !== id))} />
           {item?.category && (
             <small>
               {t("legacyCategory")}: {item.category}

@@ -2,13 +2,14 @@ import {orderedItems} from './collection-order';
 import { useEffect, useId, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, MoreHorizontal } from "lucide-react";
 import { categories, findOrCreateCategory } from "./categories";
 
-export function RecipeCategoryPicker({ value, onToggle, className = "" }: {
+export function RecipeCategoryPicker({ value, onToggle, className = "", pills = false }: {
   value: string[];
   onToggle: (id: string, included: boolean) => void | Promise<void>;
   className?: string;
+  pills?: boolean;
 }) {
   const { t } = useTranslation();
   const compact=className.split(" ").includes("detail-category-row");
@@ -45,14 +46,15 @@ export function RecipeCategoryPicker({ value, onToggle, className = "" }: {
     // Safari focuses the dialog, not the tapped button. Do not unmount that button before click.
     if (!pointerInside.current && event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
   }}>
-    <div className="recipe-category-chips">
-      {items?.filter(category => value.includes(category.id)).map(category => <span className="recipe-category-chip" key={category.id}>{category.name}</span>)}
-      <button type="button" className="category-picker-trigger text-link" ref={trigger} aria-expanded={open} aria-controls={open ? id : undefined} aria-label={t("chooseRecipeCategories")} onClick={() => setOpen(!open)}><Plus size={14} />{t("categoryAction")}</button>
+    <div className={pills ? "ingredient-tag-choices" : "recipe-category-chips"} role={pills ? "group" : undefined} aria-label={pills ? t("recipeCategoriesMultiple") : undefined}>
+      {pills && items?.map(category => <button type="button" key={category.id} aria-pressed={value.includes(category.id)} onClick={() => void onToggle(category.id, !value.includes(category.id))}>{value.includes(category.id) && <Check size={13}/>}<span>{category.name}</span></button>)}
+      {!pills && items?.filter(category => value.includes(category.id)).map(category => <span className="recipe-category-chip" key={category.id}>{category.name}</span>)}
+      <button type="button" className="category-picker-trigger text-link" ref={trigger} aria-expanded={open} aria-controls={open ? id : undefined} aria-label={t("chooseRecipeCategories")} onClick={() => setOpen(!open)}>{pills ? <MoreHorizontal size={16}/> : <><Plus size={14} />{t("categoryAction")}</>}</button>
       {compact&&open&&<button type="button" className="category-picker-done text-link" onClick={close}>{t("categoryPickerDone")}</button>}
     </div>
     {open && <div className="category-picker-panel" id={id} role="group" aria-label={t("recipeCategoriesMultiple")} aria-busy={busy} ref={panel}>
       {!compact&&<div className="category-panel-heading"><span>{t("categoryChoices")}</span><button type="button" className="category-picker-done text-link" onClick={close}>{t("categoryPickerDone")}</button></div>}
-      <div className="category-choice-list">{items?.map(category => <label key={category.id} data-selected={pending[category.id] ?? value.includes(category.id)}>
+      {!pills && <div className="category-choice-list">{items?.map(category => <label key={category.id} data-selected={pending[category.id] ?? value.includes(category.id)}>
         <input type="checkbox" aria-disabled={busy} checked={pending[category.id] ?? value.includes(category.id)} onChange={async event => {
           if (busy) return;
           const included = event.target.checked;
@@ -66,7 +68,7 @@ export function RecipeCategoryPicker({ value, onToggle, className = "" }: {
           finally { setBusy(false); }
         }} />
         {compact&&<Check className="category-choice-check" size={13} aria-hidden="true"/>}<span>{category.name}</span>
-      </label>)}{compact&&<button type="button" className="category-add-chip" disabled={busy} aria-expanded={creating} onClick={()=>setCreating(!creating)}><Plus size={13}/>{t("addCategoryChip")}</button>}</div>
+      </label>)}{compact&&<button type="button" className="category-add-chip" disabled={busy} aria-expanded={creating} onClick={()=>setCreating(!creating)}><Plus size={13}/>{t("addCategoryChip")}</button>}</div>}
       {(!compact||creating)&&<div className="category-create-section">{!creating?<button type="button" className="text-link" onClick={()=>setCreating(true)}><Plus size={14}/>{t("createCategory")}</button>:<div className="category-create-row"><input ref={newInput} aria-label={t("newCategoryName")} value={name} maxLength={100} onChange={event=>setName(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();event.stopPropagation();void create()}}}/><button type="button" disabled={busy||!name.trim()} onClick={()=>void create()}>{t("createAndAssign")}</button></div>}
       </div>}
       {error && <p role="alert">{error}</p>}
