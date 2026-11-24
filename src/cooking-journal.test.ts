@@ -50,7 +50,7 @@ it('rejects stale writes and injected failures without overwriting progress',asy
 });
 it('Backup 13 round trips grouped recipes and sessions exactly, retaining stale/orphan sessions',async()=>{
  const r=recipe(identifyRecipeLines([line()]));r.ingredientGroups=[{id:'a',name:'Sauce'}];r.lines[0].groupId='a';await recipes.put(r);await openCookingSession(r);const orphan=await openCookingSession(recipe());expect(orphan.recipeId).not.toBe(r.id);
- const backup=await exportAll();expect(backup.version).toBe(13);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
+ const backup=await exportAll();expect(backup.version).toBe(14);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
 });
 it.each([2,3,4,5,6,7,8,9,10,11,12])('accepts supported Backup %s without new metadata',async version=>{
  const r=recipe();await recipes.put(r);const backup=await exportAll();backup.version=version;

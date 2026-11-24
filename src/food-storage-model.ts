@@ -1,3 +1,4 @@
+import {lineNutrition,validZeroReference} from './line-nutrition';
 import type {RecordBase} from './db';
 import type {FoodLog, Nutrition, RecipeLine} from './domain';
 
@@ -82,8 +83,8 @@ function record(v: RecordBase) {
 }
 export function validBatchIngredient(v: unknown): v is BatchIngredient {
   const l = v as BatchIngredient;
-  return !!l && id(l.ingredientId) && text(l.name) && positive(l.quantity) && id(l.unit) && l.unit.length <= 40 && validStorageNutrition(l.nutrition) &&
-    (l.source === 'pantry' ? l.sourceBatchId === undefined && l.sourceFraction === undefined : l.source === 'batch' && id(l.sourceBatchId) && l.ingredientId === l.sourceBatchId && positive(l.sourceFraction));
+  return !!l && id(l.ingredientId) && text(l.name) && (l.lineId===undefined||id(l.lineId)) && (l.groupId===undefined||id(l.groupId)) && finiteNonnegative(l.quantity) && (l.zeroQuantityReference===undefined||validZeroReference(l.zeroQuantityReference)) && id(l.unit) && l.unit.length <= 40 && validStorageNutrition(l.nutrition) &&
+    (l.source === 'pantry' ? l.sourceBatchId === undefined && l.sourceFraction === undefined : l.source === 'batch' && id(l.sourceBatchId) && l.ingredientId === l.sourceBatchId && (l.quantity===0?l.sourceFraction===0:positive(l.sourceFraction)));
 }
 export function validFoodBatch(v: unknown): v is FoodBatch {
   const b = v as FoodBatch;
@@ -113,20 +114,20 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
   const txById = new Map(transactions.map(t => [t.id, t]));
   const meals = new Map((tables.foodLogs as FoodLog[]).map(m => [m.id, m]));
   for (const b of batches) {
-    const sum = Object.fromEntries(nutritionFields.map(k => [k, b.ingredients.some(l => l.nutrition[k] === null) ? null : b.ingredients.reduce((sum, l) => sum + l.nutrition[k]!, 0)])) as Nutrition;
+    const sum = Object.fromEntries(nutritionFields.map(k => [k, b.ingredients.some(l => lineNutrition(l)[k] === null) ? null : b.ingredients.reduce((sum, l) => sum + lineNutrition(l)[k]!, 0)])) as Nutrition;
     if (!validStorageNutrition(sum) || !storageNutritionEqual(sum, b.totalNutrition)) throw new FoodStorageError('INVALID', 'Batch composition does not match frozen ingredient snapshots');
     const creation = transactions.filter(t => t.targetBatchId === b.id && (t.kind === 'create' || t.kind === 'leftovers'));
     if (creation.length !== 1) throw new FoodStorageError('INVALID', 'Missing or duplicate batch creation history');
     for (const l of b.ingredients) if (l.source === 'batch') {
       const source = byId.get(l.sourceBatchId!);
-      if (!source || source.id === b.id || !source.everUsed || !storageNutritionEqual(l.nutrition, Object.fromEntries(nutritionFields.map(k => [k, source.totalNutrition[k] === null ? null : source.totalNutrition[k]! * l.sourceFraction!])) as Nutrition)) throw new FoodStorageError('INVALID', 'Invalid source batch link/snapshot');
+      if (!source || source.id === b.id || (l.quantity>0&&!source.everUsed) || l.quantity>0&&!storageNutritionEqual(l.nutrition, Object.fromEntries(nutritionFields.map(k => [k, source.totalNutrition[k] === null ? null : source.totalNutrition[k]! * l.sourceFraction!])) as Nutrition)) throw new FoodStorageError('INVALID', 'Invalid source batch link/snapshot');
     }
     if (b.originMealId !== null && (meals.get(b.originMealId)?.leftoverBatchId !== b.id || !meals.get(b.originMealId)!.leftoverInventoryUnchanged && !(meals.get(b.originMealId)!.deletedAt && b.initialConsumedFraction===0 && b.ingredients.some(l=>l.source==='batch') && transactions.some(t=>t.kind==='delete-meal'&&t.mealId===b.originMealId&&t.targetBatchId===b.id)) && !storageClose((meals.get(b.originMealId)!.consumptionPercent ?? 100) / 100, b.initialConsumedFraction))) throw new FoodStorageError('INVALID', 'Invalid leftover origin link');
   }
   const validateRecipeReferences=(lines:RecipeLine[])=>{
     const ids=new Set<string>();
     for(const line of lines)if(line.source==='batch'){
-      if(!id(line.lineId)||ids.has(line.lineId)||!byId.has(line.sourceBatchId!)||line.ingredientId!==line.sourceBatchId||!positive(line.quantity)||!validStorageNutrition(line.nutrition)||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))throw new FoodStorageError('INVALID','Invalid stored-food recipe reference');
+      if(!id(line.lineId)||ids.has(line.lineId)||!byId.has(line.sourceBatchId!)||line.ingredientId!==line.sourceBatchId||!finiteNonnegative(line.quantity)||!validStorageNutrition(line.nutrition)||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))throw new FoodStorageError('INVALID','Invalid stored-food recipe reference');
       ids.add(line.lineId);
     }
   };
@@ -143,6 +144,11 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
   for (const t of transactions) if (t.batchIds.some(id => !byId.has(id)) || t.targetBatchId !== null && !byId.has(t.targetBatchId) || t.mealId !== null && !meals.has(t.mealId)) throw new FoodStorageError('INVALID', 'Orphan inventory transaction');
   for (const m of meals.values()) {
     validateRecipeReferences(m.lines);
+    if(m.source==='recipe'&&m.lines.some(l=>l.quantity===0)){
+      const base=Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>lineNutrition(l)[k]===null)?null:m.lines.reduce((sum,l)=>sum+lineNutrition(l)[k]!,0)])) as Nutrition,portion=(m.consumptionPercent??100)/100;
+      const consumed=Object.fromEntries(nutritionFields.map(k=>[k,base[k]===null?null:base[k]!*portion])) as Nutrition;
+      if(!finiteNonnegative(portion)||portion>1||m.baseNutrition!==undefined&&!storageNutritionEqual(base,m.baseNutrition)||!storageNutritionEqual(consumed,m.nutrition))throw new FoodStorageError('INVALID','Zero ingredient meal snapshot mismatch');
+    }
     if(m.lines.some(l=>l.source==='batch')&&!m.leftoverBatchId&&m.recipeAllocations===undefined)throw new FoodStorageError('INVALID','Missing recipe inventory allocations');
     if(m.recipeAllocations!==undefined){
       if(m.leftoverBatchId)throw new FoodStorageError('INVALID','Preparation origins cannot also be direct allocations');
@@ -154,8 +160,8 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
         ids.add(a.lineId);
       }
       const portion=(m.consumptionPercent??100)/100;
-      if(!finiteNonnegative(portion)||portion>1||!m.baseNutrition||!storageNutritionEqual(m.baseNutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>l.nutrition[k]===null)?null:m.lines.reduce((sum,l)=>sum+l.nutrition[k]!,0)])) as Nutrition))throw new FoodStorageError('INVALID','Invalid recipe portion snapshot');
-      if(!storageNutritionEqual(m.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>l.nutrition[k]===null)?null:m.lines.reduce((sum,l)=>sum+l.nutrition[k]!,0)*portion])) as Nutrition)||m.lines.some(l=>l.source==='batch'&&portion>0&&!ids.has(l.lineId!)))throw new FoodStorageError('INVALID','Recipe allocations do not cover the consumed snapshot');
+      if(!finiteNonnegative(portion)||portion>1||!m.baseNutrition||!storageNutritionEqual(m.baseNutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>lineNutrition(l)[k]===null)?null:m.lines.reduce((sum,l)=>sum+lineNutrition(l)[k]!,0)])) as Nutrition))throw new FoodStorageError('INVALID','Invalid recipe portion snapshot');
+      if(!storageNutritionEqual(m.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,m.lines.some(l=>lineNutrition(l)[k]===null)?null:m.lines.reduce((sum,l)=>sum+lineNutrition(l)[k]!,0)*portion])) as Nutrition)||m.lines.some(l=>l.source==='batch'&&l.quantity>0&&portion>0&&!ids.has(l.lineId!)))throw new FoodStorageError('INVALID','Recipe allocations do not cover the consumed snapshot');
     }
     if (m.storageConsumption !== undefined) {
       const c = m.storageConsumption;

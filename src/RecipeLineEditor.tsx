@@ -1,3 +1,4 @@
+import {requantifyLine} from './cooking-effective';
 import {RecipeGroupsEditor} from './RecipeGroupsEditor';
 import {identifyRecipeLines,type IngredientGroup} from './cooking-journal';
 import './cooking-journal-locale';
@@ -15,7 +16,7 @@ import {useState,type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Plus,Trash2,ArrowLeftRight} from 'lucide-react';
 import {IngredientPicker} from './IngredientPicker';
-import {scaleNutrition,unknownNutrition,type RecipeLine,type PantryItem} from './domain';
+import {unknownNutrition,type RecipeLine,type PantryItem} from './domain';
 
 export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false,additionalAction,showSourceInfo=true,allowStored=true,groups,onGroupsChange}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean;allowStored?:boolean;groups?:IngredientGroup[];onGroupsChange?:(groups:IngredientGroup[])=>void}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
@@ -42,12 +43,12 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
     </div></div>
     {groups&&<details className="journal-context-menu journal-line-menu"><summary aria-label={t('journalLineActions')+' '+line.name}>···</summary><div><label>{t('journalMoveTo')}<select aria-label={line.name+' '+t('journalGroup')} value={line.groupId??''} onChange={e=>{setLines(lines.map((l,i)=>i===index?{...l,groupId:e.target.value||undefined}:l));e.currentTarget.closest('details')?.removeAttribute('open')}}><option value="">{t('journalUngrouped')}</option>{groups.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}</select></label><button type="button" aria-label={t('journalUp')+' '+line.name} disabled={!lines.slice(0,index).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,-1)}>↑ {t('journalUp')}</button><button type="button" aria-label={t('journalDown')+' '+line.name} disabled={!lines.slice(index+1).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,1)}>↓ {t('journalDown')}</button></div></details>}
     <div className="recipe-line-amounts"><label>{t('quantity')}<NumberInput aria-label={line.name+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit} value={line.quantity} onChange={event=>{
-     event.currentTarget.setCustomValidity(event.target.value!==''&&Number(event.target.value)<=0?t('invalid'):'');
-     const quantity=Number(event.target.value);if(!Number.isFinite(quantity)||quantity<=0)return;
-     setLines(lines.map((old,n)=>n===index?{...old,quantity,nutrition:scaleNutrition(old.nutrition,quantity/old.quantity)}:old));
+     event.currentTarget.setCustomValidity(event.target.value!==''&&Number(event.target.value)<0?t('invalid'):'');
+     if(event.target.value==='')return;const quantity=Number(event.target.value);if(!Number.isFinite(quantity)||quantity<0)return;
+     setLines(lines.map((old,n)=>n===index?requantifyLine(old,quantity):old));
     }}/></label><label>{t('unit')}<select disabled={line.source==='batch'} aria-label={line.name+' '+t('unit')} value={line.unit} onChange={event=>{
      const unit=event.target.value;if(unit===line.unit)return;const quantity=choice?personalQuantity(choice,unit):defaultIngredientQuantity(item,unit);
-     setLines(lines.map((old,n)=>n===index?{...old,unit,quantity,nutrition:choice?personalNutrition(choice,quantity,unit,preferences[line.ingredientId]):unknownNutrition()}:old));
+     setLines(lines.map((old,n)=>n===index?{...old,zeroQuantityReference:undefined,unit,quantity,nutrition:choice?personalNutrition(choice,quantity,unit,preferences[line.ingredientId]):unknownNutrition()}:old));
     }}><option value="g">{t('gramsUnit')}</option>{!reference&&<><option value="mL">mL</option><option value="serving">{t('servingUnit')}</option></>}{units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[line.ingredientId])}</option>)}{!['g','mL','serving',...units.map(u=>u.name)].includes(line.unit)&&<option value={line.unit}>{line.unit==='fraction'?t('storageFractionUnit'):foodUnitLabel(choice,line.unit,i18n.language,preferences[line.ingredientId])}</option>}</select></label></div>
    </div>;
  };

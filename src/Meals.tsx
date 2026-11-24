@@ -1,3 +1,4 @@
+import {lineNutrition} from './line-nutrition';
 import {RecipeSelection} from './RecipePicker';
 import {StoredRecipeSources} from './StoredFoodPicker';
 import {MealConsumptionControl} from './MealConsumptionControl';
@@ -198,7 +199,7 @@ export function AddFood({
     source === "quick"
       ? nutrition
       : source === "recipe"
-        ? recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)?unknownNutrition():sumNutrition(lines.map((l) => l.nutrition))
+        ? recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)?unknownNutrition():sumNutrition(lines.map(lineNutrition))
         : initial?.source === "pantry" &&
             initial.sourceId === ingredientId &&
             unit === initial.unit

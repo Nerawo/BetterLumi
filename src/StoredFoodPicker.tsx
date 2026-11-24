@@ -24,9 +24,10 @@ export function StoredFoodPicker({close,onSelect}:{close:()=>void;onSelect:(b:Fo
 export function StoredRecipeSources({lines,setLines,percent,initial,prepared=false}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;percent:number;initial?:FoodLog;prepared?:boolean}){
  const {t}=useTranslation(),[picking,setPicking]=useState<number|null>(null);
  const batches=useLiveQuery(()=>db.foodBatches.toArray())??[];
+ if(!lines.some(l=>l.source==='batch'&&l.quantity>0))return null;
  return <section className="stored-recipe-sources" aria-label={t('storageRecipeSources')}>
   <h3>{t('storageRecipeSources')}</h3>
-  {lines.map((line,index)=>{if(line.source!=='batch')return null;const b=batches.find(b=>b.id===line.sourceBatchId),factor=prepared?1:percent/100,needed=line.quantity*factor;
+  {lines.map((line,index)=>{if(line.source!=='batch'||line.quantity===0)return null;const b=batches.find(b=>b.id===line.sourceBatchId),factor=prepared?1:percent/100,needed=line.quantity*factor;
    const restored=initial?.recipeAllocations?.filter(a=>a.batchId===b?.id).reduce((n,a)=>n+a.originalFraction,0)??0;
    const available=b?(b.remainingQuantity*b.fractionPerUnit+restored)/(line.quantityBasis==='g'?b.fractionPerUnit:1):0;
    const changed=!!b&&!storageNutritionEqual(line.nutrition,scaleNutrition(b.totalNutrition,line.quantity*(line.quantityBasis==='g'?b.fractionPerUnit:1)));

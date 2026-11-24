@@ -1,5 +1,6 @@
+import {validZeroReference} from './line-nutrition';
 import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
-export const BACKUP_VERSION = 13;
+export const BACKUP_VERSION = 14;
 import {validateJournalBackup,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
@@ -47,6 +48,7 @@ export interface RecipeLine {
   quantity: number;
   unit: string;
   nutrition: Nutrition;
+  zeroQuantityReference?: {quantity:number;nutrition:Nutrition};
 }
 export interface Recipe extends RecordBase {
   ingredientGroups?: IngredientGroup[];
@@ -173,7 +175,8 @@ export async function exportAll() {
   await db.transaction("r", db.tables, async () => {
     for (const table of db.tables) tables[table.name] = await table.toArray();
   });
-  if((tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined))validateStorageBackup(tables);
+  for(const name of ['recipeCards','foodLogs'])for(const row of tables[name] as {lines:RecipeLine[]}[])if(row.lines.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)&&!validLines(row.lines))throw Error('Invalid zero ingredient snapshot');
+  if((tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
   validateJournalBackup(tables);
   return {
     app: "BetterLumi",
@@ -186,11 +189,12 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )
     throw Error("Invalid backup");
+  if(x.version<14&&['recipeCards','foodLogs','foodBatches'].some(name=>x.tables[name]?.some((r:any)=>(r.lines??r.ingredients??[]).some((l:any)=>l.quantity===0||l.zeroQuantityReference!==undefined))))throw Error('Zero ingredient quantities require Backup 14');
   if(x.version<11&&(['recipeCards','foodLogs'].some(name=>Array.isArray(x.tables[name])&&x.tables[name].some((r:any)=>r.recipeAllocations!==undefined||r.lines?.some((l:any)=>l.source==='batch')))))throw Error('Stored-food recipes require backup version 11');
   if(x.version<10) {
     if (storageTables.some(name => x.tables[name] !== undefined && (!Array.isArray(x.tables[name]) || x.tables[name].length > 0)) ||
@@ -488,7 +492,7 @@ function validLines(lines: any) {
         typeof l.ingredientId === "string" &&
         typeof l.name === "string" &&
         Number.isFinite(l.quantity) &&
-        l.quantity > 0 &&
+        l.quantity >= 0 && (l.zeroQuantityReference===undefined||validZeroReference(l.zeroQuantityReference)) &&
         typeof l.unit === "string" && l.unit.trim().length > 0 && l.unit.length <= 40 &&
         validNutrition(l.nutrition) && (l.source===undefined||l.source==='pantry'||l.source==='batch'&&typeof l.lineId==='string'&&l.lineId.trim()&&typeof l.sourceBatchId==='string'&&l.sourceBatchId.trim()&&l.ingredientId===l.sourceBatchId&&((l.quantityBasis==='g'&&l.unit==='g')||(l.quantityBasis==='original-fraction'&&l.unit==='fraction'))),
     )

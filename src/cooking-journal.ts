@@ -1,4 +1,5 @@
 import type {Recipe,RecipeLine} from './domain';
+import {validZeroReference} from './line-nutrition';
 import {newId} from './ids';
 
 export interface IngredientGroup {id:string;name:string}
@@ -13,7 +14,7 @@ export interface CookingSession {
 const text=(v:unknown):v is string=>typeof v==='string'&&!!v.trim();
 const positive=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v)&&v>0;
 /** Organizational metadata deliberately excluded: moving/renaming groups cannot invalidate progress. */
-export const cookingFingerprint=(l:RecipeLine)=>JSON.stringify([l.source??'pantry',l.ingredientId,l.sourceBatchId??null,l.quantityBasis??null,l.name,l.quantity,l.unit,l.nutrition]);
+export const cookingFingerprint=(l:RecipeLine)=>JSON.stringify([l.source??'pantry',l.ingredientId,l.sourceBatchId??null,l.quantityBasis??null,l.name,l.quantity,l.unit,l.nutrition,...(l.zeroQuantityReference?[l.zeroQuantityReference]:[])]);
 export function identifyRecipeLines(lines:RecipeLine[]):RecipeLine[]{
  const seen=new Set<string>();return lines.map(l=>{const id=l.lineId&&!seen.has(l.lineId)?l.lineId:newId();seen.add(id);return {...l,lineId:id}});
 }
@@ -58,7 +59,7 @@ export function changeCookingServings(s:CookingSession,servings:number,confirmRe
  if((s.checked.length||s.quantityOverrides?.length)&&!confirmReset)throw Error('Confirm checklist reset');
  return {...s,version:2,servings,checked:[],quantityOverrides:[]};
 }
-/** Absolute session-only quantities; never feeds recipe nutrition or inventory. */
+/** Absolute preparation quantities. Only explicit meal/batch/update actions apply them downstream. */
 export function setCookingQuantity(s:CookingSession,entryId:string,quantity:number,unit:string):CookingSession {
  const entry=s.entries.find(e=>e.id===entryId);
  if(!entry||!Number.isFinite(quantity)||quantity<0||JSON.parse(entry.fingerprint)[6]!==unit)throw Error('Invalid cooking quantity');
@@ -73,6 +74,7 @@ export function validateJournalRecipe(recipe:Pick<Recipe,'lines'|'ingredientGrou
  if(!Array.isArray(groups)||groups.some(g=>!g||!text(g.id)||!text(g.name))||new Set(groups.map(g=>g.id)).size!==groups.length)throw Error('Invalid ingredient groups');
  const ids=new Set<string>();
  for(const line of recipe.lines){
+  if(!Number.isFinite(line.quantity)||line.quantity<0||line.zeroQuantityReference!==undefined&&!validZeroReference(line.zeroQuantityReference))throw Error('Invalid recipe quantity reference');
   if(line.lineId!==undefined){if(!text(line.lineId)||ids.has(line.lineId))throw Error('Invalid ingredient line identity');ids.add(line.lineId)}
   if(line.groupId!==undefined&&(!text(line.groupId)||!groups.some(g=>g.id===line.groupId)||!line.lineId))throw Error('Invalid ingredient group reference');
  }

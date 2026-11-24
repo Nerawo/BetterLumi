@@ -151,3 +151,12 @@
 .journal-recipe-detail .journal-method{font-family:JournalHand,JournalChinese,var(--font-ui)}
 .cooking-mode .journal-check-row>span>span{font-family:JournalHand,JournalChinese,var(--font-ui)}
 .journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{align-items:stretch}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-storage{grid-column:1/-1;border:1px solid var(--line);border-radius:5px;color:var(--action);min-width:0;white-space:normal}
+.journal-recipe-detail .detail-ingredients li:not(.journal-overview-group)>span{margin-left:auto;text-align:right;max-width:100%;overflow-wrap:anywhere}
+.journal-recipe-detail .unified-sticky-notes .note-text{font-family:JournalHand,JournalChinese,var(--font-ui);font-size:16px;line-height:1.6}
+@media(max-width:359px){.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{grid-template-columns:1fr}.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-meal{grid-column:1;grid-row:2}}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-meal{grid-column:1;grid-row:1}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-storage{grid-column:2;grid-row:1}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.start-cooking{grid-column:1/-1;grid-row:2}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-meal,.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-storage{display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:8px 6px;font-size:12px;font-weight:400;border:1px solid var(--line);border-radius:5px;background:transparent;color:var(--action)}

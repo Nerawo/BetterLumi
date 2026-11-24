@@ -175,7 +175,7 @@ export function RecipeEditor({
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const name = String(f.get("name")).trim();
-    if (!name || !lines.length || lines.some((l) => l.quantity <= 0) || !Number.isFinite(Number(f.get('servings'))) || Number(f.get('servings'))<=0) {
+    if (!name || !lines.length || lines.some((l) => !Number.isFinite(l.quantity)||l.quantity < 0) || !Number.isFinite(Number(f.get('servings'))) || Number(f.get('servings'))<=0) {
       notice(t("emptyLines"));
       return;
     }

@@ -1,6 +1,7 @@
+import {lineNutrition} from './line-nutrition';
 import {sumNutrition,scaleNutrition,unknownNutrition,type RecipeLine,type Nutrition} from "./domain";
 /** Whole ingredient amounts stay unchanged, including legacy recipes carrying a servings field. */
-export const wholeRecipeNutrition=(lines:RecipeLine[])=>sumNutrition(lines.map(line=>line.nutrition));
+export const wholeRecipeNutrition=(lines:RecipeLine[])=>sumNutrition(lines.map(lineNutrition));
 /** Missing legacy yield means one serving; never write this fallback back to a record. */
 export function recipeYield(recipe:{servings?:number}) {
  return typeof recipe.servings==='number'&&Number.isFinite(recipe.servings)&&recipe.servings>0?recipe.servings:1;
@@ -8,7 +9,7 @@ export function recipeYield(recipe:{servings?:number}) {
 export function recipeServingLines(recipe:{servings?:number;lines:RecipeLine[]},servings=1):RecipeLine[] {
  return scaleRecipeLines(recipe.lines,servings/recipeYield(recipe));
 }
-export const scaleRecipeLines=(lines:RecipeLine[],factor:number):RecipeLine[]=>lines.map(line=>({...line,quantity:line.quantity*factor,nutrition:scaleNutrition(line.nutrition,factor)}));
+export const scaleRecipeLines=(lines:RecipeLine[],factor:number):RecipeLine[]=>lines.map(line=>({...line,quantity:line.quantity*factor,nutrition:scaleNutrition(lineNutrition(line),factor)}));
 export function recipeServingNutrition(recipe:{servings?:number;lines:RecipeLine[]},servings=1) {
  return scaleNutrition(wholeRecipeNutrition(recipe.lines),servings/recipeYield(recipe));
 }

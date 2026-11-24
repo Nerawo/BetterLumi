@@ -2,6 +2,7 @@ import {journalQuantity} from './journal-quantity';
 import {JournalMethod} from './JournalMethod';
 import {JournalHeading} from './JournalHeading';
 import {CookingMode} from './CookingMode';
+import {MakeBatchModal} from './FoodStorage';
 import {recipeSections} from './cooking-journal';
 import './cooking-journal-locale';
 import {StickyNotes,useStickyNotes} from './StickyNotes';
@@ -13,7 +14,7 @@ import {isBuiltInRecipe,bologneseCookingExtras} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
 import {recipeYield,recipeServingLines,recipeServingNutrition} from "./recipe-nutrition";
 import './recipe-yield-locale';
-import { Fragment,useState } from "react";
+import { Fragment,useState,useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Pencil } from "lucide-react";
 import {
@@ -47,7 +48,10 @@ export function RecipeDetail({
   const notes=useStickyNotes(recipe?.id??'');
   const [edit, setEdit] = useState(false);
   const [cooking,setCooking]=useState(false);
+  const [making,setMaking]=useState(false);
   const [cookingServings,setCookingServings]=useState('1');
+  useEffect(()=>{setCooking(false);setMaking(false);setEdit(false);setCookingServings('1')},[recipe?.id]);
+  useEffect(()=>{const exit=()=>{setCooking(false);setMaking(false);setEdit(false)};window.addEventListener('popstate',exit);window.addEventListener('hashchange',exit);return()=>{window.removeEventListener('popstate',exit);window.removeEventListener('hashchange',exit)}},[]);
   if (!recipe)
     return (
       <Modal
@@ -117,13 +121,14 @@ export function RecipeDetail({
         )}
       </article></div>
         <div className="form-actions recipe-detail-actions detail-toolbar">
-          <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
           <button className="secondary journal-add-meal" onClick={() => addMeal(recipe)}>
             <Plus size={15} />
             {t("journalAddMeal")}
           </button>
-
+          <button type="button" className="secondary journal-add-storage" onClick={()=>setMaking(true)}><Plus size={15}/>{t('journalAddStorage')}</button>
+          <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
         </div>
+        {making&&<MakeBatchModal recipes={recipes} pantry={pantry} initialRecipe={recipe} close={()=>setMaking(false)} notice={notice}/>}
     </Modal>
   );
 }
