@@ -336,7 +336,10 @@ function App() {
                   recipe={[...(recipeItems??[]),...builtInRecipeItems(i18n.language)].find((r) => r.id === route.recipeId)}
                   pantry={pantry ?? []}
                   notice={setToast}
-                  addMeal={(recipe) => openMeal({ date: today, recipe })}
+                  addMeal={(recipe) => openMeal({ date: selected, recipe })}
+                  recipes={[...recipeItems!,...builtInRecipeItems(i18n.language)]}
+                  mealDate={selected}
+                  onCookingMealSaved={date=>{setTodayTab('food');navigate('/today?date='+date)}}
                 />
               )}
               {page === "weight" && (

@@ -62,6 +62,9 @@ export const categories = [
 export interface MealDraft {
   date: string;
   recipe?: Recipe;
+  recipeServings?: number;
+  /** UI notification only: invoked after a successful transaction, never during it. */
+  onCommitted?: (date:string)=>void;
   log?: FoodLog;
   onSaved?: () => Promise<void>;
 }
@@ -101,8 +104,9 @@ export function AddFood({
   const sharedNotes=useStickyNotes(noteRecipeId,initial?.id??mealIdentity.id);
   const noteDraft=useStickyNoteChanges();
   const [recipeBasis,setRecipeBasis]=useState<"recipe"|"snapshot">(initial?.source==="recipe"?"snapshot":"recipe");
-  const [quantity, setQuantity] = useState(initial?.quantity ?? 1);
-  const [lineServings,setLineServings]=useState(1);
+  const startingServings=r&&typeof draft.recipeServings==='number'&&Number.isFinite(draft.recipeServings)&&draft.recipeServings>0?draft.recipeServings:1;
+  const [quantity, setQuantity] = useState(initial?.quantity ?? startingServings);
+  const [lineServings,setLineServings]=useState(initial?1:startingServings);
   const [unit, setUnit] = useState<string>(
     initial?.unit ?? "serving",
   );
@@ -112,7 +116,7 @@ export function AddFood({
   const quickOriginalNutrition=useRef(nutrition).current;
   const [lines, setLines] = useState<RecipeLine[]>(
     initial?.lines ??
-      (r?recipeServingLines(r):undefined) ??
+      (r?recipeServingLines(r,startingServings):undefined) ??
       [],
   );
   const [name, setName] = useState(initial?.name ?? r?.name ?? "");
@@ -277,6 +281,7 @@ export function AddFood({
       });
       close();
       notify(t("savedMessage"));
+      draft.onCommitted?.(String(f.get("date")));
     } catch(error) {
       if(initial?.leftoverBatchId&&error instanceof FoodStorageError&&error.code==='CONFLICT'&&error.batchId===initial.leftoverBatchId){setOriginConflict(true);notice(t('storageOriginConflict'))}
       else notice(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t));
@@ -524,7 +529,7 @@ export function AddFood({
               </button>
             </div>
           </form>
-      {storageOpened&&<StorageMealForm hidden={source!=='storage'} initial={initial?.storageConsumption?initial:undefined} date={draft.date} close={close} notice={notify} onSaved={draft.onSaved}/>}
+      {storageOpened&&<StorageMealForm hidden={source!=='storage'} initial={initial?.storageConsumption?initial:undefined} date={draft.date} close={close} notice={notify} onSaved={draft.onSaved} onCommitted={draft.onCommitted}/>}
     </section>
     {correctingOrigin&&<Modal title={t('storageCorrectTitle')} close={()=>{if(!busy)setCorrectingOrigin(false)}} className="recipe-editor-modal food-storage-modal"><div className="modal-scroll"><p>{t('storageCorrectHelp')}</p></div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setCorrectingOrigin(false)}>{t('cancel')}</button><button type="button" className="primary" disabled={busy} onClick={()=>void correctOrigin()}>{t('storageConfirmCorrection')}</button></div></Modal>}
     {reviewBatch&&initial?.leftoverBatchId&&<BatchDetail batchId={initial.leftoverBatchId} close={()=>setReviewBatch(false)} notice={notify}/>}

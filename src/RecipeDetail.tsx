@@ -15,7 +15,7 @@ import {recipeYield,recipeServingLines,recipeServingNutrition} from "./recipe-nu
 import './recipe-yield-locale';
 import { Fragment,useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import {
   unknownNutrition,
   type Recipe,
@@ -31,12 +31,13 @@ export function RecipeDetail({
   recipe,
   pantry,
   notice,
-  addMeal,
+  addMeal, recipes, mealDate, onCookingMealSaved,
 }: {
   recipe: Recipe | undefined;
   pantry: PantryItem[];
   notice: Notice;
   addMeal: (r: Recipe) => void;
+  recipes: Recipe[]; mealDate: string; onCookingMealSaved: (date:string)=>void;
 }) {
   const { t,i18n } = useTranslation(),preferences=useIngredientPreferences();
   const close = () => {
@@ -60,7 +61,7 @@ export function RecipeDetail({
   const amount=Number(cookingServings),validAmount=Number.isFinite(amount)&&amount>0;
   const cookingLines=validAmount?recipeServingLines(recipe,amount):[];
   const builtIn=isBuiltInRecipe(recipe),zh=i18n.language.startsWith('zh');
-  if(cooking)return <CookingMode recipe={recipe} close={()=>setCooking(false)}/>;
+  if(cooking)return <CookingMode recipe={recipe} recipes={recipes} pantry={pantry} date={mealDate} notice={notice} mealSaved={onCookingMealSaved} close={()=>setCooking(false)}/>;
   return (
     <Modal title={recipe.name} close={close} className={"recipe-detail-modal journal-recipe-detail"+(recipe.photo?"":" journal-no-photo")}>
       <div className="recipe-detail-scroll">{builtIn?<div className="recipe-reference-detail"><span>{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</span><span> · </span><BuiltInRecipeSource/></div>:<RecipeCategoryPicker className="detail-category-row" value={recipe.categoryIds ?? []} onToggle={(categoryId, included) => assignCategoryRecipes(categoryId, {[recipe.id]: included})} />}
@@ -104,6 +105,7 @@ export function RecipeDetail({
             <div className="recipe-method"><JournalMethod text={recipe.instructions||t('notRecorded')}/></div>
           </section>
         </div>
+        {!builtIn&&<div className="journal-content-actions"><button type="button" className="secondary recipe-edit-trigger" onClick={()=>setEdit(true)}><Pencil size={13}/>{t('editRecipe')}</button></div>}
         <StickyNotes notes={notes} recipeId={recipe.id} onChange={async change=>{await commitStickyNoteChanges([change]);notice(t('savedMessage'))}}/>
         {edit && (
           <RecipeEditor
@@ -118,11 +120,9 @@ export function RecipeDetail({
           <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
           <button className="secondary journal-add-meal" onClick={() => addMeal(recipe)}>
             <Plus size={15} />
-            {t("addTodayMeals")}
+            {t("journalAddMeal")}
           </button>
-          {!builtIn&&<button className="secondary recipe-edit-trigger" onClick={() => setEdit(true)}>
-            {t("editRecipe")}
-          </button>}
+
         </div>
     </Modal>
   );

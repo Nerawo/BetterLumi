@@ -142,7 +142,10 @@
 .journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px}
 .journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.start-cooking{grid-column:1;grid-row:1;min-width:0}
 .journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-meal{grid-column:2;grid-row:1;border:1px solid var(--line);border-radius:5px;color:var(--action);min-width:0;white-space:normal}
-.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.recipe-edit-trigger{grid-column:1/-1;grid-row:2;justify-self:end;min-height:44px;font-size:11px;padding:6px 8px}
+.journal-recipe-detail .journal-content-actions{display:flex;justify-content:flex-end;margin:4px 0 6px}
+.journal-recipe-detail .journal-content-actions .recipe-edit-trigger{display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:6px 0 6px 8px;font:400 12px/1.5 var(--font-ui);border:0;background:transparent;color:var(--action);border-radius:0}
+.journal-recipe-detail .recipe-detail .recipe-reading-grid .card{padding:0;margin:0}
+.journal-recipe-detail .recipe-detail>.unified-sticky-notes{margin:6px 0 10px;padding-top:10px;border-top:1px solid var(--line)}
 /* Latin/CJK glyph fallback is deliberate; numeric siblings retain UI typography. */
 .journal-recipe-detail .detail-ingredients strong{font-family:JournalHand,JournalChinese,var(--font-ui)}
 .journal-recipe-detail .journal-method{font-family:JournalHand,JournalChinese,var(--font-ui)}
