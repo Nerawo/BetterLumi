@@ -31,15 +31,15 @@ export function TodayProgress({model}:{model:Overview}){
 
  return <section className={"today-progress unified-overview compact-daily-overview editorial-nutrition "+(hasGoalHistory?"has-goal-history":"")} aria-labelledby="today-progress-heading">
   <h2 id="today-progress-heading">{t("dailyOverview")} · <time>{formatLocalDate(date,i18n.language)}</time></h2>
-  <div className="progress-columns">
-   <div className="progress-area" data-testid="food-progress">
+  <div className="progress-columns" data-testid="food-progress">
+   <div className="progress-area">
     <h3 className="daily-intake-label">{t("overviewDailyIntake")}</h3>
     <div className="overview-readings"><div className="calorie-reading" style={{"--calorie-fit":p.daily.nutrition.calories===null?1:Math.min(1,5/String(round(p.daily.nutrition.calories)).length)} as React.CSSProperties}><div className="progress-number"><RecordedValue value={p.daily.nutrition.calories}/></div><span className="daily-intake-unit">kcal</span></div></div>
     <div className="overview-goals food-goal-region">
      {model.calorieGoalEnabled?<NutritionGoalProgress metric="calories" config={configs.calories} daily={p.daily.nutrients.calories} weekly={week.nutrients.calories} targetOnly/>:<div className="calorie-target-unset"><p>{t("overviewNoCalorieTarget")}</p><OverviewBar percent={null} label={t("dailyCalorieGoal")} /></div>}
-     <MacronutrientGoals configs={configs} daily={p.daily} week={week} showActuals/>
     </div>
    </div>
+   <div className="nutrition-macro-column"><MacronutrientGoals configs={configs} daily={p.daily} week={week} showActuals layout="rows"/></div>
   </div>
  </section>;
 }
