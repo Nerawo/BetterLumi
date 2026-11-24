@@ -69,7 +69,7 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
  const guidedTarget=professionalCalorieTarget(draft);
  if(professional&&guidedTarget===null)throw Error('Invalid professional target');
  const nutrition=true;
- const exercise=!!(draft.exerciseEnabled&&result.exerciseApplicable);
+ const exercise=false;
  const macros=!professional&&result.bodyValid&&!input.excluded?calculateMacroPlan(input.currentWeight===null?null:weightInKg(input.currentWeight,input.weightUnit),result.targetKcal,draft.nutritionPlan??'balanced'):null;
  // An automatic plan is all-or-nothing, including all three macro targets.
  // The legacy 'eligible' action must never silently degrade to exercise only.
@@ -99,7 +99,7 @@ export async function applyCalculatorPlan(draft:CalculatorDraft,input:PlanAssess
     await saveGoalVersion({nutritionOnly:true,startDate:date,endDate:null,nutritionPeriod:{startDate:date,endDate:null},nutritionEnabled:true,nutritionFrequency:frequency,nutritionTargets:targets,nutritionTolerances:tolerances,nutritionToleranceRevision:events.at(-1)?.id,nutritionGoals,calorieMin:range.min,calorieMax:range.max,exerciseEnabled:false,exerciseMinutes:null,exerciseKcal:null});
    }else if(professional)await saveCalculatorCalories(input.heightCm,target!,date,'professional');
   }
-  if(exercise&&!sameExercise)await applyInteractiveGoals(input,draft,'exercise',date);
+  // Exercise inputs are estimate assumptions; applying never writes exercise goals.
   await saveCalculatorDraft(draft);
   outcome.duplicate=(!nutrition||sameNutrition)&&(!exercise||sameExercise);
   return outcome;

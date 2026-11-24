@@ -1,7 +1,7 @@
 import {useLayoutEffect,useRef,type KeyboardEvent,type ReactNode} from "react";
 import {useTranslation} from "react-i18next";
 
-export const todayTabs=["food","activity","supplements","weight","more","calculator"] as const;
+export const todayTabs=["food","supplements","weight","more","calculator"] as const;
 export type TodayTab=typeof todayTabs[number];
 export function TodayTabs({active,onChange,children,supplementStatus}:{active:TodayTab;onChange:(tab:TodayTab)=>void;children:Record<TodayTab,ReactNode>;supplementStatus?:ReactNode}){
  const {t,i18n}=useTranslation(),buttons=useRef<Partial<Record<TodayTab,HTMLButtonElement|null>>>({});

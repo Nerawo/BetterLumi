@@ -14,7 +14,6 @@ import {NumberUnit} from "./NumberUnit";
 import {DeleteConfirmationHost} from "./DeleteConfirmation";
 import {confirmDelete} from "./DeleteConfirmation";
 import {dailyAggregation} from "./aggregation";
-import {PlannedMovement} from "./PlannedMovement";
 import { formatLocalDate } from "./dates";
 import { TodayHeader } from "./TodayHeader";
 import "./review-locale";
@@ -34,7 +33,6 @@ import { GoalCard } from "./GoalCards";
 import { RecipeDetail } from "./RecipeDetail";
 import {measurementDate,formatMeasurementTime} from './weight-time';
 import { WeightEntry } from "./WeightEntry";
-import { ActivityCard, ActivityEditor, type ActivityDraft } from "./Activity";
 import { StorageBoundary } from "./StorageBoundary";
 import React, { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
@@ -69,7 +67,6 @@ import { Recipes } from "./Recipes";
 import { More } from "./More";
 import { AddFood, MealList, type MealDraft } from "./Meals";
 import { WeightJournal } from "./Weight";
-import { ExercisePlans } from "./ExercisePlans";
 import { PlanList } from "./Journal";
 import { Journal } from "./JournalView";
 import { SupplementCard, SupplementHeadingStatus } from "./Rituals";
@@ -105,11 +102,8 @@ function App() {
       navigate("/today?date=" + selected, true);
     else if(page==='today'&&!validLocalDate(new URL(currentRoute(),'http://local').searchParams.get('date')))navigate('/today?date='+selected,true,true);
   }, [page, selected, route.page]);
-  const [todayTab, setTodayTab] = useState<TodayTab>(()=>(readSession(pageSessionKey,validPageSession)?.tab as TodayTab)??'food');
+  const [todayTab, setTodayTab] = useState<TodayTab>(()=>((tab)=>tab==='activity'?'food':tab as TodayTab)(readSession(pageSessionKey,validPageSession)?.tab??'food'));
   const [draft, setDraft] = useState<MealDraft | null>(null);
-  const [activityDraft, setActivityDraft] = useState<ActivityDraft | null>(
-    null,
-  );
   const [aiArrival,setAIArrival]=useState<AIImportReceipt|null>(null),aiScrolled=useRef<string|null>(null);
   useEffect(()=>{if(!aiArrival)return;const timer=setTimeout(()=>setAIArrival(null),6500);return()=>clearTimeout(timer)},[aiArrival]);
   const [toast,setToastState]=useState<{message:string;duration:number}|null>(null);
@@ -141,9 +135,6 @@ function App() {
   );
   const weightState=useWeightData();
   const weightItems=weightState?.records;
-  const activities = useLiveQuery(() =>
-    db.activities.filter((a) => !a.deletedAt).toArray(),
-  );
   const supplements = useLiveQuery(() =>
     db.supplements.filter((s) => !s.deletedAt).toArray(),
   );
@@ -191,9 +182,9 @@ function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const dailyTotals=dailyAggregation(selected,logs??[],activities??[]);
+  const dailyTotals=dailyAggregation(selected,logs??[],[]);
   const todayLogs=dailyTotals.food;
-  const overview=useMemo(()=>todayOverview(goals,selected,logs??[],activities??[]),[goals,selected,logs,activities]);
+  const overview=useMemo(()=>todayOverview(goals,selected,logs??[],[]),[goals,selected,logs]);
   const displayedWeights=weightState?weightsOnDate(weightState,selected):[];
   const loaded = [
     pantry,
@@ -201,7 +192,6 @@ function App() {
     logs,
     planItems,
     weightItems,
-    activities,
     supplements,
     checks,
     settings,
@@ -266,7 +256,7 @@ function App() {
                       notice={setToast}
                     />
                   )}
-                  <Journal logs={logs!} activity={activities!} planItems={planItems!} selected={selected} setSelected={setSelected} goals={goals}/>
+                  <Journal logs={logs!} activity={[]} planItems={planItems!.filter(p=>p.kind!=="activity")} selected={selected} setSelected={setSelected} goals={goals}/>
                   <TodayTabs active={todayTab} onChange={setTodayTab} supplementStatus={<SupplementHeadingStatus items={supplements!} checks={checks!} date={selected}/>}>
                    {{
                     food: <div className="today-layout"><div>
@@ -292,7 +282,6 @@ function App() {
                           edit={(log) => setDraft({ date: log.date, log })}
                         />
                       </section></div></div>,
-                    activity: <><div className="today-layout"><div><ActivityCard items={activities!.filter(activity => activity.date === selected)} date={selected} notice={setToast} open={setActivityDraft} prominent planned={<PlannedMovement date={selected} open={setActivityDraft} notice={setToast}/>} title={t(selected === today ? "howIMovedToday" : "howIMovedOnDate")}/></div></div><ExercisePlans notice={setToast}/></>,
                     supplements: <div className="today-support"><SupplementCard items={supplements!} checks={checks!} date={selected} notice={setToast}/></div>,
                     weight: <div className="today-support">
                       <section className="card weight-mini">
@@ -326,7 +315,7 @@ function App() {
                       </section></div>,
                     more: <div className="today-utilities">
                     <GoalCard goals={goals} date={selected} notice={setToast} />
-                    <details className="other-daily-plans"><summary><CalendarDays size={17}/><span>{t("otherDailyPlans")}</span><small className="todo-count">{planItems!.filter(plan=>plan.date===selected).length}</small><ChevronDown size={15}/></summary><PlanList items={planItems!.filter(plan => plan.date === selected)} notice={setToast} defaultDate={selected}/></details>
+                    <details className="other-daily-plans"><summary><CalendarDays size={17}/><span>{t("otherDailyPlans")}</span><small className="todo-count">{planItems!.filter(plan=>plan.date===selected&&plan.kind!=="activity").length}</small><ChevronDown size={15}/></summary><PlanList items={planItems!.filter(plan => plan.date === selected&&plan.kind!=="activity")} notice={setToast} defaultDate={selected}/></details>
                   </div>,
                     calculator: <HealthGoalCalculator notice={setToast} active={page==='today'&&todayTab==='calculator'}/>
                    }}
@@ -405,14 +394,6 @@ function App() {
           notice={setToast}
         />
       )}
-      {activityDraft && (
-        <ActivityEditor
-          draft={activityDraft}
-          close={() => setActivityDraft(null)}
-          notice={setToast}
-        />
-      )}
-
       {toast && (
         <div role="status" className="toast">
           {toast.message}

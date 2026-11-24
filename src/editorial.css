@@ -2369,3 +2369,6 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .category-manager-modal .category-inline-error { margin: 2px 0 0; font: 400 12px/1.5 var(--font-ui); color: var(--ink); }
 .active-category-tools { display: flex; justify-content: flex-end; margin: -4px 0 4px; }
 .active-category-tools > button { min-height: 40px; padding: 4px 0; font-size: 12px; color: var(--muted); }
+/* Nutrition-only overview; retired movement panel leaves no empty column. */
+.today-progress .progress-columns { grid-template-columns: minmax(0, 1fr); }
+.today-progress .progress-area { border: 0; }

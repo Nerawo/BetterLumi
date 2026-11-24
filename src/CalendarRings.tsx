@@ -1,7 +1,7 @@
 import type { Ring } from "./calendar-rings";
 export function CalendarRings({
   food,
-  exercise,
+  exercise: _exercise,
 }: {
   food: Ring;
   exercise: Ring;
@@ -34,7 +34,7 @@ export function CalendarRings({
   return (
     <svg className="calendar-rings" viewBox="0 0 52 52" aria-hidden="true">
       {ring(food, 23, "food")}
-      {ring(exercise, 18.5, "exercise")}
+
     </svg>
   );
 }

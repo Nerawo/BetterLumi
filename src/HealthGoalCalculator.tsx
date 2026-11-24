@@ -6,6 +6,7 @@ import './goal-presentation-locale';
 import {calculatorSettingsKey,parseCalculatorDraft,saveCalculatorDraft,initialCalculatorDraft,calculatorWeightKg,type CalculatorDraft} from './calculator-settings';
 import './calculator-locale';
 import './planner-locale';
+import './exercise-retirement-locale';
 import './health-calculator.css';
 import {useEffect,useId,useLayoutEffect,useRef,useState} from 'react';
 import {ChevronDown,Info} from 'lucide-react';
@@ -132,6 +133,7 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
     </div>
     <div className="calculator-weight-note"><p className="calculator-footnote">{t('calcTemporaryWeightNote')}</p>{temporaryKg!==undefined&&recordedKg!==null&&<button type="button" className="planner-text-action" onClick={()=>{setTemporaryKg(undefined);setWeightRevision(v=>v+1)}}>{t('calcUseLatestWeight')}</button>}</div>
     <div className="calculator-body-bmr" aria-live="polite"><div className="calculator-result-heading">{t('bodyBmr')}<CalculatorInfo label={t('bodyBmr')} text={t('bodyBmrInfo')}/></div><p className={bmrValue===null?'calculator-footnote calculator-bmr-missing':'calculator-secondary-value'} data-testid="body-bmr">{bmrValue===null?t('bodyBmrMissing'):'≈ '+format(bmrValue)}{bmrValue!==null&&<small>{t('calcPerDay')}</small>}</p></div>
+    {plan.energy&&<dl className="calculator-macro-values energy-estimate-breakdown">{[['estimatedActivity',plan.energy.maintenance.min-plan.energy.bmr.min],['estimatedAdditionalExercise',(plan.exerciseKcal??0)/7],['estimatedTdee',plan.energy.maintenance.min+(plan.exerciseKcal??0)/7]].map(([key,value])=><div key={key}><dt>{t(String(key))}</dt><dd>≈ {format(Number(value))}<small>{t('calcPerDay')}</small></dd></div>)}</dl>}
     <details className="calculator-setting-row" open={activityOpen} onToggle={e=>setActivityOpen(e.currentTarget.open)}><summary ref={activityTrigger}><span>{t('calcActivity')}</span><span className="calculator-setting-value">{t({sedentary:'calcSedentary',light:'calcLight',moderate:'calcModerate',very:'calcVery'}[draft.activity])}<ChevronDown size={15}/></span></summary><fieldset className="calculator-activity"><legend className="sr-only">{t('calcActivity')}</legend>{(['sedentary','light','moderate','very'] as const).map((key,index)=><label key={key}><input type="radio" name="activity" value={key} checked={draft.activity===key} onClick={()=>{setActivityOpen(false);activityTrigger.current?.focus({preventScroll:true})}} onChange={()=>{edit({activity:key});setActivityOpen(false);activityTrigger.current?.focus({preventScroll:true})}}/><span>{t(['calcSedentary','calcLight','calcModerate','calcVery'][index])}</span></label>)}</fieldset></details>
     <details ref={specialPanel} className="calculator-setting-row calculator-special-settings"><summary><span>{t('compactSpecial')}</span><span className="calculator-setting-value">{t(special.active?'compactConfigured':'compactNotSet')}<ChevronDown size={15}/></span></summary><div className="calculator-guidance">
      <label className="calculator-exclusion"><input type="checkbox" name="specialOrProfessionalGuidance" checked={special.active} onChange={e=>edit({specialOrProfessionalGuidance:e.target.checked,excluded:e.target.checked})}/><span>{t('unifiedSpecialLabel')}</span></label>
@@ -182,12 +184,12 @@ function CalculatorContent({profile,initialDraft,notice,active}:{profile:BmiProf
     <dl className="planner-review-summary">
      <div><dt>{t('plannerReviewCalories')}</dt><dd data-testid="risk-theoretical">{appliedTarget===null?t('plannerNotRecorded'):format(appliedTarget)} {t('calcPerDay')}</dd></div>
      {!useProfessional&&(['protein','carbs','fat'] as const).map(key=><div key={key}><dt>{t(key)}</dt><dd data-testid={'risk-'+key}>{macros===null?t('plannerNotRecorded'):format(macros[key])+' g'}</dd></div>)}
-     <div><dt>{t('plannerMinutes')}</dt><dd>{settings.exerciseEnabled?(plan.exerciseMinutes===null?t('plannerNotRecorded'):format(plan.exerciseMinutes!)+' '+t('calcMinutesWeek')):t('plannerNotEnabled')}</dd></div>
+     <div><dt>{t('exerciseAssumptionMinutes')}</dt><dd>{settings.exerciseEnabled?(plan.exerciseMinutes===null?t('plannerNotRecorded'):format(plan.exerciseMinutes!)+' '+t('calcMinutesWeek')):t('plannerNotEnabled')}</dd></div>
      <div><dt>{t('plannerBurn')}</dt><dd>{plan.exerciseKcal===null?t(settings.exerciseEnabled?'plannerNotRecorded':'plannerNotEnabled'):format(plan.exerciseKcal)+' '+t('plannerWeeklyBurn')}</dd></div>
     </dl>
     {!useProfessional&&(unavailable||caution)&&<p className="calculator-footnote">{unavailable||caution}</p>}
     {!useProfessional&&macros?.cautions.map(item=><p className="calculator-footnote" key={item.nutrient}>{t(item.percent<item.min?'macroProportionLow':'macroProportionHigh',{nutrient:t(item.nutrient==='carbs'?'macroCarbs':item.nutrient)})} · {t('macroProportion',{percent:format(item.percent,1),min:item.min,max:item.max})}</p>)}
-    {!error&&<p className="calculator-footnote">{t(useProfessional?'guidedApplyNote':completePlan?(settings.exerciseEnabled?'plannerUnifiedNote':'plannerNutritionOnly'):'plannerCompleteRequired')}</p>}
+    {!error&&<p className="calculator-footnote">{t(useProfessional?'guidedApplyNote':completePlan?'nutritionApplyOnly':'plannerCompleteRequired')}</p>}
     {error&&<p role="alert" className="calculator-error">{error}</p>}
    </div>
    <div className="form-actions calculator-risk-actions">
