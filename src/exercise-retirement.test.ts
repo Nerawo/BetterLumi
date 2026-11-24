@@ -15,7 +15,7 @@ it('legacy exercise cannot change nutrition progress or calculator estimates and
  expect(planInteractively(input,draft)).toEqual(before);expect(todayOverview([],'2039-01-01',[],[activity])).toEqual(empty);
  const changed=planInteractively(input,{...draft,exerciseMinutes:300});expect(changed.targetKcal).toBeGreaterThan(before.targetKcal!);
  await db.settings.put({key:'heightCm',value:'175'});await applyCalculatorPlan(draft,input,'plan','2039-01-01');expect((await goalTable.toArray()).every(g=>g.nutritionOnly)).toBe(true);expect(await db.activities.toArray()).toEqual([activity]);
- const backup=await exportAll();expect(backup.version).toBe(14);expect(db.verno).toBe(7);await restoreAll(backup);expect(await db.activities.get(activity.id)).toEqual(activity);
+ const backup=await exportAll();expect(backup.version).toBe(15);expect(db.verno).toBe(7);await restoreAll(backup);expect(await db.activities.get(activity.id)).toEqual(activity);
 });
 
 it('legacy plans, occurrences, linked actual records and settings round-trip without loss',async()=>{

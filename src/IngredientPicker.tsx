@@ -12,7 +12,7 @@ import type {BuiltInFood} from './data/builtInFoods';
 import {ingredientSecondaryNames} from './pantry-names';
 import {nutritionReference} from './db';
 import type {PantryItem} from './domain';
-export function IngredientPicker({items,onSelect,onSelectBuiltIn,close}:{items:PantryItem[];onSelect:(item:PantryItem)=>void;onSelectBuiltIn?:(item:BuiltInFood)=>void;close:()=>void}){
+export function IngredientPicker({items,onSelect,onSelectBuiltIn,close,onChooseStoredFood}:{items:PantryItem[];onSelect:(item:PantryItem)=>void;onSelectBuiltIn?:(item:BuiltInFood)=>void;close:()=>void;onChooseStoredFood?:()=>void}){
  const [creating,setCreating]=useState(false),[message,setMessage]=useState('');
  const resultScroll=useRef(0);
  const preferences=useIngredientPreferences();
@@ -26,6 +26,7 @@ export function IngredientPicker({items,onSelect,onSelectBuiltIn,close}:{items:P
   <div className="ingredient-picker-search" onKeyDown={event=>{if(event.key==='Enter')event.preventDefault()}}><label className="search"><Search size={17}/><span className="sr-only">{t('ingredientPickerSearch')}</span><input type="search" value={search} placeholder={t('ingredientPickerSearch')} onChange={event=>setSearch(event.target.value)}/></label></div>
   {message&&<p role="alert">{message}</p>}
   <button type="button" className="text-link ingredient-create-trigger" style={{minHeight:44,marginInline:16,textAlign:"start"}} onClick={()=>{setMessage('');setCreating(true)}}>+ {t("inlineNewIngredient")}</button>
+  {onChooseStoredFood&&<button type="button" className="text-link ingredient-stored-trigger" style={{minHeight:44,marginInline:16,textAlign:'start'}} onClick={onChooseStoredFood}>{t('storageAddBatch')}</button>}
   <IngredientTagNavigation items={tags} active={activeTag} onChange={setTag}/>
   <div className="ingredient-picker-results" ref={node=>{if(node)node.scrollTop=resultScroll.current}} onScroll={event=>{resultScroll.current=event.currentTarget.scrollTop}} role="list" aria-label={t('ingredientPickerResults')}>
    {results.map(choice=>{if(choice.kind==='built-in'){const item=choice.item;return <div className="reference-picker-row" role="listitem" key={item.id} data-reference-id={item.id}><button type="button" className="ingredient-picker-result" onClick={()=>onSelectBuiltIn?.(item)}><strong>{referenceName(item,i18n.language)}</strong><small className="reference-nutrition">{referenceNutritionSummary(item)}</small></button><ReferenceSourceInfo source={item}/></div>}const item=choice.item;return <button type="button" className="ingredient-picker-result" key={item.id} data-ingredient-id={item.id} onClick={()=>onSelect(item)}><span className="grow"><strong>{item.name}</strong>{ingredientSecondaryNames(item).length>0&&<small>{ingredientSecondaryNames(item).join(' · ')}</small>}</span><small>{item.basis==='serving'?t('servingUnit'):`${nutritionReference(item).amount} ${nutritionReference(item).unit}`}</small></button>})}

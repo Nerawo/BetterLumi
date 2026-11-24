@@ -1,7 +1,7 @@
 import {validZeroReference} from './line-nutrition';
 import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
-export const BACKUP_VERSION = 14;
-import {validateJournalBackup,type IngredientGroup} from './cooking-journal';
+export const BACKUP_VERSION = 15;
+import {validateJournalBackup,COOKING_PREFIX,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {parseToleranceEvents} from './goal-tolerance-model';
@@ -176,8 +176,9 @@ export async function exportAll() {
     for (const table of db.tables) tables[table.name] = await table.toArray();
   });
   for(const name of ['recipeCards','foodLogs'])for(const row of tables[name] as {lines:RecipeLine[]}[])if(row.lines.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)&&!validLines(row.lines))throw Error('Invalid zero ingredient snapshot');
-  if((tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
   validateJournalBackup(tables);
+  const temporarySources=(tables.settings as {key:string;value:string}[]).some(row=>row.key.startsWith(COOKING_PREFIX)&&JSON.parse(row.value).ingredientChanges?.addedLines?.some((a:{line:RecipeLine})=>a.line.source==='batch'));
+  if(temporarySources||(tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
   return {
     app: "BetterLumi",
     version: BACKUP_VERSION,
@@ -189,7 +190,7 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )

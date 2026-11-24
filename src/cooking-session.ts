@@ -15,7 +15,8 @@ export async function openCookingSession(recipe:Recipe,restart=false){
 /** Template and preparation baseline change together, without any inventory tables. */
 export async function updateRecipeFromCooking(recipe:Recipe,session:CookingSession){
  const nextRecipe={...recipe,lines:normalizedCookingLines(recipe,session).map((l,index)=>({...l,lineId:l.lineId??session.entries[index].id})),revision:recipe.revision+1,updatedAt:new Date().toISOString()};
- const nextSession=reconcileCookingSession(nextRecipe,session);nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
+ if(!nextRecipe.lines.length)throw Error('A recipe requires ingredients');
+ const nextSession=reconcileCookingSession(nextRecipe,{...session,...(session.version===3?{ingredientChanges:{addedLines:[],removedEntries:[]}}:{})});nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
  return commitCookingRecipeUpdate(recipe,session,nextRecipe,nextSession);
 }
 /** Method has no ingredient identity effects, including for repeated legacy lines. */

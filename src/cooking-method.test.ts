@@ -19,7 +19,7 @@ it.each(['Original method.\n保持原样。',''])('updates only Method and revis
  expect(next.recipe).toEqual({...r,instructions:text,revision:r.revision+1,updatedAt:expect.any(String)});
  expect(next.session).toEqual({...s,recipeRevision:next.recipe.revision});expect(await recipes.get(r.id)).toEqual(next.recipe);
  expect(await openCookingSession(next.recipe)).toEqual(next.session);
- const after=await exportAll();expect(after.version).toBe(14);for(const key of Object.keys(before.tables).filter(k=>!['recipeCards','settings'].includes(k)))expect(after.tables[key]).toEqual(before.tables[key]);
+ const after=await exportAll();expect(after.version).toBe(15);for(const key of Object.keys(before.tables).filter(k=>!['recipeCards','settings'].includes(k)))expect(after.tables[key]).toEqual(before.tables[key]);
  await restoreAll(JSON.parse(JSON.stringify(after)));expect(await recipes.get(r.id)).toEqual(next.recipe);expect(await openCookingSession(next.recipe)).toEqual(next.session);
 });
 it('keeps ambiguous repeated legacy identities, checks and exact overrides without assigning permanent IDs',async()=>{
