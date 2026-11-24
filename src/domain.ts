@@ -1,5 +1,6 @@
 import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
-export const BACKUP_VERSION = 11;
+export const BACKUP_VERSION = 12;
+import {validateJournalBackup,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
 import {parseToleranceEvents} from './goal-tolerance-model';
@@ -38,6 +39,7 @@ export interface RecipeLine {
   /** Missing source means a legacy Pantry line. Batch sources are explicit snapshots. */
   source?: 'pantry' | 'batch';
   lineId?: string;
+  groupId?: string;
   sourceBatchId?: string;
   quantityBasis?: 'g' | 'original-fraction';
   ingredientId: string;
@@ -47,6 +49,7 @@ export interface RecipeLine {
   nutrition: Nutrition;
 }
 export interface Recipe extends RecordBase {
+  ingredientGroups?: IngredientGroup[];
   name: string;
   servings: number;
   lines: RecipeLine[];
@@ -171,6 +174,7 @@ export async function exportAll() {
     for (const table of db.tables) tables[table.name] = await table.toArray();
   });
   if((tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined))validateStorageBackup(tables);
+  validateJournalBackup(tables);
   return {
     app: "BetterLumi",
     version: BACKUP_VERSION,
@@ -182,7 +186,7 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )
@@ -457,6 +461,7 @@ export async function restoreAll(data: unknown) {
     }
   }
   validateStorageBackup(x.tables);
+  validateJournalBackup(x.tables,x.version);
   reconcileIngredientTags(x.tables);
   await db.transaction("rw", db.tables, async () => {
     for (const table of db.tables) {

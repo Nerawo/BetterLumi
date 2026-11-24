@@ -1,0 +1,140 @@
+@import './journal-yozai-font.css';
+@font-face{font-family:JournalHand;src:url('./assets/journal/caveat.woff2') format('woff2');font-weight:400;font-display:swap}
+.journal-heading{position:relative;isolation:isolate;display:inline;box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:0 3px;font:400 22px/1.25 JournalHand,var(--font-editorial);color:var(--ink);letter-spacing:0}
+:lang(zh) .journal-heading{font-family:JournalChinese,var(--font-editorial);font-size:17px;line-height:1.5}
+.journal-heading:before{content:'';position:absolute;z-index:-1;inset:53% -2px 3%;background:var(--soft);clip-path:polygon(1% 10%,99% 0,100% 82%,0 100%);transform:rotate(-1deg)}
+.cooking-mode{display:flex;flex-direction:column;overflow:hidden}
+.cooking-mode>.modal-head{margin:0;align-items:flex-start;padding:14px 18px 12px}
+.cooking-mode .modal-title-group{min-width:0}
+.cooking-mode .modal-title-group h2{font:400 26px/1.15 var(--font-editorial);letter-spacing:-.025em;margin:4px 0 0;overflow-wrap:anywhere}
+.cooking-mode .journal-mode-label{font:400 18px/1.2 JournalHand,var(--font-editorial);color:var(--muted)}
+:lang(zh) .cooking-mode .journal-mode-label{font-family:JournalChinese,var(--font-editorial);font-size:13px}
+.cooking-mode>.journal-scroll{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 18px 16px}
+.cooking-mode>.journal-footer{flex:none;margin:0;padding:10px 18px max(10px,env(safe-area-inset-bottom));gap:10px}
+.cooking-mode .journal-footer button{font-size:12px;min-height:44px}
+.cooking-mode .journal-session-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;column-gap:8px;row-gap:2px;margin:0 0 18px;font:400 12px/1.4 var(--font-ui);color:var(--ink)}
+.cooking-mode .journal-session-controls>label{display:flex;flex-direction:row;align-items:center;gap:8px;margin:0;font:400 12px/1.4 var(--font-ui);color:var(--ink)}
+.cooking-mode .journal-session-controls>small{flex-basis:100%;font-size:11px;color:var(--muted)}
+.cooking-mode .journal-session-controls>[role=status]{font-size:11px;white-space:nowrap}
+.journal-serving-stepper{display:inline-flex;align-items:center;border-bottom:1px solid var(--line)}
+.cooking-mode .journal-serving-stepper button{background:none;color:var(--ink);border:0;padding:0;min-width:32px;min-height:40px;border-radius:0;font-size:17px}
+.cooking-mode .journal-serving-stepper input{width:43px;height:38px;min-height:38px;border:0;background:none;padding:0 2px;text-align:center;font:400 16px/1.4 var(--font-ui);appearance:textfield;-moz-appearance:textfield}
+.journal-serving-stepper input::-webkit-inner-spin-button{appearance:none}
+.cooking-journal-columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;line-height:1.6}
+.cooking-journal-columns>section{min-width:0;overflow-wrap:anywhere}
+.cooking-journal-columns>section+section{border-left:1px solid var(--line);padding-left:12px}
+.cooking-journal-columns h3{margin:0 0 12px;font-weight:400}
+.cooking-mode .journal-method{font:400 13px/1.75 var(--font-ui);color:var(--ink);white-space:pre-wrap}
+.journal-ingredient-group{margin:0 0 14px}
+.journal-ingredient-group h4{margin:12px 0 4px;font-weight:400}
+.journal-ingredient-group h4 .journal-heading{font-size:19px}
+:lang(zh) .journal-ingredient-group h4 .journal-heading{font-size:15px}
+.cooking-mode .journal-check-row{display:flex;flex-direction:row;align-items:flex-start;gap:7px;min-height:44px;margin:0;padding:8px 0;border:0;cursor:pointer;font:400 13px/1.45 var(--font-ui);color:var(--ink)}
+.cooking-mode .journal-check-row input{flex:none;width:15px;height:15px;min-height:0;padding:0;margin:2px 0;border-radius:1px;accent-color:var(--theme-accent)}
+.journal-check-row>span{min-width:0;overflow-wrap:anywhere}
+.journal-check-row small{display:inline;font-size:11px;color:var(--muted);margin-left:5px;white-space:normal}
+.journal-check-row.is-checked>span>span{text-decoration:line-through;color:var(--muted)}
+.journal-check-row.is-checked small{color:var(--ink)}
+.journal-group-editor{margin:0;min-width:0}
+.journal-editor-group{margin:0 0 18px;min-width:0}
+.journal-editor-group>h4{margin:8px 0;font-weight:400}
+.journal-group-edit{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px;min-width:0}
+.journal-recipe-editor .journal-editable-heading{min-width:0;flex:1;position:relative;isolation:isolate;display:block}
+.journal-editable-heading:before{content:'';position:absolute;z-index:-1;inset:52% 0 9%;background:var(--soft);clip-path:polygon(1% 8%,99% 0,100% 82%,0 100%)}
+.journal-recipe-editor .journal-editable-heading input{width:100%;height:40px;min-height:40px;padding:4px 2px;border:0;border-radius:0;background:transparent;font:400 16px/1.4 var(--font-ui);color:var(--ink)}
+.journal-context-menu{position:relative;flex:none;font:400 12px/1.4 var(--font-ui);color:var(--ink)}
+.journal-context-menu>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:36px;min-height:40px;font:400 20px/1 var(--font-ui);border-radius:0}
+.journal-context-menu>summary::-webkit-details-marker{display:none}
+.journal-context-menu>div{position:absolute;right:0;top:100%;z-index:2;width:190px;max-width:calc(100vw - 64px);background:var(--surface);border:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:2px}
+.journal-context-menu button{min-height:40px;padding:6px 8px;text-align:left;border:0;background:none;color:var(--ink);font-size:12px}
+.journal-recipe-editor .journal-context-menu label{font-size:12px;color:var(--ink)}
+.journal-recipe-editor .journal-context-menu select{font-size:14px}
+.journal-recipe-editor .journal-grouped-lines .recipe-line{display:block;position:relative;padding:8px 0;margin:0;border:0;background:none}
+.journal-recipe-editor .journal-grouped-lines .recipe-line-heading{padding-right:34px;min-height:40px}
+.journal-recipe-editor .journal-grouped-lines .recipe-line-heading strong{font-weight:400;font-size:13px}
+.journal-recipe-editor .journal-line-menu{position:absolute;top:8px;right:0}
+.journal-recipe-editor .journal-grouped-lines .recipe-line-amounts{margin-top:2px}
+.journal-recipe-editor .journal-grouped-lines .line-add{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 0;border:0}
+.journal-recipe-editor .journal-grouped-lines .line-add button{padding:4px 0;min-height:40px;border:0;border-radius:0;background:none;color:var(--action);font-size:12px}
+.journal-recipe-editor .journal-add-group{min-height:40px;padding:6px 12px;font-size:12px;border-radius:3px}
+.journal-recipe-editor>.modal-head h2,.journal-recipe-detail>.modal-head h2{font-size:27px;line-height:1.15;font-weight:400;overflow-wrap:anywhere}
+.journal-recipe-detail .recipe-hero{background:none;border-radius:0;overflow:visible}
+.journal-recipe-detail .hero-nutrition{position:static;background:none;color:var(--ink);padding:10px 0 14px}
+.journal-recipe-detail .hero-nutrition .nutrition-strip strong{font-size:23px}
+.journal-recipe-detail.journal-no-photo .recipe-detail-image-editor{display:inline-block}
+.journal-recipe-detail.journal-no-photo .detail-image-trigger{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-height:44px;border:1px dashed var(--line);border-radius:3px}
+.journal-recipe-detail.journal-no-photo .detail-photo-empty{display:none}
+.journal-recipe-detail.journal-no-photo .detail-image-affordance{position:static;transform:none;background:none;color:var(--muted);padding:0}
+.journal-recipe-detail .recipe-yield-detail{margin:4px 0 16px}
+.journal-recipe-detail .recipe-yield-detail>label{font-size:12px;gap:8px}
+.journal-recipe-detail .recipe-reading-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;margin:0}
+.journal-recipe-detail .recipe-reading-grid .card{background:none;box-shadow:none;border:0;padding:0;margin:0 0 16px;min-width:0}
+.journal-recipe-detail .recipe-reading-grid .method-card{order:-1;border-right:1px solid var(--line);padding-right:12px}
+.journal-recipe-detail .recipe-reading-grid h2{margin:0 0 10px;font-size:20px}
+.journal-recipe-detail .recipe-method{font-size:13px;line-height:1.75;margin:0;overflow-wrap:anywhere}
+.journal-recipe-detail .detail-ingredients{margin:0;padding:0;list-style:none}
+.journal-recipe-detail .detail-ingredients li{padding:6px 0;border:0;min-width:0;display:flex;flex-wrap:wrap;gap:4px;font:400 13px/1.5 var(--font-ui)}
+.journal-recipe-detail .detail-ingredients li strong{font-weight:400;overflow-wrap:anywhere}
+.journal-recipe-detail .detail-ingredients li>span{font-size:11px;color:var(--muted)}
+.journal-recipe-detail .detail-ingredients .journal-overview-group{display:block;margin:8px 0 0;padding:0}
+.journal-recipe-detail .journal-overview-group h3{margin:0;font-weight:400}
+.journal-recipe-detail .journal-overview-group .journal-heading{font-size:19px}
+:lang(zh) .journal-recipe-detail .journal-overview-group .journal-heading{font-size:15px}
+.journal-recipe-detail .recipe-cooking-nutrition{padding-top:12px;margin-top:8px}
+.journal-recipe-detail .recipe-cooking-nutrition .nutrition-strip strong{font-size:16px}
+.journal-recipe-detail>.recipe-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px max(10px,env(safe-area-inset-bottom))}
+.journal-recipe-detail>.recipe-detail-actions button{margin:0;min-height:44px;padding:8px;font-size:12px}
+.journal-recipe-detail>.recipe-detail-actions .start-cooking{grid-column:1/-1}
+@media(min-width:768px){.journal-recipe-detail>.recipe-detail-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.journal-recipe-detail>.recipe-detail-actions .start-cooking{grid-column:auto}}
+@media(max-width:359px){.cooking-journal-columns,.journal-recipe-detail .recipe-reading-grid{grid-template-columns:1fr;gap:14px}.cooking-journal-columns>section+section{border-left:0;border-top:1px solid var(--line);padding:14px 0 0}.journal-recipe-detail .recipe-reading-grid .method-card{border-right:0;border-bottom:1px solid var(--line);padding:0 0 14px}.cooking-mode>.journal-scroll{padding:12px 16px}.cooking-mode .journal-session-controls>label{gap:3px;font-size:11px}.cooking-mode .journal-serving-stepper button{min-width:28px}.cooking-mode .journal-session-controls>[role=status]{font-size:10px}}
+.journal-recipe-editor .journal-editable-heading{flex:0 1 auto;max-width:calc(100% - 44px)}
+.journal-context-menu>summary{letter-spacing:0}
+.journal-step-number{font:400 18px/1 JournalHand,var(--font-editorial);color:var(--ink)}
+:lang(zh) .journal-step-number{font-family:JournalChinese,var(--font-editorial);font-size:15px}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.journal-recipe-detail .hero-nutrition .recipe-nutrition-strip strong.recipe-nutrition-value{font-size:19px}
+.journal-recipe-detail .hero-nutrition .recipe-nutrition-strip>div:first-child strong.recipe-nutrition-value{font-size:28px}
+.journal-recipe-detail .nutrition-strip>div>span{opacity:1;color:var(--muted);font-size:11px}
+.journal-recipe-detail .recipe-yield-detail label{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}
+.journal-recipe-detail .recipe-reading-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+@media(min-width:768px){.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:359px){.journal-recipe-detail .recipe-reading-grid{grid-template-columns:1fr}}
+/* Approved reference: stronger hierarchy, neutral notebook headings and circular checks. */
+.cooking-mode .journal-mode-label,:lang(zh) .cooking-mode .journal-mode-label{font:500 11px/1.4 var(--font-ui);letter-spacing:.07em;color:var(--muted)}
+.cooking-mode .modal-title-group h2{font:400 30px/1.15 var(--font-editorial);margin-top:8px;letter-spacing:-.02em;color:var(--ink)}
+.cooking-mode .journal-serving-stepper{border:0}
+.cooking-mode .journal-session-controls{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px;font-size:12px}
+.cooking-mode .journal-session-controls>label{font-size:12px;font-weight:500}
+.cooking-mode .journal-session-controls>[role=status]{font-size:12px}
+.cooking-mode .journal-session-controls>small{font-size:11px;margin-top:2px}
+.cooking-journal-columns{grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:14px}
+.journal-heading,:lang(zh) .journal-heading{font:500 21px/1.4 var(--font-ui);color:var(--ink);padding:0 3px}
+.journal-heading:before{inset:17% -3px 0;background:color-mix(in srgb,var(--theme-accent) 19%,var(--surface));clip-path:polygon(0 7%,97% 0,100% 95%,1% 100%);transform:rotate(-1.2deg)}
+.cooking-mode .journal-method,.journal-recipe-detail .recipe-method{font:400 14px/1.65 var(--font-ui);color:var(--ink)}
+.journal-step-number,:lang(zh) .journal-step-number{font:500 14px/1.65 var(--font-ui);color:var(--theme-accent)}
+.journal-ingredient-group h4 .journal-heading,:lang(zh) .journal-ingredient-group h4 .journal-heading,.journal-recipe-detail .journal-overview-group .journal-heading,:lang(zh) .journal-recipe-detail .journal-overview-group .journal-heading{font:600 14px/1.5 var(--font-ui)}
+.journal-ingredient-group h4 .journal-heading:before,.journal-overview-group .journal-heading:before{inset:0 -3px;transform:none;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--soft)}
+.cooking-mode .journal-check-row{font:500 14px/1.45 var(--font-ui);gap:8px;padding:7px 0;min-height:48px}
+.cooking-mode .journal-check-row input{appearance:none;-webkit-appearance:none;display:grid;place-content:center;width:18px;height:18px;border:1px solid var(--muted);border-radius:50%;margin-top:1px;background:transparent}
+.cooking-mode .journal-check-row input:checked{background:var(--action);border-color:var(--action)}
+.cooking-mode .journal-check-row input:checked:after{content:'';width:5px;height:9px;border:solid var(--surface);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.cooking-mode .journal-check-row input:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+.cooking-mode .journal-check-row small{display:block;font:400 12px/1.5 var(--font-ui);margin:2px 0 0;color:var(--muted)}
+.cooking-mode .journal-check-row.is-checked small{color:var(--muted)}
+.cooking-mode>.journal-footer{border-top:1px solid var(--line);justify-content:space-between}
+.cooking-mode .journal-footer .primary{border-radius:5px;padding:9px 15px;font-weight:500}
+.journal-recipe-editor .journal-editable-heading input{font-weight:600;font-size:14px}
+.journal-recipe-detail .detail-ingredients li strong{font-size:14px;font-weight:500}
+.journal-recipe-detail .detail-ingredients li>span{font-size:12px}
+@media(max-width:359px){.cooking-journal-columns{grid-template-columns:1fr}.cooking-mode .journal-session-controls>label{font-size:11px}.cooking-mode .journal-session-controls>[role=status]{font-size:11px}}
+.cooking-mode.recipe-detail-modal>.journal-footer{justify-content:space-between;border-top:1px solid var(--line)}
+/* Use the existing platform fallbacks locally for a firmer, readable journal face. */
+.cooking-mode,.journal-recipe-detail,.journal-recipe-editor{--font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-synthesis:weight}
+.cooking-mode.recipe-detail-modal>.journal-footer{display:flex;justify-content:space-between}
+.cooking-mode.recipe-detail-modal>.journal-footer>button:first-child{margin:0 auto 0 0}
+.cooking-mode.recipe-detail-modal>.journal-footer>.primary{margin:0}
+
+/* Chinese journal lettering only; controls, inputs, titles and numbers stay unchanged. */
+.journal-recipe-detail .journal-overview-group .journal-heading,.journal-recipe-detail .journal-method,.journal-recipe-detail .detail-ingredients strong,.journal-recipe-editor .journal-heading,.journal-recipe-editor .recipe-line-heading strong{font-family:JournalChinese,var(--font-ui)}
+/* Keep English journal section headings in Caveat on the recipe overview too. */
+.journal-recipe-detail .recipe-reading-grid>section>h2 .journal-heading{font-family:JournalHand,JournalChinese,var(--font-ui)}

@@ -1,3 +1,9 @@
+import {journalQuantity} from './journal-quantity';
+import {JournalMethod} from './JournalMethod';
+import {JournalHeading} from './JournalHeading';
+import {CookingMode} from './CookingMode';
+import {recipeSections} from './cooking-journal';
+import './cooking-journal-locale';
 import {StickyNotes,useStickyNotes} from './StickyNotes';
 import {commitStickyNoteChanges} from './sticky-notes';
 import {householdUnitLabel} from './household-units';
@@ -7,7 +13,7 @@ import {isBuiltInRecipe,bologneseCookingExtras} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
 import {recipeYield,recipeServingLines,recipeServingNutrition} from "./recipe-nutrition";
 import './recipe-yield-locale';
-import { useState } from "react";
+import { Fragment,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import {
@@ -38,6 +44,7 @@ export function RecipeDetail({
   };
   const notes=useStickyNotes(recipe?.id??'');
   const [edit, setEdit] = useState(false);
+  const [cooking,setCooking]=useState(false);
   const [cookingServings,setCookingServings]=useState('1');
   if (!recipe)
     return (
@@ -52,8 +59,9 @@ export function RecipeDetail({
   const amount=Number(cookingServings),validAmount=Number.isFinite(amount)&&amount>0;
   const cookingLines=validAmount?recipeServingLines(recipe,amount):[];
   const builtIn=isBuiltInRecipe(recipe),zh=i18n.language.startsWith('zh');
+  if(cooking)return <CookingMode recipe={recipe} close={()=>setCooking(false)}/>;
   return (
-    <Modal title={recipe.name} close={close} className="recipe-detail-modal">
+    <Modal title={recipe.name} close={close} className={"recipe-detail-modal journal-recipe-detail"+(recipe.photo?"":" journal-no-photo")}>
       <div className="recipe-detail-scroll">{builtIn?<div className="recipe-reference-detail"><span>{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</span><span> · </span><BuiltInRecipeSource/></div>:<RecipeCategoryPicker className="detail-category-row" value={recipe.categoryIds ?? []} onToggle={(categoryId, included) => assignCategoryRecipes(categoryId, {[recipe.id]: included})} />}
       <article className="recipe-detail">
         <div className="recipe-hero">
@@ -71,31 +79,31 @@ export function RecipeDetail({
           )}
 
         </div>
+            <div className="recipe-yield-detail"><label>{t('recipeCookingServings')}<span className="recipe-serving-input"><span className="recipe-serving-stepper"><button type="button" aria-label="−" disabled={!validAmount||amount<=0.5} onClick={()=>setCookingServings(String(Math.max(0.5,amount-0.5)))}>−</button><input type="number" inputMode="decimal" min="0.01" step="any" value={cookingServings} onChange={e=>setCookingServings(e.target.value)}/><button type="button" aria-label="+" onClick={()=>setCookingServings(String((validAmount?amount:0)+0.5))}>+</button></span><span>{t('recipeYieldUnit')}</span></span></label><small className="muted">{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</small></div>
         <div className="recipe-reading-grid">
           <section className="card">
-            <div className="recipe-yield-detail"><label>{t('recipeCookingServings')}<span className="recipe-serving-input"><span className="recipe-serving-stepper"><button type="button" aria-label="−" disabled={!validAmount||amount<=0.5} onClick={()=>setCookingServings(String(Math.max(0.5,amount-0.5)))}>−</button><input type="number" inputMode="decimal" min="0.01" step="any" value={cookingServings} onChange={e=>setCookingServings(e.target.value)}/><button type="button" aria-label="+" onClick={()=>setCookingServings(String((validAmount?amount:0)+0.5))}>+</button></span><span>{t('recipeYieldUnit')}</span></span></label><small className="muted">{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</small></div>
-            <h2>{t("lines")}</h2>
+
+            <h2><JournalHeading>Ingredients</JournalHeading></h2>
             <ul className="detail-ingredients">
-              {cookingLines.map((l, i) => (
+              {recipeSections({...recipe,lines:cookingLines}).map(group=><Fragment key={group.id}>{group.lines.length>0&&(recipe.ingredientGroups?.length??0)>0&&<li className="journal-overview-group"><h3><JournalHeading>{group.name||t('journalUngrouped')}</JournalHeading></h3></li>}{group.lines.map((l, i) => (
                 <li key={i}>
                   <strong>{l.name}</strong>
                   <span>
-                    {Number((l.source==='batch'&&l.unit==='fraction'?l.quantity*100:l.quantity).toFixed(3))}{" "}
+                    {journalQuantity(l)}{" "}
                     {l.source==='batch'&&l.unit==='fraction'?'% '+t('storageReference'):l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
                   </span>
                 </li>
-              ))}
+              ))}</Fragment>)}
               {builtIn&&bologneseCookingExtras.map(extra=><li key={extra.nameEn}><strong>{zh?extra.nameZh:extra.nameEn}</strong><span>{zh?extra.amountZh:extra.amountEn}</span></li>)}
             </ul>
-            {validAmount&&<section className="recipe-cooking-nutrition"><span className="eyebrow">{t('recipeCookingTotal')}</span><RecipeNutritionStrip value={recipeServingNutrition(recipe,amount)}/></section>}
+
           </section>
           <section className="card method-card">
-            <h2>{t("instructions")}</h2>
-            <div className="recipe-method preserved-text">
-              {recipe.instructions || t("notRecorded")}
-            </div>
+            <h2><JournalHeading>Method</JournalHeading></h2>
+            <div className="recipe-method"><JournalMethod text={recipe.instructions||t('notRecorded')}/></div>
           </section>
         </div>
+            {validAmount&&<section className="recipe-cooking-nutrition"><span className="eyebrow">{t('recipeCookingTotal')}</span><RecipeNutritionStrip value={recipeServingNutrition(recipe,amount)}/></section>}
         <StickyNotes notes={notes} recipeId={recipe.id} onChange={async change=>{await commitStickyNoteChanges([change]);notice(t('savedMessage'))}}/>
         {edit && (
           <RecipeEditor
@@ -107,10 +115,11 @@ export function RecipeDetail({
         )}
       </article></div>
         <div className="form-actions recipe-detail-actions detail-toolbar">
-          {!builtIn&&<button className="secondary" onClick={() => setEdit(true)}>
+          <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
+          {!builtIn&&<button className="secondary recipe-edit-trigger" onClick={() => setEdit(true)}>
             {t("editRecipe")}
           </button>}
-          <button className="primary" onClick={() => addMeal(recipe)}>
+          <button className="secondary journal-add-meal" onClick={() => addMeal(recipe)}>
             <Plus size={15} />
             {t("addTodayMeals")}
           </button>

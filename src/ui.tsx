@@ -9,12 +9,14 @@ export function Modal({
   children,
   className = "",
   descriptionId,
+  eyebrow,
 }: {
   className?: string;
   title: string;
   close: () => void;
   children: ReactNode;
   descriptionId?: string;
+  eyebrow?: string;
 }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLDialogElement>(null);
@@ -111,7 +113,7 @@ export function Modal({
       }}
     >
       <div className="modal-head">
-        <h2>{title}</h2>
+        {eyebrow?<div className="modal-title-group"><span className="journal-mode-label">{eyebrow}</span><h2>{title}</h2></div>:<h2>{title}</h2>}
         <button className="icon-button" aria-label={t("close")} onClick={close}>
           <X size={20} />
         </button>

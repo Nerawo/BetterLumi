@@ -1,0 +1,15 @@
+/* Cooking Mode only: recipe reading/editing keeps its approved reference styling. */
+.cooking-mode .cooking-journal-columns h3{margin:0 0 8px}
+.cooking-mode .cooking-journal-columns h3 .journal-heading{font:500 19px/1.3 JournalHand,var(--font-ui)}
+.cooking-mode .journal-ingredient-group{margin:0 0 10px}
+.cooking-mode .journal-ingredient-group h4{margin:7px 0 2px}
+.cooking-mode .journal-ingredient-group h4 .journal-heading{font:500 13px/1.5 JournalChinese,var(--font-ui);padding:0 2px}
+.cooking-mode .journal-method{font:400 13px/1.55 JournalChinese,var(--font-ui);color:var(--ink)}
+.cooking-mode .journal-step-number{font:500 12.5px/1.55 JournalChinese,var(--font-ui)}
+.cooking-mode .journal-check-row{min-height:44px;padding:4px 0;gap:7px;font:400 13px/1.5 JournalChinese,var(--font-ui)}
+.cooking-mode .journal-check-row>span{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;column-gap:5px;row-gap:0}
+.cooking-mode .journal-check-row>span>span{min-width:0;max-width:100%;overflow-wrap:anywhere;white-space:normal}
+.cooking-mode .journal-check-row small{display:block;flex:0 1 auto;max-width:100%;margin:0 0 0 auto;overflow-wrap:anywhere;white-space:normal;font:400 11.5px/1.5 var(--font-ui);color:var(--muted)}
+.cooking-mode>.journal-scroll{padding-top:8px;padding-bottom:10px}
+.cooking-mode .journal-session-controls{margin-bottom:12px;padding-bottom:9px}
+.cooking-mode>.modal-head{padding-bottom:9px}

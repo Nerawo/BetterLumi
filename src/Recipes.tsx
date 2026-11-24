@@ -1,3 +1,5 @@
+import {JournalHeading} from './JournalHeading';
+import {identifyRecipeLines,validateJournalRecipe,type IngredientGroup} from './cooking-journal';
 import {FoodStorageList} from './FoodStorage';
 import {PantrySortMenu,type PantrySort} from './PantrySortMenu';
 import {sortRecipes} from './recipe-sort';
@@ -164,7 +166,8 @@ export function RecipeEditor({
 }) {
   const { t } = useTranslation();
   const [categoryIds, setCategoryIds] = useState(item?.categoryIds ?? []);
-  const [lines, setLines] = useState<RecipeLine[]>(item?.lines ?? []);
+  const [lines, setLines] = useState<RecipeLine[]>(()=>identifyRecipeLines(item?.lines ?? []));
+  const [groups,setGroups]=useState<IngredientGroup[]>(item?.ingredientGroups??[]);
   const [busy, setBusy] = useState(false);
   const [photo, setPhoto] = useState(item?.photo ?? "");
   const [reading, setReading] = useState(false);
@@ -178,11 +181,13 @@ export function RecipeEditor({
     }
     setBusy(true);
     try {
+      validateJournalRecipe({lines,ingredientGroups:groups});
       await recipes.put({
         ...(item ? changed(item) : stamp()),
         name,
         servings: Number(f.get('servings')),
         lines,
+        ingredientGroups:groups,
         instructions: String(f.get("instructions")).trim(),
         stickyNote: String(f.get("stickyNote")).trim(),
         category: item?.category ?? "",
@@ -198,7 +203,7 @@ export function RecipeEditor({
     }
   };
   return (
-    <Modal title={t(item ? "editRecipe" : "newRecipe")} close={close} className="recipe-editor-modal">
+    <Modal title={t(item ? "editRecipe" : "newRecipe")} close={close} className="recipe-editor-modal journal-recipe-editor">
       <form onSubmit={submit} className="recipe-editor-form">
         <div className="recipe-editor-scroll">
           <section className="recipe-editor-basic-section"><h3>{t("basicInformation")}</h3><div className="recipe-editor-identity"><label>
@@ -241,14 +246,14 @@ export function RecipeEditor({
         </div></section>
 
         <section className="recipe-editor-section">
-        <h3>{t("lines")}</h3>
-        <RecipeLineEditor compact lines={lines} setLines={setLines} pantry={pantry} />
+        <h3><JournalHeading>{t("lines")}</JournalHeading></h3>
+        <RecipeLineEditor compact groups={groups} onGroupsChange={setGroups} lines={lines} setLines={setLines} pantry={pantry} />
         </section>
         <section className="recipe-editor-section recipe-editor-nutrition">
           <h3>{t("recipeNutritionTotal")}</h3><RecipeNutritionStrip value={wholeRecipeNutrition(lines)}/>
         </section>
         <label className="recipe-editor-section recipe-editor-text">
-          <span>{t("instructions")}</span>
+          <span><JournalHeading>{t("instructions")}</JournalHeading></span>
           <textarea
             name="instructions"
             rows={4}
