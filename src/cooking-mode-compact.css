@@ -58,3 +58,12 @@
 .cooking-mode .journal-prep-actions .journal-reset{margin:0 auto 0 0}
 .cooking-mode .journal-prep-actions .journal-update{margin:0 0 0 auto}
 @media(max-width:359px){.cooking-mode .cooking-journal-columns>section+section{padding-left:0}}
+.cooking-mode .journal-method-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;margin:-8px 0 0;min-height:40px}
+.cooking-mode .journal-method-heading h3{margin:0;min-width:0}
+.cooking-mode .journal-method-edit-trigger{display:inline-flex;align-items:center;justify-content:center;flex:none;width:40px;min-width:40px;min-height:40px;padding:0;border:0;border-radius:0;background:transparent;color:var(--muted)}
+.cooking-mode .journal-method-edit-trigger:focus-visible{outline:1px solid var(--action);outline-offset:-3px}
+.cooking-mode .journal-method-editor{min-width:0;max-width:100%;margin:0}
+.cooking-mode .journal-method-editor textarea{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:3em;max-height:clamp(96px,calc(var(--food-viewport-height,100dvh) / 3),360px);padding:0;margin:0;border:0;border-radius:0;background:transparent;color:var(--ink);caret-color:var(--action);box-shadow:none;font:400 16px/1.55 JournalHand,JournalChinese,var(--font-ui);resize:none;overflow:auto}
+.cooking-mode .journal-method-editor textarea:focus{outline:0;border:0;box-shadow:none}
+.cooking-mode .journal-method-confirm{color:var(--action)}
+.cooking-mode .journal-method-editor [role=alert]{font:400 12px/1.5 var(--font-ui);color:var(--ink);overflow-wrap:anywhere}

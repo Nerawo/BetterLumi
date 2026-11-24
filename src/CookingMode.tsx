@@ -1,4 +1,4 @@
-import {Plus} from 'lucide-react';
+import {Plus,Pencil,Check} from 'lucide-react';
 import {effectiveCookingRecipe} from './cooking-effective';
 import {isBuiltInRecipe} from './data/builtInRecipes';
 import {AddFood,type MealDraft} from './Meals';
@@ -6,24 +6,28 @@ import {MakeBatchModal} from './FoodStorage';
 import {journalQuantity} from './journal-quantity';
 import {JournalMethod} from './JournalMethod';
 import {NumberInput} from './NumberInput';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import type {Recipe,PantryItem} from './domain';
 import {Modal,type Notice} from './ui';
 import {recipeServingLines,recipeYield} from './recipe-nutrition';
 import {recipeSections,changeCookingServings,setCookingQuantity,restoreCookingQuantity,type CookingSession} from './cooking-journal';
-import {openCookingSession,saveCookingSession,discardCookingSession,updateRecipeFromCooking} from './cooking-session';
+import {openCookingSession,saveCookingSession,discardCookingSession,updateRecipeFromCooking,updateCookingMethod} from './cooking-session';
 import {householdUnitLabel} from './household-units';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import './cooking-journal-locale';
 import './cooking-journal.css';
 import './cooking-mode-compact.css';
 import {JournalHeading} from './JournalHeading';
+import {registerRouteLeaveGuard} from './routing';
 
 export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:{recipe:Recipe;recipes:Recipe[];pantry:PantryItem[];date:string;notice:Notice;mealSaved:(date:string)=>void;close:()=>void}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
  const [session,setSession]=useState<CookingSession>(),[amount,setAmount]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [quantityEdit,setQuantityEdit]=useState<{id:string;value:string}>(),[quantityError,setQuantityError]=useState('');
+ const [methodEdit,setMethodEdit]=useState<{recipe:Recipe;text:string}>(),[methodError,setMethodError]=useState('');
+ const methodScroll=useRef(0),methodInput=useRef<HTMLTextAreaElement>(null),methodDirty=useRef(false),methodSaving=useRef(false);
+ const hasMethodChanges=!!methodEdit&&methodEdit.text!==methodEdit.recipe.instructions;methodDirty.current=hasMethodChanges;
  const [mealDraft,setMealDraft]=useState<MealDraft>();
  const [batchServings,setBatchServings]=useState<number>();
  const [resetConfirm,setResetConfirm]=useState(false);
@@ -31,6 +35,9 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:
  const saving=useRef(false),stepping=useRef(false),quantitySaving=useRef(false),quantityIntent=useRef(false),mealIntent=useRef(false);
  const currentSession=useRef<CookingSession|undefined>(undefined),body=useRef<HTMLDivElement>(null),mealScroll=useRef(0);
  const initialization=useRef<{recipeId:string;revision:number;promise:Promise<CookingSession>}|undefined>(undefined),mounted=useRef(false),leaving=useRef(false),pending=useRef<Promise<unknown>>(Promise.resolve());
+ const confirmMethodLeave=()=>!methodSaving.current&&(!methodDirty.current||window.confirm(t('journalMethodDiscardConfirm')));
+ useEffect(()=>{const release=registerRouteLeaveGuard(()=>confirmMethodLeave());const unload=(event:BeforeUnloadEvent)=>{if(methodDirty.current){event.preventDefault();event.returnValue=''}};window.addEventListener('beforeunload',unload);return()=>{release();window.removeEventListener('beforeunload',unload)}},[t]);
+ useLayoutEffect(()=>{const input=methodInput.current;if(input){input.style.height='auto';input.style.height=input.scrollHeight+'px'}},[methodEdit?.text]);
  useEffect(()=>{let alive=true;setQuantityEdit(undefined);
   // StrictMode rehearses effects: reuse initialization rather than abandoning the same live session.
   if(!initialization.current||initialization.current.recipeId!==recipe.id||initialization.current.revision!==recipe.revision)initialization.current={recipeId:recipe.id,revision:recipe.revision,promise:openCookingSession(recipe,!initialization.current||initialization.current.recipeId!==recipe.id)};
@@ -52,7 +59,7 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:
   try{await task;return true}catch{currentSession.current=previous;setSession(previous);setAmount(String(previous.servings));setError(t('journalError'));return false}finally{saving.current=false;setBusy(false)}
  };
  const leave=async()=>{
-  if(leaving.current)return;leaving.current=true;quantityIntent.current=true;setBusy(true);
+  if(leaving.current||!confirmMethodLeave())return;leaving.current=true;quantityIntent.current=true;setBusy(true);
   try{await pending.current.catch(()=>{});const active=currentSession.current;if(active)await discardCookingSession(active);currentSession.current=undefined;close()}
   catch{leaving.current=false;setError(t('journalError'));setBusy(false)}
  };
@@ -94,6 +101,13 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:
  const beginMeal=async()=>{const servings=await prepareDestination();if(servings&&currentSession.current)setMealDraft({date,recipe:effectiveCookingRecipe(recipe,currentSession.current),recipeServings:servings,onCommitted:savedDate=>{void finishPreparation(()=>mealSaved(savedDate))}})};
  const beginBatch=async()=>{const servings=await prepareDestination();if(servings&&currentSession.current){setBatchRecipe(effectiveCookingRecipe(recipe,currentSession.current));setBatchServings(servings)}};
  const updateRecipe=async()=>{if(saving.current||!currentSession.current)return;saving.current=true;setBusy(true);setError('');try{const task=updateRecipeFromCooking(recipe,currentSession.current);pending.current=task;const next=await task;currentSession.current=next.session;setSession(next.session);setUpdateConfirm(false)}catch{setError(t('journalError'))}finally{saving.current=false;setBusy(false)}};
+ const finishMethodEdit=()=>{methodDirty.current=false;setMethodEdit(undefined);setMethodError('');requestAnimationFrame(()=>{if(body.current)body.current.scrollTop=methodScroll.current})};
+ const saveMethod=async()=>{
+  if(!methodEdit||!currentSession.current||saving.current||leaving.current)return;
+  methodSaving.current=true;saving.current=true;setBusy(true);setMethodError('');
+  try{const task=updateCookingMethod(methodEdit.recipe,currentSession.current,methodEdit.text);pending.current=task;const next=await task;currentSession.current=next.session;setSession(next.session);finishMethodEdit()}
+  catch{setMethodError(t('journalMethodSaveError'))}finally{methodSaving.current=false;saving.current=false;setBusy(false)}
+ };
  const cancelMeal=()=>{setMealDraft(undefined);requestAnimationFrame(()=>{if(body.current)body.current.scrollTop=mealScroll.current})};
  const cancelBatch=()=>{setBatchServings(undefined);requestAnimationFrame(()=>{if(body.current)body.current.scrollTop=mealScroll.current})};
  const lines=session?recipeServingLines(recipe,session.servings):[];
@@ -107,7 +121,10 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:
     <div className="journal-session-controls"><label><span>{t('journalYield')}</span><span className="journal-serving-stepper"><button type="button" disabled={busy||stepperAmount<=0.5} aria-label={t('journalDecrease')} onPointerDown={()=>{stepping.current=true}} onTouchStart={()=>{stepping.current=true}} onPointerCancel={()=>{stepping.current=false}} onPointerUp={()=>{requestAnimationFrame(()=>{stepping.current=false})}} onClick={()=>applyServings(Math.max(0.5,stepperAmount-0.5))}>−</button><input aria-label={t('journalYield')} type="number" inputMode="decimal" min="0.01" step="any" value={amount} disabled={busy} onChange={e=>setAmount(e.target.value)} onBlur={()=>{if(!stepping.current&&!mealIntent.current)void applyServings()}} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();e.currentTarget.blur()}}}/><button type="button" disabled={busy} aria-label={t('journalIncrease')} onPointerDown={()=>{stepping.current=true}} onTouchStart={()=>{stepping.current=true}} onPointerCancel={()=>{stepping.current=false}} onPointerUp={()=>{requestAnimationFrame(()=>{stepping.current=false})}} onClick={()=>applyServings(stepperAmount+0.5)}>+</button></span></label><span role="status">{t('journalProgress',{done:session.checked.length,total:lines.length})}</span><small>{t('journalOriginal',{count:recipeYield(recipe)})}</small></div>
     {session.needsReview&&<p role="status">{t('journalReview')} <button type="button" disabled={busy} onClick={()=>void commit({...session,checked:[],needsReview:false})}>{t('journalRestart')}</button></p>}
     <div className="cooking-journal-columns">
-     <section><h3><JournalHeading>Method</JournalHeading></h3><JournalMethod text={recipe.instructions||t('notRecorded')}/></section>
+     <section className="journal-method-section">
+      <div className="journal-method-heading"><h3><JournalHeading>Method</JournalHeading></h3>{!isBuiltInRecipe(recipe)&&<button type="button" className={'journal-method-edit-trigger'+(methodEdit?' journal-method-confirm':'')} aria-label={t(methodEdit?'journalMethodSave':'journalMethodEdit')} aria-expanded={methodEdit!==undefined} aria-controls="journal-method-input" disabled={busy||quantityEdit!==undefined} onClick={()=>{if(methodEdit){void saveMethod();return}methodScroll.current=body.current?.scrollTop??0;setMethodError('');setMethodEdit({recipe,text:recipe.instructions})}}>{methodEdit?<Check size={16} aria-hidden="true"/>:<Pencil size={14} aria-hidden="true"/>}</button>}</div>
+      {methodEdit?<div className="journal-method-editor"><textarea ref={methodInput} id="journal-method-input" autoFocus aria-label={t('journalMethodText')} value={methodEdit.text} disabled={busy} onChange={e=>setMethodEdit({...methodEdit,text:e.target.value})}/>{methodError&&<p role="alert">{methodError}</p>}</div>:<JournalMethod text={recipe.instructions||t('notRecorded')}/>}
+     </section>
      <section><h3><JournalHeading>Ingredients</JournalHeading></h3>
       {sections.filter(g=>g.lines.length).map(g=><div className="journal-ingredient-group" key={g.id}>{(recipe.ingredientGroups?.length??0)>0&&<h4><JournalHeading>{g.name||t('journalUngrouped')}</JournalHeading></h4>}
        {g.lines.map(l=>{const index=lines.indexOf(l),id=session.entries[index].id,checked=session.checked.includes(id),override=session.quantityOverrides?.find(o=>o.entryId===id),quantity=override?.quantity??l.quantity,unitLabel=l.unit==='fraction'?'% '+t('storageReference'):l.unit==='g'?t('gramsUnit'):l.unit==='serving'?t('servingUnit'):householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units);return <div className={'journal-check-row'+(checked?' is-checked':'')+(quantityEdit?.id===id?' is-editing':'')} key={id}>
@@ -128,6 +145,6 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close}:
     </div>
    </>}
   </div>
-  <div className="form-actions journal-footer"><div className="journal-prep-actions"><button type="button" className="journal-reset" disabled={!session||busy} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>{mealIntent.current=false;void resetPreparation()}}>{t('journalResetPreparation')}</button>{meaningfulOverrides&&!isBuiltInRecipe(recipe)&&<button type="button" className="journal-update" disabled={!session||busy} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{quantityIntent.current=false;mealIntent.current=false}} onClick={async()=>{if(await prepareDestination())setUpdateConfirm(true)}}>{t("journalUpdateRecipe")}</button>}</div><button type="button" className="primary" disabled={!session||busy} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>void beginMeal()}><Plus size={14} aria-hidden="true"/>{t('journalAddMeal')}</button><button type="button" className="secondary journal-add-storage" disabled={!session||busy} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>void beginBatch()}><Plus size={14} aria-hidden="true"/>{t('journalAddStorage')}</button></div>
+  <div className="form-actions journal-footer"><div className="journal-prep-actions"><button type="button" className="journal-reset" disabled={!session||busy} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>{mealIntent.current=false;void resetPreparation()}}>{t('journalResetPreparation')}</button>{meaningfulOverrides&&!isBuiltInRecipe(recipe)&&<button type="button" className="journal-update" disabled={!session||busy||hasMethodChanges} title={hasMethodChanges?t('journalMethodSaveFirst'):undefined} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{quantityIntent.current=false;mealIntent.current=false}} onClick={async()=>{if(await prepareDestination())setUpdateConfirm(true)}}>{t("journalUpdateRecipe")}</button>}</div><button type="button" className="primary" disabled={!session||busy||hasMethodChanges} title={hasMethodChanges?t('journalMethodSaveFirst'):undefined} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>void beginMeal()}><Plus size={14} aria-hidden="true"/>{t('journalAddMeal')}</button><button type="button" className="secondary journal-add-storage" disabled={!session||busy||hasMethodChanges} title={hasMethodChanges?t('journalMethodSaveFirst'):undefined} onPointerDown={()=>{quantityIntent.current=true;mealIntent.current=true}} onPointerCancel={()=>{mealIntent.current=false;quantityIntent.current=false}} onClick={()=>void beginBatch()}><Plus size={14} aria-hidden="true"/>{t('journalAddStorage')}</button></div>
  </Modal>{updateConfirm&&<Modal title={t("journalUpdateRecipe")} close={()=>{if(!busy)setUpdateConfirm(false)}} className="goal-editor-modal journal-update-confirm"><div className="modal-scroll"><p>{t("journalUpdateRecipeConfirm")}</p>{error&&<p role="alert">{error}</p>}</div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setUpdateConfirm(false)}>{t("cancel")}</button><button type="button" className="primary" disabled={busy} onClick={()=>void updateRecipe()}>{t("journalUpdateRecipe")}</button></div></Modal>}{resetConfirm&&<Modal title={t('journalResetPreparation')} close={()=>{if(!busy)setResetConfirm(false)}} className="goal-editor-modal journal-reset-confirm"><div className="modal-scroll"><p>{t('journalResetPreparationConfirm')}</p></div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setResetConfirm(false)}>{t('cancel')}</button><button type="button" className="primary" disabled={busy} onClick={()=>void resetPreparation(true)}>{t('journalResetPreparation')}</button></div></Modal>}{mealDraft&&<AddFood draft={mealDraft} recipes={recipes} pantry={pantry} close={cancelMeal} notice={notice}/>}{batchServings!==undefined&&<MakeBatchModal recipes={recipes} pantry={pantry} initialRecipe={batchRecipe??recipe} initialServings={batchServings} close={cancelBatch} notice={notice} onCommitted={()=>{void finishPreparation(close,'batch')}}/>}</>;
 }

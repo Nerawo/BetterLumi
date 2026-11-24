@@ -16,6 +16,15 @@ export async function openCookingSession(recipe:Recipe,restart=false){
 export async function updateRecipeFromCooking(recipe:Recipe,session:CookingSession){
  const nextRecipe={...recipe,lines:normalizedCookingLines(recipe,session).map((l,index)=>({...l,lineId:l.lineId??session.entries[index].id})),revision:recipe.revision+1,updatedAt:new Date().toISOString()};
  const nextSession=reconcileCookingSession(nextRecipe,session);nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
+ return commitCookingRecipeUpdate(recipe,session,nextRecipe,nextSession);
+}
+/** Method has no ingredient identity effects, including for repeated legacy lines. */
+export async function updateCookingMethod(recipe:Recipe,session:CookingSession,instructions:string){
+ if(typeof instructions!=='string'||session.recipeId!==recipe.id)throw Error('Invalid cooking method update');
+ const nextRecipe={...recipe,instructions,revision:recipe.revision+1,updatedAt:new Date().toISOString()};
+ return commitCookingRecipeUpdate(recipe,session,nextRecipe,{...session,recipeRevision:nextRecipe.revision});
+}
+function commitCookingRecipeUpdate(recipe:Recipe,session:CookingSession,nextRecipe:Recipe,nextSession:CookingSession){
  return db.transaction('rw',recipes,db.settings,async()=>{
   const current=await recipes.get(recipe.id);if(!current||JSON.stringify(current)!==JSON.stringify(recipe))throw Error('Recipe changed; reopen to reload');
   const key=COOKING_PREFIX+recipe.id,row=await db.settings.get(key);if(row?.value!==JSON.stringify(session))throw Error('Preparation changed; reopen to reload');
