@@ -48,11 +48,11 @@ it('rejects stale writes and injected failures without overwriting progress',asy
  const r=recipe(),s=await openCookingSession(r),next=await saveCookingSession(s,{...s,checked:[s.entries[0].id]});await expect(saveCookingSession(s,{...s,servings:9})).rejects.toThrow('changed');expect(await openCookingSession(r)).toEqual(next);
  const fail=()=>{throw Error('injected')};db.settings.hook('updating',fail);try{await expect(saveCookingSession(next,{...next,checked:[]})).rejects.toThrow('injected')}finally{db.settings.hook('updating').unsubscribe(fail)}expect(await openCookingSession(r)).toEqual(next);
 });
-it('Backup 12 round trips grouped recipes and sessions exactly, retaining stale/orphan sessions',async()=>{
+it('Backup 13 round trips grouped recipes and sessions exactly, retaining stale/orphan sessions',async()=>{
  const r=recipe(identifyRecipeLines([line()]));r.ingredientGroups=[{id:'a',name:'Sauce'}];r.lines[0].groupId='a';await recipes.put(r);await openCookingSession(r);const orphan=await openCookingSession(recipe());expect(orphan.recipeId).not.toBe(r.id);
- const backup=await exportAll();expect(backup.version).toBe(12);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
+ const backup=await exportAll();expect(backup.version).toBe(13);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
 });
-it.each([2,3,4,5,6,7,8,9,10,11])('accepts supported Backup %s without new metadata',async version=>{
+it.each([2,3,4,5,6,7,8,9,10,11,12])('accepts supported Backup %s without new metadata',async version=>{
  const r=recipe();await recipes.put(r);const backup=await exportAll();backup.version=version;
  if(version===2){delete backup.tables.recipeNotes;delete backup.tables.goals}if(version<4)delete backup.tables.recipeCategories;if(version<5){delete backup.tables.exercisePlans;delete backup.tables.exerciseOccurrences}if(version<6)delete backup.tables.ingredientTags;if(version<10){delete backup.tables.foodBatches;delete backup.tables.inventoryTransactions}
  await restoreAll(backup);expect(await recipes.get(r.id)).toEqual(r);

@@ -30,7 +30,7 @@
 .journal-ingredient-group h4 .journal-heading{font-size:19px}
 :lang(zh) .journal-ingredient-group h4 .journal-heading{font-size:15px}
 .cooking-mode .journal-check-row{display:flex;flex-direction:row;align-items:flex-start;gap:7px;min-height:44px;margin:0;padding:8px 0;border:0;cursor:pointer;font:400 13px/1.45 var(--font-ui);color:var(--ink)}
-.cooking-mode .journal-check-row input{flex:none;width:15px;height:15px;min-height:0;padding:0;margin:2px 0;border-radius:1px;accent-color:var(--theme-accent)}
+.cooking-mode .journal-check-row input[type=checkbox]{flex:none;width:15px;height:15px;min-height:0;padding:0;margin:2px 0;border-radius:1px;accent-color:var(--theme-accent)}
 .journal-check-row>span{min-width:0;overflow-wrap:anywhere}
 .journal-check-row small{display:inline;font-size:11px;color:var(--muted);margin-left:5px;white-space:normal}
 .journal-check-row.is-checked>span>span{text-decoration:line-through;color:var(--muted)}
@@ -115,10 +115,10 @@
 .journal-ingredient-group h4 .journal-heading,:lang(zh) .journal-ingredient-group h4 .journal-heading,.journal-recipe-detail .journal-overview-group .journal-heading,:lang(zh) .journal-recipe-detail .journal-overview-group .journal-heading{font:600 14px/1.5 var(--font-ui)}
 .journal-ingredient-group h4 .journal-heading:before,.journal-overview-group .journal-heading:before{inset:0 -3px;transform:none;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);background:var(--soft)}
 .cooking-mode .journal-check-row{font:500 14px/1.45 var(--font-ui);gap:8px;padding:7px 0;min-height:48px}
-.cooking-mode .journal-check-row input{appearance:none;-webkit-appearance:none;display:grid;place-content:center;width:18px;height:18px;border:1px solid var(--muted);border-radius:50%;margin-top:1px;background:transparent}
-.cooking-mode .journal-check-row input:checked{background:var(--action);border-color:var(--action)}
-.cooking-mode .journal-check-row input:checked:after{content:'';width:5px;height:9px;border:solid var(--surface);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
-.cooking-mode .journal-check-row input:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+.cooking-mode .journal-check-row input[type=checkbox]{appearance:none;-webkit-appearance:none;display:grid;place-content:center;width:18px;height:18px;border:1px solid var(--muted);border-radius:50%;margin-top:1px;background:transparent}
+.cooking-mode .journal-check-row input[type=checkbox]:checked{background:var(--action);border-color:var(--action)}
+.cooking-mode .journal-check-row input[type=checkbox]:checked:after{content:'';width:5px;height:9px;border:solid var(--surface);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.cooking-mode .journal-check-row input[type=checkbox]:focus-visible{outline:2px solid var(--action);outline-offset:3px}
 .cooking-mode .journal-check-row small{display:block;font:400 12px/1.5 var(--font-ui);margin:2px 0 0;color:var(--muted)}
 .cooking-mode .journal-check-row.is-checked small{color:var(--muted)}
 .cooking-mode>.journal-footer{border-top:1px solid var(--line);justify-content:space-between}
@@ -138,3 +138,13 @@
 .journal-recipe-detail .journal-overview-group .journal-heading,.journal-recipe-detail .journal-method,.journal-recipe-detail .detail-ingredients strong,.journal-recipe-editor .journal-heading,.journal-recipe-editor .recipe-line-heading strong{font-family:JournalChinese,var(--font-ui)}
 /* Keep English journal section headings in Caveat on the recipe overview too. */
 .journal-recipe-detail .recipe-reading-grid>section>h2 .journal-heading{font-family:JournalHand,JournalChinese,var(--font-ui)}
+/* Usage actions together; recipe management remains subordinate. */
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.start-cooking{grid-column:1;grid-row:1;min-width:0}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.journal-add-meal{grid-column:2;grid-row:1;border:1px solid var(--line);border-radius:5px;color:var(--action);min-width:0;white-space:normal}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions>.recipe-edit-trigger{grid-column:1/-1;grid-row:2;justify-self:end;min-height:44px;font-size:11px;padding:6px 8px}
+/* Latin/CJK glyph fallback is deliberate; numeric siblings retain UI typography. */
+.journal-recipe-detail .detail-ingredients strong{font-family:JournalHand,JournalChinese,var(--font-ui)}
+.journal-recipe-detail .journal-method{font-family:JournalHand,JournalChinese,var(--font-ui)}
+.cooking-mode .journal-check-row>span>span{font-family:JournalHand,JournalChinese,var(--font-ui)}
+.journal-recipe-detail.recipe-detail-modal>.recipe-detail-actions{align-items:stretch}

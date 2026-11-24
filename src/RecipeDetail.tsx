@@ -17,6 +17,7 @@ import { Fragment,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import {
+  unknownNutrition,
   type Recipe,
   type PantryItem,
 } from "./domain";
@@ -67,9 +68,9 @@ export function RecipeDetail({
         <div className="recipe-hero">
           {builtIn?<img className="detail-photo built-in-recipe-photo" src={recipe.photo} alt={recipe.name} width={800} height={800}/>:<RecipeDetailImage key={recipe.id} recipe={recipe} notice={notice}/>}
           <section className="hero-nutrition">
-            <span className="eyebrow">{t("recipePerServing")}</span>
+            <span className="eyebrow">{t(validAmount&&amount===1?'recipePerServing':'recipeCookingTotal')}</span>
             <RecipeNutritionStrip
-              value={recipeServingNutrition(recipe)}
+              value={validAmount?recipeServingNutrition(recipe,amount):unknownNutrition()}
             />
           </section>
         </div>
@@ -103,7 +104,6 @@ export function RecipeDetail({
             <div className="recipe-method"><JournalMethod text={recipe.instructions||t('notRecorded')}/></div>
           </section>
         </div>
-            {validAmount&&<section className="recipe-cooking-nutrition"><span className="eyebrow">{t('recipeCookingTotal')}</span><RecipeNutritionStrip value={recipeServingNutrition(recipe,amount)}/></section>}
         <StickyNotes notes={notes} recipeId={recipe.id} onChange={async change=>{await commitStickyNoteChanges([change]);notice(t('savedMessage'))}}/>
         {edit && (
           <RecipeEditor
@@ -116,13 +116,13 @@ export function RecipeDetail({
       </article></div>
         <div className="form-actions recipe-detail-actions detail-toolbar">
           <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
-          {!builtIn&&<button className="secondary recipe-edit-trigger" onClick={() => setEdit(true)}>
-            {t("editRecipe")}
-          </button>}
           <button className="secondary journal-add-meal" onClick={() => addMeal(recipe)}>
             <Plus size={15} />
             {t("addTodayMeals")}
           </button>
+          {!builtIn&&<button className="secondary recipe-edit-trigger" onClick={() => setEdit(true)}>
+            {t("editRecipe")}
+          </button>}
         </div>
     </Modal>
   );

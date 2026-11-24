@@ -4,7 +4,7 @@
 .cooking-mode .journal-ingredient-group{margin:0 0 10px}
 .cooking-mode .journal-ingredient-group h4{margin:7px 0 2px}
 .cooking-mode .journal-ingredient-group h4 .journal-heading{font:500 13px/1.5 JournalChinese,var(--font-ui);padding:0 2px}
-.cooking-mode .journal-method{font:400 13px/1.55 JournalChinese,var(--font-ui);color:var(--ink)}
+.cooking-mode .journal-method{font:400 13px/1.55 JournalHand,JournalChinese,var(--font-ui);color:var(--ink)}
 .cooking-mode .journal-step-number{font:500 12.5px/1.55 JournalChinese,var(--font-ui)}
 .cooking-mode .journal-check-row{min-height:44px;padding:4px 0;gap:7px;font:400 13px/1.5 JournalChinese,var(--font-ui)}
 .cooking-mode .journal-check-row>span{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;column-gap:5px;row-gap:0}
@@ -13,3 +13,10 @@
 .cooking-mode>.journal-scroll{padding-top:8px;padding-bottom:10px}
 .cooking-mode .journal-session-controls{margin-bottom:12px;padding-bottom:9px}
 .cooking-mode>.modal-head{padding-bottom:9px}
+.cooking-mode .journal-quantity button{font:inherit;color:inherit;background:transparent;border:0;border-radius:3px;padding:4px 2px;min-height:36px;min-width:28px}
+.cooking-mode .journal-quantity-trigger{font-variant-numeric:tabular-nums}
+.cooking-mode .journal-quantity.is-overridden .journal-quantity-trigger{color:var(--action);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+.cooking-mode .journal-check-row>span>span label{cursor:pointer;display:inline;margin:0;padding:8px 0;min-height:0;font:inherit;color:inherit}
+.cooking-mode .journal-quantity-edit{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:3px;max-width:100%}
+.cooking-mode .journal-quantity-edit input{font:400 16px/1.5 var(--font-ui);width:88px;max-width:100%;min-height:36px;padding:4px 6px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink)}
+.cooking-mode .journal-quantity-edit [role=alert]{flex-basis:100%;color:var(--ink)}

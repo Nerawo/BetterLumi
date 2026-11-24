@@ -4,8 +4,9 @@ import {newId} from './ids';
 export interface IngredientGroup {id:string;name:string}
 export const COOKING_PREFIX='cooking-session:v1:';
 export interface CookingEntry {id:string;lineId?:string;fingerprint:string}
+export interface CookingQuantityOverride {entryId:string;quantity:number;unit:string;fingerprint:string;servings:number}
 export interface CookingSession {
- version:1;id:string;recipeId:string;recipeRevision:number;servings:number;
+ version:1|2;quantityOverrides?:CookingQuantityOverride[];id:string;recipeId:string;recipeRevision:number;servings:number;
  entries:CookingEntry[];checked:string[];legacyMappings:{id:string;index:number;fingerprint:string}[];
  status:'active'|'completed';needsReview:boolean;
 }
@@ -45,7 +46,8 @@ export function reconcileCookingSession(recipe:Recipe,old?:CookingSession):Cooki
   if(e.lineId&&legacy.length>1&&legacy.some(p=>active?.checked.includes(p.id)))ambiguous=true;
   return !!e.lineId&&legacy.length===1&&entries.filter(x=>x.fingerprint===e.fingerprint).length===1&&!!active?.checked.includes(legacy[0].id);
  }).map(e=>e.id);
- return {version:1,id:active?.id??newId(),recipeId:recipe.id,recipeRevision:recipe.revision,
+ const quantityOverrides=(active?.quantityOverrides??[]).filter(o=>entries.some(e=>e.id===o.entryId&&e.fingerprint===o.fingerprint));
+ return {version:2,quantityOverrides,id:active?.id??newId(),recipeId:recipe.id,recipeRevision:recipe.revision,
   servings:active?.servings??(recipe.servings||1),entries,checked,
   legacyMappings:entries.flatMap((e,index)=>e.lineId?[]:[{id:e.id,index,fingerprint:e.fingerprint}]),
   status:'active',needsReview:ambiguous||!!active?.needsReview};
@@ -53,8 +55,18 @@ export function reconcileCookingSession(recipe:Recipe,old?:CookingSession):Cooki
 export function changeCookingServings(s:CookingSession,servings:number,confirmReset=false):CookingSession {
  if(!positive(servings))throw Error('Invalid serving quantity');
  if(servings===s.servings)return s;
- if(s.checked.length&&!confirmReset)throw Error('Confirm checklist reset');
- return {...s,servings,checked:[]};
+ if((s.checked.length||s.quantityOverrides?.length)&&!confirmReset)throw Error('Confirm checklist reset');
+ return {...s,version:2,servings,checked:[],quantityOverrides:[]};
+}
+/** Absolute session-only quantities; never feeds recipe nutrition or inventory. */
+export function setCookingQuantity(s:CookingSession,entryId:string,quantity:number,unit:string):CookingSession {
+ const entry=s.entries.find(e=>e.id===entryId);
+ if(!entry||!Number.isFinite(quantity)||quantity<0||JSON.parse(entry.fingerprint)[6]!==unit)throw Error('Invalid cooking quantity');
+ const next:CookingSession={...s,version:2,quantityOverrides:[...(s.quantityOverrides??[]).filter(o=>o.entryId!==entryId),{entryId,quantity,unit,fingerprint:entry.fingerprint,servings:s.servings}]};
+ validateCookingSession(next);return next;
+}
+export function restoreCookingQuantity(s:CookingSession,entryId:string):CookingSession {
+ return {...s,version:2,quantityOverrides:(s.quantityOverrides??[]).filter(o=>o.entryId!==entryId)};
 }
 export function validateJournalRecipe(recipe:Pick<Recipe,'lines'|'ingredientGroups'>){
  const groups=recipe.ingredientGroups??[];
@@ -66,14 +78,23 @@ export function validateJournalRecipe(recipe:Pick<Recipe,'lines'|'ingredientGrou
  }
 }
 export function validateCookingSession(s:CookingSession):void {
- if(!s||s.version!==1||!text(s.id)||!text(s.recipeId)||!Number.isInteger(s.recipeRevision)||s.recipeRevision<1||!positive(s.servings)||!['active','completed'].includes(s.status)||typeof s.needsReview!=='boolean'||!Array.isArray(s.entries)||!Array.isArray(s.checked)||!Array.isArray(s.legacyMappings))throw Error('Invalid cooking session');
+ if(!s||![1,2].includes(s.version)||!text(s.id)||!text(s.recipeId)||!Number.isInteger(s.recipeRevision)||s.recipeRevision<1||!positive(s.servings)||!['active','completed'].includes(s.status)||typeof s.needsReview!=='boolean'||!Array.isArray(s.entries)||!Array.isArray(s.checked)||!Array.isArray(s.legacyMappings))throw Error('Invalid cooking session');
  const ids=new Set<string>();
  for(const e of s.entries){if(!e||!text(e.id)||!text(e.fingerprint)||ids.has(e.id)||e.lineId!==undefined&&e.lineId!==e.id)throw Error('Invalid cooking line');ids.add(e.id)}
  if(new Set(s.checked).size!==s.checked.length||s.checked.some(id=>!ids.has(id)))throw Error('Invalid cooking checklist reference');
+ if(s.version===1&&s.quantityOverrides!==undefined||s.version===2&&!Array.isArray(s.quantityOverrides))throw Error('Invalid cooking overrides');
+ const overrideIds=new Set<string>();
+ for(const o of s.quantityOverrides??[]){
+  const entry=s.entries.find(e=>e.id===o?.entryId);
+  if(!o||Object.keys(o).some(k=>!['entryId','quantity','unit','fingerprint','servings'].includes(k))||!entry||overrideIds.has(o.entryId)||typeof o.quantity!=='number'||!Number.isFinite(o.quantity)||o.quantity<0||!text(o.unit)||o.fingerprint!==entry.fingerprint||o.servings!==s.servings)throw Error('Invalid cooking quantity override');
+  let source;try{source=JSON.parse(o.fingerprint)}catch{throw Error('Invalid cooking quantity source')}
+  if(!Array.isArray(source)||source[6]!==o.unit)throw Error('Invalid cooking quantity unit');
+  overrideIds.add(o.entryId);
+ }
  const legacy=s.entries.flatMap((e,index)=>e.lineId?[]:[{id:e.id,index,fingerprint:e.fingerprint}]);
  if(legacy.length!==s.legacyMappings.length||legacy.some((e,i)=>{const m=s.legacyMappings[i];return !m||m.id!==e.id||m.index!==e.index||m.fingerprint!==e.fingerprint}))throw Error('Invalid legacy cooking identities');
 }
-export function validateJournalBackup(tables:Record<string,unknown[]>,version=12){
+export function validateJournalBackup(tables:Record<string,unknown[]>,version=13){
  for(const recipe of (tables.recipeCards??[]) as Recipe[]){
   if(version<12&&(recipe.ingredientGroups!==undefined||recipe.lines.some(l=>l.groupId!==undefined)))throw Error('Cooking journal requires backup version 12');
   validateJournalRecipe(recipe);
@@ -81,6 +102,7 @@ export function validateJournalBackup(tables:Record<string,unknown[]>,version=12
  for(const row of (tables.settings??[]) as {key:string;value:string}[]){if(!row.key.startsWith(COOKING_PREFIX))continue;
   if(version<12)throw Error('Cooking sessions require backup version 12');
   const s=JSON.parse(row.value) as CookingSession;validateCookingSession(s);
+  if(version<13&&s.version===2)throw Error('Cooking Session v2 requires backup version 13');
   if(row.key!==COOKING_PREFIX+s.recipeId)throw Error('Invalid cooking recipe association');
   // Stale recipe revisions and orphan sessions remain intact. Reconcile only on opening their recipe.
  }
