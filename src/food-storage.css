@@ -74,8 +74,8 @@
 .storage-make-modal .line-editor.compact-lines .recipe-line-amounts { margin-top:6px; gap:8px; }
 .storage-make-modal .storage-source-row { padding-top:10px; }
 .storage-make-modal .storage-batch-previews { display:flex; flex-direction:column; gap:10px; }
-.storage-make-modal .storage-batch-nutrition + .storage-batch-nutrition { border-top:1px solid var(--line); padding-top:10px; }
-.storage-make-modal .storage-batch-nutrition h3 { margin:0; font:500 14px/1.5 var(--font-ui); }
+
+.storage-make-modal .storage-batch-nutrition h4 { margin:0; font:500 14px/1.5 var(--font-ui); }
 .storage-make-modal .nutrition-strip { display:grid; grid-template-columns:1.4fr repeat(3,minmax(0,1fr)); gap:6px; align-items:baseline; padding:8px 0 0; }
 .storage-make-modal .nutrition-strip > div { min-width:0; padding:0; border:0; }
 .storage-make-modal .nutrition-strip > div > span { margin-bottom:4px; font-size:11px; overflow-wrap:anywhere; }
@@ -88,7 +88,6 @@
 .storage-make-modal .line-editor.compact-lines .recipe-line-amounts label { font:500 13px/1.5 var(--font-ui); gap:4px; }
 
 /* Local editorial hierarchy; inventory actions retain their existing handlers. */
-.storage-make-modal .line-editor.compact-lines .line-add { border-top:1px solid var(--line); padding-top:18px; margin-top:8px; }
 .storage-detail-modal .storage-detail-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:16px 0; }
 .storage-detail-modal .storage-primary-action,.storage-detail-modal .storage-wide-action { grid-column:1/-1; }
 .storage-detail-modal .storage-detail-actions button,.storage-management-actions button { min-height:44px; padding:10px; border:1px solid var(--line); border-radius:5px; font:500 13px/1.4 var(--font-ui); white-space:normal; }
@@ -145,3 +144,43 @@
 
 .storage-origin-conflict .form-actions { flex-wrap:wrap; }
 .storage-origin-conflict .form-actions button { flex:1; min-width:110px; min-height:44px; white-space:normal; }
+
+/* Batch creation and formula corrections share the recipe journal controls. */
+.batch-journal .storage-fields > section {border-top:1px solid var(--line);padding-top:12px}
+.batch-journal .storage-fields > .batch-basic {border:0;display:grid;gap:0}
+.batch-journal .storage-fields h3 {margin:0 0 6px}
+.batch-journal .journal-heading {font:400 20px/1.45 JournalHand,JournalChinese,var(--font-editorial)}
+.batch-journal .recipe-selection-trigger {width:100%;min-height:38px;display:flex;justify-content:space-between;text-align:start;gap:8px;border:0;background:transparent;box-shadow:none;padding:0;color:var(--ink);font:400 18px/1.4 var(--font-editorial)}
+.batch-journal .recipe-selection-trigger span,.batch-journal .batch-readonly-name {overflow-wrap:anywhere}
+.batch-journal .recipe-selection-trigger svg {flex:none;color:var(--muted)}
+.batch-journal .storage-fields .batch-date,.batch-fixed-source {display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+.batch-journal .batch-date .localized-date-field {width:auto;border:0;background:none}
+.batch-journal .batch-date .localized-date-field button {border:0;background:transparent;color:var(--action);padding-inline:0}
+.batch-journal .batch-readonly-name,.batch-journal .draft-name {display:grid}
+.batch-journal .draft-name-line input[name=batchName] {padding:0;min-height:0;border:0}
+.batch-journal .line-editor.compact-lines .line-add {display:flex;flex-wrap:wrap;gap:4px 14px;padding:0;border:0;margin:0}
+.batch-journal .line-editor.compact-lines .line-add > button {width:auto;min-height:44px;border:0;background:transparent;color:var(--action);padding:0}
+.batch-journal .journal-grouped-lines .recipe-line.draft-ingredient {display:grid;grid-template-columns:minmax(0,1fr) fit-content(46%);min-height:42px}
+.batch-journal .draft-source {font:12px/1.35 var(--font-ui);color:var(--muted)}
+.batch-journal .draft-source:empty {display:none}
+.batch-journal .compact-lines .recipe-line .recipe-line-amounts {grid-column:2;grid-row:1;margin:0;gap:4px}
+.batch-journal .draft-ingredient-name {grid-column:1;grid-row:1}
+.batch-journal .line-editor.compact-lines {border-top:0}
+.batch-journal .storage-fields textarea {min-height:40px;padding:5px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;font:16px/1.4 JournalHand,JournalChinese,var(--font-ui)}
+.batch-fixed-source > :first-child {min-width:0;overflow-wrap:anywhere}
+
+.batch-journal .batch-basic :is(.recipe-selection,.draft-name,.batch-readonly-name,.batch-date) {
+  display:grid;grid-template-columns:minmax(5.5em,auto) minmax(0,1fr);align-items:center;gap:10px;margin:0;min-height:38px;
+}
+.batch-journal .batch-basic :is(.recipe-selection-label,.draft-name>span:first-child,.batch-readonly-name small) {font:500 13px/1.4 var(--font-ui);color:var(--ink)}
+.batch-journal .batch-basic .recipe-selection-trigger {justify-content:flex-end;text-align:end}
+.batch-journal .batch-basic .draft-name-line {grid-template-columns:minmax(0,1fr);text-align:end}
+.batch-journal .batch-basic .draft-name-line input[name=batchName] {inset-inline:0;width:100%;text-align:end}
+.batch-journal .batch-basic .draft-name-line > span,.batch-journal .batch-basic .draft-name-line input[name=batchName] {font-size:17px}
+.batch-journal .batch-basic .batch-date > span,.batch-journal .batch-basic .batch-readonly-name > span {justify-self:end;text-align:end}
+.batch-journal .batch-results .ingredient-journal-row {max-width:16rem}
+.batch-journal .batch-results .storage-batch-previews {gap:12px;margin-top:6px}
+.batch-journal .batch-results .nutrition-strip {padding-top:4px}
+.batch-journal .batch-note-action,.batch-journal .batch-note-text {display:block;min-width:0;max-width:100%;margin:8px 0 0;padding:5px 0;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start}
+.batch-journal .batch-note-action {min-height:40px;background:none;border:0;color:var(--action);font:14px var(--font-ui)}
+.batch-journal .batch-results textarea {width:100%;margin-top:8px}

@@ -1,3 +1,6 @@
+import {JournalHeading} from './JournalHeading';
+import {JournalTextField} from './JournalTextField';
+import {IngredientAmount} from './IngredientJournalFields';
 import {MealBasics,MealChoice,MealPhoto} from './MealJournal';
 import {lineNutrition} from './line-nutrition';
 import {RecipeSelection} from './RecipePicker';
@@ -14,7 +17,7 @@ import {useLiveQuery} from 'dexie-react-hooks';
 import {useTranslation} from 'react-i18next';
 import type {TFunction} from 'i18next';
 import {ChevronDown, Plus} from 'lucide-react';
-import {db, stamp, localDate, round, scaleNutrition, sumNutrition, unknownNutrition, type FoodLog, type PantryItem, type Recipe, type RecipeLine} from './domain';
+import {db, stamp, localDate, round, scaleNutrition, sumNutrition, unknownNutrition, type FoodLog, type PantryItem, recipes as recipeTable, type Recipe, type RecipeLine} from './domain';
 import {FoodStorage, batchRemainingNutrition, batchInventoryProgress, canCancelBatch, recipeBatchInputs} from './food-storage';
 import {FoodStorageError, type FoodBatch} from './food-storage-model';
 import {RecipeLineEditor} from './RecipeLineEditor';
@@ -116,11 +119,11 @@ export function BatchDetail({batchId,close,notice}:{batchId:string;close:()=>voi
   </div>
   {action==='meal'&&<Modal title={t('storageRecord')} close={()=>setAction(null)} className="add-food-modal food-storage-modal meal-journal"><StorageMealForm defaultBatchId={b.id} date={localDate()} close={()=>setAction(null)} notice={notice}/></Modal>}
   {action==='formula'&&<BatchFormulaEditor batch={b} close={()=>setAction(null)} notice={notice}/>}
-  {action&&action!=='meal'&&action!=='formula'&&<Modal title={t(action==='discard'?'storageConfirmDiscard':action==='cancel'?'storageConfirmCancel':action==='adjust'?'storageAdjust':action==='convert'?'storageConvert':action==='metadata'?'storageEditDetails':action==='restore'?'storageRestore':'storageArchive')} close={()=>{if(!busy)setAction(null)}} className="recipe-editor-modal food-storage-modal storage-action-modal">
+  {action&&action!=='meal'&&action!=='formula'&&<Modal title={t(action==='discard'?'storageConfirmDiscard':action==='cancel'?'storageConfirmCancel':action==='adjust'?'storageAdjust':action==='convert'?'storageConvert':action==='metadata'?'storageEditDetails':action==='restore'?'storageRestore':'storageArchive')} close={()=>{if(!busy)setAction(null)}} className={"recipe-editor-modal food-storage-modal storage-action-modal"+(action==="metadata"?" journal-recipe-editor batch-journal":"")}>
    <form onSubmit={e=>{e.preventDefault();void perform()}}><div className="modal-scroll"><fieldset disabled={busy} className="storage-fields">
     {action==='adjust'&&<><label>{t('storageCurrentAmount')} ({b.mode==='weight'?'g':t('storagePercentUnit')})<NumberInput required min="0" step="any" value={amount} onChange={e=>setAmount(e.target.value)}/></label><label>{t('storageReason')}<input required value={reason} onChange={e=>setReason(e.target.value)}/></label></>}
     {action==='convert'&&<label>{t('storageMeasured')}<NumberInput required min="0.000001" step="any" value={amount} onChange={e=>setAmount(e.target.value)}/></label>}
-    {action==='metadata'&&<><label>{t('storageName')}<input required value={name} onChange={e=>setName(e.target.value)}/></label><label>{t('storageNotes')}<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label></>}
+    {action==='metadata'&&<><JournalTextField name="batchName" required label={t("storageName")} value={name} onChange={setName} placeholder={t("batchAddName")}/><label>{t('storageNotes')}<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label></>}
     {action==='archive'&&<p className="storage-footnote">{t('storageArchiveHelp')}</p>}
     {(action==='discard'||action==='cancel')&&<p>{t(action==='discard'?'storageDiscardHelp':'storageCancelHelp')}</p>}
    </fieldset>{error&&<p role="alert" className="storage-error">{error}</p>}</div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setAction(null)}>{t('cancel')}</button><button className="primary" disabled={busy}>{t(action==='discard'||action==='cancel'?'storageConfirm':'save')}</button></div></form>
@@ -129,20 +132,32 @@ export function BatchDetail({batchId,close,notice}:{batchId:string;close:()=>voi
 }
 function BatchFormulaEditor({batch,close,notice}:{batch:FoodBatch;close:()=>void;notice:Notice}){const [snapshot]=useState(()=>structuredClone(batch));const pantry=useLiveQuery(()=>db.ingredients.filter(i=>!i.deletedAt).toArray())??[];return <MakeBatchModal recipes={[]} pantry={pantry} close={close} notice={notice} correcting={snapshot}/>;}
 export function MakeBatchModal({recipes,pantry,close,notice,correcting,initialRecipe,initialServings,onCommitted}:{recipes:Recipe[];pantry:PantryItem[];close:()=>void;notice:Notice;correcting?:FoodBatch;initialRecipe?:Recipe;initialServings?:number;onCommitted?:()=>void}){
- const {t}=useTranslation(),operation=useStorageOperation(),[identity]=useState(stamp);
+ const {t,i18n}=useTranslation(),operation=useStorageOperation(),[identity]=useState(stamp);
  const [recipeId,setRecipeId]=useState(correcting?'':initialRecipe?.id??''),[name,setName]=useState(correcting?.name??initialRecipe?.name??''),[prepared,setPrepared]=useState(correcting?.preparedOn??localDate()),[notes,setNotes]=useState(correcting?.notes??''),[weight,setWeight]=useState(correcting?String(correcting.originalCookedYield):''),[lines,setLines]=useState<RecipeLine[]>(()=>correcting?.ingredients.filter(i=>i.source==='pantry')??(initialRecipe?recipeServingLines(initialRecipe,initialServings&&Number.isFinite(initialServings)&&initialServings>0?initialServings:recipeYield(initialRecipe)):[])),[error,setError]=useState(''),[busy,setBusy]=useState(false),lock=useRef(false);
  const sourceInputs=recipeBatchInputs(lines);
+ const correctedSource=useLiveQuery(()=>correcting?.sourceRecipeId?recipeTable.get(correcting.sourceRecipeId):undefined,[correcting?.sourceRecipeId]);
+ const [editingNote,setEditingNote]=useState(false);
+ const [invalidWeight,setInvalidWeight]=useState(false);
  const total=sumNutrition([...lines.map(lineNutrition),...(correcting?.ingredients.filter(i=>i.source==='batch').map(lineNutrition)??[])]),grams=Number(weight);
- return <Modal title={t(correcting?'storageCorrectFormula':'storageMake')} close={close} className="recipe-editor-modal food-storage-modal storage-make-modal"><form className="recipe-editor-form storage-make-form" onSubmit={async e=>{
+ return <Modal title={t(correcting?'storageCorrectFormula':'storageMake')} close={close} className="recipe-editor-modal food-storage-modal storage-make-modal journal-recipe-editor batch-journal"><form className="recipe-editor-form storage-make-form" onSubmit={async e=>{
   e.preventDefault();if(lock.current)return;if(!name.trim()||!Number.isFinite(grams)||grams<=0||!lines.length&&!correcting?.ingredients.some(i=>i.source==='batch')){setError(t('storageInvalid'));return}
   lock.current=true;setBusy(true);setError('');try{const input={id:identity.id,name:name.trim(),preparedOn:prepared,notes,sourceRecipeId:recipeId||null,ingredients:sourceInputs,cookedYieldGrams:grams};if(correcting){const correction={batchId:correcting.id,expectedRevision:correcting.revision,ingredients:[...lines.map(line=>({...line,source:'pantry' as const})),...correcting.ingredients.filter(i=>i.source==='batch')],cookedYieldGrams:grams};await storage.correctFormula({...correction,operationId:operation(correction)})}else await storage.makeBatch({...input,operationId:operation(input)});close();notice(t('storageSaved'));onCommitted?.()}catch(error){setError(storageErrorMessage(error,t))}finally{lock.current=false;setBusy(false)}
- }}><div className="modal-scroll storage-make-scroll"><fieldset disabled={busy} className="storage-fields">
-  {!correcting&&<RecipeSelection recipes={recipes} label={t('storageRecipeCopy')} value={recipeId} emptyLabel={t('storageScratch')} onChange={id=>{setRecipeId(id);const r=recipes.find(r=>r.id===id);setLines(r?structuredClone(r.lines):[]);if(r)setName(r.name)}}/>}
-  <label>{t('storageName')}<input name="batchName" disabled={!!correcting} value={name} required onChange={e=>setName(e.target.value)}/></label><label>{t('storagePrepared')}<DateInput disabled={!!correcting} required value={prepared} max={localDate()} onChange={e=>setPrepared(e.target.value)}/></label>
-  <RecipeLineEditor compact showSourceInfo={false} allowStored={!correcting} lines={lines} setLines={setLines} pantry={pantry}/>
+ }}><div className="modal-scroll storage-make-scroll recipe-editor-scroll"><fieldset disabled={busy} className="storage-fields">
+  <section className="batch-basic">{correcting?<div className="batch-readonly-name"><small>{t('source')}</small><span>{correcting.sourceRecipeId?correctedSource?.name??t('sourceMissing'):t('storageScratch')}</span></div>:<RecipeSelection recipes={recipes} label={t('source')} displayName={recipeId===initialRecipe?.id?initialRecipe.name:undefined} value={recipeId} emptyLabel={t('storageScratch')} onChange={id=>{setRecipeId(id);const r=recipes.find(r=>r.id===id);setLines(r?structuredClone(r.lines):[]);if(r)setName(r.name)}}/>}
+  <div>{correcting?<div className="batch-readonly-name"><small>{t("storageName")}</small><span>{name}</span></div>:<JournalTextField name="batchName" required label={t("storageName")} value={name} onChange={setName} showPencil={false} placeholder={"＋ "+t("add")}/>}</div><label className="batch-date">{t('storagePrepared')}{correcting?<span>{formatLocalDate(prepared,i18n.language)}</span>:<DateInput required value={prepared} max={localDate()} onChange={e=>setPrepared(e.target.value)}/>}</label></section>
+  <section><h3><JournalHeading>{t("batchIngredientsHeading")}</JournalHeading></h3><RecipeLineEditor batchDraft compact showSourceInfo={false} allowStored={!correcting} lines={lines} setLines={setLines} pantry={pantry}/>
   {lines.some(l=>l.source==='batch')&&<StoredRecipeSources lines={lines} setLines={setLines} percent={100}/>}
-  <label>{t('storageCookedWeight')}<NumberInput name="cookedYieldGrams" required min="0.000001" step="any" value={weight} onChange={e=>setWeight(e.target.value)}/></label>
-  <div className="storage-batch-previews"><section className="storage-batch-nutrition" aria-label={t('storageTotalNutrition')}><h3>{t('storageTotalNutrition')}</h3><RecipeNutritionStrip value={total}/></section><section className="storage-batch-nutrition" aria-label={t('storagePer100')}><h3>{t('storagePer100')}</h3><RecipeNutritionStrip value={Number.isFinite(grams)&&grams>0?scaleNutrition(total,100/grams):unknownNutrition()}/></section></div>
-  <label>{t('storageNotes')}<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label>
+  {correcting?.ingredients.filter(line=>line.source==='batch').map((line,index)=><div className="batch-fixed-source" key={line.lineId??index}><span>{line.name}</span><span>{line.quantity} {line.unit}</span></div>)}</section>
+  <section className="batch-results"><h3><JournalHeading>{t("batchResults")}</JournalHeading></h3>
+    <div onInput={e=>{if(e.target instanceof HTMLInputElement)setInvalidWeight(!e.target.validity.valid)}} onBlur={e=>{if(e.target instanceof HTMLInputElement)setInvalidWeight(!e.target.validity.valid)}}>
+    <IngredientAmount name="cookedYieldGrams" required min={0.000001} label={t('batchTotalWeight')} value={weight===''?null:grams} onChange={value=>setWeight(value===null?'':String(value))} unit={<span>g</span>}/>
+    </div>
+    <div className="storage-batch-previews"><section className="storage-batch-nutrition" aria-label={t('storageTotalNutrition')}><h4>{t('batchWhole')}</h4><RecipeNutritionStrip value={total}/></section><section className="storage-batch-nutrition" aria-label={t('storagePer100')}><h4>{t('batchPer100')}</h4><RecipeNutritionStrip value={!invalidWeight&&Number.isFinite(grams)&&grams>0?scaleNutrition(total,100/grams):unknownNutrition()}/></section></div>
+    {correcting
+      ? notes&&<p className="batch-note-text" aria-label={t('storageNotes')}>{notes}</p>
+      : editingNote
+        ? <textarea autoFocus rows={2} aria-label={t('storageNotes')} value={notes} onChange={e=>setNotes(e.target.value)} onBlur={()=>setEditingNote(false)}/>
+        : <button type="button" className="batch-note-action" aria-label={notes?t('storageNotes'):undefined} onClick={()=>setEditingNote(true)}>{notes||t('batchAddNote')}</button>}
+  </section>
  </fieldset>{error&&<p role="alert" className="storage-error">{error}</p>}</div><div className="form-actions recipe-editor-footer"><button type="button" disabled={busy} onClick={close}>{t('cancel')}</button><button className="primary" disabled={busy}>{t('save')}</button></div></form></Modal>;
 }

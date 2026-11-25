@@ -1,0 +1,49 @@
+.ingredient-journal .pantry-editor-body { padding: 14px 16px 8px; }
+.ingredient-journal .ingredient-form-section .journal-heading { font: 400 21px/1.45 JournalHand, JournalChinese, var(--font-editorial); }
+.ingredient-journal .ingredient-form-section h3 { margin: 0 0 8px; }
+.ingredient-journal .ingredient-basics .draft-name { display: grid; gap: 0; }
+.ingredient-journal .ingredient-secondary-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; align-items: start; margin-block: 6px 8px; }
+.ingredient-journal .ingredient-secondary-fields .draft-name-line { grid-template-columns: minmax(0,1fr); min-height: 34px; }
+dialog.ingredient-journal .ingredient-secondary-fields .draft-name-line input[name] { inset-inline: 0; width: 100%; font-size: 17px; }
+.ingredient-journal .ingredient-field-label,
+.ingredient-journal .draft-name > span:first-child,
+.ingredient-journal .ingredient-journal-row > span:first-child { color: var(--muted); font: 500 13px/1.4 var(--font-ui); }
+.ingredient-journal .draft-name-line { min-height: 38px; }
+.ingredient-journal .draft-name-line:has(input:not([required])) > span { font-size: 17px; }
+.ingredient-journal .draft-name-line:has(input:not([required])) > .muted { color: var(--action); font: 14px var(--font-ui); }
+.ingredient-journal .draft-name-line input:focus { color: var(--ink); }
+.ingredient-journal .ingredient-tag-choices { gap: 5px; margin-top: 4px; }
+.ingredient-journal .ingredient-tag-choices button { min-height: 34px; max-width: 100%; min-width: 0; padding: 4px 10px; border: 1px solid var(--line); border-radius: 22px; color: var(--muted); background: transparent; font: 500 12px/1.5 var(--font-ui); overflow-wrap: anywhere; }
+.ingredient-journal .ingredient-tag-choices button[aria-pressed=true] { background: var(--soft); color: var(--action); border-color: transparent; }
+.ingredient-journal .ingredient-tag-tail { display: inline-flex; align-items: center; gap: inherit; max-width: 100%; }
+.ingredient-journal .ingredient-tag-choices .ingredient-tags-more { display: grid; place-items: center; flex: none; width: 34px; padding: 0; color: var(--action); }
+:is(.ingredient-journal,.batch-journal) .ingredient-journal-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 40px; }
+:is(.ingredient-journal,.batch-journal) .ingredient-amount { display: inline-flex; position: relative; align-items: center; justify-content: flex-end; gap: 4px; min-height: 40px; min-width: 56px; max-width: 65%; color: var(--muted); font: 14px var(--font-ui); }
+.ingredient-journal .ingredient-amount > span:not(.journal-amount-ink) { overflow-wrap: anywhere; }
+dialog:is(.ingredient-journal,.batch-journal) .ingredient-amount input[type=number],
+dialog:is(.ingredient-journal,.batch-journal) .ingredient-amount input[type=number]:focus {
+  appearance: textfield; width: 10ch; min-width: 0; height: 40px; min-height: 40px;
+  border: 0; background: transparent; box-shadow: none; outline: 0; padding: 0;
+  text-align: end; color: var(--ink); font: 400 16px/1.4 var(--font-ui);
+}
+.ingredient-journal .draft-unit-trigger,.ingredient-journal .clear-conversion {
+  padding: 0; min-height: 40px; background: transparent; border: 0; color: var(--action); font: 14px var(--font-ui);
+}
+.ingredient-journal .draft-unit-trigger { position: relative; min-width: 28px; }
+.ingredient-journal .ingredient-reference-phrase { justify-content: flex-start; gap: 5px; }
+.ingredient-reference-phrase .ingredient-amount { justify-content: flex-start; }
+dialog.ingredient-journal .ingredient-reference-phrase input[type=number],
+dialog.ingredient-journal .ingredient-reference-phrase input[type=number]:focus {
+  width: 5ch; min-width: 3ch; max-width: 18ch;
+}
+@supports (field-sizing: content) {
+  dialog.ingredient-journal .ingredient-reference-phrase input[type=number],
+  dialog.ingredient-journal .ingredient-reference-phrase input[type=number]:focus { field-sizing: content; width: auto; }
+}
+.ingredient-reference-phrase .draft-unit-trigger { text-align: start; justify-content: flex-start; }
+.ingredient-reference-phrase .journal-amount-ink { left: 0; right: auto; }
+.ingredient-journal .ingredient-basis-choice .draft-unit-trigger::after { content: '▾'; position: static; margin-inline-start: 5px; }
+.ingredient-journal .ingredient-form-section .nutrition-fields { display: block; }
+.ingredient-journal .consumption-unit-editor > summary { color: var(--action); list-style: none; padding: 8px 0; }
+.ingredient-journal summary::-webkit-details-marker { display: none; }
+.ingredient-journal .conversion-equation { color: var(--ink); text-align: end; font: 14px var(--font-ui); }
