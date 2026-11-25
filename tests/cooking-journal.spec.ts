@@ -12,9 +12,9 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`coo
  },language);await page.reload();
  const row=page.locator('.recipe-list-row').filter({hasText:'Cooking journal'});await row.locator('.actions button').first().tap();const editor=page.locator('.recipe-editor-modal');
  // Group creation, rename, ordering and assignment stay local until save.
- await editor.locator('.journal-group-editor > button').tap();await editor.locator('.journal-group-edit input').fill('Sauce');await editor.locator('.journal-group-editor > button').tap();await editor.locator('.journal-group-edit input').last().fill('Topping');
- await editor.locator('.journal-group-edit').last().locator('summary').tap();await editor.locator('.journal-group-edit').last().locator('button').first().tap();await expect(editor.locator('.journal-group-edit input').first()).toHaveValue('Topping');
- await editor.locator('.journal-line-menu summary').first().tap();const sauce=await editor.locator('.journal-line-menu select').first().locator('option').filter({hasText:'Sauce'}).getAttribute('value');await editor.locator('.journal-line-menu select').first().selectOption(sauce!);
+ await editor.locator('.draft-group-switch').tap();await editor.locator('.journal-add-group').tap();await editor.locator('.journal-group-edit input').fill('Sauce');await editor.locator('.journal-group-editor > button').tap();await editor.locator('.journal-group-edit input').last().fill('Topping');
+ await editor.locator('.journal-group-edit').last().locator('summary').tap();await editor.locator('.journal-group-edit').last().locator('button').nth(1).tap();await expect(editor.locator('.journal-group-edit h4').first()).toHaveText('Topping');
+ await editor.locator('.journal-line-menu summary').first().press('Enter');await editor.locator('[data-panel=group]').first().tap();const sauce=await editor.locator('.journal-line-menu select:not(.draft-unit)').first().locator('option').filter({hasText:'Sauce'}).getAttribute('value');await editor.locator('.journal-line-menu select:not(.draft-unit)').first().selectOption(sauce!);
  expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).recipes.get(id))!.ingredientGroups,f.id)).toBeUndefined();
  if(width===390&&language==='zh')await editor.screenshot({path:'work/screenshots/cooking-groups-editor-390.png'});
  await editor.locator('.recipe-editor-footer .primary').tap();await expect(editor).toHaveCount(0);
@@ -37,7 +37,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`coo
  expect(await page.evaluate(async()=>{const b=await(await import('/src/domain.ts')).exportAll();delete b.tables.settings;return b.tables})).toEqual(before);
  await mode.locator('.modal-head button').tap();await detail.locator('.modal-head button').tap();
  // Removing a group never removes ingredients; cancel does not persist metadata changes.
- await row.locator('.actions button').first().tap();await editor.locator('.journal-group-edit').filter({has:page.locator('input[value="Sauce"]')}).locator('summary').tap();await editor.locator('.journal-group-edit').filter({has:page.locator('input[value="Sauce"]')}).locator('button').last().tap();await expect(editor.locator('.recipe-line')).toHaveCount(3);await editor.locator('.recipe-editor-footer button').first().tap();
+ await row.locator('.actions button').first().tap();await editor.locator('.journal-group-edit').filter({has:page.getByRole('heading',{name:'Sauce',exact:true})}).locator('summary').tap();await editor.locator('.journal-group-edit').filter({has:page.getByRole('heading',{name:'Sauce',exact:true})}).locator('button').last().tap();await expect(editor.locator('.recipe-line')).toHaveCount(3);await editor.locator('.recipe-editor-footer button').first().tap();
  expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).recipes.get(id))!.ingredientGroups!.length,f.id)).toBe(2);
 });
 

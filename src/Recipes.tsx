@@ -1,3 +1,4 @@
+import {DraftMethod} from './RecipeDraftJournal';
 import {JournalHeading} from './JournalHeading';
 import {identifyRecipeLines,validateJournalRecipe,type IngredientGroup} from './cooking-journal';
 import {FoodStorageList} from './FoodStorage';
@@ -32,7 +33,7 @@ import { useTranslation } from "react-i18next";
 import {
   Search,
   Plus,
-  Upload,
+  Pencil,
   X,
 } from "lucide-react";
 import {
@@ -167,12 +168,18 @@ export function RecipeEditor({
   const { t } = useTranslation();
   const [categoryIds, setCategoryIds] = useState(item?.categoryIds ?? []);
   const [lines, setLines] = useState<RecipeLine[]>(()=>identifyRecipeLines(item?.lines ?? []));
+  const [instructions,setInstructions]=useState(item?.instructions??'');
+  const [editingMethod,setEditingMethod]=useState(false);
   const [groups,setGroups]=useState<IngredientGroup[]>(item?.ingredientGroups??[]);
   const [busy, setBusy] = useState(false);
+  const [draftName,setDraftName]=useState(item?.name??'');
+  const [yieldText,setYieldText]=useState(String(recipeYield(item??{})));
+  const adjustYield=(delta:number)=>setYieldText(value=>String(Math.max(0.01,Number(value)+delta)));
   const [photo, setPhoto] = useState(item?.photo ?? "");
   const [reading, setReading] = useState(false);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(busy || editingMethod)return;
     const f = new FormData(e.currentTarget);
     const name = String(f.get("name")).trim();
     if (!name || !lines.length || lines.some((l) => !Number.isFinite(l.quantity)||l.quantity < 0) || !Number.isFinite(Number(f.get('servings'))) || Number(f.get('servings'))<=0) {
@@ -188,7 +195,7 @@ export function RecipeEditor({
         servings: Number(f.get('servings')),
         lines,
         ingredientGroups:groups,
-        instructions: String(f.get("instructions")).trim(),
+        instructions,
         stickyNote: String(f.get("stickyNote")).trim(),
         category: item?.category ?? "",
         categoryIds,
@@ -203,16 +210,44 @@ export function RecipeEditor({
     }
   };
   return (
-    <Modal title={t(item ? "editRecipe" : "newRecipe")} close={close} className="recipe-editor-modal journal-recipe-editor">
+    <Modal title={t(item ? "editRecipe" : "journalCreateRecipe")} close={close} className="recipe-editor-modal journal-recipe-editor">
       <form onSubmit={submit} className="recipe-editor-form">
         <div className="recipe-editor-scroll">
-          <section className="recipe-editor-basic-section"><h3>{t("basicInformation")}</h3><div className="recipe-editor-identity"><label>
-            {t("name")}
-            <input name="name" required defaultValue={item?.name} />
-          </label>        
-
-        <div className={"recipe-photo-control "+(photo?"photo-field":"")}><label className="recipe-photo-upload" aria-label={t(photo?"replacePhoto":"uploadRecipePhoto")}>
-          {photo&&<img src={photo} alt={t("recipePhoto")} />}<span className="photo-upload-prompt"><Upload size={20}/><span className="sr-only">{t(photo?"replacePhoto":"uploadRecipePhoto")}</span></span>
+          <section className="recipe-editor-basic-section draft-basics">
+            <h3><JournalHeading>{t("basicInformation")}</JournalHeading></h3>
+            <label className="draft-name">
+              <span>{t("name")}</span>
+              <span className="draft-name-line">
+                <span aria-hidden="true" className={draftName?'':'muted'}>{draftName||t('draftNamePlaceholder')}</span>
+                <input name="name" aria-label={t("name")} required value={draftName} placeholder={t('draftNamePlaceholder')}
+                  onChange={e=>setDraftName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.nativeEvent.isComposing){e.preventDefault();e.currentTarget.blur()}}}/>
+                <Pencil size={15} aria-hidden="true"/>
+              </span>
+            </label>
+            <div className="draft-yield">
+              <label htmlFor="draft-recipe-yield">{t('draftRecipeYield')}</label>
+              <div className="draft-yield-controls">
+                <button type="button" aria-label={t('journalDecrease')} disabled={Number(yieldText)<=0.01} onClick={()=>adjustYield(-1)}>−</button>
+                <input id="draft-recipe-yield" name="servings" type="number" inputMode="decimal" min="0.01" step="any" required
+                  value={yieldText} style={{width:Math.max(3,yieldText.length+1)+'ch'}} onChange={e=>setYieldText(e.target.value)}
+                  onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();e.currentTarget.blur()}}}/>
+                <button type="button" aria-label={t('journalIncrease')} onClick={()=>adjustYield(1)}>＋</button>
+                <span>{t('recipeYieldUnit')}</span>
+              </div>
+            </div>
+        <fieldset className="category-assignments">
+          <legend>{t("recipeCategoriesMultiple")}</legend>
+          <RecipeCategoryPicker pills value={categoryIds} onToggle={(id, included) => setCategoryIds(previous => included ? [...new Set([...previous, id])] : previous.filter(value => value !== id))} />
+          {item?.category && (
+            <small>
+              {t("legacyCategory")}: {item.category}
+            </small>
+          )}
+        </fieldset>
+            <div className={'draft-photo'+(photo?' photo-field':'')}>
+              <label className="draft-photo-action">
+                {photo?<img src={photo} alt={t('recipePhoto')}/>:<Plus size={15}/>}
+                <span>{t(photo?'replacePhoto':'draftAddImage')}</span>
           <input
             className="sr-only" type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -230,36 +265,18 @@ export function RecipeEditor({
               }
             }}
           />
-        </label>{photo&&<button type="button" className="photo-remove" aria-label={t("removePhoto")} title={t("removePhoto")} onClick={()=>setPhoto("")}><X size={14}/></button>}</div>
-</div>
-        <div className="recipe-editor-basics">
-        <label className="recipe-yield-editor">{t('recipeYield')}<span className="recipe-serving-input"><input name="servings" type="number" inputMode="decimal" min="0.01" step="any" required defaultValue={recipeYield(item??{})}/><span>{t('recipeYieldUnit')}</span></span><small className="muted">{t('recipeYieldHelp')}</small></label>
-        <fieldset className="category-assignments">
-          <legend>{t("recipeCategoriesMultiple")}</legend>
-          <RecipeCategoryPicker pills value={categoryIds} onToggle={(id, included) => setCategoryIds(previous => included ? [...new Set([...previous, id])] : previous.filter(value => value !== id))} />
-          {item?.category && (
-            <small>
-              {t("legacyCategory")}: {item.category}
-            </small>
-          )}
-        </fieldset>
-        </div></section>
+              </label>
+              {photo&&<button type="button" className="photo-remove" aria-label={t('removePhoto')} onClick={()=>setPhoto('')}><X size={15}/></button>}
+            </div>
+          </section>
 
         <section className="recipe-editor-section">
-        <h3><JournalHeading>{t("lines")}</JournalHeading></h3>
         <RecipeLineEditor compact groups={groups} onGroupsChange={setGroups} lines={lines} setLines={setLines} pantry={pantry} />
         </section>
         <section className="recipe-editor-section recipe-editor-nutrition">
           <h3>{t("recipeNutritionTotal")}</h3><RecipeNutritionStrip value={wholeRecipeNutrition(lines)}/>
         </section>
-        <label className="recipe-editor-section recipe-editor-text">
-          <span><JournalHeading>{t("instructions")}</JournalHeading></span>
-          <textarea
-            name="instructions"
-            rows={4}
-            defaultValue={item?.instructions}
-          />
-        </label>
+        <DraftMethod value={instructions} onConfirm={setInstructions} editing={editingMethod} setEditing={setEditingMethod}/>
         <label className="recipe-editor-section recipe-editor-text">
           <span>{t("stickyNote")}</span>
           <textarea
@@ -274,7 +291,7 @@ export function RecipeEditor({
           <button type="button" onClick={close}>
             {t("cancel")}
           </button>
-          <button className="primary" disabled={busy || reading}>
+          <button className="primary" disabled={busy || reading || editingMethod}>
             {t("save")}
           </button>
         </div>

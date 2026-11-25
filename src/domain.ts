@@ -107,6 +107,16 @@ export function ingredientNutrition(
   unit: string,
 ): Nutrition {
   const nutrition=normalizeIngredientNutrition(i);
+  const factor=ingredientNutritionFactor(i,quantity,unit);
+  return Object.fromEntries(
+    nutrientKeys.map((k) => [
+      k,
+      factor === null || nutrition[k] === null ? null : nutrition[k] * factor,
+    ]),
+  ) as Nutrition;
+}
+/** Number of recorded nutrition-reference portions represented by this amount. */
+export function ingredientNutritionFactor(i: PantryItem, quantity: number, unit: string): number | null {
   const conversion = i.consumptionUnit;
   if (validConsumptionUnit(conversion) && unit === conversion.name) {
     quantity = quantity * conversion.amount / conversion.quantity;
@@ -123,12 +133,7 @@ export function ingredientNutrition(
       else if (unit === "serving" && (i.servingUnit ?? "g") === baseUnit && i.servingGrams != null && i.servingGrams > 0) factor = quantity * i.servingGrams / base;
     }
   }
-  return Object.fromEntries(
-    nutrientKeys.map((k) => [
-      k,
-      factor === null || nutrition[k] === null ? null : nutrition[k] * factor,
-    ]),
-  ) as Nutrition;
+  return factor;
 }
 export function sumNutrition(values: Nutrition[]): Nutrition {
   return Object.fromEntries(
