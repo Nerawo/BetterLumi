@@ -14,6 +14,9 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`jou
  },language);await page.reload();const row=page.locator('.recipe-list-row').filter({hasText:f.recipe.name});await row.locator('a').tap();const detail=page.locator('.journal-recipe-detail');
  await expect(detail.locator('.detail-ingredients strong')).toHaveCount(6);await expect(detail.locator('.journal-overview-group')).toHaveCount(2);await expect(detail.locator('input[type=checkbox]')).toHaveCount(0);await expect(detail.locator('.detail-image-trigger')).toBeVisible();expect((await detail.locator('.detail-image-trigger').boundingBox())!.height).toBeLessThanOrEqual(48);
  expect(await detail.locator('.recipe-reading-grid h2 .journal-heading').first().evaluate(e=>getComputedStyle(e).fontFamily)).toContain('JournalHand');await expect(detail.locator('.recipe-method')).toHaveText(f.recipe.instructions);await expect(detail.locator('.journal-step-number')).toHaveCount(4);
+ const groupTitle=detail.locator('.journal-overview-group .journal-heading').first();
+ await expect(groupTitle).toHaveCSS('font-family',/^JournalHand, JournalChinese,/);
+ await expect(groupTitle).toHaveCSS('font-weight','400');
  if(width===390&&language==='zh')await detail.screenshot({path:'work/screenshots/journal-phase2-detail-390.png'});
  await detail.locator('.recipe-edit-trigger').tap();const editor=page.locator('.journal-recipe-editor');await expect(editor.locator('.journal-editor-group')).toHaveCount(4);await expect(editor.locator('.journal-line-menu[open]')).toHaveCount(0);await expect(editor.locator('.journal-line-menu select:visible')).toHaveCount(0);
  const pastry=editor.locator('[data-group-id=pastry]'),custard=editor.locator('[data-group-id=custard]');await expect(pastry.locator('.recipe-line')).toHaveCount(3);await expect(custard.locator('.recipe-line')).toHaveCount(3);
