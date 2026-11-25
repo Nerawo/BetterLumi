@@ -30,6 +30,7 @@ const en = {
   sortIngredients: "Sort",
   sortRecent: "Recently updated",
   sortCalories: "Calories, low to high",
+  mealAddPhoto: "Add photo",
   mealPhoto: "Meal photo (optional)",
   searchRecipes: "Search recipes…",
 };
@@ -64,6 +65,7 @@ const zh = {
   sortIngredients: "排序",
   sortRecent: "最近更新",
   sortCalories: "热量从低到高",
+  mealAddPhoto: "添加照片",
   mealPhoto: "本餐照片（可选）",
 };
 i18n.addResourceBundle("en", "translation", en, true, true);

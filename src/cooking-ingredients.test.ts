@@ -1,9 +1,9 @@
 import 'fake-indexeddb/auto';
 import {afterEach,expect,it} from 'vitest';
 import {db,stamp,recipes,foodLogs,exportAll,restoreAll,type Recipe,type RecipeLine,type FoodLog} from './domain';
-import {COOKING_PREFIX,addCookingIngredient,removeCookingIngredient,visibleCookingEntries,changeCookingServings,setCookingQuantity,resetCookingPreparation,reconcileCookingSession,validateCookingSession} from './cooking-journal';
+import {COOKING_PREFIX,replaceCookingIngredient,addCookingIngredient,removeCookingIngredient,visibleCookingEntries,changeCookingServings,setCookingQuantity,resetCookingPreparation,reconcileCookingSession,validateCookingSession} from './cooking-journal';
 import {openCookingSession,saveCookingSession,updateRecipeFromCooking,updateCookingMethod} from './cooking-session';
-import {effectiveCookingRecipe,requantifyLine} from './cooking-effective';
+import {effectiveCookingRecipe,changeCookingUnit,requantifyLine} from './cooking-effective';
 import {recipeServingNutrition,wholeRecipeNutrition} from './recipe-nutrition';
 import {FoodStorage,recipeBatchInputs} from './food-storage';
 import {storedRecipeLine} from './recipe-storage';
@@ -48,14 +48,97 @@ it('insufficient mixed sources roll back and retry operation IDs never duplicate
 it('template update rollback preserves complete v3 state',async()=>{
  const {r,s}=await setup(),next=await saveCookingSession(s,addCookingIngredient(removeCookingIngredient(s,'a'),line('new'))),before=await exportAll(),fail=()=>{throw Error('Injected v3 failure')};db.settings.hook('updating',fail);try{await expect(updateRecipeFromCooking(r,next)).rejects.toThrow()}finally{db.settings.hook('updating').unsubscribe(fail)}expect((await exportAll()).tables).toEqual(before.tables);
 });
-it('Backup 15 round trips v3 exact sources, decimals, removals and checks; invalid structures reject before writes',async()=>{
- const {r,s}=await setup(),f=await source();let next=addCookingIngredient(removeCookingIngredient(s,'b'),storedRecipeLine(f.batch));const id=next.ingredientChanges!.addedLines[0].entryId;next=await saveCookingSession(s,{...setCookingQuantity(next,id,12.123456,'g'),checked:['a',id]});const backup=await exportAll();expect(backup.version).toBe(15);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(JSON.parse(JSON.stringify(backup.tables)));expect(await openCookingSession(r)).toEqual(next);const reopened=await exportAll();
+it('Backup 15 imports v3 exact sources, decimals, removals and checks; invalid structures reject before writes',async()=>{
+ const {r,s}=await setup(),f=await source();let next=addCookingIngredient(removeCookingIngredient(s,'b'),storedRecipeLine(f.batch));const id=next.ingredientChanges!.addedLines[0].entryId;next=await saveCookingSession(s,{...setCookingQuantity(next,id,12.123456,'g'),checked:['a',id]});const backup=await exportAll();expect(backup.version).toBe(16);backup.version=15;await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(JSON.parse(JSON.stringify(backup.tables)));expect(await openCookingSession(r)).toEqual(next);const reopened=await exportAll();
  const mutations=[(b:any)=>b.version=14,(b:any)=>b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify({...next,ingredientChanges:{...next.ingredientChanges,extra:true}}),(b:any)=>{const bad=structuredClone(next);bad.ingredientChanges!.addedLines[0].line.sourceBatchId='missing';bad.ingredientChanges!.addedLines[0].line.ingredientId='missing';b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify(bad)},(b:any)=>{const bad=structuredClone(next);bad.checked.push('b');b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify(bad)}];for(const mutate of mutations){const bad=structuredClone(backup);mutate(bad);await expect(restoreAll(bad)).rejects.toThrow();expect((await exportAll()).tables).toEqual(reopened.tables)}
  for(const quantity of [-1,NaN,Infinity]){const bad=structuredClone(next);bad.ingredientChanges!.addedLines[0].line.quantity=quantity;expect(()=>validateCookingSession(bad)).toThrow()}
 });
 it('valid Backup 14 zeros, groups and precise v2 overrides import without upgrade or rewriting',async()=>{
  const r=makeRecipe();r.ingredientGroups=[{id:'g',name:'Group'}];r.lines=r.lines.map((l,i)=>({...requantifyLine(l,i===0?0:l.quantity),groupId:'g'}));await recipes.put(r);const original=await openCookingSession(r),s=await saveCookingSession(original,{...setCookingQuantity(original,'b',12.123456,'g'),checked:['b']}),backup=await exportAll();backup.version=14;await restoreAll(backup);expect((await db.settings.get(COOKING_PREFIX+r.id))!.value).toBe(JSON.stringify(s));expect((await recipes.get(r.id))).toEqual(r);expect(effectiveCookingRecipe(r,s).lines.map(l=>l.quantity)).toEqual([0,12.123456]);
 });
-it.each([2,3,4,5,6,7,8,9,10,11,12,13,14])('continues accepting positive ungrouped Backup %s',async version=>{
+it.each([2,3,4,5,6,7,8,9,10,11,12,13,14,15])('continues accepting positive ungrouped Backup %s',async version=>{
  const r=makeRecipe();await recipes.put(r);const backup=await exportAll();backup.version=version;if(version===2){delete backup.tables.recipeNotes;delete backup.tables.goals}if(version<4)delete backup.tables.recipeCategories;if(version<5){delete backup.tables.exercisePlans;delete backup.tables.exerciseOccurrences}if(version<6)delete backup.tables.ingredientTags;if(version<10){delete backup.tables.foodBatches;delete backup.tables.inventoryTransactions}await restoreAll(backup);expect(await recipes.get(r.id)).toEqual(r);
+});
+
+it('replaces in place across repeated picks, group moves, restore, and normalized template update',async()=>{
+ const r=makeRecipe();r.ingredientGroups=[{id:'g',name:'Group'}];r.lines[0].groupId='g';
+ await recipes.put(r);const first=await openCookingSession(r);
+ const batch=await source();
+ let s=changeCookingServings(first,4);
+ s=addCookingIngredient(s,{...line('temporary'),groupId:'g'},'extra');
+ s={...setCookingQuantity(s,'a',99.125,'g'),checked:['a','b','extra']};
+ s=replaceCookingIngredient(s,'a',line('first choice',110));
+ s=replaceCookingIngredient(s,'a',storedRecipeLine(batch.batch));
+ s=replaceCookingIngredient(s,'extra',line('second choice',7));
+ expect(s.checked).toEqual(['b']);expect(s.quantityOverrides).toEqual([]);
+ expect(s.ingredientChanges!.replacements).toHaveLength(1);
+ s=await saveCookingSession(first,setCookingQuantity(s,'a',50.125,'g'));
+ const actual=effectiveCookingRecipe(r,s);
+ expect(actual.lines.map(l=>[l.lineId,l.ingredientId,l.groupId])).toEqual([['a',batch.id,'g'],['b','b',undefined],['extra','second choice','g']]);
+ expect(actual.lines[0].nutrition.calories).toBe(50.125);expect(actual.lines[0].quantity).toBe(50.125);
+ const backup=await exportAll();expect(backup.version).toBe(16);
+ await expect(restoreAll({...backup,version:15})).rejects.toThrow('version 16');
+ await restoreAll(JSON.parse(JSON.stringify(backup)));const reopened=await openCookingSession(r);expect(reopened).toEqual(s);s=reopened;
+ const changed={...r,revision:r.revision+1,lines:[r.lines[1],{...r.lines[0],groupId:undefined}]};
+ expect(effectiveCookingRecipe(changed,reconcileCookingSession(changed,s)).lines[1]).toMatchObject({lineId:'a',ingredientId:batch.id,groupId:undefined});
+ changed.lines[1]={...changed.lines[1],ingredientId:'other'};
+ expect(reconcileCookingSession(changed,s).ingredientChanges!.replacements).toEqual([]);
+ expect(effectiveCookingRecipe(r,resetCookingPreparation(r,s)).lines).toEqual(r.lines);
+ expect(effectiveCookingRecipe(r,removeCookingIngredient(s,'a')).lines.map(l=>l.lineId)).toEqual(['b','extra']);
+ const saved=await updateRecipeFromCooking(r,s);
+ expect(saved.recipe.lines[0]).toMatchObject({ingredientId:batch.id,lineId:'a',groupId:'g',quantity:25.0625});
+ expect(saved.session.checked).toEqual(['b']);expect(effectiveCookingRecipe(saved.recipe,saved.session).lines).toEqual(actual.lines);
+ expect((await db.foodBatches.get(batch.id))!.remainingQuantity).toBe(1000);expect(await foodLogs.count()).toBe(0);
+});
+
+it('replacement sources flow through positive allocations, overdraw rollback, cancellation and inventory return',async()=>{
+ const {r,s}=await setup(),f=await source(),second=await source();
+ let prepared=replaceCookingIngredient(replaceCookingIngredient(s,'a',storedRecipeLine(f.batch)),'b',storedRecipeLine(second.batch));
+ prepared=setCookingQuantity(setCookingQuantity(prepared,'a',99.125,'g'),'b',1100,'g');
+ const inputs=()=>recipeBatchInputs(effectiveCookingRecipe(r,prepared).lines);
+ const batch={operationId:stamp().id,id:stamp().id,name:'Test',preparedOn:'2030-01-01',cookedYieldGrams:300};
+ const before=await exportAll();await expect(f.storage.makeBatch({...batch,ingredients:inputs()})).rejects.toThrow();
+ expect((await exportAll()).tables).toEqual(before.tables);
+ prepared=setCookingQuantity(prepared,'b',0,'g');const effective=effectiveCookingRecipe(r,prepared);
+ await f.storage.makeBatch({...batch,ingredients:inputs()});
+ expect((await db.foodBatches.get(f.id))!.remainingQuantity).toBe(900.875);
+ expect((await db.foodBatches.get(second.id))!.remainingQuantity).toBe(1000);
+ await f.storage.cancelBatch({operationId:stamp().id,batchId:batch.id,expectedRevision:1});
+ const meal:FoodLog={...stamp(),source:'recipe',sourceId:r.id,name:r.name,date:'2030-01-01',category:'lunch',quantity:2,unit:'serving',lines:effective.lines,nutrition:wholeRecipeNutrition(effective.lines),consumptionPercent:100,cookingNote:''};
+ await f.storage.saveRecipeMeal({operationId:stamp().id,meal});expect((await db.foodBatches.get(f.id))!.remainingQuantity).toBe(900.875);
+ expect((await foodLogs.get(meal.id))!.recipeAllocations).toHaveLength(1);
+ await f.storage.deleteMeal({operationId:stamp().id,mealId:meal.id,expectedRevision:1});
+ expect((await db.foodBatches.get(f.id))!.remainingQuantity).toBe(1000);
+});
+
+it('rejects forged replacement references, duplicate slots, invalid quantity bases and missing batches before import',async()=>{
+ const {r,s}=await setup(),f=await source(),next=await saveCookingSession(s,replaceCookingIngredient(s,'a',storedRecipeLine(f.batch)));
+ const backup=await exportAll();
+ for(const fault of ['fingerprint','id','duplicate','servings','missing batch','extra field']){
+  const invalid=structuredClone(next),rows=invalid.ingredientChanges!.replacements!,row=rows[0];
+  if(fault==='fingerprint')row.fingerprint+='!';
+  if(fault==='id')row.entryId='missing';
+  if(fault==='duplicate')rows.push({...row});
+  if(fault==='servings')row.servings=0;
+  if(fault==='missing batch')row.line.ingredientId=row.line.sourceBatchId='missing';
+  if(fault==='extra field')Object.assign(row,{order:1});
+  const bad=structuredClone(backup);(bad.tables.settings as {key:string;value:string}[]).find(x=>x.key===COOKING_PREFIX+r.id)!.value=JSON.stringify(invalid);
+  await expect(restoreAll(bad)).rejects.toThrow();expect((await exportAll()).tables).toEqual(backup.tables);
+ }
+});
+
+it('converts session quantities on their own yield basis, retaining checks, absolute overrides and nutrition across backup',async()=>{
+ const {r,s}=await setup(),factors=new Map([['g',.01],['piece',.25]]);
+ const original={...setCookingQuantity(changeCookingServings(s,4),'a',150.5,'g'),checked:['a']};
+ expect(()=>changeCookingUnit(r,original,'a','mL',factors)).toThrow();
+ const changed=await saveCookingSession(s,changeCookingUnit(r,original,'a','piece',factors));
+ expect(changed.checked).toEqual(['a']);
+ const effective=effectiveCookingRecipe(r,changed).lines[0];
+ expect(effective.quantity).toBeCloseTo(6.02);expect(effective.unit).toBe('piece');
+ const priorNutrition=effectiveCookingRecipe(r,original).lines[0].nutrition;
+ for(const key of ['calories','carbs','protein','fat'] as const)expect(effective.nutrition[key]).toBeCloseTo(priorNutrition[key]!,12);
+ expect(effectiveCookingRecipe(r,{...changed,quantityOverrides:[]}).lines[0].quantity).toBe(8);
+ expect((await recipes.get(r.id))!.lines[0].unit).toBe('g');
+ const backup=await exportAll();await restoreAll(backup);
+ expect(effectiveCookingRecipe(r,await openCookingSession(r))).toEqual(effectiveCookingRecipe(r,changed));
 });

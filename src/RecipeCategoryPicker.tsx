@@ -47,7 +47,7 @@ export function RecipeCategoryPicker({ value, onToggle, className = "", pills = 
     if (!pointerInside.current && event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
   }}>
     <div className={pills ? "ingredient-tag-choices" : "recipe-category-chips"} role={pills ? "group" : undefined} aria-label={pills ? t("recipeCategoriesMultiple") : undefined}>
-      {pills && items?.map(category => <button type="button" key={category.id} aria-pressed={value.includes(category.id)} onClick={() => void onToggle(category.id, !value.includes(category.id))}>{value.includes(category.id) && <Check size={13}/>}<span>{category.name}</span></button>)}
+      {pills && items?.map(category => <button type="button" key={category.id} aria-pressed={value.includes(category.id)} onClick={() => void onToggle(category.id, !value.includes(category.id))}><span>{category.name}</span></button>)}
       {!pills && items?.filter(category => value.includes(category.id)).map(category => <span className="recipe-category-chip" key={category.id}>{category.name}</span>)}
       <button type="button" className="category-picker-trigger text-link" ref={trigger} aria-expanded={open} aria-controls={open ? id : undefined} aria-label={t("chooseRecipeCategories")} onClick={() => setOpen(!open)}>{pills ? <Plus size={16}/> : <><Plus size={14} />{t("categoryAction")}</>}</button>
       {compact&&open&&<button type="button" className="category-picker-done text-link" onClick={close}>{t("categoryPickerDone")}</button>}

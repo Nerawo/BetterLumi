@@ -23,7 +23,7 @@ it('template/session failure rolls both writes back, rejects stale writers',asyn
 });
 it('mixed zero sources survive Backup 14, never allocate/return unused inventory; positive sources remain atomic',async()=>{
  const storage=new FoodStorage(),source=stamp().id;await storage.makeBatch({operationId:stamp().id,id:source,name:'Sauce',preparedOn:'2026-11-01',cookedYieldGrams:1000,ingredients:[{source:'pantry',line:recipe().lines[0]}]});const batch=(await db.foodBatches.get(source))!;const r=recipe();r.lines=[{...storedRecipeLine(batch),lineId:'used',quantity:100,nutrition:{calories:10,protein:null,carbs:1,fat:0}},{...requantifyLine({...storedRecipeLine(batch),lineId:'unused'},0)},{...r.lines[0],quantity:0,nutrition:{calories:null,protein:null,carbs:null,fat:null}}];r.ingredientGroups=undefined;r.lines=r.lines.map(l=>({...l,groupId:undefined}));await recipes.put(r);
- const meal:FoodLog={...stamp(),date:'2030-01-01',category:'lunch',source:'recipe',sourceId:r.id,name:r.name,quantity:1,unit:'serving',lines:r.lines,cookingNote:'',nutrition:n,consumptionPercent:100};await storage.saveRecipeMeal({operationId:stamp().id,meal});const saved=(await foodLogs.get(meal.id))!;expect(saved.recipeAllocations).toHaveLength(1);expect(saved.lines).toHaveLength(3);expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(900);const child=stamp().id;await storage.makeBatch({operationId:stamp().id,id:child,name:'Prepared',preparedOn:'2026-11-01',cookedYieldGrams:300,ingredients:recipeBatchInputs(r.lines)});expect((await db.foodBatches.get(child))!.ingredients.map(l=>l.quantity)).toEqual([100,0,0]);expect((await db.foodBatches.get(child))!.totalNutrition.calories).toBe(10);const backup=await exportAll();expect(backup.version).toBe(15);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);await storage.deleteMeal({operationId:stamp().id,mealId:saved.id,expectedRevision:saved.revision});expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(900);await storage.cancelBatch({operationId:stamp().id,batchId:child,expectedRevision:1});expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(1000);
+ const meal:FoodLog={...stamp(),date:'2030-01-01',category:'lunch',source:'recipe',sourceId:r.id,name:r.name,quantity:1,unit:'serving',lines:r.lines,cookingNote:'',nutrition:n,consumptionPercent:100};await storage.saveRecipeMeal({operationId:stamp().id,meal});const saved=(await foodLogs.get(meal.id))!;expect(saved.recipeAllocations).toHaveLength(1);expect(saved.lines).toHaveLength(3);expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(900);const child=stamp().id;await storage.makeBatch({operationId:stamp().id,id:child,name:'Prepared',preparedOn:'2026-11-01',cookedYieldGrams:300,ingredients:recipeBatchInputs(r.lines)});expect((await db.foodBatches.get(child))!.ingredients.map(l=>l.quantity)).toEqual([100,0,0]);expect((await db.foodBatches.get(child))!.totalNutrition.calories).toBe(10);const backup=await exportAll();expect(backup.version).toBe(16);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);await storage.deleteMeal({operationId:stamp().id,mealId:saved.id,expectedRevision:saved.revision});expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(900);await storage.cancelBatch({operationId:stamp().id,batchId:child,expectedRevision:1});expect((await db.foodBatches.get(source))!.remainingQuantity).toBe(1000);
  const bad=structuredClone(backup);const row=(bad.tables.foodLogs as FoodLog[]).find(m=>m.id===saved.id)!;row.recipeAllocations![0].quantity=0;await expect(restoreAll(bad)).rejects.toThrow();
 });
 it('imports valid positive Backup 13 and rejects zero extensions under old version labels',async()=>{const r=recipe();await recipes.put(r);const b=await exportAll();b.version=13;await restoreAll(b);expect(await recipes.get(r.id)).toEqual(r);(b.tables.recipeCards as Recipe[])[0].lines[0].quantity=0;await expect(restoreAll(b)).rejects.toThrow()});
@@ -38,4 +38,36 @@ it('editing positive to zero returns only its original allocation; zero to posit
 });
 it('Pantry-only zero snapshots retain unknown references but require zero consumed nutrition on backup restore',async()=>{
  const r=recipe();r.lines=r.lines.map(l=>({...l,quantity:0,nutrition:{calories:null,protein:null,carbs:null,fat:null}}));await recipes.put(r);const meal:FoodLog={...stamp(),name:'Zero meal',date:'2030-01-01',category:'lunch',source:'recipe',sourceId:r.id,quantity:1,unit:'serving',lines:r.lines,nutrition:{calories:0,protein:0,carbs:0,fat:0},cookingNote:''};await foodLogs.add(meal);const b=await exportAll();await restoreAll(b);expect((await exportAll()).tables).toEqual(b.tables);const bad=structuredClone(b);(bad.tables.foodLogs as FoodLog[])[0].nutrition.calories=1;await expect(restoreAll(bad)).rejects.toThrow();expect((await exportAll()).tables).toEqual(b.tables);expect(await db.inventoryTransactions.count()).toBe(0);
+});
+
+it('seeds the complete adjusted meal preparation at its yield, retaining zero, additions and removals',async()=>{
+ const saved=recipe();
+ const addition={...saved.lines[1],lineId:'new',ingredientId:'extra',quantity:12.375};
+ const session=await openCookingSession(saved,true,{baseline:saved,servings:3,lines:[requantifyLine(saved.lines[0],0),addition]});
+ const result=effectiveCookingRecipe(saved,session);
+ expect(result.servings).toBe(3);
+ expect(result.lines.map(l=>[l.lineId,l.quantity])).toEqual([['a',0],['new',12.375]]);
+ expect(session.ingredientChanges?.removedEntries.map(r=>r.entryId)).toEqual(['b']);
+ expect(await foodLogs.count()).toBe(0);
+ expect(await db.inventoryTransactions.count()).toBe(0);
+});
+it('preserves legacy duplicate identities in the draft and rejects stale initialization atomically',async()=>{
+ const saved=recipe();saved.lines=[saved.lines[1],saved.lines[1]].map(l=>({...l,lineId:undefined}));
+ const baseline={...saved,lines:saved.lines.map((l,i)=>({...l,lineId:'draft-'+i}))};
+ const session=await openCookingSession(saved,true,{baseline,servings:1.5,lines:[requantifyLine(baseline.lines[1],67.125)]});
+ expect(effectiveCookingRecipe(saved,session).lines.map(l=>[l.lineId,l.quantity])).toEqual([['draft-1',67.125]]);
+ expect(session.legacyMappings.map(m=>m.id)).toEqual(['draft-0','draft-1']);
+ const before=await db.settings.toArray();
+ await expect(openCookingSession({...saved,revision:2},true,{baseline,servings:1.5,lines:[]})).rejects.toThrow();
+ expect(await db.settings.toArray()).toEqual(before);
+});
+
+it('carries a replacement nutrition snapshot even when the source ID and unit still match',async()=>{
+ const saved=recipe(),line={...saved.lines[0],nutrition:{...n,calories:234.5625}};
+
+ const session=await openCookingSession(saved,true,{baseline:saved,servings:6,lines:[line]});
+ const actual=effectiveCookingRecipe(saved,session).lines[0];
+ expect(actual.nutrition).toEqual(line.nutrition);
+ expect(actual.lineId).toBe(line.lineId);
+ expect(saved.lines[0].nutrition.calories).toBe(100);
 });

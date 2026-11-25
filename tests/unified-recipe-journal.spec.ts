@@ -180,7 +180,8 @@ for(const language of ['zh','en'])for(const mode of ['create','edit'] as const){
     await page.setViewportSize({width,height:844});
     for(const theme of ['misty','apricot','lavender','olive']){
       await page.evaluate(async theme=>(await import('/src/themes.ts')).applyTheme(theme),theme);
-      expect(await editor.locator('.recipe-editor-scroll').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+      const scroll=await editor.locator('.recipe-editor-scroll').evaluate(el=>({content:el.scrollWidth,viewport:el.clientWidth}));
+      expect(scroll.content,JSON.stringify({width,theme,scroll})).toBeLessThanOrEqual(scroll.viewport);
       expect(await extra.locator('.draft-ingredient-name').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
     }
   }
@@ -230,3 +231,17 @@ for(const language of ['zh','en'])for(const mode of ['create','edit'] as const){
   expect(flat!.instructions).toBe(method);
  });
 }
+
+test('shared icon-only grouping toolbar',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/recipes');
+ const id=await page.evaluate(async()=>{const d=await import('/src/domain.ts');const r={...d.stamp(),name:'分组测试',servings:1,lines:[],ingredientGroups:[{id:'a',name:'塔皮'},{id:'b',name:'内馅'}],instructions:'',stickyNote:''};await d.recipes.put(r);return r.id});
+ await page.reload();const editor=page.locator('.journal-recipe-editor'),icon=editor.locator('.draft-group-switch'),heading=editor.locator('.journal-group-editor > .draft-heading-row'),path='work/screenshots/amount-polish/';
+ await page.locator('.recipe-fab').tap();await expect(icon).toHaveText('');await expect(icon).toHaveAccessibleName(/设置分组|Manage groups/);
+ await expect(icon).toHaveAttribute('aria-pressed','false');expect((await icon.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+ await heading.screenshot({path:path+'create-off.png',scale:'css'});const off=await icon.evaluate(el=>getComputedStyle(el).color);
+ await icon.tap();await expect(icon).toHaveAttribute('aria-pressed','true');expect(await icon.evaluate(el=>getComputedStyle(el).color)).not.toBe(off);
+ await heading.screenshot({path:path+'create-on.png',scale:'css'});await icon.tap();await page.locator('.draft-confirmation .secondary').tap();
+ await editor.locator('.modal-head button').tap();await page.goto('/recipes/'+id);await page.locator('.recipe-edit-trigger').tap();
+ await expect(icon).toHaveAttribute('aria-pressed','true');await heading.screenshot({path:path+'edit-on.png',scale:'css'});
+ await icon.tap();await page.locator('.draft-confirmation .primary').tap();await expect(icon).toHaveAttribute('aria-pressed','false');await heading.screenshot({path:path+'edit-off.png',scale:'css'});
+});

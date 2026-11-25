@@ -1,0 +1,101 @@
+
+.meal-journal {--font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;font-family:var(--font-ui);--meal-writing:JournalHand,JournalChinese,var(--font-ui)}
+dialog.meal-journal .source-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;margin:0 14px 6px}
+dialog.meal-journal .source-tabs button {background:none;border:0;border-bottom:2px solid transparent;border-radius:0;box-shadow:none;color:var(--muted);min-height:44px}
+dialog.meal-journal .source-tabs button.selected {background:none;color:var(--action);border-bottom-color:currentColor}
+.meal-journal .meal-basics {border-bottom:1px solid var(--line);padding:0 0 6px}
+.meal-journal .meal-basics h3 {margin:4px 0;font-size:17px}
+.meal-journal .meal-basics .journal-heading,.meal-journal .meal-advanced summary .journal-heading {font:400 18px/1.5 var(--meal-writing)}
+.meal-journal .meal-basic-row,.meal-journal .meal-basics>label,.meal-journal .recipe-amounts>label:not(.consumption-control) {flex-direction:row;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;margin:0;font-size:13px}
+.meal-journal .meal-basic-row>span {flex-shrink:0}
+.meal-journal .meal-basics .localized-date-field {width:auto;border:0;background:none}
+.meal-journal .meal-basics .localized-date-field button,.meal-journal .draft-unit-trigger,.meal-journal .meal-pencil,.meal-journal .recipe-serving-input button {background:none;color:var(--action);border:0;box-shadow:none;padding:4px;min-height:40px}
+.meal-journal .meal-title-row {display:flex;align-items:center;gap:4px}
+.meal-journal .recipe-selection {flex:1;min-width:0}
+.meal-journal .recipe-selection-label {display:none}
+dialog.meal-journal .recipe-selection-trigger,dialog.meal-journal .ingredient-pick-trigger {width:100%;padding:5px 0;border:0;border-radius:0;background:none;text-align:start;font:400 19px/1.35 var(--meal-writing);color:var(--ink)}
+.meal-journal .meal-pencil {width:40px}
+.meal-journal .recipe-serving-input {width:auto;gap:2px}
+.meal-journal .recipe-serving-input button {min-width:36px}
+dialog.meal-journal .recipe-serving-input input[name=consumedServings] {width:6ch;min-height:40px;text-align:center;padding:0;background:none;border:0}
+.meal-journal .meal-adjust-help {font:12px/1.5 var(--font-ui);color:var(--muted);margin:4px 0}
+.meal-journal .meal-lines {--drag-gutter:36px;--ingredient-gap:4px;width:100%}
+.meal-journal .add-food-scroll {overscroll-behavior:contain}
+.meal-journal .meal-nutrition-preview .nutrition-strip>div:first-child strong {font-size:24px}
+.meal-journal .note-text,.meal-journal .preserved-text {font:400 17px/1.5 var(--meal-writing)}
+.meal-journal .meal-extras .meal-photo-input {position:relative;display:inline-flex;align-items:center;min-height:44px;color:var(--action);cursor:pointer}
+.meal-journal .meal-photo-input>input {position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.meal-journal .meal-photo-input:focus-within {outline:1px dotted var(--action)}
+dialog.meal-journal .add-food-footer {border-top:1px solid var(--line);background:var(--surface);padding-bottom:max(8px,env(safe-area-inset-bottom))}
+dialog.meal-journal .add-food-footer button {border-radius:5px;min-height:44px}
+.meal-journal .draft-unit-menu {font-family:var(--font-ui)}
+.meal-journal .meal-basic-row>.draft-unit-trigger {max-width:72%;overflow-wrap:anywhere}
+.meal-journal .meal-basic-row>.draft-unit-trigger::after {display:none}
+
+.meal-journal .meal-lines .journal-grouped-lines .recipe-line.draft-ingredient {grid-template-columns:minmax(0,1fr) fit-content(44%)}
+.meal-journal .meal-lines .line-add {padding-inline-start:0}
+.meal-journal .meal-amounts .form-grid {display:flex;align-items:center;justify-content:space-between;gap:8px}
+.meal-journal .meal-amounts .form-grid input {width:8ch;text-align:right}
+.meal-journal .add-food-scroll input:not([type=checkbox],[type=range],[type=file],[type=date]),.meal-journal .add-food-scroll textarea {border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
+.meal-journal .add-food-scroll input:focus-visible {outline:1px dotted var(--action)}
+.meal-journal .meal-lines .draft-amount input {border:0}
+dialog.meal-journal input.meal-consumption-slider[type=range] {appearance:none;-webkit-appearance:none;height:44px;background:transparent}
+.meal-journal .meal-consumption-slider::-webkit-slider-runnable-track {height:3px;border-radius:2px;background:linear-gradient(to right,var(--action) var(--meal-fill),var(--line) var(--meal-fill))}
+.meal-journal .meal-consumption-slider::-webkit-slider-thumb {-webkit-appearance:none;width:16px;height:16px;margin-top:-6.5px;border-radius:50%;background:var(--action)}
+.meal-journal .meal-consumption-slider::-moz-range-track {height:3px;background:var(--line)}
+.meal-journal .meal-consumption-slider::-moz-range-progress {height:3px;background:var(--action)}
+.meal-journal .meal-consumption-slider::-moz-range-thumb {width:16px;height:16px;border:0;background:var(--action);border-radius:50%}
+
+dialog.meal-journal .recipe-selection .recipe-selection-trigger {display:flex;flex-direction:row;align-items:center;gap:6px;justify-content:flex-start}
+dialog.meal-journal .recipe-consumption-heading,dialog.meal-journal .recipe-consumption-scale {width:100%}
+dialog.meal-journal .meal-basics .localized-date-field button,dialog.meal-journal .recipe-serving-input button {border:0;background:none;box-shadow:none;color:var(--action)}
+.meal-journal input[name=consumedServings] {appearance:textfield}
+.meal-journal input[type=number]::-webkit-inner-spin-button {-webkit-appearance:none}
+.meal-journal .recipe-serving-input {display:inline-flex;flex-direction:row;align-items:center}
+
+.meal-journal .meal-pantry-amount,.meal-journal .meal-pantry-amount>label:first-child {display:flex;flex-direction:row;align-items:center;gap:4px}
+.meal-journal .meal-pantry-amount>label:first-child {flex:1;justify-content:space-between}
+.meal-journal .meal-pantry-amount input {width:8ch;text-align:right}
+.meal-journal .meal-basics .localized-date-field {max-width:70%}
+
+.meal-journal .draft-unit-trigger {position:relative}
+
+dialog.meal-journal .meal-title-row>.ingredient-pick-trigger {display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}
+.meal-journal .meal-title-row>.meal-pencil {flex:none}
+
+.meal-journal .draft-ingredient:has(summary:focus-visible) {outline:1px dotted var(--action);outline-offset:-1px}
+
+.meal-note-editor textarea {font:400 17px/1.5 JournalHand,JournalChinese,sans-serif}
+
+.meal-journal .meal-basics {padding:0 0 4px}
+dialog.meal-journal .meal-basics > label,dialog.meal-journal .meal-basics .meal-basic-row {font:400 13px/1.4 var(--font-ui);color:var(--ink);min-height:40px}
+dialog.meal-journal .meal-basics :is(.date-field-trigger,.localized-date-value,.date-field-trigger svg,.draft-unit-trigger) {font:500 13px/1.4 var(--font-ui);color:var(--action);padding-inline-end:0}
+dialog.meal-journal .meal-title-row .ingredient-pick-trigger,
+dialog.meal-journal .meal-batch-select .draft-unit-trigger {display:inline-flex;align-items:center;justify-content:flex-start;text-align:start;gap:5px}
+dialog.meal-journal .meal-batch-select .draft-unit-trigger {font:400 19px/1.35 var(--meal-writing);color:var(--ink);max-width:100%;padding-inline-start:0}
+.meal-journal .meal-batch-select .draft-unit-trigger::before {content:'⌄';order:1;font:14px var(--font-ui)}
+.meal-journal .meal-title-row svg {flex:none}
+.meal-journal .meal-title-row .recipe-selection-trigger span {min-width:0;overflow-wrap:anywhere}
+dialog.meal-journal .meal-start-cooking {flex:none;align-self:center;min-height:44px;padding:4px 14px;border-radius:999px;font-size:13px}
+.meal-journal .meal-pantry-amount {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;min-height:44px}
+.meal-journal .meal-quantity-label {white-space:nowrap}
+.meal-journal .meal-quantity-phrase {display:flex;align-items:center;justify-content:flex-end;gap:4px;min-width:0}
+dialog.meal-journal .meal-quantity-phrase input[type=number] {min-width:2ch;max-width:65%;min-height:44px;padding:0;border:0;background:none;text-align:right;text-decoration:underline dotted var(--line);text-underline-offset:4px}
+.meal-journal .meal-quantity-phrase label {display:inline-flex;align-items:center;width:auto;margin:0}
+.meal-journal .meal-quantity-phrase .draft-unit-trigger {padding-inline:0}
+.meal-journal .unified-sticky-notes {margin:0;gap:2px}
+.meal-journal .unified-sticky-notes .notes-grid:empty {display:none}
+.meal-journal .meal-extras {display:grid;justify-items:start;gap:2px}
+.meal-journal .meal-extras .photo-field,.meal-journal .meal-extras .unified-sticky-notes {width:100%}
+
+.meal-journal .unified-sticky-notes:not(:has(.paper-note)) .sticky-notes-hint {display:none}
+
+.meal-journal .meal-lines .draft-row-shell + .draft-row-shell {margin-block-start:10px}
+.meal-journal .meal-lines .draft-source {font:400 11.5px/1.3 var(--font-ui);color:var(--muted)}
+.meal-journal .meal-lines .draft-source:empty {display:none}
+.meal-journal .meal-lines .recipe-line .draft-amount {
+  position:relative;background:none;font:400 14px/1.3 var(--font-ui);
+}
+dialog.meal-journal .meal-lines .recipe-line .draft-amount input {
+  border:0;background:none;text-decoration:none;
+}

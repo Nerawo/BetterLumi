@@ -1,3 +1,4 @@
+import {ListTree} from 'lucide-react';
 import {useState,type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {newId} from './ids';
@@ -41,10 +42,10 @@ export function RecipeGroupsEditor({groups,lines,onChange,renderGroup}:GroupEdit
   }
   return <div className="journal-group-editor">
     <div className="draft-heading-row"><h3><JournalHeading>{t('lines')}</JournalHeading></h3>
-      <button type="button"  className="draft-group-switch" aria-pressed={grouping} onClick={()=>{
+      <button type="button" className="draft-group-switch" aria-label={t("draftGrouping")} title={t("draftGrouping")} aria-pressed={grouping} onClick={()=>{
         if(!grouping)setGrouping(true);
         else setConfirming(true);
-      }}>{grouping&&<span aria-hidden="true">✓ </span>}{t('draftGrouping')}</button></div>
+      }}><ListTree size={18} aria-hidden="true"/></button></div>
     {grouping&&<button className="journal-add-group" type="button" onClick={addGroup}>＋ {t('journalAddGroup')}</button>}
     <section className="journal-editor-group" data-group-id="">
       {grouping&&<h4 className="draft-ungrouped">{t('journalUngrouped')}</h4>}{renderGroup(undefined,grouping)}

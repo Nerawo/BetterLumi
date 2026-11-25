@@ -1,3 +1,4 @@
+import {JournalDraftQuantity} from './JournalDraftQuantity';
 import {DraftIngredientRow} from './DraftIngredientRow';
 import {DraftMenu} from './RecipeDraftJournal';
 import {convertRecipeLine,recipeUnitFactors} from './recipe-draft-units';
@@ -21,7 +22,7 @@ import {Plus,Trash2,ArrowLeftRight} from 'lucide-react';
 import {IngredientPicker} from './IngredientPicker';
 import {unknownNutrition,type RecipeLine,type PantryItem} from './domain';
 
-export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false,additionalAction,showSourceInfo=true,allowStored=true,groups,onGroupsChange}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean;allowStored?:boolean;groups?:IngredientGroup[];onGroupsChange?:(groups:IngredientGroup[])=>void}){
+export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false,mealDraft=false,additionalAction,showSourceInfo=true,allowStored=true,groups,onGroupsChange}:{lines:RecipeLine[];setLines:(v:RecipeLine[])=>void;pantry:PantryItem[];compact?:boolean;mealDraft?:boolean;additionalAction?:ReactNode;showSourceInfo?:boolean;allowStored?:boolean;groups?:IngredientGroup[];onGroupsChange?:(groups:IngredientGroup[])=>void}){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
  const setLines=(next:RecipeLine[])=>onSetLines(groups?identifyRecipeLines(next):next);
  const moveLine=(index:number,delta:number)=>{const peers=lines.map((l,i)=>({l,i})).filter(({l})=>l.groupId===lines[index].groupId),at=peers.findIndex(p=>p.i===index),target=peers[at+delta];if(!target)return;const next=[...lines];[next[index],next[target.i]]=[next[target.i],next[index]];setLines(next)};
@@ -41,8 +42,9 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
  const renderLine=(line:RecipeLine,index:number,grouping=false)=>{
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
    const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
-   const amountControl=<NumberInput style={groups?{width:Math.max(2,String(line.quantity).length+1)+'ch'}:undefined} aria-label={line.name+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit}
-     onKeyDown={groups?event=>{if(event.key==='Enter'){event.preventDefault();event.currentTarget.blur()}}:undefined} value={line.quantity} onChange={event=>{
+   const preparation=reference?referencePreparation(reference,i18n.language):'';
+   const stateLabel=mealDraft?preparation.split(' · ').filter((part,index)=>index===0||part.includes('%')).join(' · '):preparation;
+   const amountControl=groups?<JournalDraftQuantity key={line.unit} line={line} onChange={updated=>setLines(lines.map((old,n)=>n===index?updated:old))}/>:<NumberInput aria-label={line.name+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit} value={line.quantity} onChange={event=>{
      event.currentTarget.setCustomValidity(event.target.value!==''&&Number(event.target.value)<0?t('invalid'):'');
      if(event.target.value==='')return;const quantity=Number(event.target.value);if(!Number.isFinite(quantity)||quantity<0)return;
      setLines(lines.map((old,n)=>n===index?requantifyLine(old,quantity):old));
@@ -54,7 +56,7 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
      const unsupported=line.source!=='batch'&&!factors.has(line.unit);
      const validOptions=Array.from(factors.keys()).filter(unit=>convertRecipeLine(line,unit,factors)!==null)
        .map(value=>({value,label:unitLabel(value)}));
-     return <DraftIngredientRow key={line.lineId} id={line.lineId!} name={line.name} onReplace={()=>setPicking(index)}
+     return <DraftIngredientRow mealDraft={mealDraft} key={line.lineId} id={line.lineId!} name={line.name} onReplace={()=>setPicking(index)}
        onDelete={()=>setLines(lines.filter(l=>l.lineId!==line.lineId))}
        onDrop={(groupId,before)=>{
          const rest=lines.filter(l=>l.lineId!==line.lineId);
@@ -62,10 +64,11 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
          rest.splice(at<0?rest.length:at,0,{...line,groupId});setLines(rest);
        }}>
        <div className="draft-ingredient-name"><strong>{line.name}</strong><div className="draft-source">
-         {reference?<>{referencePreparation(reference,i18n.language)}{showSourceInfo&&<> · <ReferenceSourceInfo source={reference}/></>}</>
+         {reference?<>{stateLabel}{showSourceInfo&&!mealDraft&&<> · <ReferenceSourceInfo source={reference}/></>}</>
            :line.source==='batch'?t('storageTab'):!item?t('sourceMissing'):item.brand?.trim().toLowerCase()!==line.name.trim().toLowerCase()?item.brand:null}
        </div>{unsupported&&<small className="draft-unit-warning">{t('draftUnsupportedUnit',{unit:unitLabel(line.unit)})} <button type="button" onClick={()=>setPicking(index)}>{t('replaceIngredient')}</button></small>}</div>
        <div className="recipe-line-amounts draft-amount">{amountControl}
+       <span aria-hidden="true" className="journal-amount-ink"/>
        <DraftMenu directUnit={{value:line.unit,label:unitLabel(line.unit),name:line.name,fixed:validOptions.length<2,options:validOptions,change:unit=>{
          const converted=convertRecipeLine(line,unit,factors);
          if(converted)setLines(lines.map((old,n)=>n===index?converted:old));

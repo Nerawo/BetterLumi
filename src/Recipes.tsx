@@ -221,7 +221,7 @@ export function RecipeEditor({
                 <span aria-hidden="true" className={draftName?'':'muted'}>{draftName||t('draftNamePlaceholder')}</span>
                 <input name="name" aria-label={t("name")} required value={draftName} placeholder={t('draftNamePlaceholder')}
                   onChange={e=>setDraftName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.nativeEvent.isComposing){e.preventDefault();e.currentTarget.blur()}}}/>
-                <Pencil size={15} aria-hidden="true"/>
+                <Pencil size={13} strokeWidth={1.5} aria-hidden="true"/>
               </span>
             </label>
             <div className="draft-yield">

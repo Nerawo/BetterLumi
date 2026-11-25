@@ -8,6 +8,8 @@ export interface DraftUnits {
   label:string;
   options:{value:string;label:string}[];
   fixed:boolean;
+  disabled?:boolean;
+  accessibleLabel?:string;
   change:(unit:string)=>void;
 }
 
@@ -23,7 +25,7 @@ export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:bool
   useLayoutEffect(()=>{
     if(!open||units.fixed){setPlaced(false);if(open)setOpen(false);return}
     const anchor=trigger.current!,popup=menu.current!,modal=anchor.closest('dialog')!;
-    const scroller=anchor.closest('.recipe-editor-scroll')!;
+    const scroller=anchor.closest('.recipe-editor-scroll,.add-food-scroll,.journal-scroll')!;
     const viewport=window.visualViewport;
     const place=()=>{
       const a=anchor.getBoundingClientRect(),m=modal.getBoundingClientRect(),body=scroller.getBoundingClientRect();
@@ -61,10 +63,10 @@ export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:bool
   },[open,setOpen,units.fixed]);
   const dialog=trigger.current?.closest('dialog');
   if(units.fixed)return <span className="draft-unit-text" data-unit={units.value}>{units.label}</span>;
-  return <><button ref={trigger} type="button" className="draft-unit-trigger" data-unit={units.value} aria-label={t('draftChangeUnit')+' '+units.name}
-    aria-haspopup="menu" aria-expanded={open} aria-controls={open?id:undefined} disabled={units.fixed}
+  return <><button ref={trigger} type="button" className="draft-unit-trigger" data-unit={units.value} aria-label={units.accessibleLabel??(t('draftChangeUnit')+' '+units.name)}
+    aria-haspopup="menu" aria-expanded={open} aria-controls={open?id:undefined} disabled={units.disabled}
     onClick={()=>setOpen(!open)}>{units.label}</button>
-    {open&&dialog&&createPortal(<div id={id} ref={menu} className="draft-unit-menu" role="menu" aria-label={t('draftChangeUnit')}
+    {open&&dialog&&createPortal(<div id={id} ref={menu} className="draft-unit-menu" role="menu" aria-label={units.accessibleLabel??t('draftChangeUnit')}
       style={{opacity:placed?1:0}} onKeyDown={e=>{
         if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);return}
         if(e.key==='Tab'){close(true);return}

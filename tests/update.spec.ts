@@ -8,7 +8,7 @@ test("ingredient replacement and explicit variation/original actions remain inde
   await page.goto("/recipes");
   await page.getByRole("link", { name: "Reading recipe" }).click();
   await page
-    .getByRole("button", { name: "Add to Today’s Meals", exact: true })
+    .locator(".recipe-detail-modal .journal-add-meal")
     .click();
   await page.locator(".meal-advanced > summary").click();
   await page.locator(".add-food .recipe-line input").fill("60");
@@ -29,6 +29,7 @@ test("ingredient replacement and explicit variation/original actions remain inde
     await d.db.ingredients.put(item);
     return item.id;
   });
+  await page.locator(".meal-lines .journal-line-menu > summary").click();
   await page.locator(".ingredient-replace-toggle").click();
   await page.locator(`.ingredient-picker-modal [data-ingredient-id="${replacement}"]`).click();
   page.once("dialog", (d) => d.accept("Explicit variation"));
@@ -398,11 +399,11 @@ test("sticky notes CRUD and Log Once do not overwrite the original recipe", asyn
       .filter({ hasText: "Keep this original note" }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Add to Today’s Meals", exact: true })
+    .locator(".recipe-detail-modal .journal-add-meal")
     .click();
   await page.locator(".meal-advanced > summary").click();
   await page.locator(".add-food .recipe-line input[type=number]").fill("75");
-  await page.locator(".meal-extras > summary").click();
+
   await page.locator('.add-food .unified-sticky-notes>.text-link').click();
   await page.locator('.sticky-note-editor textarea').fill('Shared cooking note');
   await page.locator('.sticky-note-editor .primary').click();

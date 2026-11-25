@@ -130,7 +130,7 @@ test("meal photos survive reload and shared consumption slider saves half, zero 
   await page.locator(".add-food .nutrition-fields input").first().fill("200");
   const slider=page.locator(".add-food input[name=consumptionPercent]");
   await slider.focus();await slider.press("Home");for(let i=0;i<10;i++)await slider.press("ArrowRight");
-  await page.locator(".meal-extras > summary").click();
+
   await page.locator(".meal-photo-input input[type=file]").setInputFiles(file);
   await page.getByRole("button", { name: "保存记录", exact: true }).click();
   await expect(page.locator(".meal-card .meal-photo")).toHaveCount(0);

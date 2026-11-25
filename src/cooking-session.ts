@@ -1,22 +1,23 @@
 import {db} from './db';
 import {recipes,type Recipe} from './domain';
-import {normalizedCookingLines} from './cooking-effective';
+import {normalizedCookingLines,initializeMealPreparation,type MealPreparation} from './cooking-effective';
 import {COOKING_PREFIX,reconcileCookingSession,validateJournalRecipe,validateCookingSession,type CookingSession} from './cooking-journal';
 
-export async function openCookingSession(recipe:Recipe,restart=false){
+export async function openCookingSession(recipe:Recipe,restart=false,preparation?:MealPreparation){
  validateJournalRecipe(recipe);
  return db.transaction('rw',db.settings,async()=>{
   const key=COOKING_PREFIX+recipe.id,row=await db.settings.get(key);
   let old:CookingSession|undefined;
   if(row&&!restart){old=JSON.parse(row.value);validateCookingSession(old!);if(old!.recipeId!==recipe.id)throw Error('Invalid cooking recipe association')}
-  const next=reconcileCookingSession(recipe,old);validateCookingSession(next);await db.settings.put({key,value:JSON.stringify(next)});return next;
+  const fresh=reconcileCookingSession(recipe,old);
+  const next=preparation?initializeMealPreparation(recipe,fresh,preparation):fresh;validateCookingSession(next);await db.settings.put({key,value:JSON.stringify(next)});return next;
  });
 }
 /** Template and preparation baseline change together, without any inventory tables. */
 export async function updateRecipeFromCooking(recipe:Recipe,session:CookingSession){
  const nextRecipe={...recipe,lines:normalizedCookingLines(recipe,session).map((l,index)=>({...l,lineId:l.lineId??session.entries[index].id})),revision:recipe.revision+1,updatedAt:new Date().toISOString()};
  if(!nextRecipe.lines.length)throw Error('A recipe requires ingredients');
- const nextSession=reconcileCookingSession(nextRecipe,{...session,...(session.version===3?{ingredientChanges:{addedLines:[],removedEntries:[]}}:{})});nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
+ const nextSession=reconcileCookingSession(nextRecipe,{...session,...(session.version>=3?{ingredientChanges:{addedLines:[],removedEntries:[]}}:{})});nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
  return commitCookingRecipeUpdate(recipe,session,nextRecipe,nextSession);
 }
 /** Method has no ingredient identity effects, including for repeated legacy lines. */

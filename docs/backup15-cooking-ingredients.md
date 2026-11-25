@@ -57,17 +57,26 @@ Reset Preparation restores the current saved recipe, default yield and empty
 checklist/overrides/set changes. Genuine exit abandons the session. Canceling a
 nested meal/batch workflow returns to the same preparation.
 
-## Interaction and verification
+## Backup 16 and Cooking Session v4
 
-The heading plus reuses IngredientPicker (including custom creation, search and
-tags) and StoredFoodPicker. Method editing remains available independently. A
-650 ms name/row hold requests removal; movement over 10 px, scrolling and pointer
-cancellation abort the gesture. Quantity and checkbox controls are excluded.
-Right-click, Shift+F10, Context Menu and Delete provide desktop/keyboard access
-without persistent row controls.
+Replacing an ingredient upgrades just the active session to v4. A replacement
+of an original line is recorded in `ingredientChanges.replacements` as
+`{entryId, fingerprint, line, servings}`. The fingerprint identifies the original
+recipe source. The new snapshot supplies the unit, nutrition and quantity at the
+recorded yield. Group and position come from the original slot. A temporary line
+already has its own snapshot, so replacement updates it in place. Either operation
+clears only that slot's checkmark and quantity override.
 
-Regression coverage is in `src/cooking-ingredients.test.ts` and
-`tests/cooking-ingredients.spec.ts`, alongside existing cooking-session, recipe,
-meal, storage and backup suites. Browser coverage uses isolated synthetic data,
-320/375/390/430 px, Chinese/English and the four existing themes. Pointer simulation
-does not replace physical iPhone verification of native long press and scrolling.
+Ingredient changes are resolved before serving normalization, meal consumption
+or stock allocation. The existing transaction paths receive the resulting recipe.
+Reset restores the current template. Reopening an active session after a recipe
+edit discards replacements whose original identity or fingerprint no longer
+matches. Backup 16 validates replacement snapshots before import, and continues
+accepting valid formats 2–15 without rewriting historical records.
+
+## Interaction
+
+Both Cooking Mode entry points share one identity-area hold, confirmation and
+picker. Horizontal swiping reveals Remove. Scrolling or pointer cancellation
+cancels a pending hold. Keyboard users can focus the name and press Enter or
+Space to replace, or focus the row and press Delete to request removal.

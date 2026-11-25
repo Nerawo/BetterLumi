@@ -10,10 +10,10 @@ import {Modal} from './ui';
 import type {Recipe} from './domain';
 import './recipe-picker.css';
 
-export function RecipeSelection({recipes,value,onChange,label,emptyLabel,disabled=false}:{recipes:Recipe[];value:string;onChange:(id:string)=>void;label:string;emptyLabel?:string;disabled?:boolean}){
+export function RecipeSelection({recipes,value,onChange,label,displayName,emptyLabel,disabled=false}:{recipes:Recipe[];value:string;onChange:(id:string)=>void;label:string;displayName?:string;emptyLabel?:string;disabled?:boolean}){
  const {t}=useTranslation(),[open,setOpen]=useState(false),trigger=useRef<HTMLButtonElement>(null);
  const close=()=>{setOpen(false);requestAnimationFrame(()=>trigger.current?.focus({preventScroll:true}))};
- return <div className="recipe-selection"><span className="recipe-selection-label">{label}</span><button ref={trigger} type="button" className="meal-selection-control recipe-selection-trigger" aria-label={label} aria-haspopup="dialog" aria-expanded={open} disabled={disabled} onClick={()=>setOpen(true)}><span>{recipes.find(r=>r.id===value)?.name??emptyLabel??t('selectRecipe')}</span><ChevronDown size={16} aria-hidden="true"/></button>{open&&createPortal(<RecipePicker recipes={recipes} selected={value} clearLabel={emptyLabel} close={close} select={id=>{onChange(id);close()}}/>,document.body)}</div>;
+ return <div className="recipe-selection"><span className="recipe-selection-label">{label}</span><button ref={trigger} type="button" className="meal-selection-control recipe-selection-trigger" aria-label={label} aria-haspopup="dialog" aria-expanded={open} disabled={disabled} onClick={()=>setOpen(true)}><span>{displayName||recipes.find(r=>r.id===value)?.name||emptyLabel||t('selectRecipe')}</span><ChevronDown size={16} aria-hidden="true"/></button>{open&&createPortal(<RecipePicker recipes={recipes} selected={value} clearLabel={emptyLabel} close={close} select={id=>{onChange(id);close()}}/>,document.body)}</div>;
 }
 function RecipePicker({recipes,selected,clearLabel,close,select}:{recipes:Recipe[];selected:string;clearLabel?:string;close:()=>void;select:(id:string)=>void}){
  const {t,i18n}=useTranslation(),[search,setSearch]=useState(''),[category,setCategory]=useState('');

@@ -12,13 +12,24 @@ for(const source of ['recipe','pantry','storage','quick'] as const)test(`future 
  const fixture=await seed(page);let modal=await openMeal(page);await modal.locator('.source-tabs button').nth(['recipe','pantry','storage','quick'].indexOf(source)).click();
  if(source==='recipe')await chooseSavedRecipe(modal,fixture.recipe.id);
  if(source==='pantry'){await modal.locator('.ingredient-pick-trigger').click();const picker=page.locator('.ingredient-picker-modal');await picker.locator('input[type=search]').fill(fixture.ingredient.name);await picker.locator(`[data-ingredient-id="${fixture.ingredient.id}"]`).click();await expect(picker).toHaveCount(0);await modal.locator('.meal-amounts input[type=number]').first().fill('100')}
- if(source==='storage'){await modal.locator('.storage-meal-form select').last().selectOption(fixture.batchId);await modal.locator('[name=storageGrams]').fill('100')}
+ if(source==='storage'){
+  await modal.locator('.storage-fields > .meal-basic-row .draft-unit-trigger').click();
+  await modal.locator('.draft-unit-menu [data-unit="'+fixture.batchId+'"]').click();
+  await modal.locator('[name=storageGrams]').fill('100');
+  const pixels=await page.evaluate(()=>document.createElement('canvas').toDataURL().split(',')[1]);
+  await modal.locator('form:visible input[type=file]').setInputFiles({name:'pudding.png',mimeType:'image/png',buffer:Buffer.from(pixels,'base64')});
+  await expect(modal.locator('form:visible .photo-field img')).toBeVisible();
+ }
  if(source==='quick')for(const [index,value] of ['123','10','12','3'].entries())await modal.locator('.nutrition-fields input').nth(index).fill(value);
  await chooseDate(page,modal.locator('form:visible .date-field-trigger'),tomorrow);await save(modal);
  const meal=await page.evaluate(async id=>{const d=await import('/src/domain.ts');return(await d.foodLogs.toArray()).find(m=>m.id!==id)!},fixture.old.id);expect(meal.date).toBe(tomorrow);expect(meal.nutrition.calories).toBeCloseTo(source==='quick'?123:source==='storage'?100:600,10);await expect(page.getByTestId('meal-section-total')).toContainText('77');
  if(source==='storage')expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).db.foodBatches.get(id))!.remainingQuantity,fixture.batchId)).toBe(500);
  await chooseDate(page,page.locator('.date-jump-trigger'),tomorrow);await expect(page.getByTestId('meal-section-total')).toContainText(String(Math.round(meal.nutrition.calories!)));let row=page.locator('.meal-row');await expect(row).toHaveCount(1);await row.locator('.actions button').first().click();modal=page.locator('.add-food-modal');await expect(modal.locator('form:visible input[type=date]')).toHaveValue(tomorrow);await chooseDate(page,modal.locator('form:visible .date-field-trigger'),later);
- if(source==='storage')await modal.locator('[name=storageGrams]').fill('150');await save(modal);await expect(page.locator('.meal-row')).toHaveCount(0);
+ if(source==='storage'){
+  await expect(modal.locator('form:visible .photo-field img')).toHaveAttribute('src',meal.photo!);
+  await modal.locator('[name=storageGrams]').fill('150')
+ }
+ await save(modal);await expect(page.locator('.meal-row')).toHaveCount(0);
  if(source==='storage')expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).db.foodBatches.get(id))!.remainingQuantity,fixture.batchId)).toBe(450);
  await page.reload();await page.goto('/today?date='+later);await page.locator('#today-tab-food').click();await expect(page.locator('.meal-row')).toHaveCount(1);const stored=await page.evaluate(async id=>(await import('/src/domain.ts')).foodLogs.get(id),meal.id);expect(stored!.date).toBe(later);expect(stored!.nutrition).toEqual(source==='storage'?{calories:150,protein:7.5,carbs:15,fat:5}:meal.nutrition);
  // A fresh page in the same installed app origin retains IndexedDB and the selected calendar date.

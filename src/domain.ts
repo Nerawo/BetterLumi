@@ -1,6 +1,6 @@
 import {validZeroReference} from './line-nutrition';
 import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
-export const BACKUP_VERSION = 15;
+export const BACKUP_VERSION = 16;
 import {validateJournalBackup,COOKING_PREFIX,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
@@ -195,7 +195,7 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )

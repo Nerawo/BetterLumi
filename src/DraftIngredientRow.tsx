@@ -4,21 +4,22 @@ import {useTranslation} from 'react-i18next';
 import {DraftConfirmation} from './RecipeDraftJournal';
 
 interface Props {
-  id:string; name:string; children:ReactNode;
-  onDrop:(group:string|undefined,before:string|undefined)=>void;
-  onReplace:()=>void; onDelete:()=>void;
+  cookingRemoval?:()=>void; disabled?:boolean; mealDraft?:boolean; id:string; name:string; children:ReactNode;
+  onDrop?:(group:string|undefined,before:string|undefined)=>void;
+  onReplace?:()=>void; onDelete?:()=>void;
 }
 interface Gesture {
   id:number; x:number; y:number; startX:number; startY:number;
   kind:'handle'|'drag'|'identity'|'swipe'; originTop:number; hold?:ReturnType<typeof setTimeout>; frame?:number;
 }
-export function DraftIngredientRow({id,name,children,onDrop,onReplace,onDelete}:Props){
+export function DraftIngredientRow({mealDraft=false,cookingRemoval,disabled=false,id,name,children,onDrop,onReplace,onDelete}:Props){
   const {t}=useTranslation();
   const shell=useRef<HTMLDivElement>(null),gesture=useRef<Gesture|undefined>(undefined);
   const consumedHold=useRef(false);
   const marker=useRef<HTMLElement|undefined>(undefined),[revealed,setRevealed]=useState(false);
   const [confirmation,setConfirmation]=useState<'replace'|'delete'>();
-  const row=()=>shell.current!.querySelector<HTMLElement>('.draft-ingredient')!;
+  const identitySelector='.draft-ingredient-name,.journal-line-name';
+  const row=()=>shell.current!.querySelector<HTMLElement>('.draft-ingredient,.journal-check-row')!;
   function stop(){
     const g=gesture.current;if(g){clearTimeout(g.hold);cancelAnimationFrame(g.frame??0)}
     gesture.current=undefined;marker.current?.removeAttribute('data-insertion');marker.current=undefined;
@@ -43,7 +44,10 @@ export function DraftIngredientRow({id,name,children,onDrop,onReplace,onDelete}:
         e.preventDefault();stop();setRevealed(false)
       }
     };
+    const scrolling=()=>{if(gesture.current?.kind==='identity')stop()};
+    document.addEventListener('scroll',scrolling,true);
     document.addEventListener('keydown',cancel);return()=>{
+      document.removeEventListener('scroll',scrolling,true);
       handle?.removeEventListener('touchstart',reserveHandle);
       surface?.removeEventListener('touchmove',reserveSwipe);
       surface?.removeEventListener('touchend',finishHold);
@@ -65,7 +69,7 @@ export function DraftIngredientRow({id,name,children,onDrop,onReplace,onDelete}:
   }
   function follow(){
     const g=gesture.current;if(!g||g.kind!=='drag'||!shell.current)return;
-    const scroll=shell.current.closest<HTMLElement>('.recipe-editor-scroll')!;
+    const scroll=shell.current.closest<HTMLElement>('.recipe-editor-scroll,.add-food-scroll')!;
     const bounds=scroll.getBoundingClientRect();
     if(g.y>=bounds.top&&g.y<=bounds.bottom){
       if(g.y<bounds.top+38)scroll.scrollTop-=7;
@@ -78,15 +82,16 @@ export function DraftIngredientRow({id,name,children,onDrop,onReplace,onDelete}:
   }
   function start(e:ReactPointerEvent){
     const target=e.target as Element;
-    if(e.button!==0||!e.isPrimary||gesture.current)return;
+    if(disabled||e.button!==0||!e.isPrimary||gesture.current)return;
     consumedHold.current=false;
     const handle=target.closest('.draft-grip');
     if(!handle&&e.pointerType==='mouse')return;
-    if(!handle&&(!target.closest('.draft-ingredient')||target.closest('button,input,select,a,details,.draft-amount')))return;
+    const control=target.closest('button,input,select,a,details,.draft-amount,.journal-quantity');
+    if(!handle&&(!target.closest('.draft-ingredient,.journal-check-row')||(control&&shell.current?.contains(control))))return;
     const g:Gesture={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,originTop:shell.current!.getBoundingClientRect().top,kind:handle?'handle':'identity'};
     gesture.current=g;
     if(handle){handle.setPointerCapture(e.pointerId);return}
-    if(e.pointerType!=='mouse'&&target.closest('.draft-ingredient-name')){
+    if(onReplace&&e.pointerType!=='mouse'&&target.closest(identitySelector)){
       g.hold=setTimeout(()=>{consumedHold.current=true;stop();setConfirmation('replace')},520);
       shell.current!.dataset.gesture='hold';
     }
@@ -99,28 +104,31 @@ export function DraftIngredientRow({id,name,children,onDrop,onReplace,onDelete}:
     if(g.kind==='handle'){g.kind='drag';shell.current!.dataset.gesture='drag';follow()}
     if(g.kind==='identity'){
       if(dx>=0||-dx<1.4*Math.abs(dy)){stop();return}
-      g.kind='swipe';shell.current!.dataset.gesture='swipe';shell.current!.setPointerCapture(e.pointerId);
+      g.kind='swipe';shell.current!.dataset.gesture='swipe';if(e.nativeEvent.isTrusted)shell.current!.setPointerCapture(e.pointerId);
     }
     if(g.kind==='swipe')shell.current!.style.setProperty('--draft-swipe',Math.max(0,-dx)+'px');
   }
   function end(e:ReactPointerEvent){
     const g=gesture.current;if(!g||g.id!==e.pointerId)return;
     const target=g.kind==='drag'?destination(e.clientX,e.clientY):undefined;
+    if(g.kind==='swipe')consumedHold.current=true;
     if(g.kind==='swipe')setRevealed(g.startX-e.clientX>=36);
-    stop();if(target)onDrop(target.group,target.before);
+    stop();if(target)onDrop?.(target.group,target.before);
   }
-  return <div ref={shell} data-line-id={id} data-revealed={revealed||undefined} className="draft-row-shell"
+  return <div ref={shell} data-line-id={id} data-revealed={revealed||undefined} className={cookingRemoval?"draft-row-shell cooking-swipe-row":"draft-row-shell"}
     onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={stop} onLostPointerCapture={e=>{if(e.target instanceof Element && (e.target.closest('.draft-grip')||e.target===shell.current))stop()}}
-    onContextMenu={e=>{if((e.target as Element).closest('.draft-ingredient-name'))e.preventDefault()}}>
-    <button className="draft-remove" disabled={!revealed} aria-hidden={!revealed} type="button" onClick={()=>{setRevealed(false);setConfirmation('delete')}}>{t('delete')}</button>
-    <div className="recipe-line draft-ingredient">
-      <button className="draft-grip" type="button" aria-label={t('journalLineActions')+' '+name} aria-haspopup="true"
-        onClick={e=>{if(e.detail===0){const menu=shell.current!.querySelector('details')!;menu.open=true;menu.querySelector('summary')?.focus()}}}><GripHorizontal size={15}/></button>
+    onClick={e=>{if(e.detail===0&&cookingRemoval&&onReplace&&!disabled&&(e.target as Element).matches('.journal-line-name'))setConfirmation('replace')}}
+    onKeyDown={e=>{if(cookingRemoval&&onReplace&&!disabled&&(e.key==='Enter'||e.key===' ')&&(e.target as Element).matches('.journal-line-name')){e.preventDefault();setConfirmation('replace')}}}
+    onContextMenu={e=>{if((e.target as Element).closest(identitySelector))e.preventDefault()}}>
+    <button className="draft-remove" disabled={disabled||!revealed} aria-hidden={!revealed} type="button" onClick={()=>{setRevealed(false);if(cookingRemoval)cookingRemoval();else setConfirmation('delete')}}>{t(cookingRemoval?'journalRemove':'delete')}</button>
+    {cookingRemoval?children:<div className="recipe-line draft-ingredient">
+      {!mealDraft&&<button className="draft-grip" type="button" aria-label={t('journalLineActions')+' '+name} aria-haspopup="true"
+        onClick={e=>{if(e.detail===0){const menu=shell.current!.querySelector('details')!;menu.open=true;menu.querySelector('summary')?.focus()}}}><GripHorizontal size={15}/></button>}
       {children}
-    </div>
-    {confirmation==='delete'&&<DraftConfirmation title={t('draftRemoveLine',{name})}
+    </div>}
+    {confirmation==='delete'&&onDelete&&<DraftConfirmation title={mealDraft?t('delete')+' · '+name:t('draftRemoveLine',{name})}
       action={t('delete')} onCancel={()=>setConfirmation(undefined)} onConfirm={onDelete}/>}
-    {confirmation==='replace'&&<DraftConfirmation title={t('draftReplaceTitle')} description={t('draftReplaceDescription',{name})}
+    {confirmation==='replace'&&onReplace&&<DraftConfirmation title={t('draftReplaceTitle')} description={t('draftReplaceDescription',{name})}
       action={t('draftReplace')} onCancel={()=>setConfirmation(undefined)} onConfirm={()=>{setConfirmation(undefined);onReplace()}}/>}
   </div>
 }

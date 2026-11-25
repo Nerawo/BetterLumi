@@ -11,7 +11,7 @@ it('integer presentation never rounds decimal recipe/override storage, including
  const original=await openCookingSession(r),s=await saveCookingSession(original,setCookingQuantity(setCookingQuantity(original,'a',150.125,'mL'),'b',0,'g'));
  expect(journalQuantity(r.lines[0])).toBe('130');expect(journalQuantity(r.lines[1])).toBe('17');
  for(const o of s.quantityOverrides!)expect(journalQuantity(o)).toBe(o.entryId==='a'?'150':'0');
- const backup=await exportAll();expect(backup.version).toBe(15);await restoreAll(JSON.parse(JSON.stringify(backup)));
+ const backup=await exportAll();expect(backup.version).toBe(16);await restoreAll(JSON.parse(JSON.stringify(backup)));
  expect((await exportAll()).tables).toEqual(backup.tables);expect(await recipes.get(r.id)).toEqual(r);
  const reopened=await openCookingSession(r);expect(reopened.quantityOverrides).toEqual(s.quantityOverrides);expect(reopened.quantityOverrides?.map(o=>o.quantity)).toEqual([150.125,0]);
  expect(r.lines.map(l=>l.quantity)).toEqual([130.125,16.667]);
@@ -48,7 +48,7 @@ it('persists overrides across reopen/refresh and completion without any recipe, 
  const after=await exportAll();for(const key of Object.keys(before.tables).filter(k=>k!=='settings'))expect(after.tables[key]).toEqual(before.tables[key]);expect(db.verno).toBe(7);expect(db.name).toBe('BetterLumi');
 });
 it('Backup 13 round trips absolute overrides and checks; Backup 12 v1 sessions import unchanged and upgrade only on open',async()=>{
- const r=recipe();await recipes.put(r);let s=await openCookingSession(r);s=await saveCookingSession(s,{...setCookingQuantity(s,'a',150.987654,'mL'),checked:['b']});const b=await exportAll();expect(b.version).toBe(15);await restoreAll(JSON.parse(JSON.stringify(b)));expect((await exportAll()).tables).toEqual(b.tables);expect(await openCookingSession(r)).toEqual(s);
+ const r=recipe();await recipes.put(r);let s=await openCookingSession(r);s=await saveCookingSession(s,{...setCookingQuantity(s,'a',150.987654,'mL'),checked:['b']});const b=await exportAll();expect(b.version).toBe(16);await restoreAll(JSON.parse(JSON.stringify(b)));expect((await exportAll()).tables).toEqual(b.tables);expect(await openCookingSession(r)).toEqual(s);
  const legacy:CookingSession={...s,version:1};delete legacy.quantityOverrides;const old=structuredClone(b);old.version=12;const row=old.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+s.recipeId) as {key:string;value:string};row.value=JSON.stringify(legacy);
  await restoreAll(old);expect((await db.settings.get(row.key))?.value).toBe(row.value);const exported=await exportAll();expect(exported.tables.settings).toEqual(old.tables.settings);expect((await openCookingSession(r))).toMatchObject({version:2,quantityOverrides:[],checked:['b']});
 });

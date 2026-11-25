@@ -1,3 +1,9 @@
+import {CookingMode} from './CookingMode';
+import type {MealPreparation} from './cooking-effective';
+import {JournalHeading} from './JournalHeading';
+import {MealBasics,MealChoice,MealPhoto,mealCategories} from './MealJournal';
+import {recipeUnitFactors} from './recipe-draft-units';
+import {identifyRecipeLines} from './cooking-journal';
 import {lineNutrition} from './line-nutrition';
 import {RecipeSelection} from './RecipePicker';
 import {StoredRecipeSources} from './StoredFoodPicker';
@@ -9,22 +15,20 @@ import {StorageMealForm, BatchDetail, storageErrorMessage, useStorageOperation} 
 import {FoodStorage} from './food-storage';
 import {FoodStorageError} from './food-storage-model';
 import {useIngredientPreferences} from './useIngredientPreferences';
-import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
+import {foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
 import {builtInFoods} from './data/builtInFoods';
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 import {isBuiltInRecipe} from './data/builtInRecipes';
 import {referenceName,referencePreparation} from './reference-library';
 import {IngredientPicker} from './IngredientPicker';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
-import {defaultIngredientQuantity} from "./consumption-units";
 import {NumberInput} from "./NumberInput";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
 import {retainedRecipeNutrition,recipeServingLines,recipeYield,scaleRecipeLines} from "./recipe-nutrition";
 import './recipe-yield-locale';
 import { DateInput } from "./DateInput";
-import { readLocalImage } from "./images";
-import { useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Utensils, ChevronDown } from "lucide-react";
 import {
@@ -53,14 +57,9 @@ import {
   changed,
   type Notice,
 } from "./ui";
-export const categories = [
-  "uncategorized",
-  "breakfast",
-  "lunch",
-  "dinner",
-  "snack",
-];
+export const categories=mealCategories;
 export interface MealDraft {
+  fromCooking?:boolean;
   date: string;
   recipe?: Recipe;
   recipeServings?: number;
@@ -115,9 +114,12 @@ export function AddFood({
     initial?.source==='quick'&&!initial.storageConsumption?retainedRecipeNutrition(initial.nutrition,initial.consumptionPercent,100,initial.baseNutrition):initial?.baseNutrition ?? initial?.nutrition ?? unknownNutrition(),
   );
   const quickOriginalNutrition=useRef(nutrition).current;
+  const [preparation,setPreparation]=useState<MealPreparation>();
+  const [mealDate,setMealDate]=useState(initial?.date??draft.date);
+  const [baseline,setBaseline]=useState(()=>r?{...r,lines:identifyRecipeLines(r.lines)}:undefined);
   const [lines, setLines] = useState<RecipeLine[]>(
     initial?.lines ??
-      (r?recipeServingLines(r,startingServings):undefined) ??
+      (baseline?recipeServingLines(baseline,startingServings):undefined) ??
       [],
   );
   const [name, setName] = useState(initial?.name ?? r?.name ?? "");
@@ -127,20 +129,22 @@ export function AddFood({
   const [consumptionPercent, setConsumptionPercent] = useState(
     initial?.consumptionPercent ?? 100,
   );
-  const [renaming, setRenaming] = useState(false);
+  const draftLines=useMemo(()=>identifyRecipeLines(lines),[lines]);
+  const [mealCategory,setMealCategory]=useState(initial?.category??"uncategorized");
+
   const [estimated, setEstimated] = useState(initial?.estimated ?? false);
   // Modal-local drafts only: switching source must not erase the user's edits.
-  const tabDraft={recipeId,ingredientId,recipeBasis,quantity,lineServings,unit,nutrition,lines,name,photo,consumptionPercent,renaming,estimated};
+  const tabDraft={recipeId,ingredientId,recipeBasis,quantity,lineServings,unit,nutrition,lines,name,photo,consumptionPercent,estimated};
   const tabDrafts=useRef<Partial<Record<typeof source,typeof tabDraft>>>({});
   const switchSource=(key:typeof source)=>{
     if(key===source)return;
     if(key==='storage')setStorageOpened(true);
     tabDrafts.current[source]=tabDraft;
-    const next:typeof tabDraft=tabDrafts.current[key]??{recipeId:'',ingredientId:'',recipeBasis:'recipe',quantity:1,lineServings:1,unit:'serving',nutrition:unknownNutrition(),lines:[],name:'',photo:'',consumptionPercent:100,renaming:false,estimated:false};
+    const next:typeof tabDraft=tabDrafts.current[key]??{recipeId:'',ingredientId:'',recipeBasis:'recipe',quantity:1,lineServings:1,unit:'serving',nutrition:unknownNutrition(),lines:[],name:'',photo:'',consumptionPercent:100,estimated:false};
     setSource(key);setRecipeId(next.recipeId);setIngredientId(next.ingredientId);setRecipeBasis(next.recipeBasis);
     setQuantity(next.quantity);setLineServings(next.lineServings);setUnit(next.unit);setNutrition(next.nutrition);
     setLines(next.lines);setName(next.name);setPhoto(next.photo);setConsumptionPercent(next.consumptionPercent);
-    setRenaming(next.renaming);setEstimated(next.estimated);setMessage('');setIngredientPicking(false);
+    setEstimated(next.estimated);setMessage('');setIngredientPicking(false);
   };
   const NutritionPreview=RecipeNutritionStrip;
   const saveRecipeVersion = async (update: boolean) => {
@@ -169,7 +173,7 @@ export function AddFood({
     }
   };
   const chooseRecipe = (id: string) => {
-    setRenaming(false);setSaveLeftovers(false);setCookedWeight('');
+    setSaveLeftovers(false);setCookedWeight('');
     setRecipeId(id);setRecipeBasis("recipe");setConsumptionPercent(100);
     const recipe = recipes.find((r) => r.id === id);
     if (recipe) {
@@ -177,9 +181,8 @@ export function AddFood({
       setPhoto(recipe.photo ?? "");
       setQuantity(1);
       setLineServings(1);
-      setLines(
-        recipeServingLines(recipe),
-      );
+      const next={...recipe,lines:identifyRecipeLines(recipe.lines)};
+      setBaseline(next);setLines(recipeServingLines(next));
     }
   };
   const chooseIngredient = (id: string) => {
@@ -190,11 +193,30 @@ export function AddFood({
     const item = pantry.find((i) => i.id === id);
     if (item) {
       setName(item.name);
-      const next=preferredFoodUnit(userChoice(item),preferences[id]);setUnit(next);setQuantity(personalQuantity(userChoice(item),next));
+      const choice=userChoice(item),preferred=preferredFoodUnit(choice,preferences[id]);const next=recipeUnitFactors(choice,preferences[id]).has(preferred)?preferred:preferredFoodUnit(choice);setUnit(next);setQuantity(personalQuantity(userChoice(item),next));
     }
   };
   const ingredient = pantry.find((i) => i.id === ingredientId),builtIn=builtInFoods.find(item=>item.id===ingredientId);
-  const choice=ingredient?userChoice(ingredient):builtIn?{kind:'built-in' as const,item:builtIn}:null,units=choice?availableUnits(choice,preferences[ingredientId]):[];
+  const choice=ingredient?userChoice(ingredient):builtIn?{kind:'built-in' as const,item:builtIn}:null;
+  const factors=choice?recipeUnitFactors(choice,preferences[ingredientId]):new Map<string,number>();
+  const unitLabel=(u:string)=>u==='g'?t('gramsUnit'):u==='serving'?t('servingUnit'):foodUnitLabel(choice,u,i18n.language,preferences[ingredientId]);
+  const setServings=(amount:number)=>{setQuantity(amount);if(Number.isFinite(amount)&&amount>0){setLines(scaleRecipeLines(lines,amount/lineServings));setLineServings(amount)}};
+  const selectedRecipe=recipes.find(item=>item.id===recipeId);
+  const startPreparation=()=>{
+    if(!selectedRecipe||!Number.isFinite(quantity)||quantity<=0)return;
+    const current=baseline?.id===selectedRecipe.id&&baseline.revision===selectedRecipe.revision
+      ?baseline:{...selectedRecipe,lines:identifyRecipeLines(selectedRecipe.lines)};
+    setBaseline(current);
+    setPreparation({baseline:current,servings:quantity,lines:draftLines});
+  };
+  const returnPreparation=(prepared:Recipe)=>{
+    const servings=recipeYield(prepared);
+    setQuantity(servings);
+    setLineServings(servings);
+    setLines(prepared.lines);
+    setPreparation(undefined);
+  };
+  const hasSource=source==="quick"||(source==="recipe"?!!recipeId||initial?.source==='recipe':!!ingredientId||initial?.source==="pantry");
   const totals =
     source === "quick"
       ? nutrition
@@ -202,10 +224,10 @@ export function AddFood({
         ? recipeBasis==='recipe'&&(!Number.isFinite(quantity)||quantity<=0)?unknownNutrition():sumNutrition(lines.map(lineNutrition))
         : initial?.source === "pantry" &&
             initial.sourceId === ingredientId &&
-            unit === initial.unit
+            (unit === initial.unit || (factors.has(unit)&&factors.has(initial.unit)))
           ? scaleNutrition(
               initial.baseNutrition ?? initial.nutrition,
-              quantity / initial.quantity,
+              quantity / initial.quantity * (unit===initial.unit?1:factors.get(unit)!/factors.get(initial.unit)!),
             )
           : choice?personalNutrition(choice,quantity,unit,preferences[ingredientId])
             : unknownNutrition();
@@ -295,7 +317,7 @@ export function AddFood({
     try{const input={...originRetry.current,meal:buildMealRecord(new FormData(mealForm.current)),expectedMealRevision:initial.revision,strategy:'meal-only' as const};await db.transaction('rw',[foodLogs,plans,db.foodBatches,db.inventoryTransactions,recipeNotes,recipeTable],async()=>{await assertMealNoteRevision(initial);await new FoodStorage().editLeftoverOrigin({...input,operationId:storageOperation(input)});await commitStickyNoteChanges(noteDraft.changes,input.meal);await draft.onSaved?.()});close();notify(t('savedMessage'))}catch(error){notice(error instanceof StickyNoteConflict?t("noteConflict"):storageErrorMessage(error,t));setCorrectingOrigin(false)}finally{submitLock.current=false;setBusy(false)}
   };
   return (
-    <Modal title={t(initial ? "editMeal" : "addFood")} close={close} className="add-food-modal">
+    <><Modal title={t(initial ? "editMeal" : "addFood")} close={close} className="add-food-modal meal-journal">
     <section className="add-food">
       <div className="segments source-tabs">
         {(["recipe", "pantry", "storage", "quick"] as const).map((key, index) => (
@@ -314,66 +336,24 @@ export function AddFood({
       </div>
           <form ref={mealForm} onSubmit={submit} hidden={source==='storage'}>
             <div className="add-food-scroll">
-            <div className="form-grid meal-date-row">
-              <label>
-                {t("date")}
-                <DateInput
-                  name="date"
-                  required
-                  defaultValue={initial?.date ?? draft.date}
-                />
-              </label>
-              <label>
-                {t("mealCategory")}
-                <select
-                  name="category"
-                  defaultValue={initial?.category ?? "uncategorized"}
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {t(c==='uncategorized'?'aiUnresolved':c)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
+            <MealBasics category={mealCategory} onCategory={setMealCategory} date={<DateInput name="date" required value={mealDate} onChange={e=>setMealDate(e.target.value)}/>}/>
             {source === "recipe" && (
               <>
-                <RecipeSelection recipes={recipes} value={recipeId} onChange={chooseRecipe} label={t('selectRecipe')} disabled={!!initial?.leftoverBatchId&&initial.lines.some(l=>l.source==='batch')}/>
-
+                <div className="meal-title-row"><RecipeSelection displayName={name} recipes={recipes} value={recipeId} onChange={chooseRecipe} label={t('selectRecipe')} disabled={!!initial?.leftoverBatchId&&initial.lines.some(l=>l.source==='batch')}/>{!initial&&!draft.fromCooking&&selectedRecipe&&<button type="button" className="primary start-cooking meal-start-cooking" disabled={!Number.isFinite(quantity)||quantity<=0} onClick={startPreparation}>{t("startCooking")}</button>}</div>
                 {!recipes.length && <p>{t("noRecipes")}</p>}
               </>
             )}
             {source === "pantry" && (
               <>
-                {builtInFoods.length===0?<>
-                <label>
-                  {t("selectIngredient")}
-                  <span className="meal-selection-control">
-                  <select
-                    value={ingredientId}
-                    onChange={(e) => chooseIngredient(e.target.value)}
-                  >
-                    <option value="">{t("selectIngredient")}</option>
-                    {pantry.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.name} {i.nameZh}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/>
-                  </span>
-                </label>
-                {!pantry.length && <p>{t("noIngredients")}</p>}
-                </>:<><label>{t('selectIngredient')}<span className="meal-selection-control"><button type="button" className="ingredient-pick-trigger" aria-haspopup="dialog" aria-expanded={ingredientPicking} onClick={()=>setIngredientPicking(true)}><span className="meal-selection-value">{ingredientId?(ingredient?.name??(builtIn?referenceName(builtIn,i18n.language):name))||t('selectIngredient'):t('selectIngredient')}</span></button><ChevronDown className="meal-selection-chevron" size={16} aria-hidden="true"/></span></label>{builtIn&&<><small>{referencePreparation(builtIn,i18n.language)}</small><ReferenceSourceInfo source={builtIn}/></>}{ingredientPicking&&<IngredientPicker items={pantry} close={()=>setIngredientPicking(false)} onSelect={item=>chooseIngredient(item.id)} onSelectBuiltIn={item=>chooseIngredient(item.id)}/>}</>}
+                <div className="meal-title-row"><button type="button" className="ingredient-pick-trigger" aria-haspopup="dialog" aria-expanded={ingredientPicking} onClick={()=>setIngredientPicking(true)}>
+                  <span>{ingredientId?name:t('selectIngredient')}</span><ChevronDown size={16} aria-hidden="true"/>
+                </button></div>
+                {ingredient?.brand&&<small>{ingredient.brand}</small>}
+                {builtIn&&<><small>{referencePreparation(builtIn,i18n.language)}</small><ReferenceSourceInfo source={builtIn}/></>}
+                {ingredientPicking&&<IngredientPicker items={pantry} close={()=>setIngredientPicking(false)} onSelect={item=>chooseIngredient(item.id)} onSelectBuiltIn={item=>chooseIngredient(item.id)}/>}
               </>
             )}
-            {source === "recipe" ? (
-              <div className="recipe-rename">
-                <button type="button" className="text-link" aria-expanded={renaming} onClick={() => setRenaming(!renaming)}>{t("renameFood")}</button>
-                {renaming && <label>{t("foodName")}<input required value={name} onChange={e => setName(e.target.value)} /></label>}
-              </div>
-            ) : (<label>
+            {(source === "quick") && (<label>
               {t(source === "quick" ? "optionalFoodName" : "foodName")}
               <input
                 required={source !== "quick"}
@@ -388,15 +368,14 @@ export function AddFood({
             <div className="meal-nutrition-preview"><NutritionPreview value={preview}/></div>
 
               </>
-            ) : (
+            ) : hasSource && (
               <>
                 <div className={"meal-amounts " + (source === "recipe" ? "recipe-amounts" : "")}>
-                {source==='recipe'&&recipeBasis==='recipe'&&<label>{t('recipeConsumedServings')}<span className="recipe-serving-input"><input name="consumedServings" type="number" inputMode="decimal" required min="0.01" step="any" value={Number.isFinite(quantity)?quantity:''} onChange={e=>{const amount=e.target.value===''?NaN:Number(e.target.value);setQuantity(amount);if(Number.isFinite(amount)&&amount>0){setLines(scaleRecipeLines(lines,amount/lineServings));setLineServings(amount)}}}/><span>{t('recipeYieldUnit')}</span></span></label>}
+                {source==='recipe'&&recipeBasis==='recipe'&&<label>{t('recipeConsumedServings')}<span className="recipe-serving-input"><button type="button" aria-label={t("journalDecrease")} onClick={()=>setServings(Math.max(.01,(quantity||1)-1))}>−</button><input name="consumedServings" type="number" inputMode="decimal" required min="0.01" step="any" value={Number.isFinite(quantity)?quantity:''} onChange={e=>setServings(e.target.value===''?NaN:Number(e.target.value))}/><button type="button" aria-label={t('journalIncrease')} onClick={()=>setServings((quantity||0)+1)}>＋</button><span>{t('recipeYieldUnit')}</span></span></label>}
                 {source!=="recipe"&&<>
-                <div className="form-grid">
-                  <label>
-                    {t("quantity")}
-                    <NumberInput
+                <div className="meal-pantry-amount">
+                  <span className="meal-quantity-label">{t("quantity")}</span><div className="meal-quantity-phrase">
+                    <NumberInput style={{width:Math.max(2,String(quantity).length+1)+"ch"}} aria-label={t("quantity")}
                       required
                       min="0"
                       step="any"
@@ -410,31 +389,18 @@ export function AddFood({
                         setQuantity(amount);
                       }}
                     />
-                  </label>
                   {source === "pantry" && (
                     <label>
-                      {t("unit")}
-                      <select
-                        value={unit}
-                        onChange={(e) => {
-                          const nextUnit=e.target.value;
-                          if(nextUnit===unit)return;
-                          setUnit(nextUnit);
-                          setQuantity(choice?personalQuantity(choice,nextUnit):defaultIngredientQuantity(ingredient,nextUnit));
-                        }}
-                      >
-                        <option value="g">{t("gramsUnit")}</option>{!builtIn&&<option value="mL">mL</option>}
-                        {!builtIn&&<option value="serving">{t("servingUnit")}</option>}
-                        {units.map(u=><option key={u.name} value={u.name}>{foodUnitLabel(choice,u.name,i18n.language,preferences[ingredientId])}</option>)}
-                        {!["g","mL","serving",...units.map(u=>u.name)].includes(unit) && <option value={unit}>{foodUnitLabel(choice,unit,i18n.language,preferences[ingredientId])}</option>}
-                      </select>
+                      <span className="sr-only">{t("unit")}</span>
+                      <MealChoice name={name} value={unit} label={unitLabel(unit)} fixed={!factors.has(unit)||factors.size<2} options={[...factors.keys()].map(value=>({value,label:unitLabel(value)}))} change={next=>{const amount=quantity*(factors.get(unit)!/factors.get(next)!);if(Number.isFinite(amount)&&amount>0){setUnit(next);setQuantity(amount)}}}/>
                     </label>
                   )}
-                </div>
+                </div></div>
                 </>}
             {source==="recipe"&&recipeBasis==="snapshot"&&<p className="muted text-small">{t("legacyRecipeSnapshot")}</p>}
             {source==='recipe'&&lines.some(l=>l.source==='batch')&&<StoredRecipeSources lines={lines} setLines={setLines} percent={consumptionPercent} initial={initial} prepared={saveLeftovers||!!initial?.leftoverBatchId}/>}
             <MealConsumptionControl value={consumptionPercent} onChange={setConsumptionPercent}/>
+            {source==='recipe'&&!initial&&consumptionPercent<100&&<div className="leftover-fields"><label className="leftover-option"><input type="checkbox" checked={saveLeftovers} onChange={e=>setSaveLeftovers(e.target.checked)}/><span>{t('storageSaveLeftovers')}</span></label>{saveLeftovers&&<label>{t('storageCompleteWeight')}<NumberInput name="leftoverCookedWeight" min="0.000001" step="any" value={cookedWeight} onChange={e=>setCookedWeight(e.target.value)}/></label>}</div>}
                 </div>
                 <div className="meal-nutrition-preview">
                 <NutritionPreview
@@ -443,17 +409,17 @@ export function AddFood({
                 </div>
                 {source === "recipe" && !(initial?.leftoverBatchId&&initial.lines.some(l=>l.source==='batch')) && (
                   <details className="meal-advanced" key={recipeId}>
-                    <summary>{t("advancedRecipe")}</summary>
-                    <div className="info-note">
+                    <summary><JournalHeading>{t("advancedRecipe")}</JournalHeading></summary>
+                    <div className="meal-adjust-help">
                       <span>{t("onceOnly")}</span>
                     </div>
-                    <RecipeLineEditor
+                    <div className="journal-recipe-editor meal-lines"><RecipeLineEditor mealDraft groups={[]}
                       compact
-                      lines={lines}
+                      lines={draftLines}
                       setLines={setLines}
                       allowStored={!initial?.leftoverBatchId}
                       pantry={pantry}
-                    />
+                    /></div>
                     {!isBuiltInRecipe({id:recipeId})&&<div className="explicit-recipe-actions">
                       <button
                         type="button"
@@ -476,40 +442,13 @@ export function AddFood({
 
               </>
             )}
-            {source==='recipe'&&!initial&&consumptionPercent<100&&<div className="leftover-fields"><label className="leftover-option"><input type="checkbox" checked={saveLeftovers} onChange={e=>setSaveLeftovers(e.target.checked)}/><span>{t('storageSaveLeftovers')}</span></label>{saveLeftovers&&<label>{t('storageCompleteWeight')}<NumberInput name="leftoverCookedWeight" min="0.000001" step="any" value={cookedWeight} onChange={e=>setCookedWeight(e.target.value)}/></label>}</div>}
+
             {initial?.leftoverBatchId&&<p className="storage-footnote">{t('storageOriginLinked')}</p>}
             {originConflict&&<div className="storage-conflict-actions"><button type="button" onClick={()=>setCorrectingOrigin(true)}>{t('storageCorrectMeal')}</button><button type="button" onClick={()=>setReviewBatch(true)}>{t('storageReviewBatch')}</button></div>}
-            <details className="meal-extras">
-              <summary>{t("mealExtras")}</summary>
-            <label className="meal-photo-input">
-              {t("mealPhoto")}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  setReadingPhoto(true);
-                  try {
-                    setPhoto(await readLocalImage(file));
-                  } catch {
-                    notice(t("photoError"));
-                  } finally {
-                    setReadingPhoto(false);
-                  }
-                }}
-              />
-            </label>
-            {photo && (
-              <div className="photo-field">
-                <img src={photo} alt={t("mealPhoto")} />
-                <button type="button" onClick={() => setPhoto("")}>
-                  {t("removePhoto")}
-                </button>
-              </div>
-            )}
+            <section className="meal-extras">
+            <MealPhoto photo={photo} onPhoto={setPhoto} onReading={setReadingPhoto} onError={notice}/>
             {initial?.id.startsWith('ai-meal:')&&initial.cookingNote&&<div className="meal-note-details"><small>{t('noteDetails')}</small><div className="preserved-text">{initial.cookingNote}</div></div>}
-            <StickyNotes notes={sharedNotes} recipeId={noteRecipeId} meal={{id:initial?.id??mealIdentity.id,date:initial?.date??draft.date}} changes={noteDraft.changes} onChange={noteDraft.stage} staged/>
+            <StickyNotes notes={sharedNotes} recipeId={noteRecipeId} meal={{id:initial?.id??mealIdentity.id,date:mealDate}} changes={noteDraft.changes} onChange={noteDraft.stage} staged/>
             <label className="checkbox-label">
               <input
                 type="checkbox"
@@ -518,14 +457,14 @@ export function AddFood({
               />
               {t("estimated")}
             </label>
-            </details>
+            </section>
             </div>
             <div role="status" className="food-status">{message}</div>
             <div className="form-actions add-food-footer">
               <button type="button" onClick={close}>
                 {t("cancel")}
               </button>
-              <button className="primary" disabled={busy || readingPhoto}>
+              <button className="primary" disabled={busy || readingPhoto || !hasSource}>
                 {t("saveMealRecord")}
               </button>
             </div>
@@ -535,6 +474,8 @@ export function AddFood({
     {correctingOrigin&&<Modal title={t('storageCorrectTitle')} close={()=>{if(!busy)setCorrectingOrigin(false)}} className="recipe-editor-modal food-storage-modal"><div className="modal-scroll"><p>{t('storageCorrectHelp')}</p></div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setCorrectingOrigin(false)}>{t('cancel')}</button><button type="button" className="primary" disabled={busy} onClick={()=>void correctOrigin()}>{t('storageConfirmCorrection')}</button></div></Modal>}
     {reviewBatch&&initial?.leftoverBatchId&&<BatchDetail batchId={initial.leftoverBatchId} close={()=>setReviewBatch(false)} notice={notify}/>}
     </Modal>
+    {preparation&&selectedRecipe&&<CookingMode recipe={selectedRecipe} recipes={recipes} pantry={pantry} date={mealDate} preparation={preparation} notice={notify} mealSaved={()=>setPreparation(undefined)} close={()=>setPreparation(undefined)} onReturnMeal={returnPreparation}/>}
+    </>
   );
 }
 export function MealList({

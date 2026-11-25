@@ -6,31 +6,27 @@
 .cooking-mode .journal-ingredient-group h4 .journal-heading{font:500 13px/1.5 JournalChinese,var(--font-ui);padding:0 2px}
 .cooking-mode .journal-method{font:400 13px/1.55 JournalHand,JournalChinese,var(--font-ui);color:var(--ink)}
 .cooking-mode .journal-step-number{font:500 12.5px/1.55 JournalChinese,var(--font-ui)}
-.cooking-mode .journal-check-row{min-height:44px;padding:4px 0;gap:7px;font:400 13px/1.5 JournalChinese,var(--font-ui)}
-.cooking-mode .journal-check-row>span{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;column-gap:2px;row-gap:0}
+.cooking-mode .journal-check-row{min-height:44px;padding:4px 0;gap:4px;font:400 13px/1.5 JournalChinese,var(--font-ui)}
+.cooking-mode .journal-check-row>span{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;column-gap:1px;row-gap:0}
 .cooking-mode .journal-check-row>span>span{min-width:0;max-width:100%;overflow-wrap:anywhere;white-space:normal;box-sizing:border-box;min-height:32px;padding-top:calc((36px - 1.5em)/2)}
 .cooking-mode .journal-check-row small{display:block;flex:0 1 auto;max-width:100%;margin:0 0 0 auto;overflow-wrap:anywhere;white-space:normal;font:400 11.5px/1.5 var(--font-ui);color:var(--muted)}
 .cooking-mode>.journal-scroll{padding-top:8px;padding-bottom:10px}
 .cooking-mode .journal-session-controls{margin-bottom:12px;padding-bottom:9px}
 .cooking-mode>.modal-head{padding-bottom:9px}
-.cooking-mode .journal-check-row .journal-quantity{min-width:0;display:inline-grid;grid-template-columns:minmax(24px,max-content) minmax(0,max-content) 24px;column-gap:4px;width:max-content;max-width:100%;align-items:center;text-align:right}
+.cooking-mode .journal-check-row .journal-quantity{min-width:0;display:inline-grid;grid-template-columns:42px minmax(0,max-content) 12px;column-gap:2px;width:max-content;max-width:100%;align-items:center;text-align:right}
 .cooking-mode .journal-quantity button{font:inherit;color:inherit;background:transparent;border:0;border-radius:3px;padding:4px 2px;min-height:36px;min-width:24px}
 .cooking-mode .journal-quantity-trigger{grid-column:1/3;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:center;font-variant-numeric:tabular-nums;text-decoration:underline dotted var(--muted);text-underline-offset:3px;text-align:right;padding:0}
 .cooking-mode .journal-quantity .journal-quantity-trigger{padding:0}
 .cooking-mode .journal-quantity-value{min-width:0;overflow-wrap:anywhere}
 .cooking-mode .journal-quantity.is-overridden .journal-quantity-trigger{color:var(--action);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
-.cooking-mode .journal-check-row>span>span label{cursor:pointer;display:inline;margin:0;padding:8px 0;min-height:0;font:inherit;color:inherit}
-.cooking-mode .journal-quantity-edit{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;min-width:0;max-width:100%}
-.cooking-mode .journal-quantity-edit input{grid-column:1;grid-row:1;box-sizing:border-box;font:400 16px/1.5 var(--font-ui);width:0;min-width:100%;max-width:100%;height:36px;min-height:36px;padding:0;border:0;border-bottom:1px dotted var(--action);border-radius:0;background:transparent;color:var(--ink);box-shadow:none;appearance:textfield;text-align:right}
-.cooking-mode .journal-quantity-edit input:focus{box-shadow:none;outline:0;border-bottom:2px dotted var(--action)}
+.cooking-mode .journal-check-row>span>span .journal-line-name{cursor:pointer;display:inline;margin:0;padding:8px 0;min-height:0;font:inherit;color:inherit}
+.cooking-mode .journal-quantity-edit{grid-column:1;grid-row:1;min-width:0}
+.cooking-mode .journal-quantity-edit input{display:block;box-sizing:border-box;font:400 16px/1.5 var(--font-ui);width:100%;min-width:0;max-width:100%;height:36px;min-height:36px;padding:0;border:0;border-radius:0;background:transparent;color:var(--ink);box-shadow:none;appearance:textfield;-webkit-appearance:none;text-align:right}
+.cooking-mode .journal-quantity-edit input:focus{box-shadow:none;outline:0;border:0}
 .cooking-mode .journal-quantity-edit input::-webkit-inner-spin-button{appearance:none;margin:0}
 .cooking-mode .journal-quantity-unit{min-width:0;max-width:100%;overflow-wrap:anywhere;text-align:right}
-.cooking-mode .journal-quantity-edit>.journal-quantity-unit{grid-column:2;grid-row:1}
-.cooking-mode .journal-quantity-actions{grid-column:3;grid-row:1;display:flex;align-items:center;justify-content:flex-start;min-width:0;width:24px;min-height:36px}
-.cooking-mode .journal-quantity-actions button{flex:0 0 12px;min-width:12px;padding:4px 0}
 .cooking-mode .journal-check-row input[type=checkbox]{margin-top:calc((36px - 18px)/2);transform:none;font-size:13px}
 .cooking-mode .journal-footer .primary{display:inline-flex;align-items:center;justify-content:center;gap:4px}
-.cooking-mode .journal-quantity-edit [role=alert]{grid-column:1/-1;color:var(--ink)}
 .cooking-mode.recipe-detail-modal>.journal-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px}
 .cooking-mode.recipe-detail-modal>.journal-footer>.journal-reset{grid-column:1/-1;justify-self:start;min-height:36px;padding:4px 0}
 .cooking-mode .journal-footer button{min-width:0;white-space:normal}
@@ -44,14 +40,12 @@
 
 .cooking-mode .journal-quantity-measure{visibility:hidden;grid-column:1/3;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:center;min-height:36px;pointer-events:none}
 .cooking-mode .journal-quantity-value{white-space:nowrap;overflow-wrap:normal}
-.cooking-mode .journal-quantity-edit{grid-row:1}
 /* One phrase underline, independent of native input font metrics. */
 .cooking-mode .journal-check-row .journal-quantity{position:relative;font-variant-numeric:tabular-nums}
-.cooking-mode .journal-quantity::after{content:'';position:absolute;left:0;right:28px;bottom:8px;border-bottom:1px dotted var(--muted);pointer-events:none}
-.cooking-mode .journal-quantity:has(input:focus)::after{border-color:var(--action)}
+.cooking-mode .journal-quantity .journal-amount-ink{right:14px}
+
 .cooking-mode .journal-quantity .journal-quantity-trigger,.cooking-mode .journal-quantity.is-overridden .journal-quantity-trigger{text-decoration:none;column-gap:inherit}
 .cooking-mode .journal-quantity-unit{padding-block:8px;box-sizing:border-box}
-.cooking-mode .journal-quantity-edit input,.cooking-mode .journal-quantity-edit input:focus{border:0;box-shadow:none;outline:0}
 .cooking-mode .cooking-journal-columns>section+section{padding-left:8px;margin-right:-8px}
 .cooking-mode .journal-prep-actions{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
 .cooking-mode .journal-prep-actions button{min-height:40px;padding:4px 0;background:none;border:0;color:var(--action);font:400 12px/1.4 var(--font-ui)}
@@ -67,5 +61,35 @@
 .cooking-mode .journal-method-editor textarea:focus{outline:0;border:0;box-shadow:none}
 .cooking-mode .journal-method-confirm{color:var(--action)}
 .cooking-mode .journal-method-editor [role=alert]{font:400 12px/1.5 var(--font-ui);color:var(--ink);overflow-wrap:anywhere}
-.cooking-mode .journal-check-row>span>span label{-webkit-touch-callout:none;user-select:none}
+.cooking-mode .journal-check-row>span>span .journal-line-name{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-y}
 .cooking-mode .journal-check-row:focus-visible{outline:1px dotted var(--action);outline-offset:2px}
+
+.cooking-mode .journal-footer [data-confirm-preparation] {grid-column:1/-1;width:100%}
+.cooking-swipe-row {
+  --delete-width:min(58px,38%);
+  touch-action:pan-y;
+}
+.cooking-swipe-row .draft-remove {
+  position:absolute;inset:0 0 0 auto;display:grid;place-items:center;
+  width:var(--delete-width);height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;
+  background:color-mix(in srgb,#91483f 85%,var(--ink));color:white;visibility:hidden;
+}
+.cooking-swipe-row:is([data-gesture=swipe],[data-revealed]) .draft-remove {visibility:visible}
+.cooking-swipe-row .journal-check-row {
+  position:relative;box-sizing:border-box;width:100%;background:var(--surface);
+}
+.cooking-swipe-row:is([data-gesture=swipe],[data-revealed]) .journal-check-row {
+  transform:translateX(calc(0px - var(--reveal)));
+}
+
+.cooking-mode .journal-check-row .journal-quantity {font:400 11.5px/1.5 var(--font-ui)}
+.cooking-mode .journal-quantity .journal-quantity-trigger {display:block;grid-column:1;grid-row:1;text-align:right}
+.cooking-mode .journal-quantity:has(.journal-quantity-trigger:disabled) .journal-amount-ink {display:none}
+.cooking-mode .journal-quantity .cooking-unit-choice {grid-column:2;grid-row:1;padding-block:0}
+.cooking-mode .cooking-unit-choice .draft-unit-trigger {min-width:0;padding:0}
+
+.cooking-mode .cooking-unit-choice .draft-unit-trigger {position:relative}
+.cooking-mode .cooking-unit-choice .draft-unit-trigger::after {display:none}
+
+.cooking-mode .journal-quantity .journal-quantity-restore {grid-column:3;grid-row:1;min-width:0;padding:4px 0;margin-inline-start:2px}
+@media(min-width:360px) and (max-width:389px){.cooking-mode .cooking-journal-columns>section+section{margin-right:-13px}}

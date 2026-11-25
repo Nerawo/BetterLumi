@@ -14,7 +14,7 @@
 .journal-recipe-editor .journal-group-edit h4 .journal-heading { font-size: 17px; }
 .journal-recipe-editor .journal-group-edit > input { flex: 1; min-width: 0; font-size: 16px; }
 .journal-recipe-editor .journal-grouped-lines .recipe-line.draft-ingredient {
-  display: grid; grid-template-columns: var(--drag-gutter) minmax(0,1fr) fit-content(44%);
+  display: grid; grid-template-columns: var(--drag-gutter) minmax(0,1fr) fit-content(52%);
   align-items: center; gap: var(--ingredient-gap); padding: 0 36px 0 0; min-height: 36px; position: relative;
 }
 .draft-ingredient-name { overflow-wrap: anywhere; min-width: 0; }
@@ -24,22 +24,26 @@
   display: flex; flex-direction: row; align-items: center; justify-self: end;
   align-self: center; gap: 4px; max-width: 100%; min-width: 0; margin: 0; padding: 0;
   font: 15px/1.3 var(--font-ui); color: var(--ink); cursor: text; min-height: 40px; border: 0;
-  background: repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px 3px) right calc(50% + 11px) / 100% 1px no-repeat;
+  position:relative;background:none;
 }
-.journal-recipe-editor .recipe-line .draft-amount input {
-  appearance: textfield; border: 0; border-radius: 0; padding: 0; margin: 0;
-  flex: 0 1 auto; min-width: 24px; max-width: 100%; min-height: 0; height: 36px; text-align: right;
-  color: inherit; background: transparent; box-shadow: none; font: 16px/1 var(--font-ui);
+:is(dialog.journal-recipe-editor,dialog.meal-journal) .recipe-line .draft-amount input[type=number],
+:is(dialog.journal-recipe-editor,dialog.meal-journal) .recipe-line .draft-amount input[type=number]:focus {
+  appearance:none; -webkit-appearance:none; outline:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none; padding:0; margin:0; text-align:right;
+  width:5ch; min-width:5ch; flex:none; min-height:36px; height:36px;
+  color:inherit; font:400 16px/1.4 var(--font-ui);
 }
-.draft-amount span { overflow-wrap: anywhere; }
-.journal-recipe-editor .draft-amount :is(.draft-unit-trigger,.draft-unit-text) {flex:0 0 auto;max-width:60%}
-.journal-recipe-editor .recipe-line .draft-amount:has(.draft-unit-text) {background:none;cursor:auto}
-.journal-recipe-editor .draft-amount:has(.draft-unit-text) input {text-decoration:underline dotted var(--line);text-underline-offset:4px}
+.draft-amount span {overflow-wrap:anywhere}
+.journal-recipe-editor .draft-amount :is(.draft-unit-trigger,.draft-unit-text) {flex:0 1 auto;min-width:0}
+.journal-amount-ink {
+  display:block; position:absolute; right:0; top:calc(50% + 10px); width:56px;
+  height:0; border-bottom:1px dotted var(--muted); pointer-events:none;
+}
+.draft-amount:has(input:disabled) .journal-amount-ink {display:none}
 .journal-recipe-editor .draft-unit-warning button {font:inherit;color:var(--action);padding:2px 0;background:none;border:0;text-decoration:underline}
 .draft-amount input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-.journal-recipe-editor .draft-amount input:focus { outline: none; }
-.journal-recipe-editor .draft-amount input:focus-visible { outline: 1px dotted var(--action); outline-offset: 1px; }
+
 .journal-recipe-editor .journal-context-menu > summary { min-width: 36px; width: 36px; min-height: 36px; height: 36px; color: var(--action); }
 .journal-recipe-editor .journal-context-menu > div { right: 0; top: 100%; z-index: 5; width: max-content; min-width: 132px; max-width: min(210px,100%); padding: 3px; }
 .journal-recipe-editor .journal-group-edit { position: relative; }
@@ -63,7 +67,7 @@
 
 .journal-recipe-editor .journal-group-editor .draft-heading-row h3 { margin: 0; }
 .journal-recipe-editor .draft-group-switch {
-  display:inline-flex; align-items:center; justify-content:flex-end; gap:4px;
+  display:inline-flex; align-items:center; justify-content:center; gap:4px;
   min-width:44px; min-height:44px; padding:0; border:0; border-radius:0;
   background:transparent; box-shadow:none; color:var(--muted); font:500 13px/1.3 var(--font-ui);
 }
@@ -71,6 +75,10 @@
 
 .journal-recipe-editor .draft-ungrouped { margin: 2px 0; font: 500 12px/1.4 var(--font-ui); color: var(--muted); }
 .draft-source { display: flex; align-items: center; flex-wrap: wrap; gap: 0 3px; color: var(--muted); font: 11px/1.25 var(--font-ui); }
+@media (max-width:359px){
+  .recipe-editor-modal .draft-source {font-size:10px;column-gap:0}
+  .recipe-editor-modal .draft-source .reference-origin {column-gap:1px}
+}
 .draft-source .reference-origin { display: inline-flex; font: inherit; }
 .journal-recipe-editor .draft-source .reference-info-trigger { min-width: 22px; min-height: 20px; width: 22px; height: 20px; padding: 0; }
 .journal-context-menu > div > section:not([hidden]) { display: grid; }
@@ -144,10 +152,14 @@
 .draft-confirmation-actions button {min-height:44px;margin:0;padding:8px 10px;border-radius:5px;font:500 14px/1.35 var(--font-ui);}
 .draft-confirmation-actions .secondary {background:transparent;color:var(--ink);border:1px solid var(--line);}
 
-.journal-recipe-editor .draft-basics {display:grid;gap:3px}
+.journal-recipe-editor .draft-basics {display:grid;align-content:start;gap:4px}
+.journal-recipe-editor .draft-basics .draft-yield {min-height:40px}
+.journal-recipe-editor .draft-basics .category-assignments legend {margin:0 0 4px}
+.journal-recipe-editor .draft-basics .ingredient-tag-choices button[aria-pressed=false] {background:transparent;color:var(--muted);border:1px solid var(--line)}
+.journal-recipe-editor .draft-basics .ingredient-tag-choices button[aria-pressed=true] {background:var(--soft);color:var(--action);border:1px solid transparent}
 .journal-recipe-editor .draft-basics h3 {margin:0 0 5px}
 .journal-recipe-editor .draft-basics .draft-name {display:grid;gap:0;margin:0}
-.draft-name-line {position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;align-items:center;min-height:44px}
+.draft-name-line {position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;align-items:center;min-height:36px}
 .draft-name-line > span {overflow-wrap:anywhere;font:400 21px/1.35 var(--font-editorial);color:var(--ink)}
 .draft-name-line > .muted {color:var(--muted);font-size:17px}
 .draft-name-line svg {justify-self:center;color:var(--muted);cursor:text}
@@ -161,7 +173,7 @@
 .draft-yield {justify-content:space-between;gap:6px}
 .journal-recipe-editor .draft-yield label {margin:0}
 .draft-yield-controls {gap:2px;color:var(--muted);font:13px/1.4 var(--font-ui)}
-.draft-yield-controls button,.draft-photo button {min-width:36px;min-height:44px;padding:0;background:none;color:var(--action);border:0}
+.draft-yield-controls button,.draft-photo button {min-width:36px;min-height:40px;padding:0;background:none;color:var(--action);border:0}
 .journal-recipe-editor .draft-yield-controls input[name=servings] {height:38px;min-height:38px;max-width:8ch;padding:0;text-align:center;appearance:textfield;background:none;border:0;border-radius:0;color:var(--ink);font:16px var(--font-ui)}
 .draft-yield-controls input::-webkit-inner-spin-button {appearance:none}
 .draft-basics .category-assignments {margin:0;padding:0;border:0}
@@ -172,7 +184,7 @@
 .journal-recipe-editor .draft-photo-action input[type=file] {width:1px;height:1px;min-height:0;padding:0}
 .journal-recipe-editor .draft-photo img {width:48px;height:48px;object-fit:cover;border-radius:3px}
 .draft-photo-action:focus-within {outline:1px dotted var(--action)}
-.journal-recipe-editor .draft-unit-menu {
+:is(.journal-recipe-editor,.meal-journal,.cooking-mode) .draft-unit-menu {
   position:absolute;z-index:20;box-sizing:border-box;display:block;
   width:max-content;min-width:54px;overflow:auto;padding:3px;
   background:var(--surface);border:1px solid var(--line);border-radius:6px;overscroll-behavior:contain;
