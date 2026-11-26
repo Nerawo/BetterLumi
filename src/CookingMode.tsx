@@ -12,7 +12,7 @@ import {requantifyLine,effectiveCookingRecipe,changeCookingUnit,cookingJournalLi
 import {isBuiltInRecipe} from './data/builtInRecipes';
 import {AddFood,type MealDraft} from './Meals';
 import {MakeBatchModal} from './FoodStorage';
-import {journalQuantity} from './journal-quantity';
+import {journalEditValue} from './journal-quantity';
 import {JournalMethod} from './JournalMethod';
 import {JournalQuantityInput} from './JournalQuantityInput';
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -251,6 +251,8 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
      <section className="journal-ingredients-section"><div className="journal-method-heading journal-ingredients-heading"><h3><JournalHeading>Ingredients</JournalHeading></h3><button type="button" className="journal-ingredient-add" aria-label={t('ingredientPickerAdd')} disabled={busy} onClick={()=>setPicking('pantry')}><Plus size={16} aria-hidden="true"/></button></div>{!lines.length&&<p className="muted">{t('journalIngredientsEmpty')}</p>}
       {sections.filter(g=>g.lines.length).map(g=><div className="journal-ingredient-group" key={g.id}>{(viewRecipe.ingredientGroups?.length??0)>0&&<h4><JournalHeading>{g.name||t('journalUngrouped')}</JournalHeading></h4>}
        {g.lines.map(l=>{const index=lines.indexOf(l),id=entries[index].id,checked=session.checked.includes(id),override=session.quantityOverrides?.find(o=>o.entryId===id),quantity=override?.quantity??l.quantity,labelFor=(unit:string)=>unit==='fraction'?'% '+t('storageReference'):unit==='g'?t('gramsUnit'):unit==='serving'?t('servingUnit'):householdUnitLabel(l.ingredientId,unit,i18n.language,preferences[l.ingredientId]?.units);
+        const inputQuantity=l.unit==='fraction'?quantity*100:quantity;
+        const displayQuantity=journalEditValue(inputQuantity);
         const unitLabel=labelFor(l.unit),item=pantry.find(p=>p.id===l.ingredientId),builtin=builtInFoods.find(b=>b.id===l.ingredientId);
         const choice=item?userChoice(item):builtin?{kind:'built-in' as const,item:builtin}:null;
         const factors=choice&&l.source!=='batch'?recipeUnitFactors(choice,preferences[l.ingredientId]):new Map<string,number>();
@@ -262,11 +264,11 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
         return <DraftIngredientRow key={id} id={id} name={l.name} cookingRemoval={()=>requestRemoval(id)} onReplace={()=>{setReplacement({id,fingerprint:entries[index].fingerprint});setPicking("pantry")}} disabled={busy||!!picking}><div className={'journal-check-row'+(checked?' is-checked':'')+(quantityEdit===id?' is-editing':'')} key={id} tabIndex={0} role="group" aria-label={l.name} aria-description={t('journalRemoveHint')} aria-keyshortcuts="Delete Shift+F10" onKeyDown={event=>{if(event.target===event.currentTarget&&!busy&&!quantityEdit&&(event.key==="Delete"||event.shiftKey&&event.key==="F10")){event.preventDefault();requestRemoval(id)}}}>
         <input id={`cooking-check-${id}`} type="checkbox" aria-label={l.name} checked={checked} disabled={busy} onChange={()=>void commit({...session,checked:checked?session.checked.filter(x=>x!==id):[...session.checked,id]})}/>
         <span>{family?<span className="journal-family-choice"><InlineFamilyChoice cooking line={family} catalog={catalog} selectedId={l.ingredientId||undefined} resolvedName={l.draftFamilyId?undefined:l.name} invalid={invalidSlot===id} choose={productId=>{if(productId!==l.ingredientId)chooseFamilyProduct(family,id,productId)}}/></span>:<span><span className="journal-line-name" role="button" tabIndex={0} aria-label={t("replaceIngredient")+" "+l.name}>{l.name}</span></span>}<small className={'journal-quantity'+(override?' is-overridden':'')}>
-         <span className="journal-amount-ink" aria-hidden="true"/><span className="journal-quantity-measure" aria-hidden="true"><span className="journal-quantity-value">{journalQuantity({...l,quantity})}{" "}</span><span className="journal-quantity-unit">{unitLabel}</span></span>
+         <span className="journal-amount-ink" aria-hidden="true"/><span className="journal-quantity-measure" aria-hidden="true"><span className="journal-quantity-value">{displayQuantity}{" "}</span><span className="journal-quantity-unit">{unitLabel}</span></span>
          {quantityEdit===id?<span className="journal-quantity-edit">
-          <JournalQuantityInput autoFocus quantity={l.unit==='fraction'?quantity*100:quantity} label={t('journalQuantityFor',{name:l.name})}
+          <JournalQuantityInput autoFocus quantity={inputQuantity} label={t('journalQuantityFor',{name:l.name})}
             onCommit={value=>saveQuantity(id,l.unit,value)} onEnd={()=>setQuantityEdit(undefined)}/>
-         </span>:<button type="button" className="journal-quantity-trigger" disabled={busy} aria-label={t('journalQuantityFor',{name:l.name})} title={override?t('journalQuantityOverridden'):t('journalQuantityEdit')} onClick={()=>setQuantityEdit(id)}><span className="journal-quantity-value">{journalQuantity({...l,quantity})}{" "}</span></button>}
+         </span>:<button type="button" className="journal-quantity-trigger" disabled={busy} aria-label={t('journalQuantityFor',{name:l.name})} title={override?t('journalQuantityOverridden'):t('journalQuantityEdit')} onClick={()=>setQuantityEdit(id)}><span className="journal-quantity-value">{displayQuantity}{" "}</span></button>}
          {override&&<button type="button" className="journal-quantity-restore" disabled={busy} aria-label={t('journalQuantityRestore',{name:l.name})} onClick={()=>{const current=currentSession.current;if(current)void commit(restoreCookingQuantity(current,id))}}>↶</button>}
          <span className="journal-quantity-unit cooking-unit-choice">{picker}</span>
         </small></span>

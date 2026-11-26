@@ -56,7 +56,7 @@ test('Family journal picker, independent tags, unique counts and shared row geom
   const option=picker.locator('[data-member-option=review-'+index+']');await expect(option.locator('strong')).toBeVisible();
   expect(await option.evaluate(el=>Math.abs(el.querySelector('strong')!.getBoundingClientRect().left-el.getBoundingClientRect().left))).toBeLessThan(2);
   if(index===1)await photo(page,'01-member-picker');
-  await option.tap();
+  await option.tap();await picker.locator('.member-picker-footer .primary').tap();
  }
  await editor.locator('.family-dot').first().tap();await editor.locator('.recipe-editor-footer .primary').tap();
  const category=page.getByRole('tab',{name:'早餐',exact:true});
@@ -159,4 +159,51 @@ for(const lang of ['zh','en'])test('directory geometry and state contrast across
   }
   await page.goto('/#/recipes');for(const width of [320,375,390,430]){await page.setViewportSize({width,height:844});await measure(page)}
  }
+});
+
+for (const width of [320,375,390,430]) test('Family member batch selection stays in the draft at '+width,async({page})=>{
+ await page.setViewportSize({width,height:844});
+ await sample(page);
+ await page.evaluate(async()=>{
+  const {stamp}=await import('/src/domain.ts'),{saveFamily}=await import('/src/families.ts');
+  for(const [id,member] of [['editing','review-4'],['other','review-0']]){
+   await saveFamily({...stamp(),id,name:id,alternateName:'',memberIds:[member],inUseIds:[member]});
+  }
+ });
+ const header=page.locator('[data-family-id=editing]');
+ await header.locator('.family-action-trigger').tap();
+ await header.getByRole('menuitem').tap();
+ const editor=page.locator('.family-editor'),picker=page.locator('.family-member-picker');
+ const add=editor.locator('.family-add-member'),confirm=picker.locator('.member-picker-footer .primary');
+ const option=(i:number)=>picker.locator('[data-member-option=review-'+i+']');
+ const stored=()=>page.evaluate(async()=>(await (await import('/src/domain.ts')).db.ingredientFamilies.get('editing'))?.memberIds);
+ // A member already confirmed into this unsaved draft must also survive picker cancellation.
+ await add.tap();await expect(confirm).toBeDisabled();await expect(option(4)).toHaveCount(0);
+ await option(3).tap();await expect(confirm).toHaveText('添加（1）');await confirm.tap();
+ await expect(editor.locator('.family-member-editor')).toHaveCount(2);
+ for(const action of ['cancel','close','back','add']){
+  await add.tap();await expect(confirm).toBeDisabled();await expect(option(3)).toHaveCount(0);
+  const search=picker.getByRole('searchbox');
+  await search.fill('Yogurt');await option(0).tap();await option(1).tap();
+  await option(1).tap();await expect(confirm).toHaveText('添加（1）');await option(1).tap();
+  await search.fill('');await picker.getByRole('tab',{name:'早餐',exact:true}).tap();
+  await expect(option(0)).toHaveAttribute('aria-pressed','true');await option(2).tap();
+  await expect(confirm).toHaveText('添加（3）');await expect(confirm).toBeInViewport();
+  expect(await picker.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+  if(action==='add')await confirm.tap();
+  else if(action==='cancel')await picker.getByRole('button',{name:'取消',exact:true}).tap();
+  else if(action==='close')await picker.locator('.modal-head button').tap();
+  else await page.goBack();
+  await expect(picker).toHaveCount(0);await expect(editor).toBeVisible();
+  await expect(editor.locator('.family-member-editor')).toHaveCount(action==='add'?5:2);
+  expect(await stored()).toEqual(['review-4']);
+ }
+ await editor.locator('.recipe-editor-footer .primary').tap();await expect(editor).toHaveCount(0);
+ const expected=['review-4','review-3','review-0','review-1','review-2'];
+ expect(await stored()).toEqual(expected);
+ const result=await page.evaluate(async()=>{
+  const d=await import('/src/domain.ts'),backup=await d.exportAll();await d.restoreAll(backup);
+  return {version:backup.version,other:(await d.db.ingredientFamilies.get('other'))?.memberIds,active:(await d.db.ingredientFamilies.get('editing'))?.inUseIds};
+ });
+ expect(result).toEqual({version:20,other:['review-0'],active:['review-4']});expect(await stored()).toEqual(expected);
 });

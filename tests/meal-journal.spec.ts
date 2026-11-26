@@ -241,5 +241,17 @@ for(const origin of ['meal','recipes'])test('session unit picker and amount geom
  const menu=mode.locator('.draft-unit-menu');await expect(menu.locator('button')).toHaveCount(2);await expect(menu).not.toContainText('✓');
  await mode.screenshot({path:shots+'units.png',scale:'css'});await menu.locator('[data-unit="个"]').tap();
  await expect(row.locator('.journal-quantity-trigger')).toHaveText('5');await expect(menu).toHaveCount(0);
+ if(origin==='recipes'){
+  const amount=row.locator('.journal-quantity-trigger');
+  await amount.tap();
+  await row.locator('.journal-quantity-edit input').fill('7.56');
+  await row.locator('.journal-quantity-edit input').press('Enter');
+  await expect(amount).toHaveText('7.6');
+  await expect(row.locator('.draft-unit-trigger')).toHaveText('个');
+  await expect.poll(()=>page.evaluate(async id=>{
+   const session=await (await import('/src/domain.ts')).db.settings.get('cooking-session:v1:'+id);
+   return JSON.parse(session!.value).quantityOverrides.find((entry:{unit:string})=>entry.unit==='个')?.quantity;
+  },id)).toBe(7.56);
+ }
  if(origin==='meal'){await mode.locator('[data-confirm-preparation]').tap();const meal=page.locator('.meal-journal');await meal.locator('.meal-advanced summary').first().tap();await expect(meal.locator('.draft-amount input').first()).toHaveValue('5')}
 });

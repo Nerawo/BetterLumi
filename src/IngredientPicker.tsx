@@ -6,7 +6,7 @@ import {useIngredientPreferences} from './useIngredientPreferences';
 import {createPortal} from 'react-dom';
 import {useEffect,useRef,useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Search} from 'lucide-react';
+import {Check,Search} from 'lucide-react';
 import {Modal} from './ui';
 import {IngredientTagNavigation,useIngredientTags} from './IngredientTags';
 import {searchFoodChoices,referenceName,referenceNutritionSummary} from './reference-library';
@@ -17,7 +17,11 @@ import {nutritionReference} from './db';
 import type {PantryItem} from './domain';
 import {pantryListNutrition} from './pantry-foods';
 import {round} from './domain';
-export function IngredientPicker({items,memberExclusions,onSelect,onSelectBuiltIn,close,onChooseStoredFood,onFamily}:{memberExclusions?:ReadonlySet<string>;onFamily?:(family:IngredientFamily,unit:"g"|"mL")=>void;items:PantryItem[];onSelect:(item:PantryItem)=>void;onSelectBuiltIn?:(item:BuiltInFood)=>void;close:()=>void;onChooseStoredFood?:()=>void}){
+type PickerSelection =
+ | {memberSelection:{excluded:ReadonlySet<string>;add:(ids:string[])=>void};onSelect?:never;onSelectBuiltIn?:never}
+ | {memberSelection?:never;onSelect:(item:PantryItem)=>void;onSelectBuiltIn?:(item:BuiltInFood)=>void};
+export function IngredientPicker({items,memberSelection,onSelect,onSelectBuiltIn,close,onChooseStoredFood,onFamily}:PickerSelection & {onFamily?:(family:IngredientFamily,unit:"g"|"mL")=>void;items:PantryItem[];close:()=>void;onChooseStoredFood?:()=>void}){
+ const [selected,setSelected]=useState<string[]>([]);
  const [creating,setCreating]=useState(false),[message,setMessage]=useState('');
  const resultScroll=useRef(0);
  const preferences=useIngredientPreferences();
@@ -40,18 +44,18 @@ export function IngredientPicker({items,memberExclusions,onSelect,onSelectBuiltI
    if(familyNameMatches(family)||matchIds.has(member.item.id))candidates.set(member.item.id,member);
   }
  }
- const results=[...candidates.values()].filter(choice=>!memberExclusions?.has(choice.item.id)&&!preferences[choice.item.id]?.archived&&(choice.kind==='user'||!!onSelectBuiltIn));
+ const results=[...candidates.values()].filter(choice=>!memberSelection?.excluded.has(choice.item.id)&&!preferences[choice.item.id]?.archived&&(choice.kind==='user'||!!memberSelection||!!onSelectBuiltIn));
  if(creating)return createPortal(<PantryEditor item={null} statusMessage={message} initialName={search.trim()} notice={setMessage} onCreated={onSelect} close={()=>setCreating(false)}/>,document.body);
- return createPortal(<Modal title={t(memberExclusions?'familyAddMember':'ingredientPickerTitle')} close={close} className={'ingredient-picker-modal'+(memberExclusions?' family-member-picker':'')}>
+ return createPortal(<Modal title={t(memberSelection?'familyAddMember':'ingredientPickerTitle')} close={close} className={'ingredient-picker-modal'+(memberSelection?' family-member-picker':'')}>
   <div className="ingredient-picker-search" onKeyDown={event=>{if(event.key==='Enter')event.preventDefault()}}><label className="search"><Search size={17}/><span className="sr-only">{t('ingredientPickerSearch')}</span><input type="search" value={search} placeholder={t('ingredientPickerSearch')} onChange={event=>setSearch(event.target.value)}/></label></div>
   {message&&<p role="alert">{message}</p>}
-  {!memberExclusions&&<button type="button" className="text-link ingredient-create-trigger" style={{minHeight:44,marginInline:16,textAlign:"start"}} onClick={()=>{setMessage('');setCreating(true)}}>+ {t("inlineNewIngredient")}</button>}
+  {!memberSelection&&<button type="button" className="text-link ingredient-create-trigger" style={{minHeight:44,marginInline:16,textAlign:"start"}} onClick={()=>{setMessage('');setCreating(true)}}>+ {t("inlineNewIngredient")}</button>}
   {onChooseStoredFood&&<button type="button" className="text-link ingredient-stored-trigger" style={{minHeight:44,marginInline:16,textAlign:'start'}} onClick={onChooseStoredFood}>{t('storageAddBatch')}</button>}
   <IngredientTagNavigation items={tags} active={activeTag} onChange={setTag}/>
   <div className="ingredient-picker-results" ref={node=>{if(node)node.scrollTop=resultScroll.current}} onScroll={event=>{resultScroll.current=event.currentTarget.scrollTop}} role="list" aria-label={t('ingredientPickerResults')}>
    {onFamily&&families.map(f=><button type="button" className="ingredient-picker-result family-picker-option" data-family-option={f.id} key={f.id} onClick={()=>onFamily(f,commonUnits(f,catalog)[0]??'g')}><span className="grow"><strong>{f.name}</strong><small>{t('familyTitle')}</small></span></button>)}
    {results.map(choice=>{
-    if(memberExclusions){
+    if(memberSelection){
      const user=choice.kind==='user'?pantryListNutrition(choice.item):undefined;
      const name=choice.kind==='user'?choice.item.name:referenceName(choice.item,i18n.language);
      const meta=choice.kind==='user'?[...ingredientSecondaryNames(choice.item),t('referenceMyFood')].join(' · '):t('referenceBuiltIn');
@@ -62,13 +66,17 @@ export function IngredientPicker({items,memberExclusions,onSelect,onSelectBuiltI
       return n==null?[]:[t(key)+' '+round(n)+' g'];
      });
      return <button type="button" key={choice.item.id} data-member-option={choice.item.id} className="ingredient-picker-result member-option"
-      onClick={()=>choice.kind==='user'?onSelect(choice.item):onSelectBuiltIn?.(choice.item)}>
-      <strong>{name}</strong><small className="member-option-energy">{calories==null?'—':Math.round(calories)} kcal / {basis}</small>
+      aria-pressed={selected.includes(choice.item.id)} onClick={()=>setSelected(ids=>ids.includes(choice.item.id)?ids.filter(id=>id!==choice.item.id):[...ids,choice.item.id])}>
+      <strong>{name}</strong><small className="member-option-energy">{calories==null?'—':Math.round(calories)} kcal / {basis}</small><span aria-hidden="true" className="member-select-mark">{selected.includes(choice.item.id)&&<Check size={12}/>}</span>
       <small>{meta}</small>{macros.length>0&&<small>{macros.join(' · ')}</small>}
      </button>;
     }
     if(choice.kind==='built-in'){const item=choice.item;return <div className="reference-picker-row" role="listitem" key={item.id} data-reference-id={item.id}><button type="button" className="ingredient-picker-result" onClick={()=>onSelectBuiltIn?.(item)}><strong>{referenceName(item,i18n.language)}</strong><small className="reference-nutrition">{referenceNutritionSummary(item)}</small></button><ReferenceSourceInfo source={item}/></div>}const item=choice.item;return <button type="button" className="ingredient-picker-result" key={item.id} data-ingredient-id={item.id} onClick={()=>onSelect(item)}><span className="grow"><strong>{item.name}</strong>{ingredientSecondaryNames(item).length>0&&<small>{ingredientSecondaryNames(item).join(' · ')}</small>}</span><small>{item.basis==='serving'?t('servingUnit'):`${nutritionReference(item).amount} ${nutritionReference(item).unit}`}</small></button>})}
    {!results.length&&!families.length&&<p className="collection-empty">{t('ingredientPickerEmpty')}</p>}
   </div>
+  {memberSelection&&<div className="form-actions member-picker-footer">
+   <button type="button" onClick={close}>{t('cancel')}</button>
+   <button type="button" className="primary" disabled={!selected.length} onClick={()=>memberSelection.add(selected)}>{t('familyAddSelected',{total:selected.length})}</button>
+  </div>}
  </Modal>,document.body);
 }

@@ -90,7 +90,7 @@ test('create and resolve a family recipe and save a concrete meal snapshot',asyn
  await shot(page,'15-empty-editor',editor);await editor.locator('[name=familyName]').fill('酸奶');await editor.locator('[name=familyAlias]').fill('Yogurt');
  for(const [i,id] of ids.entries()){
   await editor.getByRole('button',{name:'添加成员'}).tap();
-  const memberPicker=page.locator('.family-member-picker');await memberPicker.locator('[type=search]').fill(i?'Chobani':'Fage');await shot(page,'16-add-member',memberPicker);await memberPicker.locator('[data-member-option="'+id+'"]').tap();
+  const memberPicker=page.locator('.family-member-picker');await memberPicker.locator('[type=search]').fill(i?'Chobani':'Fage');await shot(page,'16-add-member',memberPicker);await memberPicker.locator('[data-member-option="'+id+'"]').tap();await memberPicker.locator('.member-picker-footer .primary').tap();
   await editor.locator('.family-dot').last().tap();
  }
  await shot(page,'07-editor',editor);await editor.locator('.primary').tap();await expect(editor).toHaveCount(0);
@@ -212,7 +212,7 @@ test('creates, edits, cancels deletion and deletes a Family from the real Pantry
   const first=picker.locator('[data-member-option]').first();
   if(index===0)await picker.getByRole('searchbox').fill('鸡蛋');
   chosen.push((await first.getAttribute('data-member-option'))!);
-  await first.tap();
+  await first.tap();await picker.locator('.member-picker-footer .primary').tap();
   await expect(editor.locator('.family-member-editor')).toHaveCount(index+1);
  }
  await editor.locator('.family-dot').first().tap();
@@ -259,7 +259,7 @@ test('a single draft member stays in the editor until Save and expands alone at 
  const editor=page.locator('.family-editor');
  await editor.locator('[name=familyName]').fill('One pantry member');
  await editor.locator('.family-add-member').tap();
- await page.locator('.family-member-picker [data-member-option]').first().tap();
+ await page.locator('.family-member-picker [data-member-option]').first().tap();await page.locator('.member-picker-footer .primary').tap();
  await expect(editor.locator('.family-member-editor')).toHaveCount(1);
  await expect(page.locator('.pantry-family')).toHaveCount(0);
  await editor.locator('.recipe-editor-footer .primary').tap();
@@ -311,7 +311,7 @@ test('Family slots share the full cooking journal, destination guard and restore
  await expect(rows.nth(2).locator('[data-unresolved]')).toBeVisible();
  await rows.nth(2).locator('.draft-family-trigger').tap();
  await rows.nth(2).getByRole('button',{name:'番茄',exact:true}).tap();await capture('07-destinations');
- await rows.nth(0).locator('.journal-quantity-trigger').tap();const qty=rows.nth(0).locator('.journal-quantity-edit input');await qty.fill('120');await qty.press('Enter');
+ await rows.nth(0).locator('.journal-quantity-trigger').tap();const qty=rows.nth(0).locator('.journal-quantity-edit input');await qty.fill('120.056');await qty.press('Enter');
  await expect(journal.locator('.recipe-nutrition-strip')).toContainText('221');await capture('04-resolved');
  const original=await journal.elementHandle();
  const entry=await page.evaluate(()=>({href:location.href,state:history.state,length:history.length}));
@@ -330,7 +330,7 @@ test('Family slots share the full cooking journal, destination guard and restore
   expect(await original!.evaluate(node=>node.isConnected)).toBe(true);
   await expect(rows.locator('input:checked')).toHaveCount(2);
   await expect(rows.first().locator('.journal-family-choice')).toContainText('Fage');
-  await expect(rows.first().locator('.journal-quantity-trigger')).toContainText('120');
+  await expect(rows.first().locator('.journal-quantity-trigger')).toHaveText('120.1');
   await expect(journal.locator('.journal-serving-stepper input')).toHaveValue('1.5');
   expect(await session()).toEqual(savedSession);
   page.off('dialog',stay);
@@ -344,7 +344,7 @@ test('Family slots share the full cooking journal, destination guard and restore
  await expect(restored.locator('.journal-serving-stepper input')).toHaveValue('1.5');
  await expect(restored.locator('.journal-family-choice .journal-line-name').first()).toContainText('Fage');
  await expect(restored.locator('.journal-family-choice .journal-line-name').last()).toContainText('番茄');
- await expect(restored.locator('.journal-quantity-trigger').first()).toContainText('120');
+ await expect(restored.locator('.journal-quantity-trigger').first()).toHaveText('120.1');
  await expect(restored.locator('.journal-method-section')).toContainText('轻轻拌匀');
 });
 for(const width of [390,320])test('Cooking shows one ingredient name and a compact member list at '+width,async({page})=>{

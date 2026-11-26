@@ -32,8 +32,28 @@ export function FamilyEditor({family,catalog,items,close,initialTags=[]}:{initia
  const [draft,setDraft]=useState<IngredientFamily>(()=>family??{...stamp(),name:'',alternateName:'',memberIds:[],inUseIds:[]});
  const [adding,setAdding]=useState(false),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const saving=useRef(false);
- const closePicker=()=>setAdding(false);
- const addMember=(id:string)=>{setDraft(current=>({...current,memberIds:[...current.memberIds,id]}));closePicker()};
+ const pickerEntry=useId();
+ const returning=useRef(false);
+ useEffect(()=>{
+  const onBack=()=>{returning.current=false;setAdding(history.state?.familyMemberPicker===pickerEntry)};
+  window.addEventListener('popstate',onBack);
+  return ()=>window.removeEventListener('popstate',onBack);
+ },[pickerEntry]);
+ const openPicker=()=>{
+  if(adding||returning.current)return;
+  history.pushState({...history.state,familyMemberPicker:pickerEntry},'');
+  setAdding(true);
+ };
+ const closePicker=()=>{
+  if(returning.current)return;
+  if(history.state?.familyMemberPicker===pickerEntry){returning.current=true;history.back()}
+  else setAdding(false);
+ };
+ const addMembers=(ids:string[])=>{
+  if(returning.current)return;
+  setDraft(current=>({...current,memberIds:[...new Set([...current.memberIds,...ids])]}));
+  closePicker();
+ };
  async function submit(){
   if(saving.current)return;
   saving.current=true;setBusy(true);setError('');
@@ -53,7 +73,7 @@ export function FamilyEditor({family,catalog,items,close,initialTags=[]}:{initia
      </section>
      <section className="family-editor-members">
       <h3><JournalHeading>{t('familyMembers')}</JournalHeading></h3>
-      <button type="button" className="text-link family-add-member" onClick={()=>setAdding(true)}><Plus size={14}/>{t('familyAddMember')}</button>
+      <button type="button" className="text-link family-add-member" onClick={openPicker}><Plus size={14}/>{t('familyAddMember')}</button>
       {draft.memberIds.map(id=>{
        const choice=catalog.choices.get(id),name=choice?memberName(choice,i18n.language):id;
        return <div className="family-member-editor" key={id}>
@@ -74,8 +94,8 @@ export function FamilyEditor({family,catalog,items,close,initialTags=[]}:{initia
     </div>
    </form>
   </Modal>
- {adding&&<IngredientPicker items={items} memberExclusions={new Set(draft.memberIds)}
-   onSelect={item=>addMember(item.id)} onSelectBuiltIn={item=>addMember(item.id)} close={closePicker}/>}
+ {adding&&<IngredientPicker items={items} memberSelection={{excluded:new Set(draft.memberIds),add:addMembers}}
+   close={closePicker}/>}
  </>;
 }
 function toggleId(ids:string[],id:string){return ids.includes(id)?ids.filter(x=>x!==id):[...ids,id]}

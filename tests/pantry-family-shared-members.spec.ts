@@ -51,7 +51,7 @@ test('shared membership works through the picker, pantry, independent In Use, re
  const add=async(id:string,query:string)=>{
   await editor.locator('.family-add-member').tap();
   await picker.getByRole('searchbox').fill(query);
-  await picker.locator('[data-member-option='+id+']').tap();
+  await picker.locator('[data-member-option='+id+']').tap();await picker.locator('.member-picker-footer .primary').tap();
  };
  const create=async(name:string)=>{
   await page.locator('.pantry-fab').tap();await page.locator('.family-create-action').tap();
