@@ -4,11 +4,33 @@ import {db,exportAll,stamp,unknownNutrition,type PantryItem} from './domain';
 import {builtInFoods} from './data/builtInFoods';
 import {ingredientTagOptions} from './data/builtInTags';
 import {searchFoodChoices} from './reference-library';
-import {sortPantryFoods} from './pantry-foods';
+import {pantryListNutrition,sortPantryFoods} from './pantry-foods';
 
 afterEach(async()=>{for(const table of db.tables)await table.clear()});
 const tags=ingredientTagOptions([{id:'custom-test',name:'Fictional custom tag'}],'en');
 const user=():PantryItem=>({...stamp(),name:'Fictional frozen broccoli',nameZh:'测试冷冻菜',brand:'Fictional Brand',basis:'100g',referenceAmount:32,servingGrams:null,tagIds:['betterlumi:ingredient-tag:vegetables','custom-test'],...unknownNutrition()});
+
+it.each([
+ {definition:{referenceAmount:100},calories:322,expected:322,unit:'g',factor:1},
+ {definition:{referenceAmount:30},calories:120,expected:400,unit:'g',factor:100/30},
+ {definition:{referenceAmount:15,referenceUnit:'mL'},calories:50,expected:333,unit:'mL',factor:100/15},
+ {definition:{referenceAmount:100,referenceUnit:'mL'},calories:43,expected:43,unit:'mL',factor:1},
+ {definition:{basis:'serving',servingGrams:25,consumptionUnit:{name:'piece',quantity:1,amount:25,unit:'g'}},calories:80,expected:320,unit:'g',factor:4},
+ {definition:{basis:'serving',servingGrams:null},calories:80,expected:80,unit:'serving',factor:1},
+] as const)('shows $expected kcal on the $unit basis across browsing states',({definition,calories,expected,unit,factor})=>{
+ const item={...user(),...definition,calories,protein:3,carbs:6,fat:2},before=structuredClone(item);
+ for(const [query,tag] of [['',''],['fictional',''],['fictional','custom-test']]){
+  for(const sort of ['name-asc','calories-desc'] as const){
+   const choice=sortPantryFoods(searchFoodChoices([item],query,tag,tags),sort,'en',query).find(c=>c.item.id===item.id);
+   if(choice?.kind!=='user')throw Error('Missing personal ingredient');
+   const row=pantryListNutrition(choice.item);
+   expect(row.basis).toEqual({amount:unit==='serving'?1:100,unit});
+   expect(Math.round(row.nutrition.calories!)).toBe(expected);
+   for(const key of ['protein','carbs','fat'] as const)expect(row.nutrition[key]).toBeCloseTo(item[key]*factor);
+  }
+ }
+ expect(item).toEqual(before);
+});
 
 it.each([['vegetables',38],['fruits',32],['dairy-eggs',3]] as const)('composes the %s category with its exact static count',(category,count)=>{
  const result=sortPantryFoods(searchFoodChoices([],'',`betterlumi:ingredient-tag:${category}`,tags),'name-asc','en');expect(result).toHaveLength(count);expect(result.every(food=>food.kind==='built-in')).toBe(true);

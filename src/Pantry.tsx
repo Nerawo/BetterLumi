@@ -8,11 +8,10 @@ import {DirectoryListHeader} from './DirectoryListHeader';
 import {IngredientTagNavigation,IngredientTagAssignment,IngredientTagManager,useIngredientTags} from "./IngredientTags";
 import {putTaggedIngredient} from "./ingredient-tags";
 import {searchFoodChoices,referenceName} from './reference-library';
-import {sortPantryFoods} from './pantry-foods';
+import {pantryListNutrition,sortPantryFoods} from './pantry-foods';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {NumberInput} from "./NumberInput";
 import { validConsumptionUnit, ingredientBaseUnit } from "./consumption-units";
-import { nutritionReference } from "./db";
 import {Fragment,type ReactNode} from "react";
 import {NumberUnit} from "./NumberUnit";
 import { useState, type FormEvent } from "react";
@@ -26,6 +25,7 @@ import {
 import { PantrySortMenu, type PantrySort } from "./PantrySortMenu";
 import {
   db,
+  round,
   stamp,
   unknownNutrition,
   type PantryItem,
@@ -82,6 +82,7 @@ export function Pantry({
             </article>;
           }
           const i=choice.item;
+          const {basis,nutrition}=pantryListNutrition(i);
           const secondary=ingredientSecondaryNames(i);
           return (
           <article
@@ -95,9 +96,9 @@ export function Pantry({
             <PantryRowContent
               titleDescription={[i.name,...secondary].join(' · ')}
               title={<button type="button" className="ingredient-name" onClick={()=>setEditing(i)}><span className="ingredient-primary">{i.name}</span>{secondary.length>0&&<> <small className="ingredient-secondary">{secondary.join(' · ')}</small></>}</button>}
-              energy={<>{i.calories!=null&&<><NumberUnit value={i.calories} unit="kcal"/> / </>}{i.basis==='serving'?t('servingUnit'):<NumberUnit value={nutritionReference(i).amount} unit={nutritionReference(i).unit}/ >}{i.basis==='serving'&&i.servingGrams!=null&&<> (<NumberUnit value={i.servingGrams} unit={i.servingUnit??'g'}/>)</>}</>}
+              energy={<>{nutrition.calories!=null&&<><NumberUnit value={Math.round(nutrition.calories)} unit="kcal"/> / </>}{basis.unit==='serving'?t('servingUnit'):<NumberUnit value={basis.amount} unit={basis.unit}/>}</>}
               metadata={[...tags.filter(tag=>i.tagIds?.includes(tag.id)).map(tag=>tag.name),t('referenceMyFood')].join(' · ')}
-              macros={(['protein','carbs','fat'] as const).some(k=>i[k]!=null)?(['protein','carbs','fat'] as const).filter(k=>i[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&' · '}{t(k)} <NumberUnit value={i[k]} unit="g"/></Fragment>):t('nutritionNotRecorded')}
+              macros={(['protein','carbs','fat'] as const).some(k=>nutrition[k]!=null)?(['protein','carbs','fat'] as const).filter(k=>nutrition[k]!=null).map((k,index)=><Fragment key={k}>{index>0&&' · '}{t(k)} <NumberUnit value={round(nutrition[k])} unit="g"/></Fragment>):t('nutritionNotRecorded')}
               actions={<div className="actions"><button type="button" aria-label={t('edit')} onClick={()=>setEditing(i)}><Pencil size={15}/></button><button type="button" className="pantry-unit-options" aria-label={t('customizeIngredient')} onClick={()=>setManagingIngredient(choice)}><MoreHorizontal size={16}/></button></div>}
             />
           </article>
