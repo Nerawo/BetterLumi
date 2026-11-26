@@ -41,7 +41,7 @@ function SourcePicker({row,catalog,apply,close}:{row:AIMealDraftRow;catalog:AIMe
   if(!selected||amount===null)throw Error('Resolve amount');
   const portion={amount,unit,weightG:null};
   const r=selected.kind==='recipe'?[...catalog.recipes,...builtInRecipeItems(language)].find(r=>r.id===selected.id):null;
-  const source=r?recipeAIMealSource(r,portion):choice?pantryAIMealSource(choice,portion,p):null;if(!source)throw Error('Unavailable');
+  const source=r?recipeAIMealSource(r,portion,catalog):choice?pantryAIMealSource(choice,portion,p):null;if(!source)throw Error('Unavailable');
   apply(selectAIMealDraftSource(row,source.baseline,source.portion,true));close();
  }catch{setError(t('aiResolvePortion'))}};
  return <section className="ai-source-picker" aria-label={t('aiChangeSource')}>

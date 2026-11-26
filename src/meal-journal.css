@@ -96,6 +96,7 @@ dialog.meal-journal .meal-quantity-phrase input[type=number] {min-width:2ch;max-
 .meal-journal .meal-lines .recipe-line .draft-amount {
   position:relative;background:none;font:400 14px/1.3 var(--font-ui);
 }
-dialog.meal-journal .meal-lines .recipe-line .draft-amount input {
-  border:0;background:none;text-decoration:none;
+dialog.meal-journal .meal-lines .recipe-line .draft-amount input[type=number],
+dialog.meal-journal .meal-lines .recipe-line .draft-amount input[type=number]:focus {
+  min-height:44px;border:0;background:none;text-decoration:none;
 }

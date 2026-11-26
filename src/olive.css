@@ -1715,13 +1715,6 @@ summary {
   border-radius: 5px;
   margin: 10px 0;
 }
-.label-ocr-panel {
-  border: 1px solid var(--theme-line, #cbd3bd);
-  background: var(--theme-surface, #f0f3e8);
-  border-radius: 7px;
-  padding: 18px;
-  margin: 20px 0;
-}
 .ocr-action-row {
   display: flex;
   gap: 14px;
@@ -1737,10 +1730,6 @@ summary {
 .ocr-action-row button {
   margin-bottom: 0;
   white-space: normal;
-}
-.label-ocr-panel > p {
-  margin-top: 12px;
-  line-height: 1.8;
 }
 .ocr-loading {
   display: flex;
@@ -1805,9 +1794,6 @@ summary {
   }
   .calendar-date-number {
     font-size: 11px;
-  }
-  .label-ocr-panel {
-    padding: 16px 12px;
   }
   .ocr-action-row {
     gap: 12px;

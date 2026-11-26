@@ -1,6 +1,88 @@
 import {chooseSavedRecipe} from './recipe-picker-helper';
 import {test,expect,type Page,type Locator} from '@playwright/test';
-test.use({browserName:'webkit',channel:'',isMobile:true,hasTouch:true});
+test.use({browserName:'webkit',channel:'',isMobile:true,hasTouch:true,trace:'retain-on-failure'});
+for(const changed of [false,true])test('first prepared batch allocation, changed formula '+changed,async({page})=>{
+ await page.goto('/today');
+ await expect(page.locator('.meal-card')).toBeVisible();
+ const ids=await page.evaluate(async changed=>{
+  const d=await import('/src/domain.ts'),{FoodStorage}=await import('/src/food-storage.ts'),{storedRecipeLine}=await import('/src/recipe-storage.ts');
+  const storage=new FoodStorage(),batchId=d.stamp().id,mealId=d.stamp().id;
+  const nutrition={calories:400,protein:40,carbs:20,fat:10};
+  await storage.makeBatch({id:batchId,name:'Sauce',operationId:d.stamp().id,preparedOn:d.localDate(),cookedYieldGrams:400,
+   ingredients:[{source:'pantry',line:{ingredientId:'fixture',name:'Tomato',quantity:400,unit:'g',nutrition}}]});
+  const batch=(await storage.batches.get(batchId))!;
+  await storage.saveRecipeMeal({operationId:d.stamp().id,meal:{...d.stamp(),id:mealId,date:d.localDate(),name:'Recorded sauce',source:'recipe',
+   category:'lunch',sourceId:null,quantity:1,unit:'serving',consumptionPercent:0,nutrition:d.unknownNutrition(),lines:[storedRecipeLine(batch)],cookingNote:''}});
+  if(changed)await storage.correctFormula({operationId:d.stamp().id,batchId,expectedRevision:batch.revision,cookedYieldGrams:400,
+   ingredients:batch.ingredients.map(l=>({...l,nutrition:{calories:800,protein:80,carbs:40,fat:20}}))});
+  return {mealId,batchId};
+ },changed);
+ const state=()=>page.evaluate(async()=>{const d=await import('/src/domain.ts');return (await d.exportAll()).tables});
+ const before=await state();
+ const open=()=>page.locator('.meal-row').filter({hasText:'Recorded sauce'}).getByRole('button',{name:'编辑',exact:true}).click();
+ const modal=page.locator('.add-food-modal'),row=modal.locator('.stored-recipe-source'),save=modal.getByRole('button',{name:'保存记录'});
+ await open();await expect(row.getByRole('status')).toHaveCount(0);
+ await setRange(modal.getByRole('slider'),50);
+ if(changed){
+  await expect(row.getByRole('status')).toContainText('批次内容已更新');
+  await save.click();await expect(modal).toBeVisible();expect(await state()).toEqual(before);
+  await modal.getByRole('button',{name:'取消',exact:true}).click();expect(await state()).toEqual(before);
+  await open();await setRange(modal.getByRole('slider'),50);
+  await row.getByRole('button').click();await page.locator('.stored-food-picker').getByRole('button',{name:/Sauce/}).click();
+ }
+ await expect(row.getByRole('status')).toHaveCount(0);
+ await save.click();await expect(modal).toHaveCount(0);
+ const backup=await page.evaluate(async()=>{const d=await import('/src/domain.ts');const b=await d.exportAll();await d.restoreAll(b);return d.exportAll()});
+ expect(backup.version).toBe(20);
+ const meal=backup.tables.foodLogs.find(l=>l.id===ids.mealId)!;
+ const expected=changed?{calories:100,protein:10,carbs:5,fat:2.5}:{calories:50,protein:5,carbs:2.5,fat:1.25};
+ expect(meal).toMatchObject({consumptionPercent:50,nutrition:expected,recipeAllocations:[{batchId:ids.batchId,quantity:50,nutrition:expected}]});
+ expect(backup.tables.foodBatches.find(b=>b.id===ids.batchId)?.remainingQuantity).toBe(350);
+});
+for(const scenario of ['historical','cancel','same stock','other stock','A B A','never allocated'] as const)
+test('Backup 20 raw recipe allocation: '+scenario,async({page})=>{
+ await page.goto('/today');
+ await expect(page.locator('.meal-card')).toBeVisible();
+ const ids=await page.evaluate(async never=>{
+  const d=await import('/src/domain.ts'),{FoodStorage}=await import('/src/food-storage.ts'),{storedRecipeLine}=await import('/src/recipe-storage.ts');
+  const s=new FoodStorage(),a={...d.stamp(),name:'Raw A',nameZh:'',brand:'',basis:'100g' as const,servingGrams:null,calories:60,protein:null,carbs:4,fat:1};
+  const b={...a,...d.stamp(),name:'Raw B',calories:80,protein:6,carbs:8,fat:4};
+  const stocks=[];
+  for(const item of [a,b]){
+   await d.db.ingredients.put(item);
+   const id=d.stamp().id;await s.registerStock({id,operationId:d.stamp().id,ingredientId:item.id,grams:400,date:d.localDate()});stocks.push(id);
+  }
+  const line=storedRecipeLine((await s.batches.get(stocks[0]))!),id=d.stamp().id;
+  await s.saveRecipeMeal({operationId:d.stamp().id,meal:{...d.stamp(),id,date:d.localDate(),name:'Stored yogurt recipe',source:'recipe',category:'lunch',sourceId:null,quantity:1,unit:'serving',consumptionPercent:never?0:100,nutrition:line.nutrition,lines:[line],cookingNote:''}});
+  await d.db.ingredients.update(a.id,{calories:54,protein:8,carbs:2,fat:2});
+  if(!never){const m=(await s.meals.get(id))!;await s.saveRecipeMeal({operationId:d.stamp().id,expectedRevision:m.revision,meal:{...m,consumptionPercent:0}})}
+  await d.restoreAll(await d.exportAll());return {id,stocks};
+ },scenario==='never allocated');
+ const tables=()=>page.evaluate(async()=>(await (await import('/src/domain.ts')).exportAll()).tables);
+ const before=await tables();
+ await page.locator('.meal-row').filter({hasText:'Stored yogurt recipe'}).getByRole('button',{name:'编辑',exact:true}).click();
+ const modal=page.locator('.add-food-modal'),row=modal.locator('.stored-recipe-source');
+ await setRange(modal.getByRole('slider'),50);
+ const choose=async(name:string)=>{await row.getByRole('button').click();await page.locator('.stored-food-picker').getByRole('button',{name:new RegExp(name)}).click()};
+ if(scenario==='never allocated'){
+  await expect(row.getByRole('status')).toContainText('重新选择');await modal.getByRole('button',{name:'保存记录'}).click();
+  expect(await tables()).toEqual(before);await choose('Raw A');
+ }
+ if(scenario==='other stock'||scenario==='A B A')await choose('Raw B');
+ if(scenario==='same stock'||scenario==='A B A')await choose('Raw A');
+ const expected=scenario==='other stock'?[40,3,4,2]:['historical','cancel'].includes(scenario)?[30,0,2,.5]:[27,4,1,1];
+ await expect(modal.locator('.meal-nutrition-preview strong')).toHaveText(expected.map((v,i)=>Math.round(v)+(i?' g':' kcal')));
+ await modal.getByRole('button',{name:scenario==='cancel'?'取消':'保存记录',exact:true}).click();
+ await expect(modal).toHaveCount(0);
+ if(scenario==='cancel'){expect(await tables()).toEqual(before);return}
+ const after=await tables(),actual=after.foodLogs.find(m=>m.id===ids.id);
+ const chosen=scenario==='other stock'?1:0;
+ expect(actual.nutrition).toEqual(Object.fromEntries(['calories','protein','carbs','fat'].map((k,i)=>[k,expected[i]])));
+ expect(actual.recipeAllocations).toMatchObject([{batchId:ids.stocks[chosen],quantity:50}]);
+ expect(actual.historicalAllocationBases).toMatchObject([{batchId:ids.stocks[chosen],lineId:actual.lines[0].lineId}]);
+ for(const [i,id] of ids.stocks.entries())expect(after.foodBatches.find(b=>b.id===id).remainingQuantity).toBe(i===chosen?350:400);
+ await page.evaluate(async()=>{const d=await import('/src/domain.ts');await d.restoreAll(await d.exportAll())});expect(await tables()).toEqual(after);
+});
 async function seed(page:Page,language='en'){
  await page.goto('/#/recipes');await expect(page.locator('.recipe-fab')).toBeVisible();
  const f=await page.evaluate(async language=>{

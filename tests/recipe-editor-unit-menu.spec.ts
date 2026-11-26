@@ -80,7 +80,7 @@ for(const mode of ['create','edit'])for(const language of ['zh','en']){
     await convert();
     await rows.first().locator('input').fill('3');await rows.first().locator('input').press('Enter');
     await unit.tap();await menu.locator('[data-unit=g]').tap();
-    expect(Number(await rows.first().locator('input').inputValue())).toBeCloseTo(96/7,12);
+    expect(await rows.first().locator('input').inputValue()).toBe('13.7');
     const amountBounds=(await rows.first().locator('.draft-amount').boundingBox())!;
     const unitBounds=(await unit.boundingBox())!;
     expect(unitBounds.width).toBeGreaterThan(0);

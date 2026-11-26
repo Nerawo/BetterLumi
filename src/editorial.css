@@ -858,12 +858,6 @@ label {
   .progress-area h3 {
     font-size: 10px;
   }
-  .progress-message {
-    font-size: 11px;
-  }
-  .today-progress > h2 {
-    margin-bottom: 16px;
-  }
   .recipe-grid {
     gap: 22px 13px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1036,8 +1030,8 @@ label {
 .modal,
 .recipe-detail-modal {
   max-height: min(
-    96dvh,
-    calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 12px)
+    calc(var(--food-viewport-height,100dvh) * .96),
+    calc(var(--food-viewport-height,100dvh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 12px)
   );
 }
 @media (max-width: 767px) {
@@ -1496,7 +1490,6 @@ body, input, select, textarea, button { font-family: var(--font-ui); }
 .exercise-record-list .tag-list { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 0; }
 .exercise-record-list .tag-list:empty { display: none; }
 .exercise-record-list .tag-list > span { padding: 2px 6px; font: 400 10px/1.4 var(--font-ui); }
-.exercise-record-list .exercise-notes { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 4px 0 0; }
 /* Text trigger retains a 44px hit area, with a keyboard-operated radio menu. */
 .pantry-sort { position: relative; flex: none; }
 .pantry-sort-trigger { display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--ink); font-size: 12px; min-height: 44px; padding: 6px 0 6px 8px; white-space: nowrap; }
@@ -1896,12 +1889,6 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .planner-collapsed-enable { display: flex; flex-direction: row; gap: 5px; min-height: 36px; align-items: center; margin: -6px 0 4px 20px; font: 400 11px/1.4 var(--font-ui); color: var(--muted); }
 .planner-collapsed-enable input { width: 16px; height: 16px; min-height: 0; margin: 0; accent-color: var(--action); }
 .planner-actions { justify-content: flex-end; }
-.exercise-notes { margin: 4px 0; font: 400 12px/1.5 var(--font-ui); color: var(--muted); overflow-wrap: anywhere; user-select: text; }
-.note-url { display: inline; }
-.note-url a { color: var(--action); text-decoration: underline; overflow-wrap: anywhere; }
-.note-url .icon-button { display: inline-grid; vertical-align: middle; place-items: center; min-width: 32px; width: 32px; min-height: 32px; padding: 0; }
-.planner-exercises .exercise-notes { flex-basis: 100%; }
-.planned-movement-row > .exercise-notes { flex-basis: 100%; margin: -2px 0 4px 26px; }
 .planned-movement-row label { cursor: pointer; }
 .section-totals { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: -2px 0 10px; color: var(--muted); font: 400 12px/1.5 var(--font-ui); }
 .movement-duration { margin: 5px 0 0; font: 500 15px/1.4 var(--font-ui); }
@@ -2167,7 +2154,6 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .page-today .exercise-card .actual-movement-heading { display: flex; align-items: center; min-height: 44px; }
 .page-today .planned-movement > summary { gap: 6px; }
 .page-today .daily-plan-group h4 { margin: 2px 0; font-size: 11px; }
-.page-today .daily-plan-group > .exercise-notes { margin: 0 0 2px; font-size: 11px; }
 .page-today .planned-movement-row { align-items: flex-start; gap: 4px; padding: 5px 0; }
 .page-today .planned-movement-row > label { gap: 7px; align-items: flex-start; }
 .page-today .planned-movement-row > label > input { margin-top: 3px; }
@@ -2176,7 +2162,6 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .page-today .exercise-card .exercise-tags { display: flex; flex-wrap: wrap; gap: 3px; margin: 2px 0 0; }
 .page-today .exercise-card .exercise-tags:empty { display: none; }
 .page-today .exercise-card .exercise-tags > span { padding: 1px 5px; font: 400 10px/1.4 var(--font-ui); }
-.page-today .exercise-card .exercise-notes { font: 400 11px/1.5 var(--font-ui); margin: 2px 0 0; }
 
 /* Shared compact plan/actual editor controls, with one scrolling body. */
 .modal.exercise-record-editor { position: fixed; top: calc(var(--food-viewport-top,0px) + max(10px,env(safe-area-inset-top))); left: 50%; transform: translateX(-50%); margin: 0; padding: 0; width: min(600px,calc(100% - 16px)); max-height: calc(var(--food-viewport-height,100dvh) - 20px); display: flex; flex-direction: column; overflow: hidden; }
@@ -2203,25 +2188,14 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .exercise-editor .tag-picker legend { float: none; width: 100%; padding: 0; margin: 0 0 4px; font: 500 12px/1.5 var(--font-ui); }
 .exercise-editor .tag-picker label { display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 5px 8px; border-radius: 6px; background: var(--soft); font-size: 12px; }
 .exercise-editor .tag-picker input[type=checkbox] { width: 16px; height: 16px; min-height: 0; margin: 0; flex: none; accent-color: var(--action); }
-.exercise-body-parts { border: 0; padding: 0; margin: 4px 0 0; }
-.exercise-body-parts > summary { min-height: 44px; display: flex; align-items: center; gap: 6px; list-style: none; font: 500 12px/1.5 var(--font-ui); }
-.exercise-body-parts > summary::-webkit-details-marker { display: none; }
-.exercise-body-parts > summary > span { flex: 1; min-width: 0; }
-.exercise-body-parts > summary small { display: block; color: var(--muted); font: 400 11px/1.5 var(--font-ui); overflow-wrap: anywhere; }
-.exercise-body-parts[open] > summary > svg { transform: rotate(180deg); }
 .exercise-editor .custom-tag { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
 .exercise-editor .custom-tag > input { flex: 1; width: 0; }
 .exercise-editor .custom-tag > button { flex: none; white-space: nowrap; min-height: 44px; padding: 8px 12px; }
-.exercise-editor .exercise-body-parts .tag-list { gap: 4px; margin: 4px 0; }
 .planned-exercise-main { display: flex; flex: 1; min-width: 0; gap: 7px; }
 .planned-exercise-main > input { margin-top: 3px; }
 .planned-exercise-main > .grow { min-width: 0; }
 .planned-exercise-label { display: block; min-height: 0; margin: 0; cursor: pointer; overflow-wrap: anywhere; }
-.page-today .daily-plan-group > h4,.page-today .daily-plan-group > .exercise-notes { display: inline; }
-.page-today .daily-plan-group > .exercise-notes { margin-left: 6px; }
-.planned-exercise-main .exercise-notes { overflow-wrap: anywhere; }
-.exercise-row-details { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
-.page-today .exercise-card .exercise-row-details .exercise-tags,.page-today .exercise-card .exercise-row-details .exercise-notes { margin: 2px 0 0; max-width: 100%; }
+.page-today .daily-plan-group > h4 { display: inline; }
 
 /* Nested daily planner: summary remains visible when all plan rows are hidden. */
 .page-today .planned-movement > summary { display: block; padding: 0; }
@@ -2237,7 +2211,6 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 .daily-plan-summary { flex: none; max-width: 50%; text-align: right; font: 400 10px/1.5 var(--font-ui); color: var(--muted); }
 .daily-plan-group > summary > svg { flex: none; color: var(--muted); }
 .daily-plan-group[open] > summary > svg { transform: rotate(180deg); }
-.page-today .daily-plan-group > .exercise-notes { display: block; margin: 0 0 3px; }
 .daily-plan-group .planned-movement-row:last-child { padding-bottom: 6px; }
 
 /* Compact editorial directories, without placeholder images or card surfaces. */
@@ -2372,3 +2345,22 @@ button[aria-pressed=true] .weekly-dot { border-color: var(--action); background:
 /* Nutrition-only overview; retired movement panel leaves no empty column. */
 .today-progress .progress-columns { grid-template-columns: minmax(0, 1fr); }
 .today-progress .progress-area { border: 0; }
+
+/* The runway contributes scrollable overflow only while the keyboard covers a field. */
+[data-keyboard-scrollport] { position:relative; }
+.modal-keyboard-runway { position:absolute; inset-inline-start:0; width:1px; height:1px; pointer-events:none; visibility:hidden; }
+html:has(dialog[open]), body:has(dialog[open]) { overscroll-behavior:none; }
+
+.modal:is(.todo-editor-modal,.stock-register-modal)[open] {
+  display:flex; flex-direction:column; overflow:hidden;
+  top:calc(var(--food-viewport-height,100dvh) / 2); bottom:auto; transform:translateY(-50%); margin-block:0;
+}
+:is(.todo-editor-modal,.stock-register-modal) > form { display:flex; flex-direction:column; min-height:0; }
+:is(.todo-editor-modal,.stock-register-modal) .modal-scroll { min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+:is(.todo-editor-modal,.stock-register-modal) :is(.modal-head,.form-actions) { flex:none; }
+.todo-fields { display:grid; gap:10px; }
+@supports (-webkit-touch-callout:none) {
+  @media (pointer:coarse) {
+    .modal input:is([type=text],[type=number],[type=search],[type=email],[type=tel],[type=url],[type=password],:not([type])), .modal textarea { font-size:16px; }
+  }
+}

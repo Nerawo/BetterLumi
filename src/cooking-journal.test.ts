@@ -8,7 +8,7 @@ import {openCookingSession,saveCookingSession} from './cooking-session';
 import {FoodStorage} from './food-storage';
 import {storedRecipeLine} from './recipe-storage';
 const line=(patch:Partial<RecipeLine>={}):RecipeLine=>({ingredientId:'egg',name:'Egg',quantity:100,unit:'g',nutrition:{calories:70.123,protein:6,carbs:null,fat:0},...patch});
-const recipe=(lines=[line()]):Recipe=>({...stamp(),name:'Journal',servings:2,lines,instructions:'Keep exact\n1. Cook.',stickyNote:'Keep note'});
+const recipe=(lines=[line()]):Recipe<import("./domain").RecipeLine>=>({...stamp(),name:'Journal',servings:2,lines,instructions:'Keep exact\n1. Cook.',stickyNote:'Keep note'});
 afterEach(async()=>{for(const t of db.tables)await t.clear()});
 it('assigns editor identities without mutating old lines; retains existing IDs and repeated names',()=>{
  const old=[line(),line({lineId:'existing'})],next=identifyRecipeLines(old);expect(old[0].lineId).toBeUndefined();expect(next[1].lineId).toBe('existing');expect(new Set(next.map(l=>l.lineId)).size).toBe(2);expect(identifyRecipeLines(next)).toEqual(next);
@@ -42,7 +42,7 @@ it('sessions persist and finish independently per recipe without changing templa
  const r=recipe(),other=recipe();await recipes.bulkPut([r,other]);await db.settings.put({key:'keep',value:'safe'});const before=await exportAll();let s=await openCookingSession(r);const otherSession=await openCookingSession(other);
  s=await saveCookingSession(s,{...s,checked:[s.entries[0].id]});db.close();await db.open();expect(await openCookingSession(r)).toEqual(s);expect(await openCookingSession(other)).toEqual(otherSession);
  await saveCookingSession(s,{...s,status:'completed'});const fresh=await openCookingSession(r);expect(fresh.id).not.toBe(s.id);expect(fresh.checked).toEqual([]);
- const after=await exportAll();for(const key of Object.keys(before.tables).filter(k=>k!=='settings'))expect(after.tables[key]).toEqual(before.tables[key]);expect(await db.settings.get('keep')).toEqual({key:'keep',value:'safe'});expect(SCHEMA_VERSION).toBe(7);expect(db.name).toBe('BetterLumi');expect(await foodLogs.count()).toBe(0);
+ const after=await exportAll();for(const key of Object.keys(before.tables).filter(k=>k!=='settings'))expect(after.tables[key]).toEqual(before.tables[key]);expect(await db.settings.get('keep')).toEqual({key:'keep',value:'safe'});expect(SCHEMA_VERSION).toBe(8);expect(db.name).toBe('BetterLumi');expect(await foodLogs.count()).toBe(0);
 });
 it('rejects stale writes and injected failures without overwriting progress',async()=>{
  const r=recipe(),s=await openCookingSession(r),next=await saveCookingSession(s,{...s,checked:[s.entries[0].id]});await expect(saveCookingSession(s,{...s,servings:9})).rejects.toThrow('changed');expect(await openCookingSession(r)).toEqual(next);
@@ -50,7 +50,7 @@ it('rejects stale writes and injected failures without overwriting progress',asy
 });
 it('Backup 13 round trips grouped recipes and sessions exactly, retaining stale/orphan sessions',async()=>{
  const r=recipe(identifyRecipeLines([line()]));r.ingredientGroups=[{id:'a',name:'Sauce'}];r.lines[0].groupId='a';await recipes.put(r);await openCookingSession(r);const orphan=await openCookingSession(recipe());expect(orphan.recipeId).not.toBe(r.id);
- const backup=await exportAll();expect(backup.version).toBe(16);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
+ const backup=await exportAll();expect(backup.version).toBe(20);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
 });
 it.each([2,3,4,5,6,7,8,9,10,11,12])('accepts supported Backup %s without new metadata',async version=>{
  const r=recipe();await recipes.put(r);const backup=await exportAll();backup.version=version;

@@ -116,9 +116,11 @@ for(const language of ['zh','en'])for(const mode of ['create','edit'] as const){
     const grip=(await reference.locator('.draft-grip').boundingBox())!;
     const identity=(await reference.locator('.draft-ingredient-name').boundingBox())!;
     const add=(await ungrouped.locator('.ingredient-add-trigger').boundingBox())!;
+    const groupBounds=(await ungrouped.boundingBox())!;
     expect(grip.width).toBeGreaterThanOrEqual(44);
     expect(identity.x-grip.x-grip.width).toBeGreaterThanOrEqual(3);
-    expect(Math.abs(add.x-identity.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(add.x-groupBounds.x)).toBeLessThanOrEqual(1);
+    await expect(ungrouped.locator('.draft-row-shell + .line-add')).toHaveCSS('border-top-width','1px');
     await expect(editor.locator('.draft-ungrouped')).toHaveCount(0);
   }
   await page.setViewportSize({width:390,height:844});
@@ -192,9 +194,6 @@ for(const language of ['zh','en'])for(const mode of ['create','edit'] as const){
   await page.setViewportSize({width:390,height:844});
   await editor.locator('.recipe-editor-scroll').evaluate(el=>el.scrollTop=0);
   if(language==='zh')await page.screenshot({path:`${folder}/${mode}-viewport.png`,scale:'css'});
-  await page.setViewportSize({width:390,height:await editor.locator('.recipe-editor-scroll').evaluate(e=>e.scrollHeight+230)});
-  if(language==='zh')await page.screenshot({path:`${folder}/${mode}-complete.png`,scale:'css'});
-  await page.setViewportSize({width:390,height:844});
   await editor.locator('[type=file]').setInputFiles({name:'test.png',mimeType:'image/png',buffer:Buffer.from(image.split(',')[1],'base64')});
   await expect(editor.locator('.photo-field img')).toHaveAttribute('src',image);
   await save.tap();await expect(editor).toHaveCount(0);

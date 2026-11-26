@@ -1,4 +1,4 @@
-import {referenceName,foodChoiceSearchRank,type FoodChoice} from './reference-library';
+import {referenceName,type FoodChoice} from './reference-library';
 import type {PantrySort} from './PantrySortMenu';
 import {ingredientNutritionFactor,scaleNutrition,type PantryItem} from './domain';
 import {nutritionReference} from './db';
@@ -14,14 +14,11 @@ export function pantryListNutrition(item:PantryItem){
 }
 
 /** Sort a derived list without changing either source or normalizing saved bases. */
-export function sortPantryFoods(foods:readonly FoodChoice[],sort:PantrySort,language:string,query=''):FoodChoice[]{
+export function sortPantryFoods(foods:readonly FoodChoice[],sort:PantrySort,language:string):FoodChoice[]{
  const name=(food:FoodChoice)=>food.kind==='built-in'?referenceName(food.item,language):food.item.name;
  const calories=(food:FoodChoice)=>food.kind==='built-in'?food.item.kcalPer100g:pantryListNutrition(food.item).nutrition.calories;
  const direction=sort.endsWith('desc')?-1:1;
  return [...foods].sort((a,b)=>{
-  if(query.trim()&&sort==='name-asc'){
-   const relevance=foodChoiceSearchRank(a,query)-foodChoiceSearchRank(b,query);if(relevance)return relevance;
-  }
   if(sort.startsWith('calories')){
    const av=calories(a),bv=calories(b);
    if(av==null)return bv==null?0:1;

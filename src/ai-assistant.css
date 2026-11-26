@@ -153,7 +153,7 @@
 .ai-assistant .ai-page-heading .secondary-back {appearance:none;-webkit-appearance:none;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;}
 .editorial-masthead.ai-masthead .language-toggle:is(:hover,:active),.ai-assistant .ai-page-heading .secondary-back:is(:hover,:active) {background:transparent;box-shadow:none;}
 .editorial-masthead.ai-masthead .language-toggle:focus-visible,.ai-assistant .ai-page-heading .secondary-back:focus-visible {outline:2px solid var(--action);outline-offset:2px;}
-.ai-copy-dialog .ai-editor-body textarea {height:min(45dvh,340px);min-height:180px;resize:none;font:400 16px/1.5 var(--font-ui);user-select:text;-webkit-user-select:text;}
+.ai-copy-dialog .ai-editor-body textarea {height:min(calc(var(--food-viewport-height,100dvh) * .45),340px);min-height:180px;resize:none;font:400 16px/1.5 var(--font-ui);user-select:text;-webkit-user-select:text;}
 .ai-copy-dialog .form-actions button {min-height:44px;font-size:12px;white-space:normal;}
 
 .ai-missing-context {display:grid;gap:8px;padding:10px 0;border-block:1px solid var(--line);margin-block:8px;}

@@ -153,3 +153,9 @@ html:has(dialog[open]) .directory-fab { visibility: hidden; pointer-events: none
 .recipe-editor-modal .ingredient-editor-row .reference-origin .reference-info-trigger { margin-block:-10px; }
 .recipe-editor-modal .ingredient-editor-row .recipe-line-amounts { gap:8px; margin-top:2px; }
 .recipe-editor-modal .ingredient-editor-row .recipe-line-amounts label { display:flex; flex-direction:column; gap:2px; font-size:11px; }
+
+/* Recipes toolbar: account for the tab panel wrapper without changing Pantry or Storage. */
+.page-recipes:has(> #recipes-library-panel:not([hidden])) > .recipes-view-tabs { margin-bottom:14px; }
+.page-recipes > #recipes-library-panel > .search { margin:0 0 12px; padding-bottom:4px; }
+.page-recipes > #recipes-library-panel > .collection-navigation { padding-block:2px; min-height:48px; }
+.page-recipes > #recipes-library-panel > .directory-summary-row { margin:8px 0; }

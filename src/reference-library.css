@@ -34,8 +34,9 @@
 .pantry-list .pantry-secondary-line > .actions > button { display:flex; align-items:flex-start; justify-content:center; padding:2px 0 0; }
 .pantry-list .pantry-reference-row .reference-origin { font:inherit; white-space:nowrap; vertical-align:baseline; }
 .pantry-list .pantry-reference-row .reference-info-trigger { position:relative; width:14px; height:14px; min-width:14px; min-height:14px; padding:0; margin:0 15px 0 3px; }
-/* Keep a touch-sized target out of normal flow, so attribution stays one text line. */
-.pantry-list .pantry-reference-row .reference-info-trigger::before { content:''; position:absolute; width:44px; height:44px; left:50%; top:50%; transform:translate(-50%,-50%); }
+/* Extend the source target into the metadata band and keep it inside its own row. */
+.pantry-list .pantry-reference-row { overflow:clip; }
+.pantry-list .pantry-reference-row .reference-info-trigger::before { content:''; position:absolute; width:44px; height:44px; left:50%; top:-4px; transform:translateX(-50%); }
 .ingredient-tag-manager.standard-modal .compact-category-manager { min-height:0; overflow:hidden; }
 .ingredient-tag-manager .category-create-inline,.ingredient-tag-manager .category-list-heading { flex:none; }
 .ingredient-tag-manager .managed-category-list { min-height:0; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
@@ -68,4 +69,3 @@
 .exercise-record-editor .exercise-estimate-prompt { margin:0; color:var(--muted); font:400 12px/1.6 var(--font-ui); }
 
 /* The hidden body-area legend must not inherit the visible full-width legend rule. */
-.exercise-record-editor .exercise-body-parts legend.visually-hidden { width:1px; margin:0; }

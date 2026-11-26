@@ -263,32 +263,7 @@ test("direct weight entry stays on Today and persists into /weight and the calen
   await page.goto("/journal?date=2026-10-17");
   await expect(page.locator(".weight-mini .weight-value")).toHaveText("70.0kg");
 });
-test("custom activities, tags and manual energy persist and remain separate from food", async ({
-  page,
-}) => {
-  await page.locator("#today-tab-activity").click();await page.locator(".exercise-card .section-heading .primary").click();
-  const form = page.getByRole("dialog");
-  await form.locator("input[name=name]").fill("My custom cable flow");
-  await form.locator("input[name=duration]").fill("45");
-  await form.getByRole("checkbox",{name:/strength training/i}).check();
-  await form.getByLabel("Anaerobic", { exact: true }).check();
-  await form.locator(".exercise-body-parts > summary").click();await form.getByLabel("Add any body-part label").fill("Rotator cuff");
-  await form.getByRole("button", { name: "Add", exact: true }).click();
-  await form.locator("input[name=caloriesBurned]").fill("240");
-  await form.getByRole("button", { name: "Save", exact: true }).click();
-  await page.reload();
-  await expect(page.locator(".activity-row")).toContainText(
-    "My custom cable flow",
-  );
-  await expect(page.locator(".activity-row")).toContainText("Rotator cuff");
-  await expect(page.locator(".activity-row")).toContainText("240 kcal");
-  await page.goto("/journal?date=2026-10-17");await page.locator("#today-tab-activity").click();
-  await expect(page.locator(".today-layout .activity-row")).toContainText(
-    "Strength Training",
-  );
-  await page.goto("/more");
-  await expect(page.locator(".activity-history")).toHaveCount(0);
-});
+
 test("independent custom supplement schedules and editing survive refresh", async ({
   page,
 }) => {
@@ -296,10 +271,9 @@ test("independent custom supplement schedules and editing survive refresh", asyn
     ["Schedule A", ["Tuesday", "Wednesday"]],
     ["Schedule B", ["Thursday", "Friday"]],
   ] as const) {
-    await page
-      .getByRole("button", { name: "Add supplement", exact: true })
-      .click();
-    const form = page.getByRole("dialog");
+    if(!await page.locator('.supplement-manager').count())await page.locator('.supplement-section .section-heading .primary').click();
+    await page.locator('.supplement-manager > .text-link').click();
+    const form = page.locator('.supplement-editor');
     await form.locator("input[name=name]").fill(name);
     await form.locator("input[name=dosage]").fill("1");
     await form.locator("input[name=unit]").fill("tablet");
@@ -308,27 +282,25 @@ test("independent custom supplement schedules and editing survive refresh", asyn
     await form.getByRole("button", { name: "Save", exact: true }).click();
   }
   await page.goto("/journal?date=2026-10-20");await page.locator("#today-tab-supplements").click();
-  await expect(page.locator(".today-support .supplement-row")).toHaveCount(
+  await expect(page.locator(".supplement-section .supplement-row")).toHaveCount(
     1,
   );
   await expect(
-    page.locator(".today-support .supplement-row"),
+    page.locator(".supplement-section .supplement-row"),
   ).toContainText("Schedule A");
   await page.reload();
   await expect(
-    page.locator(".today-support .supplement-row"),
+    page.locator(".supplement-section .supplement-row"),
   ).toContainText("Schedule A");
   await jumpToDate(page,'2026-10-22');
-  await expect(page.locator(".today-support .supplement-row")).toHaveCount(
+  await expect(page.locator(".supplement-section .supplement-row")).toHaveCount(
     1,
   );
   await expect(
-    page.locator(".today-support .supplement-row"),
+    page.locator(".supplement-section .supplement-row"),
   ).toContainText("Schedule B");
-  await page
-    .locator(".today-support .supplement-row")
-    .getByRole("button", { name: "Edit", exact: true })
-    .click();
+  await page.locator('.supplement-section .section-heading .primary').click();
+  await page.locator('.supplement-manager .simple-row').filter({hasText:'Schedule B'}).getByRole('button',{name:'Edit',exact:true}).click();
   await expect(
     page.getByRole("dialog").getByLabel("Thursday", { exact: true }),
   ).toBeChecked();
@@ -347,7 +319,7 @@ test("independent custom supplement schedules and editing survive refresh", asyn
   await page.reload();
   await jumpToDate(page,'2026-10-24');
   await expect(
-    page.locator(".today-support .supplement-row"),
+    page.locator(".supplement-section .supplement-row"),
   ).toContainText("Schedule B");
 });
 test("sticky notes CRUD and Log Once do not overwrite the original recipe", async ({
@@ -428,9 +400,9 @@ test("mobile quick meals are optional, goals version and calendar dots are real,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".mobile-nav")).toBeVisible();
-  await openPersonalGoalEditor(page);const form=page.locator('.goal-editor-inline');await form.locator('[data-goal-metric=calories] input[type=checkbox]').check();await form.locator('[name=caloriesTarget]').fill('1650');await form.locator('.exercise-goal-controls .goal-master-heading input').check();await form.locator('[name=exerciseMinutes]').fill('30');await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);const version=await page.evaluate(async()=>{const g=await import('/src/goals.ts');return g.goalTable.toArray()});expect(version).toHaveLength(1);expect(version[0]).toMatchObject({calorieMin:1600,calorieMax:1700,exerciseMinutes:30});await page.locator('#today-tab-food').click();
+  await openPersonalGoalEditor(page);const form=page.locator('.goal-editor-inline');await form.locator('[data-goal-metric=calories] input[type=checkbox]').check();await form.locator('[name=caloriesTarget]').fill('1650');await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);const version=await page.evaluate(async()=>{const g=await import('/src/goals.ts');return g.goalTable.toArray()});expect(version).toHaveLength(1);expect(version[0]).toMatchObject({calorieMin:1600,calorieMax:1700});await page.locator('#today-tab-food').click();
   await page.locator(".meal-card .section-heading .primary").click();
-  await expect(page.locator(".add-food .source-tabs button")).toHaveCount(3);
+  await expect(page.locator(".add-food .source-tabs button")).toHaveCount(4);
   await expect(page.locator(".add-food .import-entry")).toHaveCount(0);
   await page
     .locator(".add-food .source-tabs")
@@ -448,10 +420,7 @@ test("mobile quick meals are optional, goals version and calendar dots are real,
     "data-food-status",
     "within",
   );
-  await expect(page.locator('[data-date="2026-10-17"]')).toHaveAttribute(
-    "data-exercise-status",
-    "none",
-  );
+  await expect(page.locator('[data-date="2026-10-17"] [data-ring=exercise]')).toHaveCount(0);
   await page
     .locator(".mobile-nav")
     .getByRole("button", { name: "More", exact: true })

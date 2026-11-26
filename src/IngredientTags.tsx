@@ -7,7 +7,7 @@ import {createPortal} from 'react-dom';
 import {useRef,useState} from 'react';
 import {useLiveQuery} from 'dexie-react-hooks';
 import {useTranslation} from 'react-i18next';
-import {MoreHorizontal,Check} from 'lucide-react';
+import {MoreHorizontal} from 'lucide-react';
 import {ingredientTags,saveIngredientTag,deleteIngredientTag,type IngredientTag} from './ingredient-tags';
 import {db} from './domain';
 import {orderedItems} from './collection-order';
@@ -20,12 +20,22 @@ export function useIngredientTags(){const {i18n}=useTranslation();return applyIn
 export function IngredientTagNavigation({items,active,onChange,manage}:{items:IngredientTagOption[];active:string;onChange:(id:string)=>void;manage?:()=>void}){
  const {t}=useTranslation();return <div className="ingredient-tag-bar"><CollectionNavigation items={items.map(item=>({...item,label:item.builtIn?item.name+' · '+t('referenceBuiltIn'):undefined}))} active={active} onChange={onChange} label={t('ingredientTagFilter')} allLabel={t('ingredientTagAll')} manageLabel={t('manageIngredientTags')} manage={manage}/></div>;
 }
-export function IngredientTagAssignment({value,onChange}:{value:string[];onChange:(ids:string[])=>void}){
+export function IngredientTagAssignment({value,onChange,multiLabel=false}:{multiLabel?:boolean;value:string[];onChange:(ids:string[])=>void}){
  const {t}=useTranslation(),items=useIngredientTags(),[managing,setManaging]=useState(false),trigger=useRef<HTMLButtonElement>(null);
  const close=()=>{setManaging(false);requestAnimationFrame(()=>trigger.current?.focus())};
- return <section className="ingredient-form-section ingredient-tag-assignment"><h3>{t('ingredientTagsMultiple')}</h3><div className="ingredient-tag-choices" role="group" aria-label={t('ingredientTagsMultiple')}>
- {items.map(tag=><button type="button" key={tag.id} aria-label={tag.builtIn?tag.name+' · '+t('referenceBuiltIn'):undefined} aria-pressed={value.includes(tag.id)} onClick={()=>onChange(value.includes(tag.id)?value.filter(id=>id!==tag.id):[...value,tag.id])}>{value.includes(tag.id)&&<Check size={13}/>}<span>{tag.name}</span></button>)}<button type="button" ref={trigger} aria-label={t('manageIngredientTags')} aria-expanded={managing} onClick={()=>setManaging(true)}><MoreHorizontal size={16}/></button></div>
- {managing&&createPortal(<IngredientTagManager close={close} onDeleted={id=>onChange(value.filter(x=>x!==id))} onCreated={id=>onChange([...new Set([...value,id])])}/>,document.body)}</section>;
+ const chip=(tag:IngredientTagOption)=><button type="button" key={tag.id} aria-label={tag.builtIn?tag.name+' · '+t('referenceBuiltIn'):undefined}
+   aria-pressed={value.includes(tag.id)} onClick={()=>onChange(value.includes(tag.id)?value.filter(id=>id!==tag.id):[...value,tag.id])}>{tag.name}</button>;
+ return <div className="ingredient-tag-assignment">
+   <span className="ingredient-field-label">{t(multiLabel?'ingredientTagsMultiple':'pantryTags')}</span>
+   <div className="ingredient-tag-choices" role="group" aria-label={t('ingredientTagsMultiple')}>
+     {items.slice(0,-1).map(chip)}
+     <span className="ingredient-tag-tail">{items.slice(-1).map(chip)}
+       <button className="ingredient-tags-more" type="button" ref={trigger} aria-label={t('manageIngredientTags')} aria-expanded={managing}
+         onClick={()=>setManaging(true)}><MoreHorizontal size={16}/></button>
+     </span>
+   </div>
+   {managing&&createPortal(<IngredientTagManager close={close} onDeleted={id=>onChange(value.filter(x=>x!==id))} onCreated={id=>onChange([...new Set([...value,id])])}/>,document.body)}
+ </div>;
 }
 export function IngredientTagManager({close,onDeleted,onCreated}:{close:()=>void;onDeleted:(id:string)=>void;onCreated?:(id:string)=>void}){
  const {t,i18n}=useTranslation(),custom=useCustomIngredientTags(),preferred=useIngredientTagOrder();

@@ -1,6 +1,7 @@
 interface UpdateOptions {
   serviceWorkers: ServiceWorkerContainer;
   base: string;
+  visibility?: Pick<Document,'visibilityState'|'addEventListener'|'removeEventListener'>;
   onAvailable: () => void;
   onError: () => void;
   reload: () => void;
@@ -15,14 +16,25 @@ export function watchForAppUpdate(options: UpdateOptions) {
   const installing = new Set<ServiceWorker>();
   const available = () => { if (!disposed) options.onAvailable(); };
   const failed = () => { approved = false; if (!disposed) options.onError(); };
+  let previousController = options.serviceWorkers.controller;
+  const visibility = options.visibility ?? (typeof document === 'undefined' ? undefined : document);
+  let checking = false;
+  const resume = async () => {
+    if(visibility?.visibilityState!=='visible'||!registration||checking||disposed)return;
+    checking=true;
+    try { await registration.update(); } catch { /* Foregrounding offline is normal. */ }
+    finally { checking=false; }
+  };
+  visibility?.addEventListener('visibilitychange',resume);
   const controllerChanged = () => {
     if (timeout) clearTimeout(timeout);
     if (disposed) return;
     if (approved) options.reload();
-    else available();
+    else if (previousController && previousController !== options.serviceWorkers.controller) available();
+    previousController = options.serviceWorkers.controller;
   };
   const installed = () => {
-    if (registration?.waiting) available();
+    if (registration?.waiting && registration.active) available();
   };
   const updateFound = () => {
     const worker = registration?.installing;
@@ -56,6 +68,7 @@ export function watchForAppUpdate(options: UpdateOptions) {
       disposed = true;
       if (timeout) clearTimeout(timeout);
       options.serviceWorkers.removeEventListener('controllerchange', controllerChanged);
+      visibility?.removeEventListener('visibilitychange',resume);
       registration?.removeEventListener('updatefound', updateFound);
       for (const worker of installing) worker.removeEventListener('statechange', installed);
     },

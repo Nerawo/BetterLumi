@@ -7,7 +7,7 @@ import type {FoodBatch, BatchIngredient} from './food-storage-model';
 
 const store = new FoodStorage();
 const nutrition = {calories:600, protein:30, carbs:60, fat:20};
-const recipe = (): Recipe => ({...stamp(), name:'Synthetic recipe', servings:2, lines:[{ingredientId:'builtin-test', name:'Frozen ingredient', quantity:300, unit:'g', nutrition:{...nutrition}}], instructions:'Keep', stickyNote:'Keep'});
+const recipe = ():Recipe<import("./domain").RecipeLine> => ({...stamp(), name:'Synthetic recipe', servings:2, lines:[{ingredientId:'builtin-test', name:'Frozen ingredient', quantity:300, unit:'g', nutrition:{...nutrition}}], instructions:'Keep', stickyNote:'Keep'});
 const create = (overrides: Partial<MakeBatchInput> = {}): MakeBatchInput => ({operationId:stamp().id, id:stamp().id, name:'Synthetic batch', preparedOn:'2026-10-28', cookedYieldGrams:600, ingredients:copyRecipeForBatch(recipe()), ...overrides});
 async function make(overrides: Partial<MakeBatchInput> = {}) {const input=create(overrides); await store.makeBatch(input); return (await store.batches.get(input.id))!}
 const mealInput = (b: FoodBatch, quantity=100): StorageMealInput => ({operationId:stamp().id, mealId:stamp().id, batchId:b.id, portion:{unit:b.mode==='weight'?'g':'percent', quantity}, date:'2026-10-28', category:'lunch'});

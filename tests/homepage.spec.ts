@@ -11,31 +11,13 @@ test("default Chinese, calm empty states, compact ordering and responsive layout
   page,
 }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "zh");
-  await expect(page.getByTestId("food-progress")).toContainText(
-    "今天还没有吃饭吗？",
-  );
-  await expect(page.getByTestId("exercise-progress")).toContainText(
-    "今天还没有运动吗？",
-  );
-  await expect(page.locator(".today-progress [role=progressbar]")).toHaveCount(
-    0,
-  );
-  await expect(page.getByTestId("food-progress")).not.toContainText("0 kcal");
-  await expect(page.getByRole("heading", { name: "未来计划" })).toHaveCount(0);
-  await expect(page.locator(".today-layout .exercise-card")).toHaveCount(1);
-  await page.locator("#today-tab-activity").click();await expect(page.locator(".exercise-plans-section")).toBeVisible();
-  await expect(page.locator(".today-support .weight-mini")).toHaveCount(1);
-  await expect(page.locator(".goal-settings .goal-values")).toHaveCount(0);
-  const food = await page.getByTestId("food-progress").boundingBox();
-  const exercise = await page.getByTestId("exercise-progress").boundingBox();
-  expect(exercise!.x).toBeGreaterThan(food!.x);
-  const top = await page.locator(".today-progress").boundingBox();
-  const columns = await page.locator("#today-panel-activity .today-layout").boundingBox();
-  expect(top!.y + top!.height).toBeLessThan(columns!.y);
-  await page.setViewportSize({ width: 390, height: 844 });
-  const mFood = await page.getByTestId("food-progress").boundingBox();
-  const mExercise = await page.getByTestId("exercise-progress").boundingBox();
-  expect(Math.abs(mExercise!.y - mFood!.y)).toBeLessThan(2);
+  const food=page.getByTestId("food-progress");
+  await expect(food.locator(".progress-number")).toHaveText("未记录");
+  await expect(food.locator(".calorie-target-unset")).toBeVisible();
+  await expect(food.getByRole("progressbar")).toHaveCount(0);
+  await expect(page.getByTestId("exercise-progress")).toHaveCount(0);
+  await expect(page.locator("#today-tab-activity")).toHaveCount(0);
+  await page.setViewportSize({width:390,height:844});
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -52,7 +34,7 @@ test("default Chinese, calm empty states, compact ordering and responsive layout
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
-test("below, within, above, unknown and no-goal states update live with separate exercise metrics", async ({
+test("below, within, above, unknown and no-goal states update live while historical activity stays independent", async ({
   page,
 }) => {
   const ids = await page.evaluate(async () => {
@@ -97,10 +79,9 @@ test("below, within, above, unknown and no-goal states update live with separate
   });
   const f = page.getByTestId("food-progress"),
     e = page.getByTestId("exercise-progress");
-  await expect(f).toContainText("距目标下限还差 1000 kcal");
-  await expect(e).toContainText("还差 10 分钟");
-  await expect(e.locator(".overview-unknown").first()).toHaveText("未记录");
-  await expect(e.getByRole("progressbar")).toHaveCount(1);
+  const target=f.locator('[data-goal-metric=calories]');
+  await expect(target).toHaveAttribute('data-status','below');
+  await expect(e).toHaveCount(0);
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
     const old = await d.foodLogs.get(ids.food);
@@ -112,14 +93,8 @@ test("below, within, above, unknown and no-goal states update live with separate
       caloriesBurned: 80,
     });
   }, ids);
-  await expect(f).toContainText("已进入目标范围");
-  await expect(f.getByRole("progressbar")).toHaveAttribute(
-    "aria-valuenow",
-    "100",
-  );
-  await expect(e).toContainText("已达标");
-  await expect(e).toContainText("还差 120 kcal");
-  await expect(e.getByRole("progressbar")).toHaveCount(2);
+  await expect(target).toHaveAttribute('data-achieved','true');
+  await expect(target.getByRole('progressbar')).toHaveAttribute('aria-valuenow','100');
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
     const old = await d.foodLogs.get(ids.food);
@@ -127,10 +102,10 @@ test("below, within, above, unknown and no-goal states update live with separate
       nutrition: { ...old.nutrition, calories: 2100 },
     });
   }, ids);
-  await expect(f).toContainText("超出目标上限 300 kcal");
+  await expect(target).toHaveAttribute('data-status','above');
   await expect(f.locator(".progress-track.above")).toBeVisible();
   await openPersonalGoalEditor(page);await page.locator("[name=caloriesTarget]").fill("2100");await page.locator(".goal-editor-inline .form-actions .primary").click();
-  await expect(f).toContainText("已进入目标范围");
+  await expect(target).toHaveAttribute('data-achieved','true');
   await page.evaluate(async (ids) => {
     const d = await import("/src/domain.ts");
     const g = await import("/src/goals.ts");
@@ -153,8 +128,8 @@ test("below, within, above, unknown and no-goal states update live with separate
     });
   }, ids);
   await expect(f.locator(".progress-number")).toContainText("700");
-  await expect(f).not.toContainText("未设置目标");
-  await expect(f.locator(".progress-track")).toHaveCount(0);
+  
+  await expect(f.locator(".calorie-target-unset")).toBeVisible();
   await expect(f).not.toContainText("还差");
   await expect(page.locator(".meal-totals")).toHaveCount(0);
   const summary = await page.locator(".today-progress").boundingBox();
@@ -165,6 +140,6 @@ test("below, within, above, unknown and no-goal states update live with separate
     await d.softDelete(d.foodLogs, ids.food);
     await d.softDelete(d.db.activities, ids.activity);
   }, ids);
-  await expect(f).toContainText("今天还没有吃饭吗？");
-  await expect(e).toContainText("今天还没有运动吗？");
+  await expect(f.locator(".progress-number")).toHaveText("未记录");
+  await expect(e).toHaveCount(0);
 });

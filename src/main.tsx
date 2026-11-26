@@ -33,7 +33,7 @@ import { GoalCard } from "./GoalCards";
 import { RecipeDetail } from "./RecipeDetail";
 import {measurementDate,formatMeasurementTime} from './weight-time';
 import { WeightEntry } from "./WeightEntry";
-import { StorageBoundary } from "./StorageBoundary";
+import { OpenLocalJournal, StorageBoundary } from "./StorageBoundary";
 import React, { useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -256,7 +256,7 @@ function App() {
                       notice={setToast}
                     />
                   )}
-                  <Journal logs={logs!} activity={[]} planItems={planItems!.filter(p=>p.kind!=="activity")} selected={selected} setSelected={setSelected} goals={goals}/>
+                  <Journal logs={logs!} planItems={planItems!.filter(p=>p.kind!=="activity")} selected={selected} setSelected={setSelected} goals={goals}/>
                   <TodayTabs active={todayTab} onChange={setTodayTab} supplementStatus={<SupplementHeadingStatus items={supplements!} checks={checks!} date={selected}/>}>
                    {{
                     food: <div className="today-layout"><div>
@@ -409,7 +409,7 @@ restoreInitialPage();
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <StorageBoundary>
-      <WeightDataProvider><App /></WeightDataProvider>
+      <OpenLocalJournal><WeightDataProvider><App /></WeightDataProvider></OpenLocalJournal>
       <DeleteConfirmationHost />
       <PwaUpdatePrompt />
     </StorageBoundary>

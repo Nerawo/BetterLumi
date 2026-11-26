@@ -54,6 +54,10 @@ test('manifest, worker, assets, fonts, OCR and recipe images stay inside the pro
   const sw=await (await request.get(base+'sw.js')).text();
   expect(sw).toContain('/BetterLumi/index.html');
   const registration=await page.evaluate(async()=>{const r=await navigator.serviceWorker.ready;return {scope:r.scope,script:r.active?.scriptURL}});
+  await expect(page.locator('.pwa-update-prompt')).toHaveCount(0);
+  await page.reload();
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  await expect(page.locator('.pwa-update-prompt')).toHaveCount(0);
   expect(registration.scope).toBe(new URL(base,page.url()).href);expect(registration.script).toBe(new URL(base+'sw.js',page.url()).href);
   expect(requested.filter(url=>url.startsWith(new URL(page.url()).origin)).every(url=>new URL(url).pathname.startsWith(base))).toBe(true);
   expect(failures).toEqual([]);
@@ -74,7 +78,7 @@ test('a real worker update preserves edits in both tabs until each user chooses 
   await page.evaluate(()=>new Promise<void>((resolve,reject)=>{const open=indexedDB.open('BetterLumi');open.onsuccess=()=>{const db=open.result;const tx=db.transaction('settings','readwrite');tx.objectStore('settings').put({key:'pagesSyntheticSentinel',value:'retained'});tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>reject(tx.error)}}));
   const other=await context.newPage();await other.goto(app('/pantry'));await other.evaluate(()=>navigator.serviceWorker.ready);
   await request.post('/__test__/revision');
-  await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r?.update()});
+  await page.bringToFront();await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
   const prompt=page.locator('.pwa-update-prompt');await expect(prompt).toBeVisible();await expect(other.locator('.pwa-update-prompt')).toBeVisible();
   await expect(target).toHaveValue('1475');
   await expect(prompt.locator('strong')).toHaveText('有新版本可用');

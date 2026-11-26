@@ -1,6 +1,8 @@
+import {reconcileFamilyTags} from './family-tags';
+import {validateFamilies,validFamilyLine} from './family-contract';
 import {validZeroReference} from './line-nutrition';
-import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation} from "./food-storage-model";
-export const BACKUP_VERSION = 16;
+import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation, type HistoricalAllocationBasis} from "./food-storage-model";
+export const BACKUP_VERSION = 20;
 import {validateJournalBackup,COOKING_PREFIX,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
@@ -11,7 +13,7 @@ import {validGoalConfig} from "./goal-model";
 import type { Table } from "dexie";
 import { validLocalDate } from "./routing";
 import { validExercisePlan, validExerciseOccurrence } from "./exercise-schedule";
-import { db, stamp, type RecordBase, type Ingredient, localDate } from "./db";
+import { remove as removeIngredientRecord,db, stamp, type RecordBase, type Ingredient, localDate } from "./db";
 export { db, stamp, localDate };
 import { nutritionReference } from "./db";
 export type PantryItem = Ingredient & {
@@ -50,11 +52,16 @@ export interface RecipeLine {
   nutrition: Nutrition;
   zeroQuantityReference?: {quantity:number;nutrition:Nutrition};
 }
-export interface Recipe extends RecordBase {
+export interface FamilyLine {
+  source:"family";familyId:string;lineId:string;groupId?:string;name:string;quantity:number;unit:"g"|"mL";
+  ingredientId?:never;nutrition?:never;zeroQuantityReference?:never;sourceBatchId?:never;quantityBasis?:never;
+}
+export type TemplateLine=RecipeLine|FamilyLine;
+export interface Recipe<L extends TemplateLine=TemplateLine> extends RecordBase {
   ingredientGroups?: IngredientGroup[];
   name: string;
   servings: number;
-  lines: RecipeLine[];
+  lines: L[];
   instructions: string;
   stickyNote: string;
   photo?: string;
@@ -79,6 +86,7 @@ export interface FoodLog extends RecordBase {
   /** Inventory consumption and initial-leftover linkage deliberately have different semantics. */
   storageConsumption?: StorageConsumption;
   recipeAllocations?: RecipeAllocation[];
+  historicalAllocationBases?: HistoricalAllocationBasis[];
   leftoverBatchId?: string;
   /** Explicit origin-meal correction that deliberately leaves downstream stock untouched. */
   leftoverInventoryUnchanged?: true;
@@ -161,6 +169,7 @@ export async function softDelete<T extends RecordBase>(
   id: string,
 ) {
   const row = await table.get(id);
+  if(row&&table.name==='ingredients'){await removeIngredientRecord(table.db.table(table.name),row);return}
   if (row && table.name === 'foodLogs' && ('storageConsumption' in row || 'recipeAllocations' in row || 'leftoverBatchId' in row)) {
     if (row.deletedAt) return;
     const {FoodStorage} = await import('./food-storage');
@@ -180,10 +189,12 @@ export async function exportAll() {
   await db.transaction("r", db.tables, async () => {
     for (const table of db.tables) tables[table.name] = await table.toArray();
   });
-  for(const name of ['recipeCards','foodLogs'])for(const row of tables[name] as {lines:RecipeLine[]}[])if(row.lines.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)&&!validLines(row.lines))throw Error('Invalid zero ingredient snapshot');
+  for(const name of ['recipeCards','foodLogs'])for(const row of tables[name] as {lines:RecipeLine[]}[])if(row.lines.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)&&!validLines(row.lines,name==="recipeCards"))throw Error('Invalid zero ingredient snapshot');
+  if((tables.foodLogs as FoodLog[]).some(m=>m.lines.some(l=>!validLines([l]))))throw Error("Invalid concrete meal snapshot");
+  validateFamilies(tables.ingredientFamilies as import("./db").IngredientFamily[],tables.ingredients as PantryItem[],tables.recipeCards as Recipe[]);
   validateJournalBackup(tables);
   const temporarySources=(tables.settings as {key:string;value:string}[]).some(row=>row.key.startsWith(COOKING_PREFIX)&&JSON.parse(row.value).ingredientChanges?.addedLines?.some((a:{line:RecipeLine})=>a.line.source==='batch'));
-  if(temporarySources||(tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
+  if((tables.foodBatches as {stock?:unknown}[]).some(b=>b.stock)||temporarySources||(tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.historicalAllocationBases!==undefined||m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
   return {
     app: "BetterLumi",
     version: BACKUP_VERSION,
@@ -195,11 +206,14 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )
     throw Error("Invalid backup");
+  if(x.version<20&&x.tables.foodLogs?.some((m:FoodLog)=>m.historicalAllocationBases!==undefined))throw Error("Historical allocation basis requires Backup 20");
+  if(x.version<18&&x.tables.foodBatches?.some((b: {stock?:unknown})=>b.stock!==undefined))throw Error('Pantry stock requires Backup 18');
+  if(x.version<17){if(x.tables.ingredientFamilies?.length)throw Error("Families require Backup 17");x.tables.ingredientFamilies=[];}
   if(x.version<14&&['recipeCards','foodLogs','foodBatches'].some(name=>x.tables[name]?.some((r:any)=>(r.lines??r.ingredients??[]).some((l:any)=>l.quantity===0||l.zeroQuantityReference!==undefined))))throw Error('Zero ingredient quantities require Backup 14');
   if(x.version<11&&(['recipeCards','foodLogs'].some(name=>Array.isArray(x.tables[name])&&x.tables[name].some((r:any)=>r.recipeAllocations!==undefined||r.lines?.some((l:any)=>l.source==='batch')))))throw Error('Stored-food recipes require backup version 11');
   if(x.version<10) {
@@ -273,7 +287,7 @@ export async function restoreAll(data: unknown) {
         table.name === "recipeCards" &&
         (!row.name ||
           (row.servings !== undefined && (!Number.isFinite(row.servings) || row.servings <= 0)) ||
-          !validLines(row.lines) ||
+          !validLines(row.lines,x.version>=17) ||
           typeof row.stickyNote !== "string" ||
           typeof row.instructions !== "string")
       )
@@ -445,6 +459,8 @@ export async function restoreAll(data: unknown) {
       )
         throw Error("Invalid goal");
       if(table.name==="goals"){
+        if(x.version<19 && row.nutritionOnly===true && row.nutritionEnabled===false)
+          throw Error("Disabled nutrition-only goals require Backup 19");
         if(!validGoalConfig(row))throw Error("Invalid goal configuration");
 
       }
@@ -470,9 +486,11 @@ export async function restoreAll(data: unknown) {
         throw Error("Invalid weight notes");
     }
   }
+  validateFamilies(x.tables.ingredientFamilies,x.tables.ingredients,x.tables.recipeCards);
   validateStorageBackup(x.tables);
   validateJournalBackup(x.tables,x.version);
   reconcileIngredientTags(x.tables);
+  reconcileFamilyTags(x.tables,x.version);
   await db.transaction("rw", db.tables, async () => {
     for (const table of db.tables) {
       await table.clear();
@@ -490,11 +508,11 @@ function validNutrition(n: any) {
     )
   );
 }
-function validLines(lines: any) {
+function validLines(lines: any,template=false) {
   return (
     Array.isArray(lines) &&
     lines.every(
-      (l) =>
+      (l) => l?.source==="family" ? template&&validFamilyLine(l) :
         typeof l.ingredientId === "string" &&
         typeof l.name === "string" &&
         Number.isFinite(l.quantity) &&

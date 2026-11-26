@@ -93,7 +93,7 @@ it("v3 upgrades every table in place and maps legacy category labels without los
       } else expect(actual).toEqual(row);
     }
     expect(await upgraded.table("recipeCategories").count()).toBe(1);
-    expect(upgraded.verno).toBe(7);
+    expect(upgraded.verno).toBe(8);
     for (const table of ["exercisePlans", "exerciseOccurrences", "ingredientTags", "foodBatches", "inventoryTransactions"]) {
       expect(await upgraded.table(table).count(), table).toBe(0);
     }

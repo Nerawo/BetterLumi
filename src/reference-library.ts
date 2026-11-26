@@ -5,7 +5,6 @@ import {builtInTags,type IngredientTagOption} from './data/builtInTags';
 import {everydayFoodName,everydaySearchAliases,normalizedFoodQuery,visibleEverydayFood} from './everyday-foods';
 export const referenceName=everydayFoodName;
 export const referencePreparation=(item:BuiltInFood,language:string)=>language.startsWith('zh')?item.preparationStateZh:item.preparationStateEn;
-export const referenceCategory=(item:BuiltInFood,language:string)=>{const tag=builtInTags.find(tag=>item.tagIds.includes(tag.id));return tag?referenceName(tag,language):item.category};
 /** Display formatting only. Never round the nutrition snapshot or reference data. */
 export const referenceNutritionSummary=(item:BuiltInFood)=>`${item.kcalPer100g===null?'—':Math.round(item.kcalPer100g)} kcal / 100 g · P ${item.proteinPer100g?.toFixed(1)??'—'} · C ${item.carbsPer100g?.toFixed(1)??'—'} · F ${item.fatPer100g?.toFixed(1)??'—'} g`;
 export type FoodChoice={kind:'user';item:PantryItem}|{kind:'built-in';item:BuiltInFood};

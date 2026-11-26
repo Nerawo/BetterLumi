@@ -14,7 +14,12 @@ export function availableUnits(item:FoodChoice,p?:IngredientPreference|null){ret
 export function foodUnitLabel(item:FoodChoice|null,unit:string,language:string,p?:IngredientPreference|null){return item?householdUnitLabel(item.item.id,unit,language,personalUnits(item,p)):unit}
 export function baseUnit(item:FoodChoice){return item.kind==='built-in'?'g':ingredientBaseUnit(item.item)}
 export function validIngredientPreference(item:FoodChoice,p:IngredientPreference){return !!parseIngredientPreference(JSON.stringify(p))&&p.units.every(u=>u.unit===baseUnit(item))&&[baseUnit(item),...(item.kind==='user'&&item.item.basis==='serving'?['serving']:[]),...availableUnits(item,p).map(u=>u.name)].includes(p.preferred)}
-export async function saveIngredientPreference(item:FoodChoice,p:IngredientPreference){if(!validIngredientPreference(item,p))throw Error('Invalid ingredient preference');await db.settings.put({key:ingredientPreferencePrefix+item.item.id,value:JSON.stringify(p)})}
+export async function saveIngredientPreference(item:FoodChoice,p:IngredientPreference){if(!validIngredientPreference(item,p))throw Error('Invalid ingredient preference');await db.transaction('rw',db.settings,db.ingredientFamilies,async()=>{
+ await db.settings.put({key:ingredientPreferencePrefix+item.item.id,value:JSON.stringify(p)});
+ if(p.archived)await db.ingredientFamilies.where('memberIds').equals(item.item.id).modify(f=>{
+  if(f.inUseIds.includes(item.item.id)){f.inUseIds=f.inUseIds.filter(id=>id!==item.item.id);f.updatedAt=new Date().toISOString();f.revision++}
+ });
+})}
 export function ingredientPreferenceRows(rows:{key:string;value:string}[]){return Object.fromEntries(rows.filter(r=>r.key.startsWith(ingredientPreferencePrefix)).flatMap(r=>{const p=parseIngredientPreference(r.value);return p?[[r.key.slice(ingredientPreferencePrefix.length),p]]:[]})) as Record<string,IngredientPreference>}
 export function preferredFoodUnit(item:FoodChoice,p?:IngredientPreference){const fallback=item.kind==='user'&&item.item.basis==='serving'?'serving':baseUnit(item);return p&&validIngredientPreference(item,p)?p.preferred:fallback}
 export function personalQuantity(item:FoodChoice,unit:string){return item.kind==='user'?defaultIngredientQuantity(item.item,unit):unit==='g'?100:1}

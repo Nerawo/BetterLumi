@@ -1,3 +1,4 @@
+import {setDirectorySort} from './current-ui';
 import { test, expect, type Page } from "@playwright/test";
 const output =
   "./work/screenshots/";
@@ -125,20 +126,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
   await expect(
     page.locator("[data-testid=food-progress] .progress-number"),
   ).toContainText("860");
-  await expect(page.getByTestId("food-progress")).toContainText(
-    "还差 340 kcal",
-  );
-  await expect(
-    page.locator("[data-testid=exercise-progress] .movement-duration"),
-  ).toContainText("25");
-  await expect(page.getByTestId("exercise-progress")).toContainText("未记录");
-  const foodNumber = (await page
-    .locator("[data-testid=food-progress] .progress-number")
-    .boundingBox())!;
-  const movementNumber = (await page
-    .locator("[data-testid=exercise-progress] .progress-number")
-    .boundingBox())!;
-  expect(Math.abs(foodNumber.y - movementNumber.y)).toBeLessThan(1);
+  await expect(page.getByTestId("food-progress").locator("[data-goal-metric=calories]")).toHaveAttribute("data-status","below");
   const cover = (await page.locator(".graphic-introduction").boundingBox())!,
     progress = (await page.locator(".today-progress").boundingBox())!,
     nav = (await page.locator(".mobile-nav").boundingBox())!;
@@ -158,7 +146,7 @@ test("compact cover keeps real progress above the fold and four updated mobile s
   );
   await page.screenshot({ path: output + "精修-Pantry-手机.png" });
   await page.goto("/more");
-  await expect(page.locator(".settings-row")).toHaveCount(7);
+  await expect(page.locator(".settings-row")).toHaveCount(8);
   await page.screenshot({ path: output + "精修-More-手机.png" });
   await page.goto("/recipes/" + recipe);
   const modal = page.locator(".recipe-detail-modal");
@@ -189,11 +177,7 @@ test("Pantry has four compact sort orders, search and unknown-last calories in b
 }) => {
   await seed(page);
   await page.goto("/pantry");
-  const choose = async (sort: string) => {
-    await page.locator(".pantry-sort-trigger").click();
-    await expect(page.getByRole("menuitemradio")).toHaveCount(4);
-    await page.locator(`[data-sort="${sort}"]`).click();
-  };
+  const choose = (sort:string)=>setDirectorySort(page,sort);
   const names = () => page.locator(".pantry-row[data-user-food-id] h3").allTextContents();
   await choose("name-asc");
   expect((await names()).map((s) => s.trim().split(" ")[0])).toEqual([

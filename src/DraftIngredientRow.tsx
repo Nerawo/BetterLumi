@@ -18,7 +18,7 @@ export function DraftIngredientRow({mealDraft=false,cookingRemoval,disabled=fals
   const consumedHold=useRef(false);
   const marker=useRef<HTMLElement|undefined>(undefined),[revealed,setRevealed]=useState(false);
   const [confirmation,setConfirmation]=useState<'replace'|'delete'>();
-  const identitySelector='.draft-ingredient-name,.journal-line-name';
+  const identitySelector='.draft-ingredient-name,.journal-line-name,.draft-family-identity';
   const row=()=>shell.current!.querySelector<HTMLElement>('.draft-ingredient,.journal-check-row')!;
   function stop(){
     const g=gesture.current;if(g){clearTimeout(g.hold);cancelAnimationFrame(g.frame??0)}
@@ -87,7 +87,8 @@ export function DraftIngredientRow({mealDraft=false,cookingRemoval,disabled=fals
     const handle=target.closest('.draft-grip');
     if(!handle&&e.pointerType==='mouse')return;
     const control=target.closest('button,input,select,a,details,.draft-amount,.journal-quantity');
-    if(!handle&&(!target.closest('.draft-ingredient,.journal-check-row')||(control&&shell.current?.contains(control))))return;
+    const familyName=target.closest('.draft-family-trigger > strong, .draft-family-trigger > .journal-line-name');
+    if(!handle&&(!target.closest('.draft-ingredient,.journal-check-row')||(control&&shell.current?.contains(control)&&!familyName)))return;
     const g:Gesture={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,originTop:shell.current!.getBoundingClientRect().top,kind:handle?'handle':'identity'};
     gesture.current=g;
     if(handle){handle.setPointerCapture(e.pointerId);return}

@@ -1,5 +1,5 @@
 import {convertRecipeLine} from './recipe-draft-units';
-import {scaleNutrition,unknownNutrition,type Recipe,type RecipeLine} from './domain';
+import {scaleNutrition,unknownNutrition,type FamilyLine,type TemplateLine,type Recipe,type RecipeLine} from './domain';
 import {recipeServingLines,recipeYield} from './recipe-nutrition';
 import {addCookingIngredient,replaceCookingIngredient,changeCookingServings,removeCookingIngredient,setCookingQuantity,cookingFingerprint,validateCookingSession,visibleCookingEntries,type CookingSession} from './cooking-journal';
 import {storageNutritionEqual} from './food-storage-model';
@@ -12,19 +12,26 @@ export function requantifyLine(line:RecipeLine,quantity:number):RecipeLine{
  if(Object.values(nutrition).some(n=>n!==null&&(!Number.isFinite(n)||n<0)))throw Error('Invalid ingredient nutrition');
  return {...rest,quantity,nutrition,...(quantity===0&&basis?{zeroQuantityReference:structuredClone(basis)}:{})};
 }
-export function cookingPreparationLines(recipe:Recipe,session:CookingSession):RecipeLine[]{
+export function cookingJournalLines(recipe:Recipe,session:CookingSession):TemplateLine[]{
  validateCookingSession(session);if(session.recipeId!==recipe.id)throw Error('Wrong cooking recipe');
  if(session.entries.length!==recipe.lines.length)throw Error('Recipe changed; reopen preparation');
- const lines=recipeServingLines(recipe,session.servings).flatMap((line,index)=>{
+ const lines=recipeServingLines(recipe,session.servings).flatMap<TemplateLine>((line,index)=>{
   const entry=session.entries[index];if(!entry||entry.lineId!==recipe.lines[index].lineId||entry.fingerprint!==cookingFingerprint(recipe.lines[index]))throw Error('Recipe changed; reopen preparation');
   if(session.ingredientChanges?.removedEntries.some(r=>r.entryId===entry.id))return [];
   const replacement=session.ingredientChanges?.replacements?.find(r=>r.entryId===entry.id);
   if(replacement)return recipeServingLines({servings:replacement.servings,lines:[{...replacement.line,groupId:line.groupId}]},session.servings);
+  if(line.source==="family")return [line];
   return [{...line,...(session.version>=3?{lineId:entry.id}:{})}];
  });
  return [...lines,...(session.ingredientChanges?.addedLines.flatMap(a=>recipeServingLines({servings:a.servings,lines:[a.line]},session.servings))??[])];
 }
-export function effectiveCookingRecipe(recipe:Recipe,session:CookingSession):Recipe{
+export function cookingPreparationLines(recipe:Recipe,session:CookingSession):RecipeLine[]{
+ return cookingJournalLines(recipe,session).map(line=>{
+  if(line.source==='family')throw Error('familyUnavailable');
+  return line;
+ });
+}
+export function effectiveCookingRecipe(recipe:Recipe,session:CookingSession):Recipe<RecipeLine>{
  const entries=visibleCookingEntries(session);
  const lines=cookingPreparationLines(recipe,session).map((line,index)=>{
   const entry=entries[index];
@@ -37,8 +44,8 @@ export function effectiveCookingRecipe(recipe:Recipe,session:CookingSession):Rec
  * still restores the recipe-derived amount in the chosen unit. */
 export function changeCookingUnit(recipe:Recipe,session:CookingSession,id:string,unit:string,factors:ReadonlyMap<string,number>){
  const index=visibleCookingEntries(session).findIndex(entry=>entry.id===id);
- const line=cookingPreparationLines(recipe,session)[index];
- if(!line)throw Error('Unknown preparation ingredient');
+ const line=cookingJournalLines(recipe,session)[index];
+ if(!line||line.source==='family')throw Error('Unknown preparation ingredient');
  if(line.unit===unit)return session;
  const converted=convertRecipeLine(line,unit,factors);
  if(!converted)throw Error('Unsupported unit conversion');
@@ -57,6 +64,7 @@ export const normalizedCookingLines=(recipe:Recipe,session:CookingSession)=>effe
 export interface MealPreparation {
  servings:number;
  lines:RecipeLine[];
+ unresolved?:FamilyLine[];
  baseline:Recipe;
 }
 export function initializeMealPreparation(recipe:Recipe,fresh:CookingSession,draft:MealPreparation){
@@ -67,8 +75,14 @@ export function initializeMealPreparation(recipe:Recipe,fresh:CookingSession,dra
  const retained=new Set<RecipeLine>();
  for(const [index,base] of baseline.entries()){
   const line=draft.lines.find(l=>l.lineId===base.lineId);
+  const pending=draft.unresolved?.find(slot=>slot.lineId===base.lineId);
+  if(!line&&pending&&base.source==='family'){
+   if(pending.unit!==base.unit)throw Error('familyUpdateUnit');
+   if(pending.quantity!==base.quantity)session=setCookingQuantity(session,entries[index].id,pending.quantity,pending.unit);
+   continue;
+  }
   if(!line){session=removeCookingIngredient(session,entries[index].id);continue}
-  if(line.ingredientId!==base.ingredientId||(line.source??'pantry')!==(base.source??'pantry')||line.sourceBatchId!==base.sourceBatchId||line.unit!==base.unit||line.quantityBasis!==base.quantityBasis||
+  if(base.source==="family"||line.ingredientId!==base.ingredientId||(line.source??'pantry')!==(base.source??'pantry')||line.sourceBatchId!==base.sourceBatchId||line.unit!==base.unit||line.quantityBasis!==base.quantityBasis||
      line.name!==base.name||!storageNutritionEqual(requantifyLine(base,line.quantity).nutrition,lineNutrition(line))){
    session=replaceCookingIngredient(session,entries[index].id,line);
    retained.add(line);

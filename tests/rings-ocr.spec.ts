@@ -1,3 +1,4 @@
+import {selectIngredientDefinition} from './current-ui';
 import { test, expect, type Page } from "@playwright/test";
 async function fixture(page: Page, blank = false) {
   const data = await page.evaluate((blank) => {
@@ -35,7 +36,7 @@ test.beforeEach(async ({ page }) => {
     page.getByRole("heading", { name: /当日概览/ }),
   ).toBeVisible();
 });
-test("required calorie examples and missing exercise metric render independent rings", async ({
+test("daily calorie rings show distinct below, within and above states", async ({
   page,
 }) => {
   await page.evaluate(async () => {
@@ -78,13 +79,7 @@ test("required calorie examples and missing exercise metric render independent r
       notes: "",
     });
   });
-  await expect(page.getByTestId("food-progress")).toContainText(
-    "距目标下限还差 940 kcal",
-  );
-  await expect(page.getByTestId("exercise-progress")).toContainText(
-    "已达标",
-  );
-  await expect(page.getByTestId("exercise-progress")).toContainText("未记录");
+  await expect(page.getByTestId("food-progress").locator(".calorie-reading")).toHaveText("60kcal");
   await page.goto("/journal?date=2026-10-17");
   const ring = (date: string, name: string) =>
     page.locator('[data-date="' + date + '"] [data-ring="' + name + '"]');
@@ -104,13 +99,7 @@ test("required calorie examples and missing exercise metric render independent r
     "data-state",
     "above",
   );
-  await expect(ring("2026-10-17", "exercise")).toHaveAttribute(
-    "data-state",
-    "unknown",
-  );
-  await expect(
-    ring("2026-10-17", "exercise").locator(".ring-fill"),
-  ).toHaveAttribute("stroke-dasharray", "2 3");
+  await expect(ring("2026-10-17", "exercise")).toHaveCount(0);
   await expect(
     page.locator(".calendar-grid .goal-dots,.goal-legend"),
   ).toHaveCount(0);
@@ -148,17 +137,14 @@ test("legacy aliases stay searchable and nutrition basis remains explicit on mob
     await expect(page.locator(".pantry-row[data-user-food-id]")).toHaveCount(1);
   }
   await page
-    .locator(".pantry-row")
-    .getByRole("button", { name: "编辑", exact: true })
+    .locator(".pantry-row[data-user-food-id] .ingredient-name")
     .click();
   const form = page.getByRole("dialog");
   await expect(form.locator("input[type=file]")).toHaveCount(0);
-  await expect(form.getByLabel("其他名称（可选）")).toHaveValue("三文鱼、鲑鱼");
-  await form.getByLabel("其他名称（可选）").fill("三文鱼、鲑鱼,red fish");
-  await form
-    .getByLabel("营养数据基准", { exact: true })
-    .selectOption("serving");
-  await expect(form.locator(".serving-weight")).toHaveClass(/emphasized/);
+  await expect(form.locator('[name=nameZh]')).toHaveValue("三文鱼、鲑鱼");
+  await form.locator('[name=nameZh]').fill("三文鱼、鲑鱼,red fish");
+  await selectIngredientDefinition(form,'basis','serving');
+  await expect(form.locator('[name=servingGrams]')).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await form.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
     true,
@@ -180,11 +166,11 @@ for(const hasRecognition of [true,false])test('legacy label/photo metadata survi
  const remote:string[]=[];const origin=new URL(page.url()).origin;context.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==origin)remote.push(r.url())});
  const file=await fixture(page,!hasRecognition),photo='data:image/png;base64,'+file.buffer.toString('base64');
  const original=await page.evaluate(async({photo,hasRecognition})=>{const d=await import('/src/domain.ts');const row={...d.stamp(),name:'Synthetic legacy label',nameZh:'标签测试',brand:'',basis:'serving',servingGrams:40,calories:hasRecognition?230:null,protein:3,carbs:37,fat:8,photo,labelPhoto:photo,nutritionSource:'package-label-ocr',labelRecognition:{text:hasRecognition?'Synthetic label: Calories 230':'',status:hasRecognition?'reviewed':'failed'}};await d.db.ingredients.put(row);return row},{photo,hasRecognition});
- await page.goto('/pantry');await page.locator('.pantry-row[data-user-food-id] .actions button').first().click();const form=page.locator('.pantry-editor-modal'),fields=form.locator('.nutrition-fields input');await expect(form.locator('.pantry-photo-import,input[type=file],.ocr-review')).toHaveCount(0);
+ await page.goto('/pantry');await page.locator('.pantry-row[data-user-food-id] .ingredient-name').first().click();const form=page.locator('.pantry-editor-modal'),fields=form.locator('.nutrition-fields input');await expect(form.locator('.pantry-photo-import,input[type=file],.ocr-review')).toHaveCount(0);
  await fields.first().fill('');await expect(fields.first()).toHaveValue('');expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return d.db.ingredients.get(id)},original.id)).toEqual(original);
  await fields.first().fill('123');await fields.nth(1).fill('7');await form.getByRole('button',{name:'保存',exact:true}).click();await expect(form).toHaveCount(0);await page.reload();
  const after=await page.evaluate(async id=>{const d=await import('/src/domain.ts');return {item:await d.db.ingredients.get(id),count:await d.db.ingredients.count()}},original.id);
- expect(after.count).toBe(1);expect(after.item).toMatchObject({id:original.id,calories:123,protein:7,carbs:37,fat:8,servingGrams:40,photo,labelPhoto:photo,labelRecognition:original.labelRecognition});expect(remote).toEqual([]);await expect(page.locator('.pantry-row[data-user-food-id]')).toContainText('123 kcal');
+ expect(after.count).toBe(1);expect(after.item).toMatchObject({id:original.id,calories:123,protein:7,carbs:37,fat:8,servingGrams:40,photo,labelPhoto:photo,labelRecognition:original.labelRecognition});expect(remote).toEqual([]);await expect(page.locator('.pantry-row[data-user-food-id]')).toContainText('308 kcal');
 });
 
 test("historical consumption above 100% remains displayed, editable and used in progress", async ({

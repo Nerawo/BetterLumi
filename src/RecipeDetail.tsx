@@ -1,3 +1,9 @@
+import {stockViews} from './stock-view';
+import {useLiveQuery} from 'dexie-react-hooks';
+import {needsUnitReview} from './live-nutrition';
+import {useFamilies} from './FamilyUI';
+import {concreteRecipe} from './families';
+import {recipeNutritionRange} from './recipe-nutrition-range';
 import {journalQuantity} from './journal-quantity';
 import {JournalMethod} from './JournalMethod';
 import {JournalHeading} from './JournalHeading';
@@ -12,7 +18,7 @@ import {useIngredientPreferences} from './useIngredientPreferences';
 import {RecipeDetailImage} from "./RecipeDetailImage";
 import {isBuiltInRecipe,bologneseCookingExtras} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
-import {recipeYield,recipeServingLines,recipeServingNutrition} from "./recipe-nutrition";
+import {recipeYield,recipeServingLines} from "./recipe-nutrition";
 import './recipe-yield-locale';
 import { Fragment,useState,useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +28,7 @@ import {
   type Recipe,
   type PantryItem,
 } from "./domain";
-import { navigate } from "./routing";
+import { navigate, subscribeNavigation } from "./routing";
 import { RecipeCategoryPicker } from "./RecipeCategoryPicker";
 import { assignCategoryRecipes } from "./categories";
 import { RecipeEditor } from "./Recipes";
@@ -41,6 +47,9 @@ export function RecipeDetail({
   recipes: Recipe[]; mealDate: string; onCookingMealSaved: (date:string)=>void;
 }) {
   const { t,i18n } = useTranslation(),preferences=useIngredientPreferences();
+  const catalog=useFamilies(pantry);
+  const hasStockLines=recipe?.lines.some(line=>line.source==='batch')??false;
+  const stock=useLiveQuery(()=>hasStockLines?stockViews():[],[hasStockLines]);
   const close = () => {
     if (history.state?.recipeOverlay) history.back();
     else navigate("/recipes", true);
@@ -51,7 +60,7 @@ export function RecipeDetail({
   const [making,setMaking]=useState(false);
   const [cookingServings,setCookingServings]=useState('1');
   useEffect(()=>{setCooking(false);setMaking(false);setEdit(false);setCookingServings('1')},[recipe?.id]);
-  useEffect(()=>{const exit=()=>{setCooking(false);setMaking(false);setEdit(false)};window.addEventListener('popstate',exit);window.addEventListener('hashchange',exit);return()=>{window.removeEventListener('popstate',exit);window.removeEventListener('hashchange',exit)}},[]);
+  useEffect(()=>subscribeNavigation(()=>{setCooking(false);setMaking(false);setEdit(false)}),[]);
   if (!recipe)
     return (
       <Modal
@@ -72,10 +81,11 @@ export function RecipeDetail({
       <article className="recipe-detail">
         <div className="recipe-hero">
           {builtIn?<img className="detail-photo built-in-recipe-photo" src={recipe.photo} alt={recipe.name} width={800} height={800}/>:<RecipeDetailImage key={recipe.id} recipe={recipe} notice={notice}/>}
-          <section className="hero-nutrition">
+          <section className="hero-nutrition">{needsUnitReview(recipe.lines.filter(l=>l.source!=='family'),pantry,preferences)&&<small role="status">{t("liveUnitReview")}</small>}
             <span className="eyebrow">{t(validAmount&&amount===1?'recipePerServing':'recipeCookingTotal')}</span>
             <RecipeNutritionStrip
-              value={validAmount?recipeServingNutrition(recipe,amount):unknownNutrition()}
+              value={validAmount?recipeNutritionRange(recipe.lines,catalog,i18n.language,amount/recipeYield(recipe),stock):unknownNutrition()}
+              unavailable={!concreteRecipe(recipe)}
             />
           </section>
         </div>
@@ -93,10 +103,10 @@ export function RecipeDetail({
             <ul className="detail-ingredients">
               {recipeSections({...recipe,lines:cookingLines}).map(group=><Fragment key={group.id}>{group.lines.length>0&&(recipe.ingredientGroups?.length??0)>0&&<li className="journal-overview-group"><h3><JournalHeading>{group.name||t('journalUngrouped')}</JournalHeading></h3></li>}{group.lines.map((l, i) => (
                 <li key={i}>
-                  <strong>{l.name}</strong>
+                  <strong>{l.source==="family"?catalog.families.find(f=>f.id===l.familyId)?.name??l.name:l.name}</strong>
                   <span>
                     {journalQuantity(l)}{" "}
-                    {l.source==='batch'&&l.unit==='fraction'?'% '+t('storageReference'):l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
+                    {l.source==='batch'&&l.unit==='fraction'?'% '+t('storageReference'):l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : l.source==="family"?l.unit:householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}
                   </span>
                 </li>
               ))}</Fragment>)}
@@ -125,7 +135,7 @@ export function RecipeDetail({
             <Plus size={15} />
             {t("journalAddMeal")}
           </button>
-          <button type="button" className="secondary journal-add-storage" onClick={()=>setMaking(true)}><Plus size={15}/>{t('journalAddStorage')}</button>
+          <button type="button" disabled={!concreteRecipe(recipe)} title={!concreteRecipe(recipe)?t("familyPreview"):undefined} className="secondary journal-add-storage" onClick={()=>setMaking(true)}><Plus size={15}/>{t('journalAddStorage')}</button>
           <button type="button" className="primary start-cooking" onClick={()=>setCooking(true)}>{t('startCooking')}</button>
         </div>
         {making&&<MakeBatchModal recipes={recipes} pantry={pantry} initialRecipe={recipe} close={()=>setMaking(false)} notice={notice}/>}

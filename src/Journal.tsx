@@ -41,9 +41,11 @@ function PlanEditor({item,close,notice,defaultDate}:{item:Plan|null;close:()=>vo
    });close();notice(t("savedMessage"));
   }catch{notice(t("failedMessage"));setSaving(false)}
  }}>
+  <div className="modal-scroll todo-fields">
   <label>{t("todoTitle")}<input name="title" required defaultValue={item?.title}/></label>
   <label>{t("date")}<DateInput name="date" required defaultValue={item?.date??defaultDate}/></label>
   <label>{t("notes")} <small>{t("optional")}</small><textarea name="notes" rows={3} defaultValue={item?.notes}/></label>
+  </div>
   <div className="form-actions"><button type="button" onClick={close}>{t("cancel")}</button><button className="primary" disabled={saving}>{t("save")}</button></div>
  </form></Modal>;
 }

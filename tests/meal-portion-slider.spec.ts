@@ -5,7 +5,7 @@ async function seed(page:Page,language:string){
  await page.goto('/today');await expect(page.locator('.meal-card')).toBeVisible();
  const fixture=await page.evaluate(async language=>{
   const d=await import('/src/domain.ts');await d.db.settings.put({key:'language',value:language});
-  const ingredient={...d.stamp(),name:'Synthetic portion ingredient',nameZh:'',brand:'',basis:'100g',servingGrams:null,calories:100,protein:10,carbs:10,fat:2};await d.db.ingredients.put(ingredient);
+  const ingredient={...d.stamp(),name:'Synthetic portion ingredient',nameZh:'',brand:'',basis:'100g',servingGrams:null,calories:600,protein:30,carbs:60,fat:20};await d.db.ingredients.put(ingredient);
   const recipe={...d.stamp(),name:'Synthetic 600 kcal serving',servings:2,lines:[{ingredientId:ingredient.id,name:ingredient.name,quantity:200,unit:'g',nutrition:{calories:1200,protein:60,carbs:120,fat:40}}],instructions:'Keep',stickyNote:''};await d.recipes.put(recipe);
   const old={...d.stamp(),date:d.localDate(),category:'lunch',name:'Historical snapshot keep',source:'recipe',sourceId:recipe.id,quantity:.75,unit:'serving',consumptionPercent:50,nutrition:{calories:137,protein:null,carbs:0,fat:4},lines:[],cookingNote:'Keep'};await d.foodLogs.put(old);
   return{recipe,ingredient,old};

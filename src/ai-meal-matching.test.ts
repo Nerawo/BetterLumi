@@ -8,7 +8,7 @@ import {recipeServingNutrition} from './recipe-nutrition';
 import {createAIMealDraft,selectAIMealDraftSource,editAIMealDraftRow} from './ai-meal-state';
 import {matchAIMealFood,pantryAIMealSource,recipeAIMealSource,type AIMealCatalog} from './ai-meal-matching';
 const ingredient=(patch:Partial<PantryItem>={}):PantryItem=>({...stamp(),name:'Synthetic liquid',nameZh:'测试饮品',aliases:['Synthetic alias'],brand:'',basis:'100g',referenceAmount:222,referenceUnit:'mL',servingGrams:null,calories:111,protein:4,carbs:12,fat:0,...patch});
-const recipe=(name='Synthetic recipe'):Recipe=>({...stamp(),name,servings:2,lines:[{ingredientId:'original-id',name:'Original line',quantity:100,unit:'g',nutrition:{calories:333.123456,protein:null,carbs:30,fat:4}}],instructions:'',stickyNote:''});
+const recipe=(name='Synthetic recipe'):Recipe<import("./domain").RecipeLine>=>({...stamp(),name,servings:2,lines:[{ingredientId:'original-id',name:'Original line',quantity:100,unit:'g',nutrition:{calories:333.123456,protein:null,carbs:30,fat:4}}],instructions:'',stickyNote:''});
 const catalog=(patch:Partial<AIMealCatalog>={}):AIMealCatalog=>({ingredients:[],recipes:[],preferences:{},...patch});
 const portion=(amount=2,unit='份')=>({amount,unit,weightG:null});
 const row=()=>createAIMealDraft(JSON.stringify({format:'betterlumi-meal',version:1,meals:[{date:null,mealType:null,items:[{name:'Synthetic food',date:null,mealType:null,amount:2,unit:'份',weightG:null,consumedFraction:.5,nutrition:{calories:123,protein:null,carbs:20,fat:0},estimated:true,notes:null,splitSuggestions:[]}]}]})).rows[0];

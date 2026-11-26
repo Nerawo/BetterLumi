@@ -4,7 +4,6 @@ import {builtInFoods} from './data/builtInFoods';
 import {ingredientTagOptions} from './data/builtInTags';
 import {everydayFoodGroups,everydayFoodNames,visibleEverydayFood} from './everyday-foods';
 import {builtInFoodLine,referenceName,searchFoodChoices} from './reference-library';
-import {sortPantryFoods} from './pantry-foods';
 import {builtInHouseholdUnits} from './household-units';
 import {availableUnits,saveIngredientPreference,preferredFoodUnit,personalNutrition,ingredientPreferenceRows} from './ingredient-preferences';
 import {db,stamp,exportAll,restoreAll,recipes,foodLogs} from './domain';
@@ -22,7 +21,7 @@ it.each([
  ['藜麦','Quinoa (dry)','168874'],['熟藜麦','Quinoa (cooked)','168917'],
 ])('offers concise %s / %s names and predictable generic search',(zh,en,fdc)=>{
  const f=food(fdc);expect(referenceName(f,'zh-CN')).toBe(zh);expect(referenceName(f,'en')).toBe(en);
- for(const q of [zh,en]){expect(results(q)[0].item.id).toBe(f.id);expect(sortPantryFoods(results(q),'name-asc','zh',q)[0].item.id).toBe(f.id)}
+ for(const q of [zh,en])expect(results(q)[0].item.id).toBe(f.id);
 });
 it.each([['Bartlett','746773'],['巴特利特','746773'],['Gala','1750341'],['Tommy Atkins','2710833'],['汤米阿特金斯','2710833'],['Hass','2710824'],['中粒','169760'],['中粒白米饭','168930'],['medium grain','168930'],['short-grain','168932'],['短粒白米','168931']])('retains explicit cultivar / grain search %s',(q,fdc)=>{expect(results(q).some(r=>r.item.id===food(fdc).id)).toBe(true)});
 it('groups only two white-rice preparations and never deletes their variants',()=>{
@@ -62,5 +61,5 @@ it('keeps hidden variants resolvable with their custom units, archives, defaults
  expect(personalNutrition(choice,1,'bowl',pref).calories).toBeCloseTo(f.kcalPer100g!*1.77,12);
  expect((await exportAll()).tables).toEqual(before.tables);await restoreAll(before);
  expect(await recipes.get(recipe.id)).toEqual(recipe);expect(await foodLogs.get(log.id)).toEqual(log);
- expect(ingredientPreferenceRows(await db.settings.toArray())[f.id]).toEqual(pref);expect(before.version).toBe(16);expect(db.verno).toBe(7);expect(db.name).toBe('BetterLumi');
+ expect(ingredientPreferenceRows(await db.settings.toArray())[f.id]).toEqual(pref);expect(before.version).toBe(20);expect(db.verno).toBe(8);expect(db.name).toBe('BetterLumi');
 });

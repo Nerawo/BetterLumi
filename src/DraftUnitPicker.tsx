@@ -1,4 +1,4 @@
-import {useId,useLayoutEffect,useRef,useState} from 'react';
+import {useId,useLayoutEffect,useRef,useState,type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {useTranslation} from 'react-i18next';
 
@@ -13,7 +13,7 @@ export interface DraftUnits {
   change:(unit:string)=>void;
 }
 
-export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:boolean;setOpen:(value:boolean)=>void}){
+export function DraftUnitPicker({units,open,setOpen,triggerContent,matchColumn=false}:{units:DraftUnits;open:boolean;setOpen:(value:boolean)=>void;triggerContent?:ReactNode;matchColumn?:boolean}){
   const {t}=useTranslation();
   const trigger=useRef<HTMLButtonElement>(null),menu=useRef<HTMLDivElement>(null);
   const id=useId();
@@ -25,8 +25,14 @@ export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:bool
   useLayoutEffect(()=>{
     if(!open||units.fixed){setPlaced(false);if(open)setOpen(false);return}
     const anchor=trigger.current!,popup=menu.current!,modal=anchor.closest('dialog')!;
-    const scroller=anchor.closest('.recipe-editor-scroll,.add-food-scroll,.journal-scroll')!;
+    const scroller=anchor.closest('.recipe-editor-scroll,.add-food-scroll,.journal-scroll,.pantry-editor-body,.modal-scroll')??modal;
     const viewport=window.visualViewport;
+    if(matchColumn){
+      popup.style.width=anchor.getBoundingClientRect().width+'px';
+      const bottom=Math.min(scroller.getBoundingClientRect().bottom,(viewport?.offsetTop??0)+(viewport?.height??innerHeight));
+      const needed=anchor.getBoundingClientRect().bottom+7+Math.min(popup.scrollHeight,132)-bottom;
+      if(needed>0)scroller.scrollTop+=needed;
+    }
     const place=()=>{
       const a=anchor.getBoundingClientRect(),m=modal.getBoundingClientRect(),body=scroller.getBoundingClientRect();
       const top=Math.max(body.top,viewport?.offsetTop??0)+3;
@@ -34,9 +40,10 @@ export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:bool
       if(a.bottom<top||a.top>bottom){setOpen(false);return}
       const left=Math.max(body.left,viewport?.offsetLeft??0)+4;
       const right=Math.min(body.right,(viewport?.offsetLeft??0)+(viewport?.width??innerWidth))-4;
+      if(matchColumn)popup.style.width=a.width+'px';
       popup.style.maxWidth=Math.max(0,right-left)+'px';
       const above=a.top-top-2,below=bottom-a.bottom-2;
-      const upward=below<popup.scrollHeight+2&&above>below;
+      const upward=!matchColumn&&below<popup.scrollHeight+2&&above>below;
       popup.style.maxHeight=Math.max(0,upward?above:below)+'px';
       const x=Math.max(left,Math.min(right-popup.offsetWidth,a.right-popup.offsetWidth));
       popup.style.left=(x-m.left-modal.clientLeft)+'px';
@@ -60,13 +67,13 @@ export function DraftUnitPicker({units,open,setOpen}:{units:DraftUnits;open:bool
       viewport?.removeEventListener('resize',place);
       viewport?.removeEventListener('scroll',place);
     };
-  },[open,setOpen,units.fixed]);
+  },[open,setOpen,units.fixed,matchColumn]);
   const dialog=trigger.current?.closest('dialog');
   if(units.fixed)return <span className="draft-unit-text" data-unit={units.value}>{units.label}</span>;
   return <><button ref={trigger} type="button" className="draft-unit-trigger" data-unit={units.value} aria-label={units.accessibleLabel??(t('draftChangeUnit')+' '+units.name)}
     aria-haspopup="menu" aria-expanded={open} aria-controls={open?id:undefined} disabled={units.disabled}
-    onClick={()=>setOpen(!open)}>{units.label}</button>
-    {open&&dialog&&createPortal(<div id={id} ref={menu} className="draft-unit-menu" role="menu" aria-label={units.accessibleLabel??t('draftChangeUnit')}
+    onClick={()=>setOpen(!open)}>{triggerContent??units.label}</button>
+    {open&&dialog&&createPortal(<div id={id} ref={menu} className={'draft-unit-menu'+(matchColumn?' draft-unit-column-menu':'')} role="menu" aria-label={units.accessibleLabel??t('draftChangeUnit')}
       style={{opacity:placed?1:0}} onKeyDown={e=>{
         if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);return}
         if(e.key==='Tab'){close(true);return}

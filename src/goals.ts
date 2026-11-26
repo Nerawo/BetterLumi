@@ -34,10 +34,13 @@ function selectSectionVersion(goals:Goal[],start:string,end:string,section:GoalS
  return dated.sort((a,b)=>goalPeriod(b,section).startDate.localeCompare(goalPeriod(a,section).startDate)||revisionOrder(a,b))[0]??unrestricted??null;
 }
 export function sectionGoal(goals:Goal[],start:string,end:string,section:GoalSection){return selectSectionVersion(goals.filter(goal=>section==='nutrition'?!goal.scope:goal.scope!=='calories'&&!goal.nutritionOnly),start,end,section)}
+export function latestNutritionVersion(goals:Goal[],start:string,end=start){
+ return selectSectionVersion(goals.filter(goal=>goal.scope!=='exercise'),start,end,'nutrition');
+}
 /** Compose a read-only view; never persist or rewrite these resolved versions. */
 export function resolvedGoal(goals:Goal[],start:string,end=start):Goal|null {
  const nutrition=evaluateToleranceGoal(sectionGoal(goals,start,end,'nutrition'),end),exercise=sectionGoal(goals,start,end,'exercise');
- const latest=selectSectionVersion(goals.filter(goal=>goal.scope!=='exercise'),start,end,'nutrition'),calories=latest?.scope==='calories'?evaluateToleranceGoal(latest,end):null;
+ const latest=latestNutritionVersion(goals,start,end),calories=latest?.scope==='calories'?evaluateToleranceGoal(latest,end):null;
  if(!calories&&nutrition===exercise)return nutrition;
  const base=[nutrition,exercise,calories].filter((g):g is Goal=>g!==null).sort((a,b)=>b.revision-a.revision||goalVersionOrder(a,b))[0];if(!base)return null;
  const result:Goal={...base,scope:undefined,nutritionOnly:undefined,evaluationCalorieTarget:nutrition?.nutritionTargets?.calories??null,nutritionTargets:nutrition?.nutritionTargets,nutritionTolerances:nutrition?.nutritionTolerances,nutritionToleranceRevision:nutrition?.nutritionToleranceRevision,evaluationToleranceEvents:nutrition?.evaluationToleranceEvents,nutritionFrequency:nutrition?.nutritionFrequency,nutritionGoals:nutrition?.nutritionGoals,calorieMin:nutrition?.calorieMin??null,calorieMax:nutrition?.calorieMax??null,nutritionEnabled:nutrition?nutrition.nutritionEnabled!==false:false,nutritionPeriod:nutrition?goalPeriod(nutrition,'nutrition'):undefined,exerciseMode:exercise?.exerciseMode,exerciseMinutes:exercise?.exerciseMinutes??null,exerciseKcal:exercise?.exerciseKcal??null,exerciseEnabled:exercise?exercise.exerciseEnabled!==false:false,exercisePeriod:exercise?goalPeriod(exercise,'exercise'):undefined};
@@ -98,7 +101,8 @@ export async function saveGoalVersion(value: Omit<Goal, keyof RecordBase>,edit?:
     if(edit&&(!existing||existing.deletedAt||existing.revision!==edit.revision))throw Error('Goal changed');
     if(existing&&sameGoalDates(existing,value)){
       const preserveAnchor=(section:GoalSection)=>{const period=goalPeriod({...existing,...storedValue},section);return period.unrestricted?{...period,startDate:goalPeriod(existing,section).startDate}:period};
-      await goalTable.put({...existing,...storedValue,id:existing.id,createdAt:existing.createdAt,updatedAt:new Date().toISOString(),revision,startDate:existing.startDate,nutritionPeriod:preserveAnchor('nutrition'),exercisePeriod:preserveAnchor('exercise')});
+      await goalTable.put({...existing,...storedValue,id:existing.id,createdAt:existing.createdAt,updatedAt:new Date().toISOString(),revision,startDate:existing.startDate,nutritionPeriod:preserveAnchor('nutrition'),
+        ...(!value.nutritionOnly&&{exercisePeriod:preserveAnchor('exercise')})});
       return;
     }
     await goalTable.add({

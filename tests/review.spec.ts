@@ -80,7 +80,7 @@ test("calendar above meals synchronizes the selected day while old links and his
   );
   await expect(page.locator(".meal-card .meal-row")).toHaveCount(1);
   await expect(page.locator(".meal-card")).toContainText("历史早餐");
-  await expect(page.locator(".today-layout .exercise-card")).toContainText("历史运动");
+  await expect(page.locator("#today-tab-activity")).toHaveCount(0);
   const meals = await page.locator(".meal-card").boundingBox();
   const calendar = await page.locator(".calendar-card").boundingBox();
   expect(calendar!.y + calendar!.height).toBeLessThanOrEqual(meals!.y);
@@ -150,9 +150,9 @@ test("category manager, multi assignments, modal state, touch-visible nutrition,
     .click();
   dialog = page.getByRole("dialog");
   await dialog.getByRole("button", {name: "选择分类", exact: true}).click();
-  await expect(dialog.getByLabel("早餐", { exact: true })).toBeChecked();
-  await expect(dialog.getByLabel("快速", { exact: true })).toBeChecked();
-  await dialog.getByLabel("晚间", { exact: true }).check();
+  await expect(dialog.getByRole('button',{name:'早餐',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(dialog.getByRole('button',{name:'快速',exact:true})).toHaveAttribute('aria-pressed','true');
+  await dialog.getByRole('button',{name:'晚间',exact:true}).click();
   await dialog.locator(".category-picker-done").click();
   await dialog.getByRole("button", { name: "保存", exact: true }).click();
   await page.getByRole("tab", { name: "晚间", exact: true }).click();
@@ -226,10 +226,10 @@ test("closing with X, Escape and backdrop preserves list scrolling; tab keyboard
       await d.recipes.put({ ...r, ...d.stamp(), name: "滚动食谱 " + n });
   }, data.recipe);
   await page.goto("/recipes");
-  await expect(page.getByRole("tab")).toHaveCount(3);
+  await expect(page.locator('.collection-navigation').getByRole("tab")).toHaveCount(3);
   await page.getByRole("tab", { name: "全部", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByRole("tab").nth(1)).toHaveAttribute(
+  await expect(page.locator('.collection-navigation').getByRole("tab").nth(1)).toHaveAttribute(
     "aria-selected",
     "true",
   );

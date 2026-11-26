@@ -4,13 +4,16 @@ import { validConsumptionUnit, type ConsumptionUnit } from "./consumption-units"
 import {newId} from "./ids";
 import Dexie, { type Table } from "dexie";
 import type {FoodBatch, StorageTransaction} from "./food-storage-model";
-export const SCHEMA_VERSION = 7;
+export const SCHEMA_VERSION = 8;
 export interface RecordBase {
   id: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   revision: number;
+}
+export interface IngredientFamily extends RecordBase {
+  name:string; alternateName:string; memberIds:string[]; inUseIds:string[];
 }
 export interface Ingredient extends RecordBase {
   name: string;
@@ -73,6 +76,7 @@ export interface FutureRecord extends RecordBase {
   [key: string]: unknown;
 }
 export class LumiDB extends Dexie {
+  ingredientFamilies!: Table<IngredientFamily>;
   ingredients!: Table<Ingredient>;
   activities!: Table<Activity>;
   supplements!: Table<Supplement>;
@@ -164,10 +168,11 @@ export class LumiDB extends Dexie {
     // Additive only: existing records remain untouched.
     this.version(6).stores({ingredientTags:"id,name,updatedAt,deletedAt"});
     // Food Storage is additive: no upgrade callback, reseeding or rewrites of existing rows.
-    this.version(SCHEMA_VERSION).stores({
+    this.version(7).stores({
       foodBatches: "id,name,sourceRecipeId,preparedOn,updatedAt,deletedAt",
       inventoryTransactions: "id,*batchIds,mealId,targetBatchId,createdAt",
     });
+    this.version(8).stores({ingredientFamilies:"id,name,*memberIds"});
   }
 }
 export const db = new LumiDB();
@@ -202,6 +207,19 @@ export function per100g(i: Ingredient) {
   };
 }
 export async function remove(table: Table<RecordBase>, row: RecordBase) {
+  if(table.name==='ingredients'){
+    const database=table.db as LumiDB;
+    await database.transaction('rw',table,database.ingredientFamilies,database.foodBatches,async()=>{
+      if(await database.foodBatches.filter(b=>b.stock?.ingredientId===row.id&&b.remainingQuantity>0).count())throw Error('Ingredient has remaining stock');
+      const now=new Date().toISOString();
+      await database.ingredientFamilies.where('memberIds').equals(row.id).modify(f=>{
+        f.memberIds=f.memberIds.filter(id=>id!==row.id);f.inUseIds=f.inUseIds.filter(id=>id!==row.id);
+        f.updatedAt=now;f.revision++;
+      });
+      await table.update(row.id,{deletedAt:now,updatedAt:now,revision:row.revision+1});
+    });
+    return;
+  }
   await table.update(row.id, {
     deletedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -222,6 +240,7 @@ export const tableNames = [
 export async function makeBackup(database = db) {
   const tables: Record<string, unknown[]> = {};
   await database.transaction("r", database.tables, async () => {
+    if(await database.ingredientFamilies.count())throw Error("Ingredient families require a full backup");
     if (await database.foodBatches.count() || await database.inventoryTransactions.count()) throw Error("Food Storage requires the full exportAll backup");
     for (const name of tableNames)
       tables[name] = await database.table(name).toArray();
@@ -335,6 +354,7 @@ export async function restoreBackup(value: unknown, database = db) {
   copy.tables.ingredientTags??=[];
   reconcileIngredientTags(copy.tables);
   await database.transaction("rw", database.tables, async () => {
+    if(await database.ingredientFamilies.count())throw Error("Ingredient families require a full backup");
     if (await database.foodBatches.count() || await database.inventoryTransactions.count()) throw Error("Food Storage requires the full restoreAll backup");
     for (const name of tableNames) {
       await database.table(name).clear();

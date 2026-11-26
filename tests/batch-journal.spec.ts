@@ -99,7 +99,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
   await expect(modal).toHaveCount(0);
   expect(await remaining()).toBeLessThan(350);
   await page.locator('.storage-list-row').filter({hasText:'Apple Cinnamon'}).tap();
-  await page.locator('.storage-detail-actions button').nth(1).tap();
+  await page.getByRole('button',{name:language==='zh'?'修正配方':'Correct formula',exact:true}).tap();
   await expect(weight).toHaveValue('400');
   await expect(headings).toHaveCount(2);
   await expect(modal.locator('.batch-note-text')).toHaveText('留作周末早餐。');

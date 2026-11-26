@@ -296,7 +296,7 @@ describe("non-destructive migrations and backup continuity", () => {
     });
     await foodLogs.put(food(null));
     const backup = await exportAll();
-    expect(backup.version).toBe(16);
+    expect(backup.version).toBe(20);
     await restoreAll(backup);
     expect((await db.activities.get(a.id))?.bodyParts).toEqual([
       "Custom label",

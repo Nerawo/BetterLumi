@@ -222,7 +222,7 @@
 .page-today .macro-goal-range .number-unit { display: inline-flex; flex-wrap: nowrap; justify-content: center; gap: 2px; white-space: nowrap; }
 .page-today .exercise-card :is(.activity-row,.planned-movement-row) { min-height: 64px; padding-block: 10px; }
 .page-today .exercise-card .activity-row .actions button { width: 40px; min-width: 40px; min-height: 44px; }
-.page-today .exercise-card :is(.simple-row .grow > small,.exercise-row-values,.exercise-notes) { font-size: 11px; line-height: 1.5; }
+.page-today .exercise-card :is(.simple-row .grow > small,.exercise-row-values) { font-size: 11px; line-height: 1.5; }
 .page-today .exercise-card .daily-plan-group { background: transparent; border-radius: 0; }
 .page-today .supplement-toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: -6px; }
 .page-today .supplement-count { font: 500 12px/1.5 var(--font-ui); color: var(--muted); font-variant-numeric: tabular-nums; }

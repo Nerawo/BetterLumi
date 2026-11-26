@@ -2,9 +2,9 @@ import type {Recipe} from './domain';
 import type {PantrySort} from './PantrySortMenu';
 import {recipeListNutrition} from './recipe-list-nutrition';
 /** Presentation only. Unknown energy stays last in either direction. */
-export function sortRecipes(items:readonly Recipe[],sort:PantrySort,language:string):Recipe[]{
+export function sortRecipes(items:readonly Recipe[],sort:PantrySort,language:string,energy:(recipe:Recipe)=>number|null=recipe=>recipeListNutrition(recipe).nutrition.calories):Recipe[]{
  const direction=sort.endsWith('desc')?-1:1;
- return items.map(recipe=>({recipe,calories:recipeListNutrition(recipe).nutrition.calories})).sort((a,b)=>{
+ return items.map(recipe=>({recipe,calories:energy(recipe)})).sort((a,b)=>{
   if(sort.startsWith('calories')){
    if(a.calories===null&&b.calories!==null)return 1;
    if(b.calories===null&&a.calories!==null)return -1;

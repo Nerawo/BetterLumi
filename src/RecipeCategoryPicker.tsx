@@ -20,7 +20,7 @@ export function RecipeCategoryPicker({ value, onToggle, className = "", pills = 
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false), [name, setName] = useState("");
   const newInput=useRef<HTMLInputElement>(null),pointerInside=useRef(false),createLock=useRef(false);
-  useEffect(()=>{if(!creating)return;const reveal=()=>requestAnimationFrame(()=>newInput.current?.closest('.category-create-row')?.scrollIntoView({block:'nearest',inline:'nearest'}));newInput.current?.focus({preventScroll:true});reveal();window.visualViewport?.addEventListener('resize',reveal);return()=>window.visualViewport?.removeEventListener('resize',reveal)},[creating]);
+  useEffect(()=>{if(creating)newInput.current?.focus({preventScroll:true})},[creating]);
   const create=async()=>{if(createLock.current||busy)return;if(!name.trim()){setError(t('categoryNameRequired'));return;}createLock.current=true;setBusy(true);setError("");try{const category=await findOrCreateCategory(name);await onToggle(category.id,true);setName("");setCreating(false);trigger.current?.focus({preventScroll:true})}catch{setError(t("failedMessage"))}finally{createLock.current=false;setBusy(false)}};
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);

@@ -1,0 +1,153 @@
+.page-pantry .pantry-add-actions .pantry-fab {width:46px;height:46px;min-width:0;padding:0;justify-content:center;border-radius:50%}
+.pantry-add-menu{position:fixed;z-index:46;right:max(var(--journal-gutter),env(safe-area-inset-right),calc((100vw - 1040px)/2 + var(--journal-gutter)));bottom:calc(130px + max(12px,env(safe-area-inset-bottom)));display:grid;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px;box-shadow:0 4px 14px var(--shadow);animation:family-menu-in .13s ease-out}
+@keyframes family-menu-in{from{opacity:0;transform:translateY(3px)}}
+.pantry-add-menu button{min-height:44px;padding:5px 14px;text-align:start;background:transparent;color:var(--action);border:0}
+
+.family-dot {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.pantry-list .family-child .actions > .family-dot:is(:hover,:active),
+.family-member-editor .family-dot:is(:hover,:active) { background: transparent; }
+.family-dot span {
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.family-dot[aria-pressed=true] { color: var(--action); }
+.family-dot[aria-pressed=true] span { background: currentColor; }
+
+.family-editor .family-editor-scroll { gap: 12px; }
+.family-editor .family-editor-scroll section { flex: none; }
+.family-editor .family-editor-scroll h3 { margin: 0 0 6px; }
+.family-editor .draft-basics { gap: 2px; }
+.family-editor .draft-name-line:has(input:not([required])) > .muted { color: var(--action); font: 14px var(--font-ui); }
+.family-editor-members, .family-delete-section { padding-top: 12px; border-top: 1px solid var(--line); }
+.family-editor .family-add-member { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; }
+.family-member-editor { display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+.family-member-editor:last-child { border-bottom: 0; }
+.family-member-editor > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.family-member-editor button { min-width: 44px; min-height: 44px; background: transparent; border: 0; color: var(--muted); }
+.family-editor .family-delete { color: #91483f; min-height: 44px; padding: 0; }
+.family-member-picker .ingredient-picker-result { width: 100%; text-align: start; }
+
+.family-parent:has(.family-heading[aria-expanded]) { cursor: pointer; }
+.pantry-list .family-parent .ingredient-title-line { align-items: center; }
+.pantry-list .family-parent .ingredient-energy { display: inline-flex; align-items: center; gap: 4px; padding-top: 0; }
+.family-parent .ingredient-energy svg { flex: none; }
+.family-summary { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); }
+.family-actions { position: relative; }
+.family-action-trigger {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.family-action-trigger::before { content:''; position:absolute; inset:-6px -4px; }
+.family-action-menu {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 100%;
+  z-index: 4;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px var(--shadow);
+}
+.family-action-menu button { min-height: 44px; white-space: nowrap; border: 0; background: transparent; color: var(--action); }
+
+.page-pantry .pantry-list { --family-member-indent: 16px; }
+.pantry-family:has(.family-children) { border-block-end: 1px solid var(--line); }
+.family-children { margin-inline-start: var(--family-member-indent); padding-block: 4px; }
+.family-child { position: relative; }
+.family-child::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: -10px;
+  inline-size: 1px;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--muted) 32%, var(--line));
+}
+.family-child[data-in-use=true]::before { background: color-mix(in srgb, var(--action) 72%, var(--line)); }
+.pantry-list .family-child:last-child .pantry-row { border-block-end-color: transparent; }
+.page-pantry .family-child .pantry-row:has(.family-dot:hover) { background: transparent; }
+@media (hover:none) {
+  .page-pantry .family-child .pantry-row:hover { background: transparent; }
+}
+
+.pantry-list .family-child .ingredient-name {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pantry-list .family-child .ingredient-primary,
+.pantry-list .family-child .ingredient-secondary { display: inline; white-space: inherit; }
+
+/* Both kinds of concrete ingredient share a title line and one metadata/action band. */
+.page-pantry .pantry-list .pantry-row { padding-block:5px; }
+.page-pantry .pantry-list .ingredient-title-line :is(h3,.ingredient-name) { min-height:24px; }
+.pantry-list .pantry-row:not(.family-parent) .pantry-row-content {
+ position:relative; display:grid; grid-template-columns:minmax(0,1fr) 44px; grid-template-rows:auto auto auto;
+}
+.pantry-list .pantry-row-content .ingredient-title-line {grid-column:1/-1}
+.pantry-list .pantry-row:not(.family-parent) .pantry-secondary-line {display:contents}
+.pantry-list .pantry-secondary-line > .pantry-source-line {grid-column:1;grid-row:2;align-self:center;margin:0}
+@media(max-width:360px){.pantry-list .pantry-row:not(.family-parent) .pantry-row-content {grid-template-rows:auto auto minmax(34px,auto)}}
+.pantry-list .pantry-row .pantry-row-content .macro-summary {grid-column:1;grid-row:3;margin:0}
+.pantry-list > .pantry-row :is(.pantry-source-line,.macro-summary) {padding-inline-end:var(--family-member-indent)}
+.pantry-list .pantry-row .has-secondary-actions :is(.pantry-source-line,.macro-summary) {padding-inline-end:0}
+.pantry-list .pantry-row .pantry-secondary-line > .actions {position:absolute;inset:auto 0 0 auto}
+.pantry-list .pantry-row .pantry-secondary-line > .actions button {display:grid;place-items:center;padding:0}
+.page-pantry .pantry-list .pantry-row.family-parent { position:relative; isolation:isolate; min-height:56px; }
+.page-pantry .pantry-list .family-parent:has(.family-action-menu) { z-index:1; }
+.pantry-list .family-parent .family-heading:hover { background:transparent; }
+.pantry-list .family-parent::before {
+  content:''; position:absolute; inset-block:4px; inset-inline:-6px; z-index:-1;
+  pointer-events:none; border-radius:8px;
+  background:color-mix(in srgb,var(--action) 9%,var(--bg));
+}
+.family-editor .draft-name > span:first-child,.family-editor .ingredient-field-label {font:500 13px/1.4 var(--font-ui);color:var(--muted)}
+.family-editor .draft-name-line > span,.family-editor .family-member-editor > span {font:500 16px/1.45 var(--font-ui)}
+.family-editor .family-add-member,.family-editor .draft-name-line:has(input:not([required])) > .muted {font:500 14px/1.4 var(--font-ui);color:var(--action)}
+.family-member-editor > span {white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.family-member-editor button.family-dot[aria-pressed=true] {color:var(--action)}
+.family-member-picker .ingredient-picker-result.member-option {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:baseline;text-align:start;padding:8px 0}
+.member-option > strong {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-option > small:not(.member-option-energy) {grid-column:1/-1}
+.member-option-energy {white-space:nowrap}
+.managed-category-list .collection-drag-handle {flex:0 0 44px;min-height:44px;display:grid;place-items:center;padding:0;border:0;background:transparent;touch-action:none;user-select:none;-webkit-touch-callout:none}
+.managed-category-list:has(.is-dragging) .managed-category-row {transition:transform .14s ease}
+.managed-category-list .managed-category-row.is-dragging {position:relative;z-index:1;background:var(--soft);opacity:1;transition:none}
+.page-recipes #recipes-library-panel > .category-bar.collection-navigation,.page-pantry .ingredient-tag-bar > .category-bar.collection-navigation {
+ box-sizing:border-box;height:52px;min-height:52px;padding-block:4px;align-items:center;margin-block:0;border-block:0;
+}
+:is(.page-pantry,.page-recipes) .collection-navigation .category-tabs.editorial-pill-nav,
+:is(.page-pantry,.page-recipes) .collection-navigation .collection-pill-scroll {align-items:center;height:44px;padding-block:0;margin-block:0;border-block:0}
+:is(.page-pantry,.page-recipes) .category-bar.collection-navigation [role=tab] {display:inline-flex;align-items:center;justify-content:center;height:40px;min-height:40px;padding-block:0;line-height:20px}
+.page.page-recipes #recipes-library-panel > .search,.page-pantry.page-pantry > .search {margin-bottom:4px}
+.page.page-recipes #recipes-library-panel > .directory-summary-row,.page-pantry.page-pantry > .directory-summary-row {margin-top:4px}
+.pantry-sort .pantry-sort-menu [role=menuitemradio] {display:flex;align-items:center;justify-content:space-between;color:var(--ink)}
+.pantry-sort [role=menuitemradio] .sort-direction {color:var(--muted)}
+.pantry-sort .pantry-sort-trigger .sort-direction,.pantry-sort [aria-checked=true] .sort-direction {color:var(--action)}
+.pantry-sort .pantry-sort-menu [aria-checked=true] {background:var(--soft)}

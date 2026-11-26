@@ -1,4 +1,4 @@
-import type {Recipe,RecipeLine} from './domain';
+import type {Recipe,RecipeLine,TemplateLine} from './domain';
 import {validZeroReference} from './line-nutrition';
 import {newId} from './ids';
 
@@ -19,15 +19,15 @@ export interface CookingSession {
 const text=(v:unknown):v is string=>typeof v==='string'&&!!v.trim();
 const positive=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v)&&v>0;
 /** Organizational metadata deliberately excluded: moving/renaming groups cannot invalidate progress. */
-export const cookingFingerprint=(l:RecipeLine)=>JSON.stringify([l.source??'pantry',l.ingredientId,l.sourceBatchId??null,l.quantityBasis??null,l.name,l.quantity,l.unit,l.nutrition,...(l.zeroQuantityReference?[l.zeroQuantityReference]:[])]);
-export function identifyRecipeLines(lines:RecipeLine[]):RecipeLine[]{
+export const cookingFingerprint=(l:TemplateLine)=>l.source==="family"?JSON.stringify(["family",l.familyId,null,null,"",l.quantity,l.unit]):JSON.stringify([l.source??'pantry',l.ingredientId,l.sourceBatchId??null,l.quantityBasis??null,l.name,l.quantity,l.unit,l.nutrition,...(l.zeroQuantityReference?[l.zeroQuantityReference]:[])]);
+export function identifyRecipeLines<L extends TemplateLine>(lines:L[]):L[]{
  const seen=new Set<string>();return lines.map(l=>{const id=l.lineId&&!seen.has(l.lineId)?l.lineId:newId();seen.add(id);return {...l,lineId:id}});
 }
-export function recipeSections(recipe:Pick<Recipe,'lines'|'ingredientGroups'>){
+export function recipeSections<L extends TemplateLine>(recipe:{lines:L[];ingredientGroups?:IngredientGroup[]}){
  const groups=recipe.ingredientGroups??[],known=new Set(groups.map(g=>g.id));
  return [{id:'',name:'',lines:recipe.lines.filter(l=>!l.groupId||!known.has(l.groupId))},...groups.map(g=>({...g,lines:recipe.lines.filter(l=>l.groupId===g.id)}))];
 }
-export function removeIngredientGroup(recipe:Pick<Recipe,'lines'|'ingredientGroups'>,id:string){
+export function removeIngredientGroup<L extends TemplateLine>(recipe:{lines:L[];ingredientGroups?:IngredientGroup[]},id:string){
  return {ingredientGroups:(recipe.ingredientGroups??[]).filter(g=>g.id!==id),lines:recipe.lines.map(l=>l.groupId===id?{...l,groupId:undefined}:l)};
 }
 export function reconcileCookingSession(recipe:Recipe,old?:CookingSession):CookingSession {
@@ -165,7 +165,7 @@ export function validateCookingSession(s:CookingSession):void {
  const legacy=s.entries.flatMap((e,index)=>e.lineId?[]:[{id:e.id,index,fingerprint:e.fingerprint}]);
  if(legacy.length!==s.legacyMappings.length||legacy.some((e,i)=>{const m=s.legacyMappings[i];return !m||m.id!==e.id||m.index!==e.index||m.fingerprint!==e.fingerprint}))throw Error('Invalid legacy cooking identities');
 }
-export function validateJournalBackup(tables:Record<string,unknown[]>,version=16){
+export function validateJournalBackup(tables:Record<string,unknown[]>,version=17){
  for(const recipe of (tables.recipeCards??[]) as Recipe[]){
   if(version<12&&(recipe.ingredientGroups!==undefined||recipe.lines.some(l=>l.groupId!==undefined)))throw Error('Cooking journal requires backup version 12');
   validateJournalRecipe(recipe);
@@ -173,6 +173,14 @@ export function validateJournalBackup(tables:Record<string,unknown[]>,version=16
  for(const row of (tables.settings??[]) as {key:string;value:string}[]){if(!row.key.startsWith(COOKING_PREFIX))continue;
   if(version<12)throw Error('Cooking sessions require backup version 12');
   const s=JSON.parse(row.value) as CookingSession;validateCookingSession(s);
+  for(const entry of s.entries){
+   if(!entry.fingerprint.startsWith('["family",'))continue;
+   const fingerprint=JSON.parse(entry.fingerprint),id=fingerprint[1];
+   if(fingerprint.length!==7||!text(id)||fingerprint[2]!==null||fingerprint[3]!==null||fingerprint[4]!==''||
+     !Number.isFinite(fingerprint[5])||fingerprint[5]<0||!['g','mL'].includes(fingerprint[6])||!entry.lineId)throw Error('Invalid family slot');
+   if(s.version!==4&&!s.ingredientChanges?.removedEntries.some(r=>r.entryId===entry.id))throw Error('Invalid cooking family session version');
+   if(version<17||!(tables.ingredientFamilies as {id:string;deletedAt:string|null}[]|undefined)?.some(f=>f.id===id&&(!f.deletedAt||s.status!=='active')))throw Error('Invalid cooking family reference');
+  }
   if(version<16&&s.version===4)throw Error('Cooking Session v4 requires backup version 16');
   if(version<15&&s.version===3)throw Error('Cooking Session v3 requires backup version 15');
   const recipe=(tables.recipeCards as Recipe[]).find(r=>r.id===s.recipeId);

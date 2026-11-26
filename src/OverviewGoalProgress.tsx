@@ -2,7 +2,6 @@ import {calorieGoalDisplay} from "./nutrition-goal-display";
 import {useTranslation} from "react-i18next";
 import {round} from "./domain";
 import {rangeText} from "./GoalCards";
-import {progressPercent} from "./today-progress";
 import type {NutritionGoal} from "./goal-model";
 import type {measurement} from "./aggregation";
 import type {weeklyStatistics} from "./weekly-goals";
@@ -26,18 +25,5 @@ export function NutritionGoalProgress({metric,config,daily,weekly,graphic=false,
   {targetOnly?<div className="overview-goal-comparison"><span className="goal-comparison-target">{rangeText(config.min,config.max)}</span><small>{unit+(isWeekly?"/"+t("perDay"):"")}</small></div>:<GoalComparison value={amount} target={rangeText(config.min,config.max)} unit={unit+(isWeekly?"/"+t("perDay"):"")}/>}
   {graphic?<svg className="graphic-calorie-ring" viewBox="0 0 100 100" role={display.percent===null?"img":"progressbar"} aria-label={name+" · "+t(isWeekly?"overviewWeeklyAverage":"goalDaily")} aria-valuemin={display.percent===null?undefined:0} aria-valuemax={display.percent===null?undefined:100} aria-valuenow={display.percent===null?undefined:Number(display.percent.toFixed(1))} data-status={status??"unknown"}><circle className="graphic-calorie-track" cx="50" cy="50" r="45"/>{display.percent!==null&&<circle className="graphic-calorie-fill" cx="50" cy="50" r="45" pathLength="100" strokeDasharray="100" strokeDashoffset={100-display.percent} transform="rotate(-90 50 50)"/>}</svg>:<OverviewBar percent={display.percent} label={name+" · "+t(isWeekly?"overviewWeeklyAverage":"goalDaily")} status={status}/>}
   {!display.complete&&(!targetOnly||amount!==null)&&<p className="progress-message">{t(amount===null?"notRecorded":"partialData")}</p>}
- </div>;
-}
-export function ExerciseGoalProgress({metric,target,daily,weekly,isWeekly,compatible}:{metric:"minutes"|"burned";target:number|null;daily:Measurement;weekly:Measurement;isWeekly:boolean;compatible:boolean}){
- const {t}=useTranslation();if(target===null)return null;
- const actual=isWeekly?weekly:daily,canCompare=(!isWeekly||compatible)&&actual.complete&&actual.value!==null;
- const met=actual.value!==null&&actual.value>=target,unit=metric==="minutes"?t("minutes"):"kcal";
- const name=t(metric==="minutes"?"overviewDurationGoal":"overviewBurnGoal");
- return <div className="overview-goal-progress" data-status={canCompare?(met?"within":"below"):actual.value===null?"unknown":"partial"} data-incomplete={!actual.complete||undefined} data-exercise-goal={metric} data-goal-mode={isWeekly?"weekly":"daily"}>
-  <div className="overview-goal-heading"><p className="overview-goal-label">{name}</p>{isWeekly&&<small>{t("overviewWeeklyShort")}</small>}</div>
-  <GoalComparison value={actual.value} target={target} unit={unit}/>
-  <OverviewBar percent={canCompare?progressPercent(actual.value,target):null} label={name+" · "+t(isWeekly?"goalWeeklyTotal":"goalDaily")} status={canCompare?(met?"within":"below"):null}/>
-  {!canCompare&&<p className="progress-message">{t(actual.value===null?"notRecorded":"partialData")}</p>}
-  {canCompare&&<p className="progress-message">{t(met?"overviewTargetMet":metric==="minutes"?"overviewMinutesLeft":"overviewKcalLeft",{value:round(Math.max(0,target-actual.value!))})}</p>}
  </div>;
 }

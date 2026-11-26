@@ -6,14 +6,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { localDate, round, type FoodLog, type Plan } from "./domain";
-import type { Activity } from "./db";
 import type { Goal } from "./goals";
 import { calendarRings } from "./calendar-rings";
 import { CalendarRings } from "./CalendarRings";
 import { CalendarDateJump } from "./CalendarDateJump";
 import { shiftMonth } from "./routing";
 import { shiftDay, weekDates } from "./exercise-schedule";
-export function Journal({ logs, activity: _activity, planItems, selected, setSelected, goals }: { logs: FoodLog[]; activity: Activity[]; planItems: Plan[]; selected: string; setSelected:(date:string)=>void; goals:Goal[] }) {
+export function Journal({ logs, planItems, selected, setSelected, goals }: { logs: FoodLog[]; planItems: Plan[]; selected: string; setSelected:(date:string)=>void; goals:Goal[] }) {
  const {t,i18n}=useTranslation(); const [expanded,setExpanded]=useState(false);const [achievementDate,setAchievementDate]=useState<string|null>(null);const [help,setHelp]=useState(false);
  const first=new Date(selected.slice(0,7)+"-01T12:00:00");
  const count=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();

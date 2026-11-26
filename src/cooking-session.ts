@@ -1,23 +1,39 @@
 import {db} from './db';
+import {checkPreparedMember,templateFromPreparation} from './family-contract';
 import {recipes,type Recipe} from './domain';
-import {normalizedCookingLines,initializeMealPreparation,type MealPreparation} from './cooking-effective';
-import {COOKING_PREFIX,reconcileCookingSession,validateJournalRecipe,validateCookingSession,type CookingSession} from './cooking-journal';
+import {effectiveCookingRecipe,normalizedCookingLines,initializeMealPreparation,type MealPreparation} from './cooking-effective';
+import {replaceCookingIngredient,COOKING_PREFIX,reconcileCookingSession,validateJournalRecipe,validateCookingSession,type CookingSession} from './cooking-journal';
 
-export async function openCookingSession(recipe:Recipe,restart=false,preparation?:MealPreparation){
+export async function openCookingSession(recipe:Recipe,restart=false,preparation?:MealPreparation,resolveSlots?:(s:CookingSession)=>CookingSession){
  validateJournalRecipe(recipe);
- return db.transaction('rw',db.settings,async()=>{
+ return db.transaction('rw',db.settings,db.ingredientFamilies,async()=>{
+  const familyIds=new Set(recipe.lines.flatMap(line=>line.source==='family'?[line.familyId]:[]));
+  if(familyIds.size){
+   const families=await db.ingredientFamilies.bulkGet([...familyIds]);
+   if(families.some(f=>!f||f.deletedAt))throw Error('familyReferenced');
+  }
   const key=COOKING_PREFIX+recipe.id,row=await db.settings.get(key);
   let old:CookingSession|undefined;
   if(row&&!restart){old=JSON.parse(row.value);validateCookingSession(old!);if(old!.recipeId!==recipe.id)throw Error('Invalid cooking recipe association')}
-  const fresh=reconcileCookingSession(recipe,old);
-  const next=preparation?initializeMealPreparation(recipe,fresh,preparation):fresh;validateCookingSession(next);await db.settings.put({key,value:JSON.stringify(next)});return next;
+  let fresh=reconcileCookingSession(recipe,old);
+  if(familyIds.size)fresh={...fresh,version:4,ingredientChanges:fresh.ingredientChanges??{addedLines:[],removedEntries:[]}};
+  let next=preparation?initializeMealPreparation(recipe,fresh,preparation):fresh;
+  if(resolveSlots)next=resolveSlots(next);
+  validateCookingSession(next);
+  await db.settings.put({key,value:JSON.stringify(next)});return next;
  });
 }
 /** Template and preparation baseline change together, without any inventory tables. */
 export async function updateRecipeFromCooking(recipe:Recipe,session:CookingSession){
- const nextRecipe={...recipe,lines:normalizedCookingLines(recipe,session).map((l,index)=>({...l,lineId:l.lineId??session.entries[index].id})),revision:recipe.revision+1,updatedAt:new Date().toISOString()};
+ const normalized=normalizedCookingLines(recipe,session).map((l,index)=>({...l,lineId:l.lineId??session.entries[index].id}));
+ const nextRecipe={...recipe,lines:templateFromPreparation(recipe,normalized),revision:recipe.revision+1,updatedAt:new Date().toISOString()};
  if(!nextRecipe.lines.length)throw Error('A recipe requires ingredients');
- const nextSession=reconcileCookingSession(nextRecipe,{...session,...(session.version>=3?{ingredientChanges:{addedLines:[],removedEntries:[]}}:{})});nextSession.quantityOverrides=[];nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
+ let nextSession=reconcileCookingSession(nextRecipe,{...session,...(session.version>=3?{ingredientChanges:{addedLines:[],removedEntries:[]}}:{})});nextSession.quantityOverrides=[];
+ for(const line of nextRecipe.lines)if(line.source==="family"){
+  const resolved=effectiveCookingRecipe(recipe,session).lines.find(l=>l.lineId===line.lineId)!;
+  nextSession=replaceCookingIngredient(nextSession,line.lineId,resolved);
+ }
+ nextSession.checked=session.checked.filter(id=>nextSession.entries.some(e=>e.id===id));
  return commitCookingRecipeUpdate(recipe,session,nextRecipe,nextSession);
 }
 /** Method has no ingredient identity effects, including for repeated legacy lines. */
@@ -27,9 +43,17 @@ export async function updateCookingMethod(recipe:Recipe,session:CookingSession,i
  return commitCookingRecipeUpdate(recipe,session,nextRecipe,{...session,recipeRevision:nextRecipe.revision});
 }
 function commitCookingRecipeUpdate(recipe:Recipe,session:CookingSession,nextRecipe:Recipe,nextSession:CookingSession){
- return db.transaction('rw',recipes,db.settings,async()=>{
+ return db.transaction('rw',recipes,db.settings,db.ingredientFamilies,async()=>{
   const current=await recipes.get(recipe.id);if(!current||JSON.stringify(current)!==JSON.stringify(recipe))throw Error('Recipe changed; reopen to reload');
   const key=COOKING_PREFIX+recipe.id,row=await db.settings.get(key);if(row?.value!==JSON.stringify(session))throw Error('Preparation changed; reopen to reload');
+  for(const line of nextRecipe.lines)if(line.source==='family'){
+   const family=await db.ingredientFamilies.get(line.familyId);
+   if(!family||family.deletedAt)throw Error('familyReferenced');
+   if(nextRecipe.lines!==recipe.lines){
+    const product=nextSession.ingredientChanges?.replacements?.find(r=>r.entryId===line.lineId)?.line;
+    checkPreparedMember(family,line,product);
+   }
+  }
   validateJournalRecipe(nextRecipe);validateCookingSession(nextSession);await recipes.put(nextRecipe);await db.settings.put({key,value:JSON.stringify(nextSession)});return {recipe:nextRecipe,session:nextSession};
  });
 }

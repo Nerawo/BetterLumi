@@ -8,7 +8,7 @@ import {recipeServingNutrition,wholeRecipeNutrition} from './recipe-nutrition';
 import {FoodStorage,recipeBatchInputs} from './food-storage';
 import {storedRecipeLine} from './recipe-storage';
 const line=(id:string,quantity=100):RecipeLine=>({lineId:id,ingredientId:id,name:'Repeated ingredient',quantity,unit:'g',nutrition:{calories:quantity,protein:quantity/10,carbs:quantity/5,fat:0}});
-const makeRecipe=():Recipe=>({...stamp(),name:'Preparation',servings:2,lines:[line('a'),line('b',200)],instructions:'Keep method',stickyNote:'Keep notes',photo:'',categoryIds:[]});
+const makeRecipe=():Recipe<import("./domain").RecipeLine>=>({...stamp(),name:'Preparation',servings:2,lines:[line('a'),line('b',200)],instructions:'Keep method',stickyNote:'Keep notes',photo:'',categoryIds:[]});
 afterEach(async()=>{for(const table of db.tables)await table.clear()});
 async function setup(){const r=makeRecipe();await recipes.put(r);const s=await openCookingSession(r);return {r,s}}
 async function source(){const storage=new FoodStorage(),id=stamp().id;await storage.makeBatch({operationId:stamp().id,id,name:'Sauce',preparedOn:'2030-01-01',cookedYieldGrams:1000,ingredients:[{source:'pantry',line:line('sauce',1000)}]});return {storage,id,batch:(await db.foodBatches.get(id))!}}
@@ -49,7 +49,7 @@ it('template update rollback preserves complete v3 state',async()=>{
  const {r,s}=await setup(),next=await saveCookingSession(s,addCookingIngredient(removeCookingIngredient(s,'a'),line('new'))),before=await exportAll(),fail=()=>{throw Error('Injected v3 failure')};db.settings.hook('updating',fail);try{await expect(updateRecipeFromCooking(r,next)).rejects.toThrow()}finally{db.settings.hook('updating').unsubscribe(fail)}expect((await exportAll()).tables).toEqual(before.tables);
 });
 it('Backup 15 imports v3 exact sources, decimals, removals and checks; invalid structures reject before writes',async()=>{
- const {r,s}=await setup(),f=await source();let next=addCookingIngredient(removeCookingIngredient(s,'b'),storedRecipeLine(f.batch));const id=next.ingredientChanges!.addedLines[0].entryId;next=await saveCookingSession(s,{...setCookingQuantity(next,id,12.123456,'g'),checked:['a',id]});const backup=await exportAll();expect(backup.version).toBe(16);backup.version=15;await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(JSON.parse(JSON.stringify(backup.tables)));expect(await openCookingSession(r)).toEqual(next);const reopened=await exportAll();
+ const {r,s}=await setup(),f=await source();let next=addCookingIngredient(removeCookingIngredient(s,'b'),storedRecipeLine(f.batch));const id=next.ingredientChanges!.addedLines[0].entryId;next=await saveCookingSession(s,{...setCookingQuantity(next,id,12.123456,'g'),checked:['a',id]});const backup=await exportAll();expect(backup.version).toBe(20);backup.version=15;await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(JSON.parse(JSON.stringify(backup.tables)));expect(await openCookingSession(r)).toEqual(next);const reopened=await exportAll();
  const mutations=[(b:any)=>b.version=14,(b:any)=>b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify({...next,ingredientChanges:{...next.ingredientChanges,extra:true}}),(b:any)=>{const bad=structuredClone(next);bad.ingredientChanges!.addedLines[0].line.sourceBatchId='missing';bad.ingredientChanges!.addedLines[0].line.ingredientId='missing';b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify(bad)},(b:any)=>{const bad=structuredClone(next);bad.checked.push('b');b.tables.settings.find((r:any)=>r.key===COOKING_PREFIX+next.recipeId).value=JSON.stringify(bad)}];for(const mutate of mutations){const bad=structuredClone(backup);mutate(bad);await expect(restoreAll(bad)).rejects.toThrow();expect((await exportAll()).tables).toEqual(reopened.tables)}
  for(const quantity of [-1,NaN,Infinity]){const bad=structuredClone(next);bad.ingredientChanges!.addedLines[0].line.quantity=quantity;expect(()=>validateCookingSession(bad)).toThrow()}
 });
@@ -76,7 +76,7 @@ it('replaces in place across repeated picks, group moves, restore, and normalize
  const actual=effectiveCookingRecipe(r,s);
  expect(actual.lines.map(l=>[l.lineId,l.ingredientId,l.groupId])).toEqual([['a',batch.id,'g'],['b','b',undefined],['extra','second choice','g']]);
  expect(actual.lines[0].nutrition.calories).toBe(50.125);expect(actual.lines[0].quantity).toBe(50.125);
- const backup=await exportAll();expect(backup.version).toBe(16);
+ const backup=await exportAll();expect(backup.version).toBe(20);
  await expect(restoreAll({...backup,version:15})).rejects.toThrow('version 16');
  await restoreAll(JSON.parse(JSON.stringify(backup)));const reopened=await openCookingSession(r);expect(reopened).toEqual(s);s=reopened;
  const changed={...r,revision:r.revision+1,lines:[r.lines[1],{...r.lines[0],groupId:undefined}]};

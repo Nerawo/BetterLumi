@@ -1,0 +1,21 @@
+import {test,expect} from '@playwright/test';
+test.use({browserName:'chromium',channel:'chrome',hasTouch:true,isMobile:true,viewport:{width:390,height:650}});
+test('touch drag on the handle reorders and edge-scrolls the tag list',async({page,context})=>{
+ await page.goto('/#/pantry');await expect(page.locator('.pantry-fab')).toBeVisible();
+ await page.evaluate(async()=>{const {db,stamp}=await import('/src/domain.ts');await db.table('ingredientTags').bulkAdd(Array.from({length:24},(_,i)=>({...stamp(),name:'Breakfast '+(i+1)})))});
+ const open=()=>page.locator('.collection-navigation > button').tap();await open();
+ const rows=page.locator('.managed-category-row'),first=rows.first(),list=page.locator('.managed-category-list');
+ const id=await first.getAttribute('data-category-id');
+ const r=(await first.locator('.collection-drag-handle').boundingBox())!,area=(await list.boundingBox())!;
+ const client=await context.newCDPSession(page);
+ const touch=(type:'touchStart'|'touchMove'|'touchEnd',x:number,y:number)=>client.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'?[]:[{x,y,id:1}]});
+ const x=r.x+r.width/2,y=r.y+r.height/2;
+ await touch('touchStart',x+62,y);await touch('touchMove',x+62,y+50);await touch('touchEnd',0,0);
+ await expect(rows.first()).toHaveAttribute('data-category-id',id!);
+ await touch('touchStart',x,y);await touch('touchMove',x,y+50);await expect(list.locator('.is-dragging')).toHaveCount(1);
+ await touch('touchMove',x,area.y+area.height-4);await expect.poll(()=>list.evaluate(el=>el.scrollTop)).toBeGreaterThan(70);
+ await touch('touchEnd',0,0);await expect(rows.first()).not.toHaveAttribute('data-category-id',id!);
+ const order=await rows.evaluateAll(els=>els.map(el=>el.getAttribute('data-category-id')));
+ await page.locator('.ingredient-tag-manager .modal-head button').tap();await page.reload();await open();
+ await expect.poll(()=>rows.evaluateAll(els=>els.map(el=>el.getAttribute('data-category-id')))).toEqual(order);
+});

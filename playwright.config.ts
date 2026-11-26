@@ -18,7 +18,7 @@ export default defineConfig({
     timezoneId: "America/New_York",
   },
   webServer: process.env.BETTERLUMI_TEST_EXTERNAL_SERVER==="1"?undefined:{
-    command: `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${testPort} --strictPort`,
+    command: `node tests/support/browser-test-server.mjs ${testPort}`,
     url: testURL,
     reuseExistingServer: false,
     timeout: 30000,

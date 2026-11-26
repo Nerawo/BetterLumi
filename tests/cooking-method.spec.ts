@@ -29,7 +29,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`Met
 });
 
 for(const kind of ['back','navigation'])test(`unsaved Method protects ${kind} without a persistent draft`,async({page})=>{
- await page.setViewportSize({width:390,height:844});const recipe=await seed(page,'en'),mode=page.locator('.cooking-mode');await mode.locator('input[type=checkbox]').first().check();await expect(mode.locator('input[type=checkbox]').first()).toBeEnabled();await mode.locator('.journal-method-edit-trigger').tap();await mode.locator('textarea').fill('Unsaved Method must remain until explicitly confirmed');const before=await snapshot(page);
+ await page.setViewportSize({width:430,height:844});await page.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true}));const recipe=await seed(page,'en'),mode=page.locator('.cooking-mode');await mode.locator('input[type=checkbox]').first().check();await expect(mode.locator('input[type=checkbox]').first()).toBeEnabled();await mode.locator('.journal-method-edit-trigger').tap();await mode.locator('textarea').fill('Unsaved Method must remain until explicitly confirmed');const before=await snapshot(page);
  const navigate=async()=>{if(kind==='back')await page.goBack();else await page.evaluate(async()=>(await import('/src/routing.ts')).navigate('/pantry'))};
  page.once('dialog',async dialog=>{expect(dialog.message()).toContain('unsaved Method');await dialog.dismiss()});await navigate();await expect(mode).toBeVisible();await expect(mode.locator('textarea')).toHaveValue('Unsaved Method must remain until explicitly confirmed');expect(await snapshot(page)).toEqual(before);
  page.once('dialog',dialog=>dialog.accept());await navigate();await expect(mode).toHaveCount(0);await expect.poll(async()=>page.evaluate(async id=>(await(await import('/src/domain.ts')).db.settings.get('cooking-session:v1:'+id)),recipe.id)).toBeUndefined();expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).recipes.get(id))!.instructions,recipe.id)).toBe(recipe.instructions);
@@ -47,3 +47,29 @@ test('empty Method can be added and cleared; failed save preserves draft and pre
  await page.evaluate(async()=>{const {db}=await import('/src/domain.ts'),fail=()=>{throw Error('Injected method write failure')};db.settings.hook('updating',fail);(window as any).undoMethodFailure=()=>db.settings.hook('updating').unsubscribe(fail)});await section.locator('.journal-method-confirm').last().tap();await expect(editor.locator('[role=alert]')).toBeVisible();await expect(input).toHaveValue('1. Added method.');expect(await snapshot(page)).toEqual(before);await page.evaluate(()=>(window as any).undoMethodFailure());await section.locator('.journal-method-confirm').last().tap();await expect(section.locator('.journal-method')).toHaveText('1. Added method.');
  await edit.tap();await input.fill('');await section.locator('.journal-method-confirm').last().tap();await expect(section.locator('.journal-method')).toHaveText('Not recorded');await expect(edit).toBeVisible();expect(await page.evaluate(async id=>(await(await import('/src/domain.ts')).recipes.get(id))!.instructions,recipe.id)).toBe('');await edit.tap();await input.fill('Escape must protect this unsaved Method');page.once('dialog',dialog=>dialog.dismiss());await input.press('Escape');await expect(mode).toBeVisible();await expect(input).toHaveValue('Escape must protect this unsaved Method');page.once('dialog',dialog=>dialog.accept());await mode.locator('.modal-head button').tap();await expect(mode).toHaveCount(0);await expect(page.locator('.journal-recipe-detail .journal-method')).toHaveText('Not recorded');await page.locator('.start-cooking').tap();await expect(mode.locator('.journal-method')).toHaveText('Not recorded');
 });
+
+
+
+ test('Cancel preserves the original journal and clean Back leaves without a prompt',async({playwright,baseURL})=>{
+  const browser=await playwright.chromium.launch({channel:'chrome'});
+  try {
+  const page=await browser.newPage({baseURL,hasTouch:true});
+  await page.setViewportSize({width:390,height:844});
+  await seed(page,'en');
+  const mode=page.locator('.cooking-mode'),original=await mode.elementHandle();
+  const url=page.url();
+  await mode.locator('.journal-method-edit-trigger').click();
+  const text=mode.locator('textarea'),method=await text.inputValue();
+  await text.fill('Unsaved draft');
+  let count=0;
+  page.on('dialog',async d=>{count++;await d.dismiss()});
+  await page.goBack();
+  await expect(page).toHaveURL(url);
+  await expect(text).toHaveValue('Unsaved draft');
+  expect(await original!.evaluate(node=>node.isConnected)).toBe(true);
+  await text.fill(method);
+  await page.goBack();
+  await expect(mode).toHaveCount(0);
+  expect(count).toBe(1);
+  } finally {await browser.close()}
+ });

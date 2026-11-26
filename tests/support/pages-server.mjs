@@ -22,5 +22,5 @@ const server=http.createServer(async(req,res)=>{
     res.end(body);
   } catch {res.writeHead(404);res.end('Not found');}
 });
-server.listen(5201,'127.0.0.1');
+server.listen(Number(process.env.BETTERLUMI_PAGES_TEST_PORT??5201),'127.0.0.1');
 for(const event of ['SIGINT','SIGTERM'])process.on(event,()=>server.close(()=>process.exit(0)));

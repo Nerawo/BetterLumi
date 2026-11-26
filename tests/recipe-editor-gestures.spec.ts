@@ -75,7 +75,7 @@ for(const mode of ['create','edit'])for(const language of ['zh','en'])test('touc
   await expect(editor.locator('.draft-remove:visible')).toHaveCount(0);
   await expect(dialog).toHaveCount(0);
   const hold=async()=>{
-    await anchor();p=await point(shell(0).locator('.draft-ingredient-name'));await touch('touchStart',p.x,p.y);
+    const identity=shell(0).locator('.draft-ingredient-name strong');await identity.scrollIntoViewIfNeeded();p=await point(identity);expect(await identity.evaluate((el,pos)=>el.contains(document.elementFromPoint(pos.x,pos.y)),p)).toBe(true);await touch('touchStart',p.x,p.y);
     await expect(dialog).toBeVisible();await touch('touchEnd');
     await expect(dialog.locator('p')).toContainText(recipe.lines[0].name);
     await expect(page.locator('.ingredient-picker-modal')).toHaveCount(0);

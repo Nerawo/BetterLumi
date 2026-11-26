@@ -7,7 +7,7 @@ type RouteLeaveGuard=(target:string)=>boolean;
 let routeLeaveGuard:RouteLeaveGuard|null=null;
 export function registerRouteLeaveGuard(guard:RouteLeaveGuard){routeLeaveGuard=guard;return()=>{if(routeLeaveGuard===guard)routeLeaveGuard=null}}
 let lastEntry:{route:string;url:string;state:any}|null=null,restoringEntry=false;
-const rememberEntry=()=>{lastEntry={route:currentRoute(),url:location.href,state:history.state}};
+export const rememberEntry=()=>{lastEntry={route:currentRoute(),url:location.href,state:history.state}};
 import { localDate } from "./db";
 export function navigate(url: string, replace = false, preserveScroll = false) {
   const next = new URL(url, location.origin);
@@ -31,13 +31,20 @@ export function navigate(url: string, replace = false, preserveScroll = false) {
     routeHref(target),
   );
   rememberEntry();
-  window.dispatchEvent(new PopStateEvent("popstate", {state: {inPlace: preserveScroll}}));
+  publishNavigation(preserveScroll);
 }
-const subscribe = (fn: () => void) => {
-  window.addEventListener("popstate", fn);
-  window.addEventListener("hashchange", fn);
-  return () => {window.removeEventListener("popstate", fn);window.removeEventListener("hashchange", fn)};
-};
+const acceptedNavigation = "betterlumi:navigation";
+export function subscribeNavigation(fn: () => void) {
+  window.addEventListener(acceptedNavigation, fn);
+  return () => window.removeEventListener(acceptedNavigation, fn);
+}
+function publishNavigation(inPlace = false) {
+  window.dispatchEvent(new Event(acceptedNavigation));
+  if (inPlace) return;
+  const key = history.state?.navKey ?? currentRoute();
+  const y = Number(scrollPositions.get(key) ?? history.state?.scrollY ?? 0);
+  requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({top:Number.isFinite(y)?y:0,behavior:"instant"})));
+}
 export function validLocalDate(value: string | null): value is string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const d = new Date(value + "T12:00:00");
@@ -76,8 +83,8 @@ function decodeId(value: string) {
 }
 export function useRoute() {
   const href = useSyncExternalStore(
-    subscribe,
-    currentRoute,
+    subscribeNavigation,
+    () => lastEntry?.route ?? currentRoute(),
   );
   return parseRoute(href);
 }
@@ -97,13 +104,6 @@ export function backToOrigin(fallback = "/more") {
   if (state?.appNavigation && typeof state.from === "string" && /^\/(today|more|recipes|pantry|weight)(\/|\?|$)/.test(state.from)) history.back();
   else navigate(fallback, true);
 }
-if (typeof window !== "undefined") window.addEventListener("popstate", (event) => {
-  if (event.state?.inPlace) return;
-  const key = history.state?.navKey ?? currentRoute();
-  const y = Number(scrollPositions.get(key) ?? history.state?.scrollY ?? 0);
-  requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({top:Number.isFinite(y)?y:0,behavior:"instant"})));
-});
-
 if (typeof window !== "undefined") {
   if (!history.state?.navKey) history.replaceState({...history.state,navKey:newId()}, "");
   window.addEventListener("scroll", () => scrollPositions.set(history.state?.navKey ?? currentRoute(), window.scrollY), {passive:true});
@@ -124,6 +124,7 @@ if(typeof window!=='undefined'){
   }
   if(!Number.isSafeInteger(history.state?.routeIndex))history.replaceState({...history.state,routeIndex:(previous.state?.routeIndex??0)+1},'');
   rememberEntry();
+  publishNavigation();
  };
  window.addEventListener('popstate',check,true);window.addEventListener('hashchange',check,true);
 }

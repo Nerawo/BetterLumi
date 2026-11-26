@@ -10,6 +10,101 @@ const pantry:RecipeLine={ingredientId:'pantry-test',name:'Pasta',quantity:80,uni
 async function setup(){const batch=stamp().id;await s.makeBatch({operationId:stamp().id,id:batch,name:'Sauce',preparedOn:'2026-10-31',cookedYieldGrams:1150,ingredients:[{source:'pantry',line:{...pantry,quantity:1150,nutrition:{calories:2300,protein:115,carbs:null,fat:0}}}]});const line:RecipeLine={lineId:stamp().id,source:'batch',sourceBatchId:batch,quantityBasis:'g',ingredientId:batch,name:'Sauce',quantity:200,unit:'g',nutrition:{calories:400,protein:20,carbs:null,fat:0}};const recipe={...stamp(),name:'Pasta with sauce',servings:1,lines:[line,structuredClone(pantry)],instructions:'',stickyNote:''};await db.table('recipeCards').put(recipe);return{batch,line,recipe}}
 function meal(lines:RecipeLine[]):FoodLog{return{...stamp(),name:'Actual pasta',date:'2030-02-01',category:'lunch',source:'recipe',sourceId:null,quantity:1,unit:'serving',nutrition:{calories:0,protein:0,carbs:0,fat:0},lines,cookingNote:'',consumptionPercent:100}}
 afterEach(async()=>{for(const t of db.tables)await t.clear()});
+it.each([25,0])('keeps a previously allocated raw-stock recipe basis across a %i percent edit and restore',async intermediate=>{
+ const item={...stamp(),name:'Yogurt',nameZh:'',brand:'',basis:'100g' as const,servingGrams:null,calories:60,protein:8,carbs:4,fat:1};
+ await db.ingredients.put(item);
+ const id=stamp().id;
+ await s.registerStock({id,operationId:stamp().id,ingredientId:item.id,grams:400,date:'2026-10-31'});
+ const line=storedRecipeLine((await s.batches.get(id))!),m=meal([line]);
+ await s.saveRecipeMeal({operationId:stamp().id,meal:m});
+ const editPercent=async(percent:number)=>{
+   const previous=(await s.meals.get(m.id))!;
+   await s.saveRecipeMeal({operationId:stamp().id,expectedRevision:previous.revision,meal:{...previous,consumptionPercent:percent}});
+ };
+ await db.ingredients.update(item.id,{calories:55,protein:7,carbs:3,fat:2});
+ await editPercent(intermediate);
+ expect((await s.batches.get(id))?.remainingQuantity).toBe(400-intermediate);
+ expect((await s.meals.get(m.id))?.nutrition).toEqual(scaleNutrition(line.nutrition,intermediate/100));
+ await restoreAll(await exportAll());
+ await editPercent(50);
+ expect((await s.batches.get(id))?.remainingQuantity).toBe(350);
+ expect((await s.meals.get(m.id))?.nutrition).toEqual({calories:30,protein:4,carbs:2,fat:0.5});
+ await restoreAll(await exportAll());
+});
+it('freezes unfilled fields as zero and keeps the same raw-stock basis across returns, restore and reselection',async()=>{
+ const item={...stamp(),name:'Yogurt',nameZh:'',brand:'',basis:'100g' as const,servingGrams:null,calories:60,protein:null,carbs:4,fat:null};
+ await db.ingredients.put(item);
+ const id=stamp().id;
+ await s.registerStock({id,operationId:stamp().id,ingredientId:item.id,grams:400,date:'2026-10-31'});
+ const line=storedRecipeLine((await s.batches.get(id))!),original=meal([line]);
+ const frozen={calories:.6,protein:0,carbs:.04,fat:0};
+ await s.saveRecipeMeal({operationId:stamp().id,meal:original});
+ await db.ingredients.update(item.id,{calories:55,protein:7,carbs:3,fat:2});
+ for(const percent of [0,25,0,50]){
+   const prior=(await s.meals.get(original.id))!;
+   await s.saveRecipeMeal({operationId:stamp().id,expectedRevision:prior.revision,meal:{...prior,consumptionPercent:percent}});
+   const saved=(await s.meals.get(original.id))!;
+   expect(saved.historicalAllocationBases).toEqual([expect.objectContaining({lineId:line.lineId,batchId:id,ingredientId:item.id,unit:'g',perGram:frozen})]);
+   expect(saved.nutrition).toEqual(scaleNutrition(frozen,percent));
+   expect(saved.recipeAllocations!.map(a=>a.quantity)).toEqual(percent?[percent]:[]);
+   expect((await s.batches.get(id))!.remainingQuantity).toBe(400-percent);
+   const backup=await exportAll();await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);
+ }
+ const previous=(await s.meals.get(original.id))!;
+ const selected={...previous,lines:[{...line,nutrition:{calories:55,protein:7,carbs:3,fat:2}}]};
+ await s.saveRecipeMeal({operationId:stamp().id,meal:selected,expectedRevision:previous.revision},false,[line.lineId!]);
+ const refreshed=(await s.meals.get(original.id))!;
+ for(const [key,value] of Object.entries({calories:27.5,protein:3.5,carbs:1.5,fat:1}))expect(refreshed.nutrition[key as keyof typeof refreshed.nutrition]).toBeCloseTo(value,12);
+ expect(refreshed.historicalAllocationBases![0].perGram).toEqual({calories:.55,protein:.07,carbs:.03,fat:.02});
+ const backup=await exportAll();
+ for(const change of [{perGram:{...frozen,protein:null}},{perGram:{...frozen,fat:Infinity}},{perGram:{...frozen,calories:NaN}},{perGram:{...frozen,carbs:'0'}},{ingredientId:'missing'},{batchId:'missing'},{lineId:'missing'},{unit:'mL'},{transactionId:'missing'}]){
+   const bad=structuredClone(backup);Object.assign((bad.tables.foodLogs[0] as FoodLog).historicalAllocationBases![0],change);
+   await expect(restoreAll(bad)).rejects.toThrow();expect((await exportAll()).tables).toEqual(backup.tables);
+ }
+ await expect(restoreAll({...backup,version:19})).rejects.toThrow('Backup 20');
+});
+it('leaves never-allocated raw stock without a historical basis through restore and failed first debit',async()=>{
+ const item={...stamp(),name:'Yogurt',nameZh:'',brand:'',basis:'100g' as const,servingGrams:null,calories:60,protein:8,carbs:4,fat:1};
+ await db.ingredients.put(item);
+ const id=stamp().id;
+ await s.registerStock({id,operationId:stamp().id,ingredientId:item.id,grams:400,date:'2026-10-31'});
+ const line=storedRecipeLine((await s.batches.get(id))!),original={...meal([line]),consumptionPercent:0};
+ await s.saveRecipeMeal({operationId:stamp().id,meal:original});
+ const backup=await exportAll();
+ await restoreAll({...backup,version:19});
+ await db.ingredients.update(item.id,{calories:55});
+ const prior=(await s.meals.get(original.id))!;
+ expect(prior.historicalAllocationBases).toBeUndefined();
+ const before=(await exportAll()).tables;
+ const attempt={operationId:stamp().id,expectedRevision:prior.revision,meal:{...prior,consumptionPercent:50}};
+ await expect(s.saveRecipeMeal(attempt)).rejects.toMatchObject({code:'CONFLICT'});
+ const fail=()=>{throw Error('failed receipt')};s.transactions.hook('creating',fail);
+ try{
+   const selected={...attempt.meal,lines:[{...line,nutrition:{...line.nutrition,calories:55}}]};
+   await expect(s.saveRecipeMeal({...attempt,meal:selected},true)).rejects.toThrow('failed receipt');
+ }finally{s.transactions.hook('creating').unsubscribe(fail)}
+ expect((await exportAll()).tables).toEqual(before);
+});
+it('requires explicit reselection before first allocation from a corrected prepared batch',async()=>{
+ const {batch,line}=await setup(),original=meal([line]);
+ original.consumptionPercent=0;
+ await s.saveRecipeMeal({operationId:stamp().id,meal:original});
+ const before=(await s.batches.get(batch))!;
+ await s.correctFormula({operationId:stamp().id,batchId:batch,expectedRevision:before.revision,
+   cookedYieldGrams:1150,ingredients:before.ingredients.map(i=>({...i,nutrition:{...i.nutrition,calories:1150}}))});
+ const backup=await exportAll();
+ await restoreAll(backup);
+ const historical=(await s.meals.get(original.id))!;
+ expect(historical.baseNutrition).toEqual(line.nutrition);
+ const attempt={...historical,consumptionPercent:50};
+ await expect(s.saveRecipeMeal({operationId:stamp().id,expectedRevision:historical.revision,meal:attempt})).rejects.toMatchObject({code:'CONFLICT'});
+ expect((await exportAll()).tables).toEqual(backup.tables);
+ const current=storedRecipeLine((await s.batches.get(batch))!,line);
+ await s.saveRecipeMeal({operationId:stamp().id,expectedRevision:historical.revision,meal:{...attempt,lines:[current]}});
+ expect((await s.meals.get(original.id))?.nutrition).toEqual(scaleNutrition(current.nutrition,0.5));
+ expect((await s.batches.get(batch))?.remainingQuantity).toBe(1050);
+ await restoreAll(await exportAll());
+});
 it('saves mixed templates without inventory deduction; copies explicit stored-food inputs',async()=>{const f=await setup();expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(1150);expect(await s.meals.count()).toBe(0);expect(copyRecipeForBatch(f.recipe)[0]).toMatchObject({source:'batch',batchId:f.batch,portion:{unit:'g',quantity:200}})});
 it('applies percentage once, preserving null and sourced calories, and deletes to exact original source',async()=>{const f=await setup(),m=meal(f.recipe.lines);m.consumptionPercent=50;await s.saveRecipeMeal({operationId:stamp().id,meal:m});const saved=(await s.meals.get(m.id))!;expect(saved.nutrition).toEqual({calories:340,protein:15,carbs:null,fat:1});expect(saved.recipeAllocations![0].quantity).toBe(100);expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(1050);await s.deleteMeal({operationId:stamp().id,mealId:m.id,expectedRevision:saved.revision});expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(1150)});
 it('handles multiple lines from one source and multiple source batches without double-counting',async()=>{const a=await setup(),b=await setup(),m=meal([a.line,{...a.line,lineId:stamp().id},b.line,pantry]);await s.saveRecipeMeal({operationId:stamp().id,meal:m});expect((await s.batches.get(a.batch))!.remainingQuantity).toBe(750);expect((await s.batches.get(b.batch))!.remainingQuantity).toBe(950);expect((await s.meals.get(m.id))!.nutrition.calories).toBe(1480)});
@@ -17,7 +112,7 @@ it('reuses a frozen template after exhaustion only with an explicitly replaced s
 it('edits quantity and replacement atomically and restores the exact previous batches',async()=>{const a=await setup(),b=await setup(),m=meal(a.recipe.lines);await s.saveRecipeMeal({operationId:stamp().id,meal:m});const old=(await s.meals.get(m.id))!;await s.saveRecipeMeal({operationId:stamp().id,expectedRevision:old.revision,meal:{...old,lines:[{...b.line,quantity:300,nutrition:{calories:600,protein:30,carbs:null,fat:0}},pantry]}});expect((await s.batches.get(a.batch))!.remainingQuantity).toBe(1150);expect((await s.batches.get(b.batch))!.remainingQuantity).toBe(850);const updated=(await s.meals.get(m.id))!;await s.deleteMeal({operationId:stamp().id,mealId:m.id,expectedRevision:updated.revision});expect((await s.batches.get(b.batch))!.remainingQuantity).toBe(1150)});
 it('rejects overdraw across sources without partial deduction, and rolls back a failed receipt',async()=>{const a=await setup(),b=await setup(),before=await exportAll();await expect(s.saveRecipeMeal({operationId:stamp().id,meal:meal([a.line,{...b.line,quantity:2000,nutrition:scaleNutrition(b.line.nutrition,10)}])})).rejects.toMatchObject({code:'OVERDRAW'});expect((await exportAll()).tables).toEqual(before.tables);const fail=()=>{throw Error('Receipt failure')};s.transactions.hook('creating',fail);try{await expect(s.saveRecipeMeal({operationId:stamp().id,meal:meal(a.recipe.lines)})).rejects.toThrow('Receipt failure')}finally{s.transactions.hook('creating').unsubscribe(fail)}expect((await exportAll()).tables).toEqual(before.tables)});
 it('copies a mixed recipe to a prepared child, deducts once, and restores only the consumed child',async()=>{const f=await setup(),id=stamp().id;await s.makeBatch({operationId:stamp().id,id,name:'Cooked pasta',preparedOn:'2026-10-31',ingredients:copyRecipeForBatch(f.recipe),cookedYieldGrams:350});expect((await s.batches.get(id))!.totalNutrition.calories).toBe(680);expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(950);const m=stamp().id;await s.saveMeal({operationId:stamp().id,mealId:m,batchId:id,portion:{unit:'g',quantity:100},date:'2030-02-01',category:'lunch'});await s.deleteMeal({operationId:stamp().id,mealId:m,expectedRevision:(await s.meals.get(m))!.revision});expect((await s.batches.get(id))!.remainingQuantity).toBe(350);expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(950)});
-it('round-trips Backup 11 and rejects forged allocations before writes',async()=>{const f=await setup(),m=meal(f.recipe.lines);await s.saveRecipeMeal({operationId:stamp().id,meal:m});const backup=await exportAll();expect(backup.version).toBe(16);await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);const forged=structuredClone(backup);(forged.tables.foodLogs as FoodLog[])[0].recipeAllocations![0].originalFraction=999;await expect(restoreAll(forged)).rejects.toThrow();expect((await exportAll()).tables).toEqual(backup.tables);const wrongVersion=structuredClone(backup);wrongVersion.version=10;await expect(restoreAll(wrongVersion)).rejects.toThrow('version 11')});
+it('round-trips Backup 11 and rejects forged allocations before writes',async()=>{const f=await setup(),m=meal(f.recipe.lines);await s.saveRecipeMeal({operationId:stamp().id,meal:m});const backup=await exportAll();expect(backup.version).toBe(20);await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);const forged=structuredClone(backup);(forged.tables.foodLogs as FoodLog[])[0].recipeAllocations![0].originalFraction=999;await expect(restoreAll(forged)).rejects.toThrow();expect((await exportAll()).tables).toEqual(backup.tables);const wrongVersion=structuredClone(backup);wrongVersion.version=10;await expect(restoreAll(wrongVersion)).rejects.toThrow('version 11')});
 it('continues reading Backup 10 Pantry recipes and empty legacy backups without rewriting snapshots',async()=>{const r={...stamp(),name:'Legacy',servings:1,lines:[pantry],instructions:'Keep',stickyNote:'Keep'};await db.table('recipeCards').put(r);const old=await exportAll();old.version=10;await restoreAll(old);expect(await db.table('recipeCards').get(r.id)).toEqual(r);const ancient=structuredClone(old);ancient.version=9;delete (ancient.tables as any).foodBatches;delete (ancient.tables as any).inventoryTransactions;await restoreAll(ancient);expect(await db.table('recipeCards').get(r.id)).toEqual(r)});
 it('retries the same operation id without duplicate allocations or inventory deductions',async()=>{const f=await setup(),input={operationId:stamp().id,meal:meal(f.recipe.lines)};await s.saveRecipeMeal(input);await s.saveRecipeMeal(input);expect((await s.batches.get(f.batch))!.remainingQuantity).toBe(950);expect(await s.meals.count()).toBe(1);validateStorageBackup((await exportAll()).tables)});
 

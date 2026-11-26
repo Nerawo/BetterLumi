@@ -87,6 +87,9 @@
 .journal-recipe-editor .journal-grouped-lines .journal-editor-group > .line-add {
   margin:0; padding-inline-start:calc(var(--drag-gutter) + var(--ingredient-gap));
 }
+.recipe-editor-modal.journal-recipe-editor .journal-grouped-lines .journal-editor-group > .line-add { padding-inline-start:0; }
+.recipe-editor-modal.journal-recipe-editor .journal-editor-group > .draft-row-shell + .line-add { border-block-start:1px solid var(--line); }
+.recipe-editor-modal.journal-recipe-editor .journal-grouped-lines .line-add .ingredient-add-trigger { min-height:44px; }
 .journal-recipe-editor .journal-grouped-lines .line-add .ingredient-add-trigger {
   padding:0; gap:4px; min-height:36px; color:var(--action);
 }
@@ -97,15 +100,21 @@
   display:flex; align-items:center; justify-content:space-between; gap:8px;
 }
 .journal-recipe-editor .journal-editor-group:has(> .draft-ungrouped):not(:has(> .draft-row-shell)) > .line-add { padding:0; }
+.recipe-editor-modal .journal-editor-group:has(> .draft-ungrouped):not(:has(> .draft-row-shell)) { flex-direction:row-reverse; }
 
 .draft-row-shell { position:relative; min-width:0 }
 .journal-recipe-editor .draft-grip,.journal-recipe-editor .draft-unit-trigger {background:transparent;border:0;color:var(--action);min-width:0;min-height:36px;padding:0 2px;box-shadow:none}
 .journal-recipe-editor .draft-grip {touch-action:none;cursor:grab;user-select:none;color:var(--muted)}
 .journal-recipe-editor .draft-unit-trigger {position:relative;min-height:40px;padding:0;text-align:end;font:inherit;color:inherit;overflow-wrap:anywhere}
+.draft-unit-trigger {position:relative}
 .draft-unit-trigger::after {content:'';position:absolute;inset:0 -5px 0 0;min-width:24px}
 .journal-recipe-editor .draft-grip svg {pointer-events:none}
 .journal-recipe-editor .draft-ingredient .journal-line-menu {position:absolute;right:0;top:0}
 .journal-recipe-editor .draft-ingredient .journal-line-menu > div {top:100%;max-width:min(200px,80vw)}
+@media (hover:hover) and (pointer:fine) {
+ /* The positioned amount ends at the start of the row's reserved action gutter. */
+ .journal-recipe-editor .draft-ingredient .draft-amount > .journal-line-menu {right:-36px}
+}
 .draft-ingredient-name {touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .draft-row-shell[data-gesture=hold] .draft-ingredient-name strong {text-decoration:underline dotted var(--muted);text-underline-offset:3px}
 .draft-row-shell[data-gesture=drag] {z-index:6;pointer-events:none}
@@ -139,6 +148,86 @@
 }
 
 .journal-recipe-editor :is(button:not(.draft-grip),summary) {touch-action:manipulation}
+
+.ingredient-picker-modal .ingredient-picker-result.family-picker-option {
+  justify-content:flex-start; align-items:center; text-align:start;
+}
+.recipe-editor-modal.journal-recipe-editor .journal-grouped-lines .draft-ingredient { min-height:44px; }
+.recipe-editor-modal .draft-ingredient .draft-grip { min-height:44px; }
+.recipe-editor-modal .draft-ingredient-name strong,
+:is(.meal-journal,.cooking-mode) .draft-family-identity > strong,
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-member-label > span,
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-option-name {
+  display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.recipe-editor-modal .draft-ingredient-name > .draft-source:empty { display:none; }
+.recipe-editor-modal .draft-ingredient-name > .draft-source { row-gap:0; line-height:1.2; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-identity { display:flex; align-items:baseline; gap:7px; min-width:0; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-identity > strong { flex:none; max-inline-size:56%; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-member-label {
+  display:inline-flex; align-items:center; gap:2px; min-width:0;
+  color:var(--muted); font:11px/1.2 var(--font-ui);
+}
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-trigger[data-unresolved] .draft-family-member-label { color:var(--action); }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-trigger {
+  align-items:center; justify-content:flex-start;
+  width:100%; min-height:44px; padding:0; border:0; border-radius:0; background:none;
+  color:var(--ink); text-align:start; touch-action:pan-y;
+}
+.recipe-editor-modal .draft-ingredient-name:has(.draft-family-trigger) { display:contents; }
+.recipe-editor-modal .draft-family-trigger { grid-column:2; grid-row:1; min-width:0; }
+.recipe-editor-modal .draft-ingredient:has(.draft-family-trigger) .draft-amount { grid-column:3; grid-row:1; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-trigger ~ :is(.draft-family-options,.draft-family-error) { grid-column:2 / -1; }
+.draft-family-trigger svg { flex:none; }
+.draft-family-trigger[aria-expanded=true] svg { transform:rotate(180deg); }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-options { display:block; border-inline-start:1px solid var(--line); padding-inline-start:6px; margin-inline-start:2px; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-options button {
+  display:grid; grid-template-columns:8px minmax(0,1fr) auto; align-items:center; column-gap:6px;
+  width:100%; min-height:44px; margin:0; padding:0 0 0 2px;
+  border:0; border-radius:0; background:none; color:var(--ink); text-align:start;
+  font:400 13px/1.25 var(--font-ui);
+}
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-options button + button { box-shadow:inset 0 1px var(--line); }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-options small { color:var(--muted); font:11px/1.2 var(--font-ui); white-space:nowrap; text-align:end; }
+.draft-family-dot { flex:none; width:8px; height:8px; border-radius:50%; border:1px solid var(--muted); }
+.draft-family-options [aria-pressed=true] .draft-family-dot { border-color:var(--action); background:var(--action); }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-error { display:block; color:color-mix(in srgb,#91483f 85%,var(--ink)); }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-unit-review { display:grid; }
+:is(.recipe-editor-modal,.meal-journal,.cooking-mode) .draft-family-unit-review button { min-height:44px; text-align:start; }
+.recipe-editor-modal .recipe-editor-nutrition [role=status] { color:var(--muted); font:400 13px/1.45 var(--font-ui); }
+.meal-journal .draft-ingredient-name:has(.draft-family-trigger) { display:contents; }
+.meal-journal .draft-family-trigger { grid-column:1; grid-row:1; }
+.meal-journal .draft-ingredient:has(.draft-family-trigger) .draft-amount { grid-column:2; grid-row:1; }
+.meal-journal .draft-family-trigger ~ :is(.draft-family-options,.draft-family-error) { grid-column:1 / -1; }
+.cooking-mode .journal-check-row:has(.journal-family-choice)>span { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+.cooking-mode .journal-check-row>span>.journal-family-choice { display:contents; }
+.cooking-mode .journal-check-row:has(.journal-family-choice) :is(.draft-family-identity,.journal-quantity) { grid-row:1; }
+.cooking-mode .journal-check-row:has(.journal-family-choice) .journal-quantity { grid-column:2; }
+.cooking-mode .journal-check-row .journal-family-choice :is(.draft-family-options,.draft-family-error,.draft-family-unit-review) { grid-column:1 / -1; width:100%; box-sizing:border-box; }
+.cooking-mode .journal-check-row .journal-family-choice .draft-family-identity {
+  grid-column:1; align-self:stretch; align-items:center; gap:2px; font:inherit; color:inherit;
+}
+.cooking-mode .journal-family-choice .draft-family-identity > .journal-line-name {
+  display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; min-width:0; padding:0;
+}
+.cooking-mode .journal-family-choice .draft-family-identity svg { flex:none; color:var(--muted); }
+.cooking-mode .journal-check-row.is-checked > span > .journal-family-choice { text-decoration:none; }
+.cooking-mode .journal-check-row.is-checked .draft-family-identity > .journal-line-name { text-decoration:line-through; }
+.cooking-mode .journal-family-choice .draft-family-options {
+  border-inline-start:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  padding-inline-start:6px; margin:0;
+}
+.cooking-mode .journal-family-choice .draft-family-options button {
+  grid-template-columns:8px minmax(0,1fr); min-height:44px; column-gap:5px;
+  padding:0; box-shadow:none; color:var(--muted); font:400 12px/1.2 var(--font-ui);
+}
+:is(.recipe-detail-modal,.recipe-editor-modal,.add-food-modal) .nutrition-strip.recipe-nutrition-strip.nutrition-range {
+ grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));
+}
+:is(.recipe-detail-modal,.recipe-editor-modal,.add-food-modal) .nutrition-strip.recipe-nutrition-strip.nutrition-range > div > strong.recipe-nutrition-value {
+ display:block; min-width:0; white-space:normal; overflow-wrap:anywhere; font-size:clamp(15px,5vw,23px);
+}
+.nutrition-range .recipe-nutrition-value small { display:block; }
 
 .modal.draft-confirmation {
   width:min(360px,calc(100% - 32px)); max-height:calc(100dvh - 32px);
@@ -184,7 +273,7 @@
 .journal-recipe-editor .draft-photo-action input[type=file] {width:1px;height:1px;min-height:0;padding:0}
 .journal-recipe-editor .draft-photo img {width:48px;height:48px;object-fit:cover;border-radius:3px}
 .draft-photo-action:focus-within {outline:1px dotted var(--action)}
-:is(.journal-recipe-editor,.meal-journal,.cooking-mode,.ingredient-journal) .draft-unit-menu {
+:is(.journal-recipe-editor,.meal-journal,.cooking-mode,.ingredient-journal,.food-storage-modal) .draft-unit-menu {
   position:absolute;z-index:20;box-sizing:border-box;display:block;
   width:max-content;min-width:54px;overflow:auto;padding:3px;
   background:var(--surface);border:1px solid var(--line);border-radius:6px;overscroll-behavior:contain;

@@ -13,7 +13,7 @@ import {useState,useLayoutEffect,useRef,useEffect} from "react";
 import {flushSync} from "react-dom";
 import {useTranslation} from "react-i18next";
 import {ChevronDown} from "lucide-react";
-import {activeGoal,goalEditContext,saveGoalVersion,type Goal} from "./goals";
+import {activeGoal,goalEditContext,latestNutritionVersion,saveGoalVersion,type Goal} from "./goals";
 import {configuredNutritionGoals,goalPeriod,type NutritionGoal,type NutritionGoals,type GoalSection} from "./goal-model";
 import {nutritionMetrics,type NutritionMetric} from "./aggregation";
 import {localDate} from "./domain";
@@ -30,7 +30,9 @@ function GoalEditor({goals,date,close,notice}:{goals:Goal[];date:string;close:()
  const draft=useGoalDraft(date,(current?.id??'none')+':'+(current?.revision??0)),restored=draft.restored;
  const [nutrition,setNutrition]=useState<NutritionGoals>(()=>restored?.nutrition??structuredClone(configuredNutritionGoals(current)));
  const {events:toleranceEvents,values:tolerances,ready:tolerancesReady}=useGoalToleranceSettings();
- const [targets,setTargets]=useState<NutritionTargets>(()=>restored?.targets??Object.fromEntries(nutritionMetrics.map(key=>[key,(key==='calories'?current?.evaluationCalorieTarget:undefined)??current?.nutritionTargets?.[key]??derivedTarget(nutrition[key].min,nutrition[key].max)])) as NutritionTargets);
+ const originalMetrics=configuredNutritionGoals(current);
+ const initialTargets=Object.fromEntries(nutritionMetrics.map(key=>[key,(key==='calories'?current?.evaluationCalorieTarget:undefined)??current?.nutritionTargets?.[key]??derivedTarget(originalMetrics[key].min,originalMetrics[key].max)])) as NutritionTargets;
+ const [targets,setTargets]=useState<NutritionTargets>(()=>restored?.targets??initialTargets);
 
  const [nutritionEnabled,setNutritionEnabled]=useState(restored?.nutritionEnabled??current?.nutritionEnabled!==false);
  const [exerciseEnabled]=useState(restored?.exerciseEnabled??current?.exerciseEnabled!==false);
@@ -40,7 +42,8 @@ function GoalEditor({goals,date,close,notice}:{goals:Goal[];date:string;close:()
  const [exerciseStart]=useState(restored?.exerciseStart??(current&&!goalPeriod(current,"exercise").unrestricted?goalPeriod(current,"exercise").startDate:"")),[exerciseEnd]=useState(restored?.exerciseEnd??(current?.exercisePeriod?current.exercisePeriod.endDate??"":current?.endDate??""));
  const [advanced,setAdvanced]=useState(restored?.advanced??false),[error,setError]=useState(""),[busy,setBusy]=useState(false);
  const change=(metric:NutritionMetric,value:Partial<NutritionGoal>)=>setNutrition(old=>({...old,[metric]:{...old[metric],...value}}));
- const [nutritionFrequency,setNutritionFrequency]=useState<"daily"|"weekly">(()=>restored?.calorieFrequency??current?.nutritionFrequency??(Object.values(nutrition).find(config=>config.mode!=="off")?.mode==="weekly"?"weekly":"daily"));
+ const originalFrequency=current?.nutritionFrequency??(Object.values(originalMetrics).find(config=>config.mode!=="off")?.mode==="weekly"?"weekly":"daily");
+ const [nutritionFrequency,setNutritionFrequency]=useState<"daily"|"weekly">(()=>restored?.calorieFrequency??originalFrequency);
  const [nutritionLimited,setNutritionLimited]=useState(restored?.nutritionLimited??(current?goalPeriod(current,'nutrition').unrestricted!==true:false));
  const [exerciseLimited]=useState(restored?.exerciseLimited??(current?goalPeriod(current,'exercise').unrestricted!==true:false));
  const ranges=Object.fromEntries(nutritionMetrics.map(key=>[key,{...nutrition[key],mode:nutrition[key].mode==='off'?'off':nutritionFrequency,...acceptableRange(targets[key],tolerances[key])}])) as NutritionGoals;
@@ -50,7 +53,38 @@ function GoalEditor({goals,date,close,notice}:{goals:Goal[];date:string;close:()
  const metric=(key:NutritionMetric)=><div className="nutrition-goal-control" data-goal-metric={key}><div className={"nutrition-goal-heading"+(key==="calories"?" nutrition-settings-row":"")}><span className="goal-metric-label"><strong>{t(key==='calories'?'goalCalories':key)}</strong>{key==='calories'&&<GoalTargetInfo kind="calories" tolerances={tolerances}/>}</span><label className="nutrition-goal-enable"><input type="checkbox" aria-label={t("enableNutritionGoal",{metric:t(key==="calories"?"goalCalories":key)})} checked={nutrition[key].mode!=="off"} onChange={event=>change(key,{mode:event.target.checked?nutritionFrequency:"off"})}/><span className="sr-only">{t("enabled")}</span></label></div>{nutrition[key].mode!=="off"&&<><div className="goal-target-field"><label><span className="sr-only">{t(key==='calories'?'goalCalories':key)} · {t('goalTarget')}</span><span className="goal-target-input-line"><NumberInput name={key+'Target'} type="number" inputMode="decimal" min="0" step="any" value={targets[key]??''} required={nutritionEnabled} onInvalid={()=>{if(key!=='calories')flushSync(()=>setAdvanced(true))}} onChange={e=>setTargets(old=>({...old,[key]:number(e.target.value)}))}/><span className="goal-input-unit">{key==='calories'?'kcal':'g'}</span></span></label></div></>}</div>;
  const dateError=Boolean(nutritionLimited&&(!nutritionStart||nutritionEnd&&nutritionEnd<nutritionStart));
  const effectiveDates=(section:GoalSection)=>{const limited=nutritionLimited,start=nutritionStart,end=nutritionEnd;return <div className="goal-date-limitation"><label className="goal-date-toggle"><input name={section+'LimitDates'} type="checkbox" checked={limited} onChange={e=>{setNutritionLimited(e.target.checked);if(e.target.checked&&!start)setNutritionStart(localDate())}}/><span>{t('goalLimitDates')}</span></label>{limited&&<div className="form-grid goal-effective-dates"><label>{t('startDate')}<DateInput name={section+'StartDate'} aria-label={t('nutritionGoalsTitle')+' · '+t('startDate')} required value={start} onChange={e=>setNutritionStart(e.target.value)}/></label><label>{t('endDate')}<DateInput name={section+'EndDate'} aria-label={t('nutritionGoalsTitle')+' · '+t('endDate')} min={start||undefined} value={end} onChange={e=>setNutritionEnd(e.target.value)}/></label></div>}</div>};
-  return <form className="goal-editor-inline" aria-label={t("editGoals")} onSubmit={async event=>{event.preventDefault();notice("",0);setError("");const invalid=nutritionEnabled&&nutritionMetrics.find(key=>nutrition[key].mode!=='off'&&(targets[key]===null||!Number.isFinite(targets[key])||targets[key]!<0));if(invalid){if(invalid!=='calories')setAdvanced(true);setError(t('goalToleranceRequired'));return}setBusy(true);try{const value={nutritionOnly:true,startDate:nutritionLimited?nutritionStart:localDate(),endDate:nutritionLimited?nutritionEnd||null:null,nutritionPeriod:{startDate:nutritionLimited?nutritionStart:localDate(),endDate:nutritionLimited?nutritionEnd||null:null,unrestricted:!nutritionLimited},nutritionFrequency,nutritionGoals:ranges,nutritionTargets:targets,nutritionTolerances:tolerances,nutritionToleranceRevision:toleranceEvents.at(-1)?.id,nutritionEnabled,calorieMin:ranges.calories.mode==='off'?null:ranges.calories.min,calorieMax:ranges.calories.mode==='off'?null:ranges.calories.max,exerciseEnabled:false,exerciseMinutes:null,exerciseKcal:null};await saveGoalVersion(value,goalEditContext(goals,value));draft.discard();close();notice(t("goalsUpdated"),2500)}catch(error){setError(t(error instanceof Error&&error.message==="Goal changed"?"goalEditConflict":"goalInvalid"))}finally{setBusy(false)}}}>
+  return <form className="goal-editor-inline" aria-label={t("editGoals")} onSubmit={async event=>{event.preventDefault();notice("",0);setError("");const invalid=nutritionEnabled&&nutritionMetrics.find(key=>nutrition[key].mode!=='off'&&(targets[key]===null||!Number.isFinite(targets[key])||targets[key]!<0));if(invalid){if(invalid!=='calories')setAdvanced(true);setError(t('goalToleranceRequired'));return}setBusy(true);try{
+    const source=latestNutritionVersion(goals,date);
+    const masterChanged=current!=null && nutritionEnabled!==(current.nutritionEnabled!==false);
+    const metricsUnchanged=nutritionFrequency===originalFrequency && nutritionMetrics.every(key=>
+      nutrition[key].mode===originalMetrics[key].mode && targets[key]===initialTargets[key]);
+    // Preserve stored ranges and their tolerance revision on a master toggle.
+    // A scoped calorie goal supplies only part of the configuration.
+    const retained=masterChanged && metricsUnchanged && source
+      ? source.scope==='calories'
+        ? activeGoal(goals.map(g=>({...g,evaluationToleranceEvents:undefined})),date)
+        : source
+      : null;
+    const config=retained ? {
+      nutritionFrequency:retained.nutritionFrequency,nutritionGoals:retained.nutritionGoals,
+      nutritionTargets:retained.nutritionTargets,nutritionTolerances:retained.nutritionTolerances,
+      nutritionToleranceRevision:retained.nutritionToleranceRevision,calorieMin:retained.calorieMin,calorieMax:retained.calorieMax,
+    } : {
+      nutritionFrequency,nutritionGoals:ranges,nutritionTargets:targets,nutritionTolerances:tolerances,
+      nutritionToleranceRevision:toleranceEvents.at(-1)?.id,calorieMin:ranges.calories.mode==='off'?null:ranges.calories.min,
+      calorieMax:ranges.calories.mode==='off'?null:ranges.calories.max,
+    };
+    const startDate=nutritionLimited?nutritionStart:current?.nutritionPeriod?.unrestricted?current.nutritionPeriod.startDate:localDate();
+    const endDate=nutritionLimited?nutritionEnd||null:null;
+    const previousPeriod=retained?.nutritionPeriod;
+    const nutritionPeriod=previousPeriod && previousPeriod.startDate===startDate && previousPeriod.endDate===endDate && !!previousPeriod.unrestricted===!nutritionLimited
+      ? previousPeriod : {startDate,endDate,unrestricted:!nutritionLimited};
+    const value={...config,nutritionOnly:true,startDate,endDate,nutritionPeriod,
+      nutritionEnabled,exerciseEnabled:false,exerciseMinutes:null,exerciseKcal:null};
+    const edit=goalEditContext(goals,value);
+    // A scoped overlay can supersede an older record with the same dates.
+    await saveGoalVersion(value,masterChanged && edit?.id!==source?.id ? undefined : edit);
+    draft.discard();close();notice(t("goalsUpdated"),2500)}catch(error){setError(t(error instanceof Error&&error.message==="Goal changed"?"goalEditConflict":"goalInvalid"))}finally{setBusy(false)}}}>
  <div className="goal-editor-scroll"><section className="nutrition-goal-controls"><div className="nutrition-goal-heading goal-master-heading"><h3>{t("nutritionGoalsTitle")}</h3><label className="nutrition-goal-enable"><input type="checkbox" aria-label={t("enableNutritionGoals")} checked={nutritionEnabled} onChange={event=>setNutritionEnabled(event.target.checked)}/><span className="sr-only">{t("enabled")}</span></label></div><fieldset className="nutrition-goal-fields" hidden={!nutritionEnabled} disabled={!nutritionEnabled}><div className="goal-mode-selector" role="group" aria-label={t("nutritionGoalsTitle")}>{(["daily","weekly"] as const).map(mode=><button type="button" key={mode} aria-pressed={nutritionFrequency===mode} onClick={()=>setNutritionFrequency(mode)}>{t(mode==="daily"?"goalDaily":"goalWeeklyAverage")}</button>)}</div>{metric("calories")}
  <section className="advanced-nutrition"><div className="advanced-nutrition-heading nutrition-settings-row" onClick={event=>{if(!(event.target as Element).closest('button,.goal-info'))setAdvanced(!advanced)}}><span className="goal-metric-label"><button type="button" className="advanced-nutrition-toggle" aria-expanded={advanced} aria-controls="macro-goal-controls" onClick={()=>setAdvanced(!advanced)}><strong>{t('detailedNutrition')}</strong></button><GoalTargetInfo kind="macros" tolerances={tolerances}/></span><ChevronDown className={"advanced-nutrition-chevron"+(advanced?" expanded":"")} size={16} aria-hidden="true"/></div><div className="goal-macro-grid" id="macro-goal-controls" hidden={!advanced}>{(['protein','carbs','fat'] as const).map(key=><div key={key}>{metric(key)}</div>)}</div></section>{effectiveDates("nutrition")}</fieldset></section>
  {(error||dateError)&&<p role="alert">{error||t("goalDateOrder")}</p>}

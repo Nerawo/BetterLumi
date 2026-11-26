@@ -1,22 +1,27 @@
+import {JournalTextField} from './JournalTextField';
 import {DraftMethod} from './RecipeDraftJournal';
 import {JournalHeading} from './JournalHeading';
 import {identifyRecipeLines,validateJournalRecipe,type IngredientGroup} from './cooking-journal';
 import {FoodStorageList} from './FoodStorage';
 import {PantrySortMenu,type PantrySort} from './PantrySortMenu';
 import {sortRecipes} from './recipe-sort';
-import {recipeListNutrition} from './recipe-list-nutrition';
-import {recipeNutritionDisplay} from './recipe-nutrition-display';
+import {needsUnitReview} from './live-nutrition';
+import {recipeCardRange,recipeNutritionRange,formatNutritionRange} from './recipe-nutrition-range';
 import {RecipeNutritionStrip} from './RecipeNutritionStrip';
 import {builtInRecipeItems,isBuiltInRecipe} from './data/builtInRecipes';
 import {BuiltInRecipeSource} from './BuiltInRecipeSource';
 import {DirectoryListHeader} from './DirectoryListHeader';
 import {CollectionNavigation} from './CollectionNavigation';
 import {orderedItems} from './collection-order';
-import { RecipeLineEditor } from "./RecipeLineEditor";
+import {stockViews} from './stock-view';
+import {useFamilies} from "./FamilyUI";
+import {saveFamilyRecipe} from "./families";
+import {RecipeLineEditor} from './RecipeLineEditor';
+import {templateEditorLine,templateLine,type EditorLine} from './family-preparation';
 import {RecipeCategoryManager} from "./RecipeCategoryManager";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
-import {wholeRecipeNutrition,recipeYield} from "./recipe-nutrition";
+import {recipeYield} from "./recipe-nutrition";
 import './recipe-yield-locale';
 import { useLiveQuery } from "dexie-react-hooks";
 import {
@@ -33,7 +38,6 @@ import { useTranslation } from "react-i18next";
 import {
   Search,
   Plus,
-  Pencil,
   X,
 } from "lucide-react";
 import {
@@ -41,7 +45,6 @@ import {
   stamp,
   softDelete,
   type Recipe,
-  type RecipeLine,
   type PantryItem,
 } from "./domain";
 import {
@@ -73,12 +76,15 @@ export function Recipes({
   const closeCategoryManager=()=>{setManage(false);requestAnimationFrame(()=>categoryManagerTrigger.current?.focus())};
   const [manageRecipes, setManageRecipes] = useState<RecipeCategory | null>(null);
 
+  const familyCatalog=useFamilies(pantry);
+  const hasStockLines=items.some(recipe=>recipe.lines.some(line=>line.source==='batch'));
+  const stock=useLiveQuery(()=>hasStockLines?stockViews():[],[hasStockLines]);
   const filtered = sortRecipes(filterRecipes(
     [...items,...builtInRecipeItems(i18n.language)],
     search,
     categoryItems.some((c) => c.id === tab) ? tab : "",
     categoryItems,
-  ),sort,i18n.language);
+  ),sort,i18n.language,r=>recipeCardRange(r,familyCatalog,i18n.language,stock).nutrition.calories?.[0]??null);
   return (
     <>
       <div className="recipes-view-tabs" role="tablist" aria-label={t('recipes')}><button type="button" role="tab" aria-selected={view==='recipes'} aria-controls="recipes-library-panel" id="recipes-library-tab" className={view==='recipes'?'selected':''} onClick={()=>setView('recipes')}>{t('storageMyRecipes')}</button><button type="button" role="tab" aria-selected={view==='storage'} aria-controls="recipes-storage-panel" id="recipes-storage-tab" className={view==='storage'?'selected':''} onClick={()=>setView('storage')}>{t('storageTab')}</button></div>
@@ -96,12 +102,12 @@ export function Recipes({
       <DirectoryListHeader count={t('recipeCount',{count:filtered.length})}>{categoryItems.filter(category=>category.id===tab).map(category=><span key={category.id}><button type="button" className="text-link manage-category-recipes" aria-label={t("manageCategoryRecipes",{name:category.name})} onClick={()=>setManageRecipes(category)}>{t("manageRecipes")}</button></span>)}<PantrySortMenu value={sort} onChange={setSort} kind="recipes"/></DirectoryListHeader>
       <button type="button" className="primary recipe-fab directory-fab" onClick={() => setEditing(null)} aria-label={t("directoryCreateRecipe")}><Plus size={18} aria-hidden="true"/><span>{t("directoryCreateRecipe")}</span></button>
       <div className="recipe-grid recipe-list">
-        {filtered.map(r=>{const {nutrition,perServing}=recipeListNutrition(r),basis=t(perServing?"compactPerServing":"recipeListWholeBasis"),hasMacros=(["protein","carbs","fat"] as const).some(key=>nutrition[key]!==null);return <article className="recipe-card recipe-list-row" key={r.id} onClick={e=>{if(!(e.target as HTMLElement).closest("button,a,input,select,dialog"))navigate("/recipes/"+encodeURIComponent(r.id))}}>
+        {filtered.map(r=>{const {nutrition,perServing}=recipeCardRange(r,familyCatalog,i18n.language,stock),basis=t(perServing?"compactPerServing":"recipeListWholeBasis"),hasMacros=(["protein","carbs","fat"] as const).some(key=>nutrition[key]!==null);return <article className="recipe-card recipe-list-row" key={r.id} onClick={e=>{if(!(e.target as HTMLElement).closest("button,a,input,select,dialog"))navigate("/recipes/"+encodeURIComponent(r.id))}}>
           {r.photo&&<img className="recipe-thumbnail" src={r.photo} alt="" loading="lazy"/>}
           <div className="recipe-body"><h3><a href={routeHref("/recipes/"+encodeURIComponent(r.id))} onClick={e=>{e.preventDefault();navigate("/recipes/"+encodeURIComponent(r.id))}}>{r.name}</a></h3>
           {isBuiltInRecipe(r)&&<div className="recipe-reference-badge"><BuiltInRecipeSource/></div>}
-          <p className="recipe-metadata">{nutrition.calories===null?t(hasMacros?'recipeListCaloriesMissing':'nutritionNotRecorded'):<NumberUnit value={recipeNutritionDisplay(nutrition.calories)} unit="kcal"/>} / {basis}</p>
-          {hasMacros&&<p className="macro-summary recipe-macros">{(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}<span className="recipe-macro">{t(key==='carbs'?'recipeListCarbs':key)} {nutrition[key]===null?<span className="recipe-nutrient-unavailable">{t('notRecorded')}</span>:<NumberUnit value={recipeNutritionDisplay(nutrition[key]!)} unit="g"/>}</span></Fragment>)}</p>}</div>
+          <p className="recipe-metadata">{nutrition.calories===null?t(r.lines.some(l=>l.source==='family')?'familyNutritionUnavailable':hasMacros?'recipeListCaloriesMissing':'nutritionNotRecorded'):<NumberUnit value={formatNutritionRange(nutrition.calories)} unit="kcal"/>} / {basis}</p>
+          {hasMacros&&<p className="macro-summary recipe-macros">{(['protein','carbs','fat'] as const).map((key,index)=><Fragment key={key}>{index>0&&' · '}<span className="recipe-macro">{t(key==='carbs'?'recipeListCarbs':key)} {nutrition[key]===null?<span className="recipe-nutrient-unavailable">{t('notRecorded')}</span>:<NumberUnit value={formatNutritionRange(nutrition[key]!)} unit="g"/>}</span></Fragment>)}</p>}</div>
           {!isBuiltInRecipe(r)&&<Actions edit={()=>setEditing(r)} remove={async()=>{await confirmDelete("recipe",r.name,async()=>{await softDelete(recipes,r.id)})}}/>}
         </article>})}
       </div>
@@ -165,9 +171,10 @@ export function RecipeEditor({
   close: () => void;
   notice: Notice;
 }) {
-  const { t } = useTranslation();
+  const { t,i18n } = useTranslation();
+  const familyCatalog=useFamilies(pantry);
   const [categoryIds, setCategoryIds] = useState(item?.categoryIds ?? []);
-  const [lines, setLines] = useState<RecipeLine[]>(()=>identifyRecipeLines(item?.lines ?? []));
+  const [lines, setLines] = useState<EditorLine[]>(()=>identifyRecipeLines((item?.lines ?? []).map(templateEditorLine)));
   const [instructions,setInstructions]=useState(item?.instructions??'');
   const [editingMethod,setEditingMethod]=useState(false);
   const [groups,setGroups]=useState<IngredientGroup[]>(item?.ingredientGroups??[]);
@@ -177,6 +184,10 @@ export function RecipeEditor({
   const adjustYield=(delta:number)=>setYieldText(value=>String(Math.max(0.01,Number(value)+delta)));
   const [photo, setPhoto] = useState(item?.photo ?? "");
   const [reading, setReading] = useState(false);
+  const template=lines.map(templateLine);
+  const hasStockLines=template.some(line=>line.source==='batch');
+  const stock=useLiveQuery(()=>hasStockLines?stockViews():[],[hasStockLines]);
+  const preview=recipeNutritionRange(template,familyCatalog,i18n.language,1,stock);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(busy || editingMethod)return;
@@ -189,11 +200,11 @@ export function RecipeEditor({
     setBusy(true);
     try {
       validateJournalRecipe({lines,ingredientGroups:groups});
-      await recipes.put({
+      await saveFamilyRecipe({
         ...(item ? changed(item) : stamp()),
         name,
         servings: Number(f.get('servings')),
-        lines,
+        lines:template,
         ingredientGroups:groups,
         instructions,
         stickyNote: String(f.get("stickyNote")).trim(),
@@ -203,8 +214,8 @@ export function RecipeEditor({
       });
       close();
       notice(t("savedMessage"));
-    } catch {
-      notice(t("failedMessage"));
+    } catch (e) {
+      notice(t(e instanceof Error && e.message.startsWith("family")?e.message:"failedMessage"));
     } finally {
       setBusy(false);
     }
@@ -215,15 +226,8 @@ export function RecipeEditor({
         <div className="recipe-editor-scroll">
           <section className="recipe-editor-basic-section draft-basics">
             <h3><JournalHeading>{t("basicInformation")}</JournalHeading></h3>
-            <label className="draft-name">
-              <span>{t("name")}</span>
-              <span className="draft-name-line">
-                <span aria-hidden="true" className={draftName?'':'muted'}>{draftName||t('draftNamePlaceholder')}</span>
-                <input name="name" aria-label={t("name")} required value={draftName} placeholder={t('draftNamePlaceholder')}
-                  onChange={e=>setDraftName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.nativeEvent.isComposing){e.preventDefault();e.currentTarget.blur()}}}/>
-                <Pencil size={13} strokeWidth={1.5} aria-hidden="true"/>
-              </span>
-            </label>
+            <JournalTextField name="name" label={t("name")} value={draftName} onChange={setDraftName}
+              placeholder={t('draftNamePlaceholder')} required/>
             <div className="draft-yield">
               <label htmlFor="draft-recipe-yield">{t('draftRecipeYield')}</label>
               <div className="draft-yield-controls">
@@ -271,10 +275,13 @@ export function RecipeEditor({
           </section>
 
         <section className="recipe-editor-section">
-        <RecipeLineEditor compact groups={groups} onGroupsChange={setGroups} lines={lines} setLines={setLines} pantry={pantry} />
+        <RecipeLineEditor compact groups={groups} onGroupsChange={setGroups} lines={lines} setLines={setLines} pantry={pantry}
+          familyDraft={{catalog:familyCatalog}} />
         </section>
         <section className="recipe-editor-section recipe-editor-nutrition">
-          <h3>{t("recipeNutritionTotal")}</h3><RecipeNutritionStrip value={wholeRecipeNutrition(lines)}/>
+          <h3>{t("recipeNutritionTotal")}</h3>
+          {needsUnitReview(template.filter(line=>line.source!=='family'),pantry,familyCatalog.preferences)&&<small role="status">{t('liveUnitReview')}</small>}
+          <RecipeNutritionStrip value={preview} unavailable={template.some(line=>line.source==='family')}/>
         </section>
         <DraftMethod value={instructions} onConfirm={setInstructions} editing={editingMethod} setEditing={setEditingMethod}/>
         <label className="recipe-editor-section recipe-editor-text">

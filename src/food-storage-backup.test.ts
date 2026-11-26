@@ -19,16 +19,16 @@ async function fixture(){
  return{item,recipe,meal,batch};
 }
 it('upgrades every v6 store in place, without changing any existing rows, IDs, preferences or snapshots',async()=>{
- await db.open();const name='food-storage-migration-'+crypto.randomUUID();const old=new Dexie(name);const schemas=Object.fromEntries(db.tables.filter(t=>!['foodBatches','inventoryTransactions'].includes(t.name)).map(t=>[t.name,[t.schema.primKey.src,...t.schema.indexes.map(i=>i.src)].join(',')]));
+ await db.open();const name='food-storage-migration-'+crypto.randomUUID();const old=new Dexie(name);const schemas=Object.fromEntries(db.tables.filter(t=>!["ingredientFamilies",'foodBatches','inventoryTransactions'].includes(t.name)).map(t=>[t.name,[t.schema.primKey.src,...t.schema.indexes.map(i=>i.src)].join(',')]));
  expect(Object.keys(schemas)).toHaveLength(18);old.version(6).stores(schemas);
  const snapshots:Record<string,unknown[]>={};
  for(const table of old.tables){const row=table.name==='settings'?{key:'ingredientPreference:builtin-old',value:JSON.stringify({version:1,units:[{name:'piece',quantity:1,amount:50,unit:'g'}],preferred:'piece',archived:true})}:{...stamp(),name:'Historical '+table.name,date:'2020-01-01',nutrition:{calories:77,protein:null,carbs:0,fat:4},untouched:{values:[0,null,''],snapshot:'preserve exactly'}};await table.put(row);snapshots[table.name]=await table.toArray()}
- old.close();const updated=new LumiDB(name);temporary.push(updated);await updated.open();expect(updated.verno).toBe(7);expect(updated.name).toBe(name);
+ old.close();const updated=new LumiDB(name);temporary.push(updated);await updated.open();expect(updated.verno).toBe(8);expect(updated.name).toBe(name);
  for(const [name,rows]of Object.entries(snapshots))expect(await updated.table(name).toArray(),name).toEqual(rows);
  expect(await updated.foodBatches.count()).toBe(0);expect(await updated.inventoryTransactions.count()).toBe(0);expect(db.name).toBe('BetterLumi');
 });
 it('round trips v11 inventory, lineage, conversion history, meals, recipe snapshots and preferences exactly',async()=>{
- const {item,recipe,batch}=await fixture();const before=await exportAll();expect(before.version).toBe(16);expect(db.verno).toBe(7);expect(Object.keys(before.tables)).toHaveLength(20);
+ const {item,recipe,batch}=await fixture();const before=await exportAll();expect(before.version).toBe(20);expect(db.verno).toBe(8);expect(Object.keys(before.tables)).toHaveLength(21);
  await restoreAll(JSON.parse(JSON.stringify(before)));expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.table('recipeCards').get(recipe.id)).toEqual(recipe);
  expect(batchRemainingNutrition((await store.batches.get(batch.id))!)).toEqual(batchRemainingNutrition(batch));
  const meal=(await store.meals.get('first-meal'))!;await store.deleteMeal({operationId:'delete-after-restore',mealId:meal.id,expectedRevision:meal.revision});expect((await store.batches.get(batch.id))!.remainingQuantity).toBe(250);
@@ -36,7 +36,7 @@ it('round trips v11 inventory, lineage, conversion history, meals, recipe snapsh
 it.each([2,3,4,5,6,7,8,9])('accepts a valid v%s backup without inventory and preserves its historical records',async version=>{
  const item=ingredient();await db.ingredients.put(item);await db.settings.put({key:'language',value:'zh'});const old=await exportAll();old.version=version;delete old.tables.foodBatches;delete old.tables.inventoryTransactions;
  if(version===2){delete old.tables.recipeNotes;delete old.tables.goals}if(version<4)delete old.tables.recipeCategories;if(version<5){delete old.tables.exercisePlans;delete old.tables.exerciseOccurrences}if(version<6)delete old.tables.ingredientTags;
- await restoreAll(old);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.settings.get('language')).toEqual({key:'language',value:'zh'});expect(await store.batches.count()).toBe(0);expect(await store.transactions.count()).toBe(0);expect(SCHEMA_VERSION).toBe(7);expect(BACKUP_VERSION).toBe(16);
+ await restoreAll(old);expect(await db.ingredients.get(item.id)).toEqual(item);expect(await db.settings.get('language')).toEqual({key:'language',value:'zh'});expect(await store.batches.count()).toBe(0);expect(await store.transactions.count()).toBe(0);expect(SCHEMA_VERSION).toBe(8);expect(BACKUP_VERSION).toBe(20);
 });
 it.each(['missing-table','negative-balance','invalid-nutrition','dangling-meal','dangling-source','cycle','broken-origin','bad-movement','duplicate-transaction','missing-history','wrong-total','wrong-consumption','lost-lock','downgrade'] as const)('rejects %s backup before changing any data',async defect=>{
  await fixture();const original=await exportAll(),bad=structuredClone(original);const b=(bad.tables.foodBatches as FoodBatch[])[0],tx=(bad.tables.inventoryTransactions as StorageTransaction[])[0];

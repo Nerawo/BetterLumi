@@ -47,14 +47,14 @@ export function configuredNutritionGoals(goal:Goal|null|undefined):NutritionGoal
 export function validGoalConfig(value:unknown) {
  const g=value as Goal;if(!g||![g.calorieMin,g.calorieMax,g.exerciseMinutes,g.exerciseKcal].every(v=>v===null||validMeasure(v)))return false;
  if(g.nutritionOnly!==undefined&&typeof g.nutritionOnly!=='boolean')return false;
- if(g.nutritionOnly&&(g.scope!==undefined||g.nutritionEnabled!==true||g.exerciseEnabled!==false||g.exerciseMinutes!==null||g.exerciseKcal!==null))return false;
+ if(g.nutritionOnly&&(g.scope!==undefined||typeof g.nutritionEnabled!=='boolean'||g.exerciseEnabled!==false||g.exerciseMinutes!==null||g.exerciseKcal!==null))return false;
  if(g.calorieSource!==undefined&&(!['automatic','professional'].includes(g.calorieSource)||g.scope!=='calories'))return false;
  if(g.scope!==undefined&&g.scope!=='calories'&&g.scope!=='exercise')return false;
  if(g.scope==='exercise'&&(g.nutritionEnabled!==false||g.exerciseEnabled!==true||g.exerciseMode!=='weekly'||g.calorieMin!==null||g.calorieMax!==null||g.nutritionTargets!==undefined||g.nutritionGoals!==undefined))return false;
  if(g.scope==='calories'&&(g.nutritionTargets?.calories==null||!g.nutritionTolerances))return false;
  if(g.scope==='calories'&&(g.nutritionEnabled!==true||g.exerciseEnabled!==false||g.exerciseMinutes!==null||g.exerciseKcal!==null||!g.nutritionGoals||g.nutritionGoals.calories.mode==='off'||['protein','carbs','fat'].some(key=>g.nutritionGoals![key as NutritionMetric]?.mode!=='off')))return false;
  if(g.nutritionTargets!==undefined&&(!g.nutritionTargets||!validTolerances(g.nutritionTolerances)||!nutritionMetrics.every(key=>g.nutritionTargets![key]===null||validMeasure(g.nutritionTargets![key]))))return false;
- if(g.nutritionTargets!==undefined){if(!g.nutritionGoals||!nutritionMetrics.every(key=>{const target=g.nutritionTargets![key],config=g.nutritionGoals![key],range=acceptableRange(target,g.nutritionTolerances![key]);return config&&config.min===range.min&&config.max===range.max&&!(g.nutritionEnabled!==false&&config.mode!=='off'&&target===null)}))return false;}
+ if(g.nutritionTargets!==undefined){if(!g.nutritionGoals||!nutritionMetrics.every(key=>{const target=g.nutritionTargets![key],config=g.nutritionGoals![key],range=acceptableRange(target,g.nutritionTolerances![key]);return config&&config.min===range.min&&config.max===range.max&&!((g.nutritionOnly||g.nutritionEnabled!==false)&&config.mode!=='off'&&target===null)}))return false;}
  if(g.nutritionTolerances!==undefined&&!validTolerances(g.nutritionTolerances))return false;
  if(g.nutritionToleranceRevision!==undefined&&typeof g.nutritionToleranceRevision!=='string')return false;
  if(g.calorieMin!==null&&g.calorieMax!==null&&g.calorieMin>g.calorieMax)return false;

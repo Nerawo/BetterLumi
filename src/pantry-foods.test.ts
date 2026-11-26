@@ -21,7 +21,7 @@ it.each([
  const item={...user(),...definition,calories,protein:3,carbs:6,fat:2},before=structuredClone(item);
  for(const [query,tag] of [['',''],['fictional',''],['fictional','custom-test']]){
   for(const sort of ['name-asc','calories-desc'] as const){
-   const choice=sortPantryFoods(searchFoodChoices([item],query,tag,tags),sort,'en',query).find(c=>c.item.id===item.id);
+   const choice=sortPantryFoods(searchFoodChoices([item],query,tag,tags),sort,'en').find(c=>c.item.id===item.id);
    if(choice?.kind!=='user')throw Error('Missing personal ingredient');
    const row=pantryListNutrition(choice.item);
    expect(row.basis).toEqual({amount:unit==='serving'?1:100,unit});
@@ -57,5 +57,5 @@ it('returns a genuinely empty combined set only when neither source matches',()=
 it('never writes composed rows to IndexedDB or changes existing tables',async()=>{
  const item=user();await db.ingredients.put(item);const before=await exportAll();
  for(const sort of ['name-asc','name-desc','calories-asc','calories-desc'] as const)expect(sortPantryFoods(searchFoodChoices([item],'','',tags),sort,'zh')).toHaveLength(203);
- expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([item]);expect(db.verno).toBe(7);
+ expect((await exportAll()).tables).toEqual(before.tables);expect(await db.ingredients.toArray()).toEqual([item]);expect(db.verno).toBe(8);
 });

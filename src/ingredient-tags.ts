@@ -1,3 +1,4 @@
+import {familyTagPrefix,readFamilyTags} from './family-tags';
 import {builtInTagIds,type IngredientTagOption} from './data/builtInTags';
 import {nextOrder,associatedNameMatches} from './collection-order';
 import {db,stamp,type PantryItem} from './domain';
@@ -15,9 +16,12 @@ export async function saveIngredientTag(name:string,item?:IngredientTag){
  });
 }
 export async function deleteIngredientTag(tag:IngredientTag){
- await db.transaction('rw',[ingredientTags,db.ingredients],async()=>{
+ await db.transaction('rw',[ingredientTags,db.ingredients,db.settings],async()=>{
   const current=await ingredientTags.get(tag.id);if(!current||current.deletedAt)return;
   const now=new Date().toISOString();await ingredientTags.update(tag.id,{deletedAt:now,updatedAt:now,revision:current.revision+1});
+  await db.settings.where("key").startsWith(familyTagPrefix).modify(row=>{
+   const ids=readFamilyTags(row.value);if(ids.includes(tag.id))row.value=JSON.stringify(ids.filter(id=>id!==tag.id));
+  });
   await db.ingredients.filter(i=>(i.tagIds??[]).includes(tag.id)).modify(i=>{i.tagIds=i.tagIds!.filter(id=>id!==tag.id);i.updatedAt=now;i.revision++;});
  });
 }

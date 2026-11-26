@@ -50,6 +50,8 @@ test('compact food dialog saves unknowns, keeps a single scroll region and colla
  await expect(save).toBeVisible();
  expect(await dialog.evaluate(e=>e.scrollHeight<=e.clientHeight)).toBe(true);
  await page.setViewportSize({width:390,height:460});
+ await expect(save).toBeAttached();
+ await page.setViewportSize({width:390,height:844});
  await expect(save).toBeInViewport();
  await save.click();
  const original=await page.evaluate(async id=>{const d=await import('/src/domain.ts');return d.recipes.get(id)},recipe);

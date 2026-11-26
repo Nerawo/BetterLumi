@@ -1,3 +1,5 @@
+import {concreteRecipe} from './families';
+import {livePreparation,needsUnitReview} from './live-nutrition';
 import type {PantryItem,Recipe} from './domain';
 import {searchFoodChoices,referenceName,type FoodChoice} from './reference-library';
 import {everydaySearchAliases} from './everyday-foods';
@@ -49,7 +51,9 @@ export function pantryAIMealSource(choice:FoodChoice,portion:AIMealPortion,p?:In
  const nutrition=validateAIMealNutrition(personalNutrition(choice,1,unit,p));
  return {baseline:{kind:'pantry',id:choice.item.id,name:choice.kind==='built-in'?referenceName(choice.item,'en'):choice.item.name,amount:1,unit,weightG:grams,nutrition,estimated:false},portion:{amount:portion.amount,unit,weightG:grams===null?null:portion.amount*grams}};
 }
-export function recipeAIMealSource(recipe:Recipe,portion:AIMealPortion):{baseline:AIMealBaseline;portion:AIMealPortion} {
+export function recipeAIMealSource(recipe:Recipe,portion:AIMealPortion,catalog?:AIMealCatalog):{baseline:AIMealBaseline;portion:AIMealPortion} {
+ if(!concreteRecipe(recipe))throw Error('Select the family member in Add Meal');
+ if(catalog){if(needsUnitReview(recipe.lines,catalog.ingredients,catalog.preferences))throw Error('Review ingredient conversion');recipe={...recipe,lines:livePreparation(recipe.lines,catalog.ingredients,catalog.preferences)}}
  if(recipe.deletedAt)throw Error('Recipe is unavailable');
  if(canonicalAIMealUnit(portion.unit)!=='serving'||portion.amount===null||!Number.isFinite(portion.amount)||portion.amount<0)throw Error('Resolve recipe servings explicitly; cooked weight is not available');
  return {baseline:{kind:'recipe',id:recipe.id,name:recipe.name,amount:1,unit:'serving',weightG:null,nutrition:validateAIMealNutrition(recipeServingNutrition(recipe,1)),estimated:false},portion:{amount:portion.amount,unit:'serving',weightG:null}};
