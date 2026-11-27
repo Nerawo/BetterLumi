@@ -79,6 +79,8 @@ for(const language of ['zh','en'])for(const mode of ['create','edit'] as const){
   await actions.locator('summary').press('Enter');await actions.locator('.ingredient-replace-toggle').tap();
   await page.locator(`[data-ingredient-id="${fixture.milk}"]`).tap();
   await expect(first.locator('strong')).toHaveText('香草牛奶 · Vanilla milk');
+  await expect(first.locator('.draft-unit-warning')).toContainText('cup');
+  await first.locator('.draft-unit-trigger').tap();await editor.locator('.draft-unit-menu [data-unit=g]').tap();
   await first.locator('.draft-amount input').tap();await first.locator('input').fill('150.125');
   await snapshot('quantity',ungrouped);
   await first.locator('input').press('Enter');

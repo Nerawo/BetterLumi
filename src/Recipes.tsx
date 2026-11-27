@@ -17,7 +17,7 @@ import {stockViews} from './stock-view';
 import {useFamilies} from "./FamilyUI";
 import {saveFamilyRecipe} from "./families";
 import {RecipeLineEditor} from './RecipeLineEditor';
-import {templateEditorLine,templateLine,type EditorLine} from './family-preparation';
+import {familyUnitNeedsReview,templateEditorLine,templateLine,type EditorLine} from './family-preparation';
 import {RecipeCategoryManager} from "./RecipeCategoryManager";
 import {NumberUnit} from "./NumberUnit";
 import {confirmDelete} from "./DeleteConfirmation";
@@ -184,13 +184,14 @@ export function RecipeEditor({
   const adjustYield=(delta:number)=>setYieldText(value=>String(Math.max(0.01,Number(value)+delta)));
   const [photo, setPhoto] = useState(item?.photo ?? "");
   const [reading, setReading] = useState(false);
-  const template=lines.map(templateLine);
+  const pendingFamilyUnit=lines.some(familyUnitNeedsReview);
+  const template=lines.filter(line=>!familyUnitNeedsReview(line)).map(templateLine);
   const hasStockLines=template.some(line=>line.source==='batch');
   const stock=useLiveQuery(()=>hasStockLines?stockViews():[],[hasStockLines]);
-  const preview=recipeNutritionRange(template,familyCatalog,i18n.language,1,stock);
+  const preview=recipeNutritionRange(pendingFamilyUnit?[]:template,familyCatalog,i18n.language,1,stock);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(busy || editingMethod)return;
+    if(busy || editingMethod || pendingFamilyUnit)return;
     const f = new FormData(e.currentTarget);
     const name = String(f.get("name")).trim();
     if (!name || !lines.length || lines.some((l) => !Number.isFinite(l.quantity)||l.quantity < 0) || !Number.isFinite(Number(f.get('servings'))) || Number(f.get('servings'))<=0) {
@@ -281,7 +282,7 @@ export function RecipeEditor({
         <section className="recipe-editor-section recipe-editor-nutrition">
           <h3>{t("recipeNutritionTotal")}</h3>
           {needsUnitReview(template.filter(line=>line.source!=='family'),pantry,familyCatalog.preferences)&&<small role="status">{t('liveUnitReview')}</small>}
-          <RecipeNutritionStrip value={preview} unavailable={template.some(line=>line.source==='family')}/>
+          <RecipeNutritionStrip value={preview} unavailable={pendingFamilyUnit||template.some(line=>line.source==='family')}/>
         </section>
         <DraftMethod value={instructions} onConfirm={setInstructions} editing={editingMethod} setEditing={setEditingMethod}/>
         <label className="recipe-editor-section recipe-editor-text">
@@ -298,7 +299,7 @@ export function RecipeEditor({
           <button type="button" onClick={close}>
             {t("cancel")}
           </button>
-          <button className="primary" disabled={busy || reading || editingMethod}>
+          <button className="primary" disabled={busy || reading || editingMethod || pendingFamilyUnit}>
             {t("save")}
           </button>
         </div>

@@ -11,7 +11,7 @@ import {storedRecipeLine} from './recipe-storage';
 import './food-storage-locale';
 import {useIngredientPreferences} from './useIngredientPreferences';
 import {availableUnits,foodUnitLabel,preferredFoodUnit,personalQuantity,personalNutrition,userChoice} from './ingredient-preferences';
-import {builtInFoods,type BuiltInFood} from './data/builtInFoods';
+import {builtInFoods} from './data/builtInFoods';
 import {referenceName,referencePreparation,type FoodChoice} from './reference-library';
 import {ReferenceSourceInfo} from './ReferenceSourceInfo';
 import {defaultIngredientQuantity} from './consumption-units';
@@ -23,7 +23,8 @@ import {IngredientPicker} from './IngredientPicker';
 import {automaticMember,commonUnits,familyOptions,memberName,type FamilyCatalog} from './families';
 import {pantryListNutrition} from './pantry-foods';
 import {unknownNutrition,type FamilyLine,type PantryItem} from './domain';
-import {templateLine,type EditorLine} from './family-preparation';
+import {livePantryLine} from './live-nutrition';
+import {familyUnitNeedsReview,templateLine,type EditorLine} from './family-preparation';
 
 function FamilyOptionEnergy({option,id}:{option:FoodChoice;id:string}){
  const normalized=option.kind==='user'?pantryListNutrition(option.item):undefined;
@@ -78,16 +79,19 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
  const [storedPicking,setStoredPicking]=useState<number|'add'|null>(null);
  const [picking,setPicking]=useState<number|'add'|null>(null);
  const [addGroup,setAddGroup]=useState<string>();
- const choose=(item:PantryItem)=>{
-  const choice=userChoice(item),pref=preferences[item.id];
-  let unit=preferredFoodUnit(choice,pref);
-  if(groups && !recipeUnitFactors(choice,pref).has(unit))unit=preferredFoodUnit(choice);
+ const chooseFood=(choice:FoodChoice)=>{
+  const pref=preferences[choice.item.id];
   const previous=typeof picking==='number'?lines[picking]:undefined;
-  const quantity=previous?.unit===unit?previous.quantity:defaultIngredientQuantity(item,unit);
-  const line={lineId:previous?.lineId,groupId:previous?previous.groupId:addGroup,ingredientId:item.id,name:item.name,quantity,unit,nutrition:personalNutrition(userChoice(item),quantity,unit,preferences[item.id])};
-  setLines(picking==='add'?[...lines,line]:lines.map((old,index)=>index===picking?line:old));setPicking(null);
+  let unit=preferredFoodUnit(choice,pref);
+  if(previous&&onGroupsChange)unit=previous.unit;
+  else if(groups&&choice.kind==='user'&&!recipeUnitFactors(choice,pref).has(unit))unit=preferredFoodUnit(choice);
+  const quantity=previous?.unit===unit?previous.quantity:personalQuantity(choice,unit);
+  const name=choice.kind==='user'?choice.item.name:referenceName(choice.item,i18n.language);
+  const line={lineId:previous?.lineId,groupId:previous?previous.groupId:addGroup,ingredientId:choice.item.id,name,quantity,unit,nutrition:personalNutrition(choice,quantity,unit,pref)};
+  const replacement=previous&&onGroupsChange?livePantryLine(line,choice.kind==='user'?choice.item:undefined,pref):line;
+  setLines(picking==='add'?[...lines,line]:lines.map((old,index)=>index===picking?replacement:old));
+  setPicking(null);
  };
- const chooseBuiltIn=(item:BuiltInFood)=>{const choice={kind:'built-in' as const,item},unit=preferredFoodUnit(choice,preferences[item.id]),previous=typeof picking==='number'?lines[picking]:undefined,quantity=previous?.unit===unit?previous.quantity:personalQuantity(choice,unit),line={lineId:previous?.lineId,groupId:previous?previous.groupId:addGroup,ingredientId:item.id,name:referenceName(item,i18n.language),quantity,unit,nutrition:personalNutrition(choice,quantity,unit,preferences[item.id])};setLines(picking==='add'?[...lines,line]:lines.map((old,index)=>index===picking?line:old));setPicking(null)};
  const renderLine=(line:EditorLine,index:number,grouping=false)=>{
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
    const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
@@ -102,10 +106,10 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
    const ingredientName=<><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{line.source==='batch'?<small className="ingredient-line-brand"> · {t('storageTab')}</small>:!item&&!reference&&<small>{t('sourceMissing')}</small>}</>;
    if(groups||batchDraft){
      const factors=choice&&line.source!=='batch'?recipeUnitFactors(choice,preferences[line.ingredientId]):new Map<string,number>();
-     const slot=line.draftFamilyId&&familyDraft?templateLine(line) as FamilyLine:undefined;
+     const slot=line.draftFamilyId&&familyDraft&&!familyUnitNeedsReview(line)?templateLine(line) as FamilyLine:undefined;
      const unsupported=!slot&&line.source!=='batch'&&!factors.has(line.unit);
-     const templateFamily=!!slot&&!familyDraft?.actual;
-     const validOptions=(templateFamily?['g','mL']:Array.from(factors.keys()).filter(unit=>convertRecipeLine(line,unit,factors)!==null))
+     const templateFamily=!!line.draftFamilyId&&!familyDraft?.actual;
+     const validOptions=(templateFamily?['g','mL']:Array.from(factors.keys()).filter(unit=>(!!onGroupsChange&&unsupported)||convertRecipeLine(line,unit,factors)!==null))
        .map(value=>({value,label:unitLabel(value)}));
      const id=line.lineId??(index+"-"+line.ingredientId);
      const replace=()=>line.source==="batch"&&batchDraft?setStoredPicking(index):setPicking(index);
@@ -125,8 +129,9 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
        </div>{unsupported&&<small className="draft-unit-warning">{t('draftUnsupportedUnit',{unit:unitLabel(line.unit)})} <button type="button" onClick={()=>setPicking(index)}>{t('replaceIngredient')}</button></small>}</>}</div>
        <div className="recipe-line-amounts draft-amount">{amountControl}
        <span aria-hidden="true" className="journal-amount-ink"/>
-       <DraftMenu directUnit={{value:line.unit,label:unitLabel(line.unit),name:line.name,fixed:validOptions.length<2,options:validOptions,change:unit=>{
+       <DraftMenu directUnit={{value:line.unit,label:unitLabel(line.unit),name:line.name,fixed:validOptions.length===0||(validOptions.length===1&&validOptions[0].value===line.unit),options:validOptions,change:unit=>{
          if(templateFamily){setLines(lines.map((old,n)=>n===index?{...old,unit}:old));return}
+         if(onGroupsChange&&unsupported){setLines(lines.map((old,n)=>n===index?livePantryLine({...old,unit},item,preferences[line.ingredientId]):old));return}
          const converted=convertRecipeLine(line,unit,factors);
          if(converted)setLines(lines.map((old,n)=>n===index?converted:old));
        }}} className="journal-line-menu" label={t('journalLineActions')+' '+line.name}
@@ -162,8 +167,8 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
   {storedPicking!==null&&<StoredFoodPicker close={()=>setStoredPicking(null)} onSelect={b=>{const previous=typeof storedPicking==='number'?lines[storedPicking]:undefined,line={...storedRecipeLine(b,previous),groupId:previous?previous.groupId:addGroup};setLines(storedPicking==='add'?[...lines,line]:lines.map((l,i)=>i===storedPicking?line:l));setStoredPicking(null)}}/>}
   {picking!==null&&<IngredientPicker onFamily={onGroupsChange?(family,unit)=>{
    const prev=typeof picking==='number'?lines[picking]:undefined;
-   const line:EditorLine={draftFamilyId:family.id,ingredientId:'',lineId:prev?.lineId,groupId:prev?prev.groupId:addGroup,name:family.name,quantity:prev?.unit===unit?prev.quantity:100,unit,nutrition:unknownNutrition()};
+   const line:EditorLine={draftFamilyId:family.id,ingredientId:'',lineId:prev?.lineId,groupId:prev?prev.groupId:addGroup,name:family.name,quantity:prev?.quantity??100,unit:prev?.unit??unit,nutrition:unknownNutrition()};
    setLines(picking==='add'?[...lines,line]:lines.map((l,i)=>i===picking?line:l));setPicking(null);
-  }:undefined} onChooseStoredFood={groups&&allowStored?()=>{setStoredPicking(picking);setPicking(null)}:undefined} items={pantry} close={()=>setPicking(null)} onSelect={choose} onSelectBuiltIn={chooseBuiltIn}/>}
+  }:undefined} onChooseStoredFood={groups&&allowStored?()=>{setStoredPicking(picking);setPicking(null)}:undefined} items={pantry} close={()=>setPicking(null)} onSelect={item=>chooseFood(userChoice(item))} onSelectBuiltIn={item=>chooseFood({kind:'built-in',item})}/>}
  </div>;
 }

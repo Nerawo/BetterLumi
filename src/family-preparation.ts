@@ -5,6 +5,9 @@ export type EditorLine=RecipeLine & {draftFamilyId?:string;draftFamilyMemberId?:
 export function templateEditorLine(line:TemplateLine):EditorLine{
  return line.source==='family'?{lineId:line.lineId,groupId:line.groupId,name:line.name,draftFamilyId:line.familyId,ingredientId:'',unit:line.unit,quantity:line.quantity,nutrition:unknownNutrition()}:line;
 }
+export function familyUnitNeedsReview(line:EditorLine){
+ return !!line.draftFamilyId&&line.unit!=='g'&&line.unit!=='mL';
+}
 export function templateLine(line:EditorLine):TemplateLine{
  if(!line.draftFamilyId)return line;
  if(!line.lineId||(line.unit!=='g'&&line.unit!=='mL'))throw Error('familyInvalid');

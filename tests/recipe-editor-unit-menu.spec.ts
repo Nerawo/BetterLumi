@@ -122,12 +122,14 @@ test('legacy unsupported unit stays intact until explicitly replaced in the draf
   await page.reload();
   const edit=page.locator('.recipe-list-row .actions button').first(),editor=page.locator('.journal-recipe-editor');
   await edit.tap();await expect(editor.locator('.draft-unit-warning')).toContainText('mL');
-  await expect(editor.locator('.draft-unit-text')).toHaveText('mL');
+  await expect(editor.locator('.draft-unit-trigger')).toHaveText('mL');
   await editor.locator('.recipe-editor-footer .primary').tap();await expect(editor).toHaveCount(0);
   const read=()=>page.evaluate(async id=>(await (await import('/src/domain.ts')).recipes.get(id))!.lines,original.id);
   expect(await read()).toEqual(original.lines);
   await edit.tap();await editor.locator('.draft-unit-warning button').tap();
   await page.locator('[data-ingredient-id="'+original.lines[0].ingredientId+'"]').tap();
+  await expect(editor.locator('.draft-unit-warning')).toBeVisible();
+  await editor.locator('.draft-unit-trigger').tap();await editor.getByRole('menuitemradio').tap();
   await expect(editor.locator('.draft-unit-warning')).toHaveCount(0);await expect(editor.locator('.draft-unit-text')).toHaveAttribute('data-unit','g');
   await editor.locator('.recipe-editor-footer button').first().tap();expect(await read()).toEqual(original.lines);
 });
