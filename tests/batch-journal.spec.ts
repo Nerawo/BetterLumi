@@ -35,12 +35,12 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
     }
   };
   const headings=modal.locator('h3 .journal-heading');
-  await expect(headings).toHaveText(language==='zh'?['食材与用量','批次结果']:['Ingredients','Batch Results']);
+  await expect(headings).toHaveText(language==='zh'?['批次结果']:['Batch Results']);
   await expect(modal.locator('textarea')).toHaveCount(0);
   await shot('01-blank');
   await shot('empty-note',modal.locator('.batch-note-action'));
   await modal.locator('[name=batchName]').fill('周末燕麦');
-  await modal.locator('.ingredient-add-trigger').tap();
+  await modal.locator('.batch-review > summary').tap();await modal.locator('.ingredient-add-trigger').tap();
   await page.locator('[data-ingredient-id="'+fixture.pantry+'"]').tap();
   await modal.locator('[name=cookedYieldGrams]').fill('200');
   await modal.locator('[name=cookedYieldGrams]').press('Enter');
@@ -64,6 +64,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
   await shot('02-recipe');
   await shot('04-basic',modal.locator('.batch-basic'));
   await shot('long-320');
+  await modal.locator('.batch-review > summary').tap();
   const row=modal.locator('.draft-ingredient').first();
   const quantity=row.locator('input');
   await quantity.tap();
@@ -79,7 +80,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
   await page.locator('.stored-food-picker .storage-list-row').tap();
   const remaining=()=>page.evaluate(async id=>(await(await import('/src/domain.ts')).db.foodBatches.get(id))!.remainingQuantity,fixture.stock);
   expect(await remaining()).toBe(350);
-  await shot('06-ingredients',modal.locator('section').filter({has:page.locator('.line-editor')}).first());
+  await shot('06-ingredients',modal.locator('.batch-review'));
   await weight.fill('400');
   expect((await ink.boundingBox())!.width).toBe(56);
   await shot('10-weight-edit',weightSection);
@@ -101,7 +102,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
   await page.locator('.storage-list-row').filter({hasText:'Apple Cinnamon'}).tap();
   await page.getByRole('button',{name:language==='zh'?'修正配方':'Correct formula',exact:true}).tap();
   await expect(weight).toHaveValue('400');
-  await expect(headings).toHaveCount(2);
+  await expect(headings).toHaveCount(1);
   await expect(modal.locator('.batch-note-text')).toHaveText('留作周末早餐。');
   await shot('existing-note',modal.locator('.batch-results'));
   await modal.locator('.storage-make-scroll').evaluate(el=>el.scrollTop=0);

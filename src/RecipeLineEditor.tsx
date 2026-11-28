@@ -23,7 +23,7 @@ import {IngredientPicker} from './IngredientPicker';
 import {automaticMember,commonUnits,familyOptions,memberName,type FamilyCatalog} from './families';
 import {pantryListNutrition} from './pantry-foods';
 import {unknownNutrition,type FamilyLine,type PantryItem} from './domain';
-import {livePantryLine} from './live-nutrition';
+import {recipeDisplayName,livePantryLine} from './live-nutrition';
 import {familyUnitNeedsReview,templateLine,type EditorLine} from './family-preparation';
 
 function FamilyOptionEnergy({option,id}:{option:FoodChoice;id:string}){
@@ -41,7 +41,7 @@ export function InlineFamilyChoice({line,catalog,selectedId,resolvedName,invalid
  const options=familyOptions(line,catalog);
  const member=selectedId?options.find(option=>option.item.id===selectedId):automaticMember(line,catalog);
  const missing=invalid&&!member&&!resolvedName;
- const family=catalog.families.find(f=>f.id===line.familyId),name=family?.name??line.name;
+ const family=catalog.families.find(f=>f.id===line.familyId),name=cooking?line.name:family?.name??line.name;
  const familyName=cooking?<span className="journal-line-name">{name}</span>:<strong title={name}>{name}</strong>;
  if(!catalog.ready)return <>{familyName}{!cooking&&<div className="draft-source">{t('familyTitle')}</div>}</>;
  if(!options.length&&!resolvedName)return <>{familyName}<div className="draft-family-unit-review draft-unit-warning" tabIndex={-1}>
@@ -50,19 +50,22 @@ export function InlineFamilyChoice({line,catalog,selectedId,resolvedName,invalid
  </div></>;
  const disclosure=cooking?options.length>0:options.length>1||!resolvedName&&(!member||!!selectedId)&&options.length>0;
  const memberLabel=resolvedName??(member?memberName(member,i18n.language):undefined);
- const title=cooking?(memberLabel??name):name;
- const identity=cooking?<><span className="journal-line-name">{title}</span>{disclosure&&<ChevronDown size={12} aria-hidden="true"/>}</>:<><strong>{name}</strong><span className="draft-family-member-label" title={memberLabel}>
+
+ const identity=cooking?<><span className="journal-line-name">{name}</span>{disclosure&&<ChevronDown size={12} aria-hidden="true"/>}</>:<><strong>{name}</strong><span className="draft-family-member-label" title={memberLabel}>
   <span>{memberLabel??t('familyDraftChoose')}</span>{disclosure&&<ChevronDown size={13} aria-hidden="true"/>}
  </span></>;
  return <>
   {disclosure?<button ref={trigger} type="button" className="draft-family-identity draft-family-trigger" onClick={()=>setExpanded(value=>!value)}
    aria-expanded={expanded} aria-controls={expanded?panelId:undefined} aria-invalid={missing||undefined} aria-describedby={missing?panelId+'-error':undefined}
-   data-unresolved={!memberLabel||undefined} title={title}>{identity}</button>
-   :<span className="draft-family-identity" title={title}>{identity}</span>}
+   data-unresolved={!memberLabel||undefined} title={name}>{identity}</button>
+   :<span className="draft-family-identity" title={name}>{identity}</span>}
   {missing&&<small className="draft-family-error" id={panelId+'-error'} role="alert">{t('familyDraftRequired')}</small>}
   {disclosure&&expanded&&<span id={panelId} role="group" aria-label={t('familyChoose',{name})} className="draft-family-options">
    {options.map((option,index)=>{
-    const label=memberName(option,i18n.language),energyId=panelId+'-energy-'+index;
+    const productName=memberName(option,i18n.language);
+    const duplicate=cooking&&options.some(other=>other.item.id!==option.item.id&&memberName(other,i18n.language).toLocaleLowerCase()===productName.toLocaleLowerCase());
+    const source=duplicate?(option.kind==='user'?option.item.brand:t('referenceBuiltIn')):undefined;
+    const label=source?productName+' / '+source:productName,energyId=panelId+'-energy-'+index;
     return <button key={option.item.id} type="button" aria-label={label} aria-describedby={cooking?undefined:energyId} aria-pressed={member?.item.id===option.item.id} onClick={()=>{
      choose(option.item.id);
      if(!cooking){setExpanded(false);trigger.current?.focus({preventScroll:true})}
@@ -93,17 +96,20 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
   setPicking(null);
  };
  const renderLine=(line:EditorLine,index:number,grouping=false)=>{
+   const templateCatalog=onGroupsChange?familyDraft?.catalog:undefined;
+   const displayName=templateCatalog?recipeDisplayName(line,templateCatalog,i18n.language,line.draftFamilyId):line.name;
    const item=pantry.find(i=>i.id===line.ingredientId),reference=builtInFoods.find(food=>food.id===line.ingredientId);
+   const displayItem=templateCatalog && (item?.deletedAt || preferences[line.ingredientId]?.archived)?undefined:item;
    const choice=item?userChoice(item):reference?{kind:'built-in' as const,item:reference}:null,units=choice?availableUnits(choice,preferences[line.ingredientId]):[];
    const preparation=reference?referencePreparation(reference,i18n.language):'';
    const stateLabel=(mealDraft||batchDraft)?preparation.split(' · ').filter((part,index)=>index===0||part.includes('%')).join(' · '):preparation;
-   const amountControl=(groups||batchDraft)?<JournalDraftQuantity required={batchDraft} key={line.unit} line={line} onChange={updated=>setLines(lines.map((old,n)=>n===index?updated:old))}/>:<NumberInput aria-label={line.name+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit} value={line.quantity} onChange={event=>{
+   const amountControl=(groups||batchDraft)?<JournalDraftQuantity required={batchDraft} key={line.unit} line={line} onChange={updated=>setLines(lines.map((old,n)=>n===index?updated:old))}/>:<NumberInput aria-label={displayName+' '+t('quantity')} type="number" required min="0" step="any" key={line.unit} value={line.quantity} onChange={event=>{
      event.currentTarget.setCustomValidity(event.target.value!==''&&Number(event.target.value)<0?t('invalid'):'');
      if(event.target.value==='')return;const quantity=Number(event.target.value);if(!Number.isFinite(quantity)||quantity<0)return;
      setLines(lines.map((old,n)=>n===index?requantifyLine(old,quantity):old));
     }}/>;
    const unitLabel=(value:string)=>value==='g'?t('gramsUnit'):value==='serving'?t('servingUnit'):value==='fraction'?t('storageFractionUnit'):foodUnitLabel(choice,value,i18n.language,preferences[line.ingredientId]);
-   const ingredientName=<><strong>{line.name}</strong>{item?.brand&&item.brand.trim().toLowerCase()!==line.name.trim().toLowerCase()&&<small className="ingredient-line-brand"> {item.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{line.source==='batch'?<small className="ingredient-line-brand"> · {t('storageTab')}</small>:!item&&!reference&&<small>{t('sourceMissing')}</small>}</>;
+   const ingredientName=<><strong>{displayName}</strong>{displayItem?.brand&&displayItem.brand.trim().toLowerCase()!==displayName.trim().toLowerCase()&&<small className="ingredient-line-brand"> {displayItem.brand}</small>}{reference&&<><small className="ingredient-line-brand"> · {referencePreparation(reference,i18n.language)}</small>{showSourceInfo&&<ReferenceSourceInfo source={reference}/>}</>}{line.source==='batch'?<small className="ingredient-line-brand"> · {t('storageTab')}</small>:!item&&!reference&&<small>{t('sourceMissing')}</small>}</>;
    if(groups||batchDraft){
      const factors=choice&&line.source!=='batch'?recipeUnitFactors(choice,preferences[line.ingredientId]):new Map<string,number>();
      const slot=line.draftFamilyId&&familyDraft&&!familyUnitNeedsReview(line)?templateLine(line) as FamilyLine:undefined;
@@ -113,7 +119,7 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
        .map(value=>({value,label:unitLabel(value)}));
      const id=line.lineId??(index+"-"+line.ingredientId);
      const replace=()=>line.source==="batch"&&batchDraft?setStoredPicking(index):setPicking(index);
-     return <DraftIngredientRow mealDraft={mealDraft||batchDraft} key={id} id={id} name={line.name} onReplace={replace}
+     return <DraftIngredientRow mealDraft={mealDraft||batchDraft} key={id} id={id} name={displayName} onReplace={replace}
        onDelete={()=>setLines(lines.filter((_,n)=>n!==index))}
        onDrop={(groupId,before)=>{
          const rest=lines.filter(l=>l.lineId!==line.lineId);
@@ -123,24 +129,24 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
        <div className="draft-ingredient-name">{slot&&familyDraft?.actual?<InlineFamilyChoice key={slot.familyId} line={slot} catalog={familyDraft.catalog}
         invalid={familyDraft.invalidLine===slot.lineId} selectedId={line.draftFamilyMemberId}
         choose={memberId=>setLines(lines.map((old,n)=>n===index?{...old,draftFamilyMemberId:memberId}:old))}
-        repair={unit=>setLines(lines.map((old,n)=>n===index?{...old,unit,draftFamilyMemberId:undefined}:old))}/>:slot?<div className="draft-family-identity"><strong title={line.name}>{familyDraft?.catalog.families.find(f=>f.id===slot.familyId)?.name??line.name}</strong><span className="draft-family-member-label">{t('familyTitle')}</span></div>:<><strong title={line.name}>{line.name}</strong><div className="draft-source">
+        repair={unit=>setLines(lines.map((old,n)=>n===index?{...old,unit,draftFamilyMemberId:undefined}:old))}/>:slot?<div className="draft-family-identity"><strong title={displayName}>{displayName}</strong><span className="draft-family-member-label">{t('familyTitle')}</span></div>:<><strong title={displayName}>{displayName}</strong><div className="draft-source">
          {reference?<>{stateLabel}{showSourceInfo&&!mealDraft&&<> · <ReferenceSourceInfo source={reference}/></>}</>
-           :line.draftFamilyId?t('familyTitle'):line.source==='batch'?t('storageTab'):!item?t('sourceMissing'):item.brand?.trim().toLowerCase()!==line.name.trim().toLowerCase()?item.brand:null}
+           :line.draftFamilyId?t('familyTitle'):line.source==='batch'?t('storageTab'):!displayItem?t('sourceMissing'):displayItem.brand?.trim().toLowerCase()!==displayName.trim().toLowerCase()?displayItem.brand:null}
        </div>{unsupported&&<small className="draft-unit-warning">{t('draftUnsupportedUnit',{unit:unitLabel(line.unit)})} <button type="button" onClick={()=>setPicking(index)}>{t('replaceIngredient')}</button></small>}</>}</div>
        <div className="recipe-line-amounts draft-amount">{amountControl}
        <span aria-hidden="true" className="journal-amount-ink"/>
-       <DraftMenu directUnit={{value:line.unit,label:unitLabel(line.unit),name:line.name,fixed:validOptions.length===0||(validOptions.length===1&&validOptions[0].value===line.unit),options:validOptions,change:unit=>{
+       <DraftMenu directUnit={{value:line.unit,label:unitLabel(line.unit),name:displayName,fixed:validOptions.length===0||(validOptions.length===1&&validOptions[0].value===line.unit),options:validOptions,change:unit=>{
          if(templateFamily){setLines(lines.map((old,n)=>n===index?{...old,unit}:old));return}
          if(onGroupsChange&&unsupported){setLines(lines.map((old,n)=>n===index?livePantryLine({...old,unit},item,preferences[line.ingredientId]):old));return}
          const converted=convertRecipeLine(line,unit,factors);
          if(converted)setLines(lines.map((old,n)=>n===index?converted:old));
-       }}} className="journal-line-menu" label={t('journalLineActions')+' '+line.name}
+       }}} className="journal-line-menu" label={t('journalLineActions')+' '+displayName}
          leading={<button type="button" className="ingredient-replace-toggle" onClick={replace}>{t('replaceIngredient')}</button>}
          choices={[
-           ...(grouping?[{key:'group',label:t('journalMoveTo'),control:<select aria-label={line.name+' '+t('journalGroup')} value={line.groupId??''} onChange={e=>{setLines(lines.map((l,i)=>i===index?{...l,groupId:e.target.value||undefined}:l));}}><option value="">{t('journalUngrouped')}</option>{groups?.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}</select>}]:[])
+           ...(grouping?[{key:'group',label:t('journalMoveTo'),control:<select aria-label={displayName+' '+t('journalGroup')} value={line.groupId??''} onChange={e=>{setLines(lines.map((l,i)=>i===index?{...l,groupId:e.target.value||undefined}:l));}}><option value="">{t('journalUngrouped')}</option>{groups?.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}</select>}]:[])
          ]}>
-         <button type="button" aria-label={t('journalUp')+' '+line.name} disabled={!lines.slice(0,index).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,-1)}>↑ {t('journalUp')}</button><button type="button" aria-label={t('journalDown')+' '+line.name} disabled={!lines.slice(index+1).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,1)}>↓ {t('journalDown')}</button>
-         <button type="button" className="draft-delete" aria-label={t('delete')+' '+line.name} onClick={()=>setLines(lines.filter((_,i)=>i!==index))}>{t('delete')}</button>
+         <button type="button" aria-label={t('journalUp')+' '+displayName} disabled={!lines.slice(0,index).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,-1)}>↑ {t('journalUp')}</button><button type="button" aria-label={t('journalDown')+' '+displayName} disabled={!lines.slice(index+1).some(l=>l.groupId===line.groupId)} onClick={()=>moveLine(index,1)}>↓ {t('journalDown')}</button>
+         <button type="button" className="draft-delete" aria-label={t('delete')+' '+displayName} onClick={()=>setLines(lines.filter((_,i)=>i!==index))}>{t('delete')}</button>
        </DraftMenu></div>
      </DraftIngredientRow>;
    }
@@ -153,10 +159,10 @@ export function RecipeLineEditor({lines,setLines:onSetLines,pantry,compact=false
    };
    return <div className="recipe-line ingredient-editor-row" key={line.lineId??index}>
     <div className="recipe-line-heading"><div className="grow">{ingredientName}</div><div className="actions">
-     <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+line.name} onClick={()=>line.source==='batch'?setStoredPicking(index):setPicking(index)}><ArrowLeftRight size={16}/></button>
-     <button type="button" aria-label={t('delete')+' '+line.name} onClick={()=>setLines(lines.filter((_,n)=>n!==index))}><Trash2 size={15}/></button>
+     <button type="button" className="ingredient-replace-toggle" aria-label={t('replaceIngredient')+' '+displayName} onClick={()=>line.source==='batch'?setStoredPicking(index):setPicking(index)}><ArrowLeftRight size={16}/></button>
+     <button type="button" aria-label={t('delete')+' '+displayName} onClick={()=>setLines(lines.filter((_,n)=>n!==index))}><Trash2 size={15}/></button>
     </div></div>
-    <div className="recipe-line-amounts"><label>{t('quantity')}{amountControl}</label><label>{t('unit')}<select disabled={line.source==='batch'} aria-label={line.name+' '+t('unit')} value={line.unit} onChange={e=>changeUnit(e.target.value)}>
+    <div className="recipe-line-amounts"><label>{t('quantity')}{amountControl}</label><label>{t('unit')}<select disabled={line.source==='batch'} aria-label={displayName+' '+t('unit')} value={line.unit} onChange={e=>changeUnit(e.target.value)}>
      {options.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</select></label></div>
    </div>;
  };

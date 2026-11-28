@@ -97,7 +97,7 @@ it('pins actual product, updates only the template quantity, restores the v4 slo
  expect(actual.lines[0].nutrition.calories).toBeCloseTo(59*1.255,12);
  const log={...stamp(),date:'2026-11-25',source:'recipe' as const,sourceId:r.id,category:'lunch',name:r.name,quantity:1,unit:'serving',lines:actual.lines,nutrition:actual.lines[0].nutrition,cookingNote:''};
  await foodLogs.put(log);await saveFamily({...f,inUseIds:[b.id]});
- const backup=await exportAll();expect(backup.version).toBe(20);
+ const backup=await exportAll();expect(backup.version).toBe(21);
  await restoreAll(JSON.parse(JSON.stringify(backup)));
  expect(await foodLogs.get(log.id)).toEqual(log);
  expect(await recipes.get(r.id)).toEqual(next.recipe);
@@ -140,7 +140,7 @@ it('round-trips shared members and resolves each recipe by its own Family ID and
  await saveFamilyRecipe(breakfastRecipe);
  const exact:Recipe={...r,...stamp(),lines:[{ingredientId:a.id,name:a.name,unit:'g',quantity:100,nutrition:{calories:59,protein:8,carbs:5,fat:3}}]};
  await saveFamilyRecipe(exact);
- const backup=await exportAll();expect(backup.version).toBe(20);
+ const backup=await exportAll();expect(backup.version).toBe(21);
  await restoreAll(JSON.parse(JSON.stringify(backup)));
  expect(await db.ingredientFamilies.get(f.id)).toMatchObject({memberIds:[a.id,b.id],inUseIds:[a.id]});
  expect(await db.ingredientFamilies.get(breakfast.id)).toMatchObject({memberIds:[a.id,egg.id],inUseIds:[egg.id]});
@@ -249,7 +249,7 @@ it('round-trips independent Family tags in Backup 18 and removes deleted assignm
  await saveFamily(f,[dairy,tag.id]);
  expect((await db.ingredients.get(a.id))?.tagIds).toBeUndefined();
  await db.ingredients.update(a.id,{tagIds:[tag.id]});
- const backup=await exportAll();expect(backup.version).toBe(20);
+ const backup=await exportAll();expect(backup.version).toBe(21);
  await restoreAll({...JSON.parse(JSON.stringify(backup)),version:18});expect(await read()).toEqual([dairy,tag.id]);
  const current=(await db.ingredientFamilies.get(f.id))!;
  await saveFamily({...current,inUseIds:[]});expect(await read()).toEqual([dairy,tag.id]);

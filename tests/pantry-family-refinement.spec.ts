@@ -205,5 +205,5 @@ for (const width of [320,375,390,430]) test('Family member batch selection stays
   const d=await import('/src/domain.ts'),backup=await d.exportAll();await d.restoreAll(backup);
   return {version:backup.version,other:(await d.db.ingredientFamilies.get('other'))?.memberIds,active:(await d.db.ingredientFamilies.get('editing'))?.inUseIds};
  });
- expect(result).toEqual({version:20,other:['review-0'],active:['review-4']});expect(await stored()).toEqual(expected);
+ expect(result).toEqual({version:21,other:['review-0'],active:['review-4']});expect(await stored()).toEqual(expected);
 });

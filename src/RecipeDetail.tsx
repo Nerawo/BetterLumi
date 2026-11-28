@@ -1,6 +1,6 @@
 import {stockViews} from './stock-view';
 import {useLiveQuery} from 'dexie-react-hooks';
-import {needsUnitReview} from './live-nutrition';
+import {recipeDisplayName,needsUnitReview} from './live-nutrition';
 import {useFamilies} from './FamilyUI';
 import {concreteRecipe} from './families';
 import {recipeNutritionRange} from './recipe-nutrition-range';
@@ -58,8 +58,9 @@ export function RecipeDetail({
   const [edit, setEdit] = useState(false);
   const [cooking,setCooking]=useState(false);
   const [making,setMaking]=useState(false);
-  const [cookingServings,setCookingServings]=useState('1');
-  useEffect(()=>{setCooking(false);setMaking(false);setEdit(false);setCookingServings('1')},[recipe?.id]);
+  const [selectedServings,setCookingServings]=useState<string>();
+  const cookingServings=selectedServings??String(recipeYield(recipe??{}));
+  useEffect(()=>{setCooking(false);setMaking(false);setEdit(false);setCookingServings(undefined)},[recipe?.id]);
   useEffect(()=>subscribeNavigation(()=>{setCooking(false);setMaking(false);setEdit(false)}),[]);
   if (!recipe)
     return (
@@ -74,7 +75,7 @@ export function RecipeDetail({
   const amount=Number(cookingServings),validAmount=Number.isFinite(amount)&&amount>0;
   const cookingLines=validAmount?recipeServingLines(recipe,amount):[];
   const builtIn=isBuiltInRecipe(recipe),zh=i18n.language.startsWith('zh');
-  if(cooking)return <CookingMode recipe={recipe} recipes={recipes} pantry={pantry} date={mealDate} notice={notice} mealSaved={onCookingMealSaved} close={()=>setCooking(false)}/>;
+  if(cooking)return <CookingMode initialServings={validAmount?amount:undefined} recipe={recipe} recipes={recipes} pantry={pantry} date={mealDate} notice={notice} mealSaved={onCookingMealSaved} close={()=>setCooking(false)}/>;
   return (
     <Modal title={recipe.name} close={close} className={"recipe-detail-modal journal-recipe-detail"+(recipe.photo?"":" journal-no-photo")}>
       <div className="recipe-detail-scroll">{builtIn?<div className="recipe-reference-detail"><span>{t('recipeCanonicalYield',{count:recipeYield(recipe)})}</span><span> · </span><BuiltInRecipeSource/></div>:<RecipeCategoryPicker className="detail-category-row" value={recipe.categoryIds ?? []} onToggle={(categoryId, included) => assignCategoryRecipes(categoryId, {[recipe.id]: included})} />}
@@ -103,7 +104,7 @@ export function RecipeDetail({
             <ul className="detail-ingredients">
               {recipeSections({...recipe,lines:cookingLines}).map(group=><Fragment key={group.id}>{group.lines.length>0&&(recipe.ingredientGroups?.length??0)>0&&<li className="journal-overview-group"><h3><JournalHeading>{group.name||t('journalUngrouped')}</JournalHeading></h3></li>}{group.lines.map((l, i) => (
                 <li key={i}>
-                  <strong>{l.source==="family"?catalog.families.find(f=>f.id===l.familyId)?.name??l.name:l.name}</strong>
+                  <strong>{recipeDisplayName(l,catalog,i18n.language)}</strong>
                   <span>
                     {journalQuantity(l)}{" "}
                     {l.source==='batch'&&l.unit==='fraction'?'% '+t('storageReference'):l.unit === "g" ? t("gramsUnit") : l.unit === "serving" ? t("servingUnit") : l.source==="family"?l.unit:householdUnitLabel(l.ingredientId,l.unit,i18n.language,preferences[l.ingredientId]?.units)}

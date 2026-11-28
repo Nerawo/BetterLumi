@@ -137,7 +137,7 @@ export function AddFood({draft,recipes,pantry,close,notice:notify}:AddFoodProps)
   const resolveRecipe=source==="recipe"&&sourceBasis==="selected";
   const [reselectedStockLines,setReselectedStockLines]=useState<string[]>([]);
   const editorLines=useMemo(()=>{
-    if(resolveRecipe)return liveStockLines(livePreparation(storedLines,pantry,preferences),rawStock??[]);
+    if(resolveRecipe)return liveStockLines(livePreparation(storedLines,pantry,preferences,i18n.language),rawStock??[]);
     return storedLines.map(line=>{
       if(line.lineId&&reselectedStockLines.includes(line.lineId))return liveStockLines([line],rawStock??[])[0];
       const basis=historicalBasisForLine(initial,line);
@@ -146,7 +146,7 @@ export function AddFood({draft,recipes,pantry,close,notice:notify}:AddFoodProps)
       if(line.unit!=='g'&&!batch)return line;
       return {...line,nutrition:basisLineNutrition(basis,line.unit==='g'?line.quantity:line.quantity/batch!.fractionPerUnit)};
     });
-  },[storedLines,resolveRecipe,pantry,preferences,rawStock,initial,reselectedStockLines]) as EditorLine[];
+  },[storedLines,resolveRecipe,pantry,preferences,i18n.language,rawStock,initial,reselectedStockLines]) as EditorLine[];
   const draftLines=useMemo(()=>identifyRecipeLines(editorLines),[editorLines]);
   const {lines,unresolved}=useMemo(()=>resolveFamilyPreparation(editorLines,familyCatalog,i18n.language),[editorLines,familyCatalog,i18n.language]);
   const hasFamily=storedLines.some(line=>line.draftFamilyId);
@@ -345,7 +345,7 @@ export function AddFood({draft,recipes,pantry,close,notice:notify}:AddFoodProps)
           const items=(await db.ingredients.bulkGet(ids)).flatMap(item=>item?[item]:[]);
           const prefs=ingredientPreferenceRows((await db.settings.bulkGet(ids.map(id=>ingredientPreferencePrefix+id))).flatMap(row=>row?[row]:[]));
           if(needsUnitReview(record.lines,items,prefs))throw new FoodStorageError('UNIT_REVIEW','Review recipe conversion');
-          record.lines=livePreparation(record.lines,items,prefs);
+          record.lines=livePreparation(record.lines,items,prefs,i18n.language);
           record.baseNutrition=sumNutrition(record.lines.map(lineNutrition));
           record.nutrition=consumedNutrition(record.baseNutrition,consumptionPercent);
         }
@@ -538,7 +538,7 @@ export function AddFood({draft,recipes,pantry,close,notice:notify}:AddFoodProps)
     {correctingOrigin&&<Modal title={t('storageCorrectTitle')} close={()=>{if(!busy)setCorrectingOrigin(false)}} className="recipe-editor-modal food-storage-modal"><div className="modal-scroll"><p>{t('storageCorrectHelp')}</p></div><div className="form-actions"><button type="button" disabled={busy} onClick={()=>setCorrectingOrigin(false)}>{t('cancel')}</button><button type="button" className="primary" disabled={busy} onClick={()=>void correctOrigin()}>{t('storageConfirmCorrection')}</button></div></Modal>}
     {reviewBatch&&initial?.leftoverBatchId&&<BatchDetail batchId={initial.leftoverBatchId} close={()=>setReviewBatch(false)} notice={notify}/>}
     </Modal>
-    {preparation&&selectedRecipe&&<CookingMode recipe={selectedRecipe} recipes={recipes} pantry={pantry} date={mealDate} preparation={preparation} selectionLines={draftLines} notice={notify} mealSaved={()=>setPreparation(undefined)} close={()=>setPreparation(undefined)} onReturnMeal={returnPreparation}/>}
+    {preparation&&selectedRecipe&&<CookingMode historicalSource={sourceBasis==='historical'} recipe={selectedRecipe} recipes={recipes} pantry={pantry} date={mealDate} preparation={preparation} selectionLines={draftLines} notice={notify} mealSaved={()=>setPreparation(undefined)} close={()=>setPreparation(undefined)} onReturnMeal={returnPreparation}/>}
     </>
   );
 }

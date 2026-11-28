@@ -50,7 +50,7 @@ it('rejects stale writes and injected failures without overwriting progress',asy
 });
 it('Backup 13 round trips grouped recipes and sessions exactly, retaining stale/orphan sessions',async()=>{
  const r=recipe(identifyRecipeLines([line()]));r.ingredientGroups=[{id:'a',name:'Sauce'}];r.lines[0].groupId='a';await recipes.put(r);await openCookingSession(r);const orphan=await openCookingSession(recipe());expect(orphan.recipeId).not.toBe(r.id);
- const backup=await exportAll();expect(backup.version).toBe(20);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
+ const backup=await exportAll();expect(backup.version).toBe(21);await restoreAll(JSON.parse(JSON.stringify(backup)));expect((await exportAll()).tables).toEqual(backup.tables);
 });
 it.each([2,3,4,5,6,7,8,9,10,11,12])('accepts supported Backup %s without new metadata',async version=>{
  const r=recipe();await recipes.put(r);const backup=await exportAll();backup.version=version;
@@ -76,4 +76,17 @@ it('accepts Backup 11 mixed stored-food templates with exact frozen snapshots an
  await storage.makeBatch({operationId:stamp().id,id:batchId,name:'Stored sauce',preparedOn:'2026-11-23',cookedYieldGrams:400,ingredients:[{source:'pantry',line:line()}]});
  const r=recipe([line(),storedRecipeLine((await db.foodBatches.get(batchId))!)]);await recipes.put(r);
  const backup=await exportAll();backup.version=11;await restoreAll(backup);expect((await exportAll()).tables).toEqual(backup.tables);expect(await recipes.get(r.id)).toEqual(r);expect((await db.foodBatches.get(batchId))!.remainingQuantity).toBe(400);
+});
+
+it.each([1,4,6])('starts the whole %i-serving recipe and scales only the preparation',async servings=>{
+ const r=recipe([1,30,35,150,150,10].map((quantity,index)=>line({lineId:String(index),quantity,unit:index===0?'egg':index===3?'mL':'g'})));
+ r.servings=servings;
+ const initial=await openCookingSession(r);
+ expect(initial.servings).toBe(servings);
+ const {cookingJournalLines}=await import('./cooking-effective');
+ for(const amount of [servings,2,1,8]){
+  const session=changeCookingServings(initial,amount);
+  expect(cookingJournalLines(r,session).map(l=>l.quantity)).toEqual(r.lines.map(l=>l.quantity*(amount/servings)));
+ }
+ expect(r.lines.map(l=>l.quantity)).toEqual([1,30,35,150,150,10]);
 });

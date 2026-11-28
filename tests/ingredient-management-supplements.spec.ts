@@ -15,7 +15,7 @@ test('historical Pantry meal snapshot: '+scenario,async({page})=>{
    if(scenario==='changed Pantry')await d.db.ingredients.update(item.id,{calories:999,protein:20,carbs:32,fat:21});
    if(scenario==='Backup 20'){
      const backup=JSON.parse(JSON.stringify(await d.exportAll()));
-     if(backup.version!==20)throw Error('Expected Backup 20');
+     if(backup.version!==21)throw Error('Expected Backup 21');
      await d.foodLogs.delete(meal.id);
      await d.restoreAll(backup);
    }

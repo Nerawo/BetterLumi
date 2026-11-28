@@ -23,7 +23,7 @@ it.each([true,false])('Backup 19 restores the exact nutrition-only settings with
  const saved=nutritionOnlyGoal(enabled);
  await goalTable.add(saved);
  const backup=await exportAll();
- expect(backup.version).toBe(20);
+ expect(backup.version).toBe(21);
  await restoreAll({...backup,version:19});
  expect(await goalTable.get(saved.id)).toEqual(saved);
  if(enabled){

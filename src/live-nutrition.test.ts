@@ -20,7 +20,7 @@ it('uses current nutrition and restores two different concrete snapshots from th
  const before=await consume(id);await db.ingredients.update(item.id,{calories:55});const after=await consume(id);
  expect(before.nutrition.calories).toBe(60);expect(after.nutrition.calories).toBeCloseTo(55,12);
  expect(after.lines[0]).toMatchObject({ingredientId:item.id,quantity:100,unit:'g'});
- const backup=await exportAll();expect(backup.version).toBe(20);await restoreAll(JSON.parse(JSON.stringify(backup)));
+ const backup=await exportAll();expect(backup.version).toBe(21);await restoreAll(JSON.parse(JSON.stringify(backup)));
  expect(await store.meals.bulkGet([before.id,after.id])).toEqual([before,after]);
  expect(await store.batches.get(id)).toMatchObject({remainingQuantity:150,stock:{kind:'pantry-ingredient',ingredientId:item.id}});
  await store.saveMeal({operationId:stamp().id,mealId:before.id,batchId:id,date,category:'dinner',portion:{unit:'g',quantity:100},expectedRevision:before.revision});
@@ -88,4 +88,17 @@ it('reflects corrected reference portions, macros and explicit piece conversions
  const [next]=livePreparation([required],[corrected],{});
  expect(next).toMatchObject({lineId:required.lineId,unit:'piece',quantity:2,nutrition:{calories:60,protein:12,carbs:2,fat:6}});
  expect(needsUnitReview([required],[{...corrected,consumptionUnit:null}],{})).toBe(true);
+});
+
+it('renders live identities without rewriting the template, and freezes the resolved name only for a new usage',async()=>{
+ const {recipeDisplayName}=await import('./live-nutrition');
+ const food=yogurt(),saved={...line(food),groupId:'toppings'},current={...food,name:'Renamed yogurt',brand:'Current dairy',calories:80};
+ const catalog=familyCatalog([], [current],{});
+ expect(recipeDisplayName(saved,catalog,'en')).toBe(current.name);
+ expect(livePreparation([saved],[current],{},'en')[0]).toEqual({...saved,name:current.name,nutrition:{...saved.nutrition,calories:80}});
+ expect(saved.name).toBe('Fage');
+ const unavailable=familyCatalog([], [{...current,deletedAt:new Date().toISOString()}],{});
+ expect(recipeDisplayName(saved,unavailable,'en')).toBe(saved.name);
+ expect(recipeDisplayName(saved,{...catalog,preferences:{[food.id]:{version:1,units:[],preferred:'g',archived:true}}},'en')).toBe(saved.name);
+ expect(recipeDisplayName({...saved,source:'batch'},catalog,'en')).toBe(saved.name);
 });

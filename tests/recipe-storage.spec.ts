@@ -33,7 +33,7 @@ for(const changed of [false,true])test('first prepared batch allocation, changed
  await expect(row.getByRole('status')).toHaveCount(0);
  await save.click();await expect(modal).toHaveCount(0);
  const backup=await page.evaluate(async()=>{const d=await import('/src/domain.ts');const b=await d.exportAll();await d.restoreAll(b);return d.exportAll()});
- expect(backup.version).toBe(20);
+ expect(backup.version).toBe(21);
  const meal=backup.tables.foodLogs.find(l=>l.id===ids.mealId)!;
  const expected=changed?{calories:100,protein:10,carbs:5,fat:2.5}:{calories:50,protein:5,carbs:2.5,fat:1.25};
  expect(meal).toMatchObject({consumptionPercent:50,nutrition:expected,recipeAllocations:[{batchId:ids.batchId,quantity:50,nutrition:expected}]});

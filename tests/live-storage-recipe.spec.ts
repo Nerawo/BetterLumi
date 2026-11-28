@@ -20,7 +20,7 @@ test('stock meal edit: '+scenario,async({page})=>{
   const otherId=d.stamp().id;
   await storage.registerStock({id:otherId,operationId:d.stamp().id,ingredientId:other.id,grams:350,date:d.localDate()});
   await d.db.ingredients.update(other.id,{calories:80,protein:6,carbs:8,fat:3});
-  if(scenario==='restore'){const backup=await d.exportAll();if(backup.version!==20)throw Error('Expected Backup 20');await d.restoreAll(JSON.parse(JSON.stringify(backup)))}
+  if(scenario==='restore'){const backup=await d.exportAll();if(backup.version!==21)throw Error('Expected Backup 21');await d.restoreAll(JSON.parse(JSON.stringify(backup)))}
   return {batchId,mealId,otherId};
  },scenario);
  for(let i=0;i<(scenario==='unchanged'?3:1);i++){

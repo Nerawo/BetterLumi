@@ -1,8 +1,8 @@
 import {reconcileFamilyTags} from './family-tags';
 import {validateFamilies,validFamilyLine} from './family-contract';
 import {validZeroReference} from './line-nutrition';
-import {storageTables, validateStorageBackup, type StorageConsumption, type RecipeAllocation, type HistoricalAllocationBasis} from "./food-storage-model";
-export const BACKUP_VERSION = 20;
+import {storageTables, validateStorageBackup, type FoodBatch, type StorageTransaction, type StorageConsumption, type RecipeAllocation, type HistoricalAllocationBasis} from "./food-storage-model";
+export const BACKUP_VERSION = 21;
 import {validateJournalBackup,COOKING_PREFIX,type IngredientGroup} from './cooking-journal';
 import {validMeasuredAt} from './weight-time';
 import {normalizeIngredientNutrition} from './ingredient-nutrition';
@@ -106,6 +106,16 @@ export interface Weight extends RecordBase {
   notes?: string;
 }
 export const recipes = db.table<Recipe>("recipeCards");
+export async function putRecipeWithStockReferences(recipe:Recipe) {
+  const ids=[...new Set(recipe.lines.flatMap(line=>line.source==='batch'&&line.sourceBatchId?[line.sourceBatchId]:[]))];
+  if(!ids.length)return recipes.put(recipe);
+  return db.transaction('rw',recipes,db.foodBatches,async()=>{
+    for(const batch of await db.foodBatches.bulkGet(ids)){
+      if(batch?.mode==='servings'&&!batch.everUsed)await db.foodBatches.update(batch.id,{everUsed:true,revision:batch.revision+1,updatedAt:new Date().toISOString()});
+    }
+    return recipes.put(recipe);
+  });
+}
 export const foodLogs = db.table<FoodLog>("foodLogs");
 export const plans = db.table<Plan>("plans");
 export const weights = db.table<Weight>("weights");
@@ -194,7 +204,7 @@ export async function exportAll() {
   validateFamilies(tables.ingredientFamilies as import("./db").IngredientFamily[],tables.ingredients as PantryItem[],tables.recipeCards as Recipe[]);
   validateJournalBackup(tables);
   const temporarySources=(tables.settings as {key:string;value:string}[]).some(row=>row.key.startsWith(COOKING_PREFIX)&&JSON.parse(row.value).ingredientChanges?.addedLines?.some((a:{line:RecipeLine})=>a.line.source==='batch'));
-  if((tables.foodBatches as {stock?:unknown}[]).some(b=>b.stock)||temporarySources||(tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.historicalAllocationBases!==undefined||m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
+  if((tables.foodBatches as FoodBatch[]).some(b=>b.stock||b.mode==='servings')||(tables.inventoryTransactions as StorageTransaction[]).some(t=>t.kind==='create'&&t.movements.some(m=>m.batchId===t.targetBatchId&&m.mode==='ratio'))||temporarySources||(tables.recipeCards as Recipe[]).some(r=>r.lines.some(l=>l.source==='batch'))||(tables.foodLogs as FoodLog[]).some(m=>m.historicalAllocationBases!==undefined||m.recipeAllocations!==undefined||m.lines.some(l=>l.quantity===0))||(tables.foodBatches as {ingredients:RecipeLine[]}[]).some(b=>b.ingredients.some(l=>l.quantity===0||l.zeroQuantityReference!==undefined)))validateStorageBackup(tables);
   return {
     app: "BetterLumi",
     version: BACKUP_VERSION,
@@ -206,11 +216,12 @@ export async function restoreAll(data: unknown) {
   const x = structuredClone(data) as any;
   if (
     x?.app !== "BetterLumi" ||
-    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, BACKUP_VERSION].includes(x.version) ||
+    ![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, BACKUP_VERSION].includes(x.version) ||
     !x.tables ||
     typeof x.tables !== "object"
   )
     throw Error("Invalid backup");
+  if(x.version<21 && (x.tables.foodBatches?.some((b:FoodBatch)=>b.mode==='servings'||b.totalServings!==undefined) || x.tables.inventoryTransactions?.some((t:StorageTransaction)=>t.kind==='repartition'||t.movements?.some(m=>m.mode==='servings')))) throw Error('Serving inventory requires Backup 21');
   if(x.version<20&&x.tables.foodLogs?.some((m:FoodLog)=>m.historicalAllocationBases!==undefined))throw Error("Historical allocation basis requires Backup 20");
   if(x.version<18&&x.tables.foodBatches?.some((b: {stock?:unknown})=>b.stock!==undefined))throw Error('Pantry stock requires Backup 18');
   if(x.version<17){if(x.tables.ingredientFamilies?.length)throw Error("Families require Backup 17");x.tables.ingredientFamilies=[];}

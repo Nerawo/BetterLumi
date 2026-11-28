@@ -2,7 +2,7 @@ import {lineNutrition,validZeroReference} from './line-nutrition';
 import type {RecordBase} from './db';
 import type {FoodLog, Nutrition, RecipeLine} from './domain';
 
-export type InventoryMode = 'weight' | 'ratio';
+export type InventoryMode = 'weight' | 'ratio' | 'servings';
 export type ArchiveReason = 'exhausted' | 'manual' | 'discarded' | 'canceled' | null;
 export interface StockBasis {ingredientId:string;perGram:Nutrition}
 export interface HistoricalAllocationBasis extends StockBasis {
@@ -35,6 +35,7 @@ export interface FoodBatch extends RecordBase {
   notes: string;
   ingredients: BatchIngredient[];
   totalNutrition: Nutrition;
+  totalServings?: number;
   originalCookedYield: number | null;
   mode: InventoryMode;
   remainingQuantity: number;
@@ -46,6 +47,12 @@ export interface FoodBatch extends RecordBase {
   originMealId: string | null;
   initialConsumedFraction: number;
 }
+export function originalBatchPercentage(batch:FoodBatch, history:StorageTransaction[]) {
+  return batch.mode==='ratio' && history.some(t=>t.kind==='create' && t.targetBatchId===batch.id);
+}
+export function percentageFraction(percent:number, availableFraction:number, ofOriginal:boolean) {
+  return (ofOriginal ? 1 : availableFraction) * (percent / 100);
+}
 export interface StorageConsumption {
   stockBasis?:StockBasis;
   batchId: string;
@@ -55,10 +62,11 @@ export interface StorageConsumption {
 export interface RecipeAllocation extends StorageConsumption {
   lineId: string;
   quantity: number;
-  unit: 'g' | 'fraction';
+  unit: 'g' | 'fraction' | 'serving';
   nutrition: Nutrition;
 }
 export interface InventoryMovement {
+  batchRevision?: number;
   batchId: string;
   mode: InventoryMode;
   before: number;
@@ -67,7 +75,7 @@ export interface InventoryMovement {
   /** Signed change in original-batch nutrition fraction. */
   fractionDelta: number;
 }
-export type StorageTransactionKind = 'create' | 'leftovers' | 'meal' | 'delete-meal' | 'correct-formula' | 'adjust' | 'convert' | 'archive' | 'restore' | 'discard' | 'metadata' | 'edit-origin' | 'cancel-batch';
+export type StorageTransactionKind = 'create' | 'leftovers' | 'meal' | 'delete-meal' | 'repartition' | 'correct-formula' | 'adjust' | 'convert' | 'archive' | 'restore' | 'discard' | 'metadata' | 'edit-origin' | 'cancel-batch';
 export interface StorageTransaction extends RecordBase {
   kind: StorageTransactionKind;
   /** Canonical request fingerprint detects accidental reuse of an operation ID. */
@@ -108,7 +116,8 @@ export function validBatchIngredient(v: unknown): v is BatchIngredient {
 export function validFoodBatch(v: unknown): v is FoodBatch {
   const b = v as FoodBatch;
   return !!b && (b.stock===undefined||(b.stock?.kind==='pantry-ingredient'&&id(b.stock.ingredientId)&&b.stock.unit==='g'&&b.mode==='weight')) && record(b) && id(b.name) && (b.sourceRecipeId === null || id(b.sourceRecipeId)) && date(b.preparedOn) && text(b.notes) && Array.isArray(b.ingredients) && b.ingredients.length > 0 && b.ingredients.every(validBatchIngredient) &&
-    validStorageNutrition(b.totalNutrition) && (b.originalCookedYield === null || positive(b.originalCookedYield)) && ['weight', 'ratio'].includes(b.mode) &&
+    validStorageNutrition(b.totalNutrition) && (b.originalCookedYield === null || positive(b.originalCookedYield)) && ['weight', 'ratio', 'servings'].includes(b.mode) &&
+    (b.mode === 'servings' ? positive(b.totalServings) && b.originalCookedYield === null && b.originMealId === null && b.initialConsumedFraction === 0 && storageClose(b.totalServings * b.fractionPerUnit, 1) : b.totalServings === undefined) &&
     (b.mode !== 'ratio' || b.originalCookedYield === null && b.fractionPerUnit === 1) && finiteNonnegative(b.remainingQuantity) && positive(b.fractionPerUnit) &&
     typeof b.everUsed === 'boolean' && typeof b.archived === 'boolean' && [null, 'exhausted', 'manual', 'discarded', 'canceled'].includes(b.archiveReason) && b.archived === (b.archiveReason !== null) && (b.remainingQuantity !== 0 || b.archived) && (b.archiveReason !== 'canceled' || b.remainingQuantity === 0) &&
     (b.archiveReason !== 'exhausted' || b.remainingQuantity === 0) && (b.originMealId === null || id(b.originMealId) && b.everUsed) && finiteNonnegative(b.initialConsumedFraction) && b.initialConsumedFraction <= 1 &&
@@ -120,10 +129,57 @@ export function validStorageConsumption(v: unknown): v is StorageConsumption {
 }
 export function validStorageTransaction(v: unknown): v is StorageTransaction {
   const t = v as StorageTransaction;
-  return !!t && record(t) && ['create', 'leftovers', 'meal', 'delete-meal', 'correct-formula', 'adjust', 'convert', 'archive', 'restore', 'discard', 'metadata', 'edit-origin', 'cancel-batch'].includes(t.kind) && id(t.request) &&
+  return !!t && record(t) && ['create', 'leftovers', 'meal', 'delete-meal', 'repartition', 'correct-formula', 'adjust', 'convert', 'archive', 'restore', 'discard', 'metadata', 'edit-origin', 'cancel-batch'].includes(t.kind) && id(t.request) &&
     Array.isArray(t.batchIds) && t.batchIds.every(id) && new Set(t.batchIds).size === t.batchIds.length && (t.mealId === null || id(t.mealId)) && (t.targetBatchId === null || id(t.targetBatchId)) && text(t.reason) &&
-    Array.isArray(t.movements) && t.movements.every(m => !!m && id(m.batchId) && t.batchIds.includes(m.batchId) && ['weight', 'ratio'].includes(m.mode) && finiteNonnegative(m.before) && finiteNonnegative(m.after) && positive(m.fractionPerUnit) && typeof m.fractionDelta === 'number' && Number.isFinite(m.fractionDelta) && storageClose(m.fractionDelta, (m.after - m.before) * m.fractionPerUnit));
+    Array.isArray(t.movements) && t.movements.every(m => !!m && id(m.batchId) && t.batchIds.includes(m.batchId) && ['weight', 'ratio', 'servings'].includes(m.mode) && finiteNonnegative(m.before) && finiteNonnegative(m.after) && positive(m.fractionPerUnit) && typeof m.fractionDelta === 'number' && Number.isFinite(m.fractionDelta) && (t.kind === 'repartition' ? m.mode === 'servings' && m.fractionDelta === 0 : storageClose(m.fractionDelta, (m.after - m.before) * m.fractionPerUnit)));
 }
+function validateServingLedger(batch: FoodBatch, history: StorageTransaction[], creation: StorageTransaction, meals:Map<string,FoodLog>, batches:Map<string,FoodBatch>) {
+  const invalid = () => { throw new FoodStorageError('INVALID', 'Serving inventory differs from its transaction history'); };
+  const entries = history.flatMap(tx => tx.movements.filter(m => m.batchId === batch.id).map(m => ({tx,m})))
+    .sort((a,b) => (a.m.batchRevision ?? 0) - (b.m.batchRevision ?? 0));
+  const allocated = new Map<string,number>();
+  let balance = 0, factor = 0, revision = 0, untouched = true;
+  if (!entries.length || entries[0].tx !== creation || creation.kind !== 'create') invalid();
+  for (const {tx,m} of entries) {
+    if (m.mode !== 'servings' || !Number.isSafeInteger(m.batchRevision) || m.batchRevision! <= revision || m.batchRevision! > batch.revision || !storageClose(m.before,balance)) invalid();
+    if (revision === 0 || tx.kind === 'repartition') {
+      const input=JSON.parse(tx.request).input;
+      if ((revision === 0 ? input.id!==batch.id || input.mode!=='servings' : input.batchId!==batch.id || input.expectedRevision!==m.batchRevision!-1) || !positive(input.totalServings) || !storageClose(input.totalServings,m.after)) invalid();
+      if (!untouched || tx.targetBatchId !== batch.id || !storageClose(m.after*m.fractionPerUnit,1)) invalid();
+      factor = m.fractionPerUnit;
+    } else {
+      if (!storageClose(m.fractionPerUnit/factor,1)) invalid();
+      if (!['adjust','meal','delete-meal','create','leftovers','discard','cancel-batch'].includes(tx.kind)) invalid();
+      if (tx.kind === 'adjust') {
+        const input=JSON.parse(tx.request).input;
+        if(!tx.reason.trim() || tx.targetBatchId!==batch.id || input.batchId!==batch.id || input.reason!==tx.reason || !finiteNonnegative(input.quantity) || !storageClose(input.quantity,m.after)) invalid();
+      }
+      if (tx.kind==='meal'||tx.kind==='delete-meal') {
+        if(!tx.mealId || !meals.has(tx.mealId)) invalid();
+        const outstanding=(allocated.get(tx.mealId!)??0)-m.fractionDelta;
+        if(outstanding<0&&!storageClose(outstanding,0))invalid();
+        allocated.set(tx.mealId!,outstanding);
+      }
+      if(tx.kind==='cancel-batch' && tx.targetBatchId!==batch.id){
+        const child=batches.get(tx.targetBatchId??'');
+        if(!child || !child.ingredients.some(line=>line.sourceBatchId===batch.id && storageClose(line.sourceFraction!,m.fractionDelta)))invalid();
+      }
+      if(tx.kind==='cancel-batch' && tx.targetBatchId===batch.id && m.after!==0)invalid();
+      if (tx.kind==='delete-meal' && m.after<m.before) invalid();
+      if ((tx.kind==='meal'||tx.kind==='create'||tx.kind==='leftovers') && m.after<m.before && !batch.everUsed) invalid();
+      if (['create','leftovers','discard'].includes(tx.kind) && m.after > m.before) invalid();
+      untouched = false;
+    }
+    balance = m.after; revision = m.batchRevision!;
+  }
+  for(const meal of meals.values()){
+    const direct=meal.storageConsumption?.batchId===batch.id?meal.storageConsumption.originalFraction:0;
+    const recipe=(meal.recipeAllocations??[]).reduce((n,a)=>n+(a.batchId===batch.id?a.originalFraction:0),0);
+    if(!storageClose(allocated.get(meal.id)??0,meal.deletedAt?0:direct+recipe))invalid();
+  }
+  if (!storageClose(factor/batch.fractionPerUnit,1) || !storageClose(balance,batch.remainingQuantity)) invalid();
+}
+
 /** Validate links before ANY restore writes; historical/tombstoned rows are retained. */
 export function validateStorageBackup(tables: Record<string, unknown[]>) {
   const batches = tables.foodBatches as FoodBatch[];
@@ -144,8 +200,11 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
     if (!validStorageNutrition(sum) || !storageNutritionEqual(sum, b.totalNutrition)) throw new FoodStorageError('INVALID', 'Batch composition does not match frozen ingredient snapshots');
     const creation = transactions.filter(t => t.targetBatchId === b.id && (t.kind === 'create' || t.kind === 'leftovers'));
     if (creation.length !== 1) throw new FoodStorageError('INVALID', 'Missing or duplicate batch creation history');
+    if (b.mode==='ratio' && originalBatchPercentage(b,creation) && (b.originMealId!==null || creation[0].mealId!==null || creation[0].movements.filter(m=>m.batchId===b.id&&m.mode==='ratio'&&m.before===0&&m.after===1&&m.fractionDelta===1).length!==1)) throw new FoodStorageError('INVALID','Ratio creation source mismatch');
+    if (b.mode === 'servings') validateServingLedger(b, transactions, creation[0], meals, byId);
     for (const l of b.ingredients) if (l.source === 'batch') {
       const source = byId.get(l.sourceBatchId!);
+      if (source?.mode==='servings' && !((l.unit==='serving' && storageClose(l.quantity*source.fractionPerUnit,l.sourceFraction!)) || (l.unit==='fraction' && storageClose(l.quantity,l.sourceFraction!))))throw new FoodStorageError('INVALID','Serving source quantity differs from its original fraction');
       if (!source || source.id === b.id || (l.quantity>0&&!source.everUsed) || l.quantity>0&&!storageNutritionEqual(l.nutrition, consumptionNutrition(source,l.sourceFraction!,l.stockBasis))) throw new FoodStorageError('INVALID', 'Invalid source batch link/snapshot');
     }
     if (b.originMealId !== null && (meals.get(b.originMealId)?.leftoverBatchId !== b.id || !meals.get(b.originMealId)!.leftoverInventoryUnchanged && !(meals.get(b.originMealId)!.deletedAt && b.initialConsumedFraction===0 && b.ingredients.some(l=>l.source==='batch') && transactions.some(t=>t.kind==='delete-meal'&&t.mealId===b.originMealId&&t.targetBatchId===b.id)) && !storageClose((meals.get(b.originMealId)!.consumptionPercent ?? 100) / 100, b.initialConsumedFraction))) throw new FoodStorageError('INVALID', 'Invalid leftover origin link');
@@ -153,11 +212,17 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
   const validateRecipeReferences=(lines:RecipeLine[])=>{
     const ids=new Set<string>();
     for(const line of lines)if(line.source==='batch'){
-      if(!id(line.lineId)||ids.has(line.lineId)||!byId.has(line.sourceBatchId!)||line.ingredientId!==line.sourceBatchId||!finiteNonnegative(line.quantity)||!validStorageNutrition(line.nutrition)||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))throw new FoodStorageError('INVALID','Invalid stored-food recipe reference');
+      if(!id(line.lineId)||ids.has(line.lineId)||!byId.has(line.sourceBatchId!)||byId.get(line.sourceBatchId!)?.mode==='servings'&&line.quantityBasis!=='original-fraction'||line.ingredientId!==line.sourceBatchId||!finiteNonnegative(line.quantity)||!validStorageNutrition(line.nutrition)||!((line.quantityBasis==='g'&&line.unit==='g')||(line.quantityBasis==='original-fraction'&&line.unit==='fraction')))throw new FoodStorageError('INVALID','Invalid stored-food recipe reference');
       ids.add(line.lineId);
     }
   };
-  for(const r of (tables.recipeCards??[]) as {lines:RecipeLine[]}[])validateRecipeReferences(r.lines??[]);
+  for(const r of (tables.recipeCards??[]) as {lines:RecipeLine[]}[]){
+    validateRecipeReferences(r.lines??[]);
+    for(const line of r.lines??[])if(line.source==='batch'){
+      const b=byId.get(line.sourceBatchId!);
+      if(b?.mode==='servings'&&!b.everUsed)throw new FoodStorageError('INVALID','Referenced serving portions are not locked');
+    }
+  }
   // Source references must be a DAG; prepared food must never recursively become itself.
   const done = new Set<string>(), visiting = new Set<string>();
   const visit = (b: FoodBatch) => {
@@ -167,6 +232,10 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
     visiting.delete(b.id); done.add(b.id);
   };
   batches.forEach(visit);
+  for (const t of transactions) {
+    if (t.kind==='repartition' && (!t.targetBatchId || byId.get(t.targetBatchId)?.mode!=='servings' || t.movements.length!==1 || t.movements[0].batchId!==t.targetBatchId))throw new FoodStorageError('INVALID','Invalid repartition transaction');
+    if(t.movements.some(m=>m.mode==='servings'&&byId.get(m.batchId)?.mode!=='servings'))throw new FoodStorageError('INVALID','Serving movement source mismatch');
+  }
   for (const t of transactions) if (t.batchIds.some(id => !byId.has(id)) || t.targetBatchId !== null && !byId.has(t.targetBatchId) || t.mealId !== null && !meals.has(t.mealId)) throw new FoodStorageError('INVALID', 'Orphan inventory transaction');
   for (const m of meals.values()) {
     validateRecipeReferences(m.lines);
@@ -199,8 +268,8 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
       if(m.source!=='recipe'||m.storageConsumption||!Array.isArray(m.recipeAllocations))throw new FoodStorageError('INVALID','Invalid recipe inventory allocations');
       const ids=new Set<string>();
       for(const a of m.recipeAllocations){const source=byId.get(a.batchId),receipt=txById.get(a.transactionId),line=m.lines.find(l=>l.lineId===a.lineId);
-        if(!validStorageConsumption(a)||!positive(a.quantity)||!['g','fraction'].includes(a.unit)||!validStorageNutrition(a.nutrition)||ids.has(a.lineId)||!line||line.source!=='batch'||line.sourceBatchId!==a.batchId||!source?.everUsed||receipt?.kind!=='meal'||receipt.mealId!==m.id||!receipt.batchIds.includes(a.batchId)||!storageNutritionEqual(a.nutrition,consumptionNutrition(source,a.originalFraction,a.stockBasis)))throw new FoodStorageError('INVALID','Invalid recipe allocation link or snapshot');
-        if(!storageClose(a.originalFraction,a.quantity*(a.unit==='g'?source.fractionPerUnit:1))||!storageClose(a.originalFraction,line.quantity*(line.quantityBasis==='g'?source.fractionPerUnit:1)*(m.consumptionPercent??100)/100)||!storageNutritionEqual(a.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,line.nutrition[k]===null?null:line.nutrition[k]!*(m.consumptionPercent??100)/100])) as Nutrition))throw new FoodStorageError('INVALID','Allocation differs from recipe line');
+        if(!validStorageConsumption(a)||!positive(a.quantity)||!['g','fraction','serving'].includes(a.unit)||(a.unit==='serving')!==(source?.mode==='servings')||!validStorageNutrition(a.nutrition)||ids.has(a.lineId)||!line||line.source!=='batch'||line.sourceBatchId!==a.batchId||!source?.everUsed||receipt?.kind!=='meal'||receipt.mealId!==m.id||!receipt.batchIds.includes(a.batchId)||!storageNutritionEqual(a.nutrition,consumptionNutrition(source,a.originalFraction,a.stockBasis)))throw new FoodStorageError('INVALID','Invalid recipe allocation link or snapshot');
+        if(!storageClose(a.originalFraction,a.quantity*(a.unit==='fraction'?1:source.fractionPerUnit))||!storageClose(a.originalFraction,line.quantity*(line.quantityBasis==='g'?source.fractionPerUnit:1)*(m.consumptionPercent??100)/100)||!storageNutritionEqual(a.nutrition,Object.fromEntries(nutritionFields.map(k=>[k,line.nutrition[k]===null?null:line.nutrition[k]!*(m.consumptionPercent??100)/100])) as Nutrition))throw new FoodStorageError('INVALID','Allocation differs from recipe line');
         ids.add(a.lineId);
       }
       const portion=(m.consumptionPercent??100)/100;
@@ -209,6 +278,8 @@ export function validateStorageBackup(tables: Record<string, unknown[]>) {
     }
     if (m.storageConsumption !== undefined) {
       const c = m.storageConsumption;
+      const consumedBatch=byId.get(c.batchId);
+      if(consumedBatch?.mode==='servings' && (m.unit!=='serving'||!positive(m.quantity)||!storageClose(m.quantity*consumedBatch.fractionPerUnit,c.originalFraction)))throw new FoodStorageError('INVALID','Invalid serving meal snapshot');
       if(c.stockBasis){
         const line=m.lines[0],source=byId.get(c.batchId);
         if(!source||m.lines.length!==1||line?.ingredientId!==c.stockBasis.ingredientId||line.unit!=='g'||!storageClose(line.quantity,c.originalFraction/source.fractionPerUnit)||!storageNutritionEqual(line.nutrition,m.nutrition))throw new FoodStorageError('INVALID','Invalid concrete stock meal snapshot');

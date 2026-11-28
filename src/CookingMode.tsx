@@ -1,4 +1,4 @@
-import {livePreparation,needsUnitReview} from './live-nutrition';
+import {recipeDisplayName,livePreparation,needsUnitReview} from './live-nutrition';
 import {useFamilies} from './FamilyUI';
 import {automaticMember,concreteRecipe,familyOptions,familySnapshot} from './families';
 import {draftFromPrepared,templateEditorLine,templateLine,type EditorLine} from './family-preparation';
@@ -38,10 +38,10 @@ import {recipeUnitFactors} from './recipe-draft-units';
 import type {FoodChoice} from './reference-library';
 import {referenceName} from './reference-library';
 
-type CookingProps={preparation?:MealPreparation;selectionLines?:EditorLine[];onReturnMeal?:(prepared:Recipe<RecipeLine>)=>void;recipe:Recipe;recipes:Recipe[];pantry:PantryItem[];date:string;notice:Notice;mealSaved:(date:string)=>void;close:()=>void};
-export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,preparation,selectionLines,onReturnMeal}:CookingProps){
+type CookingProps={historicalSource?:boolean;initialServings?:number;preparation?:MealPreparation;selectionLines?:EditorLine[];onReturnMeal?:(prepared:Recipe<RecipeLine>)=>void;recipe:Recipe;recipes:Recipe[];pantry:PantryItem[];date:string;notice:Notice;mealSaved:(date:string)=>void;close:()=>void};
+export function CookingMode({historicalSource=false,initialServings,recipe,recipes,pantry,date,notice,mealSaved,close,preparation,selectionLines,onReturnMeal}:CookingProps){
  const {t,i18n}=useTranslation(),preferences=useIngredientPreferences();
- const catalog=useFamilies(pantry,!concreteRecipe(recipe));
+ const catalog=useFamilies(pantry);
  const [session,setSession]=useState<CookingSession>(),[amount,setAmount]=useState(''),[error,setError]=useState(''),[savingUI,setBusy]=useState(false);
  const busy=savingUI||!!session&&session.recipeRevision!==recipe.revision;
  const [unitMenu,setUnitMenu]=useState<string>();
@@ -64,7 +64,7 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
  useEffect(()=>{const release=registerRouteLeaveGuard(()=>confirmMethodLeave());const unload=(event:BeforeUnloadEvent)=>{if(methodDirty.current){event.preventDefault();event.returnValue=''}};window.addEventListener('beforeunload',unload);return()=>{release();window.removeEventListener('beforeunload',unload)}},[t]);
  useLayoutEffect(()=>{const input=methodInput.current;if(input){input.style.height='auto';input.style.height=input.scrollHeight+'px'}},[methodEdit?.text]);
  const familyRecipe=!concreteRecipe(recipe);
- const resume=familyRecipe&&!preparation;
+ const resume=!preparation;
  const [invalidSlot,setInvalidSlot]=useState<string>();
  function resolveAutomatic(current:CookingSession){
   let next=current;
@@ -81,15 +81,26 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
  }
  function openSession(restart:boolean,initial?:MealPreparation){
   const unresolved=selectionLines?.map(templateLine).filter((line):line is FamilyLine=>line.source==='family'&&!initial?.lines.some(l=>l.lineId===line.lineId));
-  return openCookingSession(recipe,restart,initial&&{...initial,unresolved},familyRecipe?resolveAutomatic:undefined);
+  return openCookingSession(recipe,restart,initial&&{...initial,unresolved},familyRecipe?resolveAutomatic:undefined,initialServings);
  }
- useEffect(()=>{let alive=true;if(familyRecipe&&!catalog.ready)return;setQuantityEdit(undefined);
+ useEffect(()=>{let alive=true;if(familyRecipe&&!catalog.ready)return;
+  const alreadyOpen=()=>currentSession.current?.recipeId===recipe.id&&currentSession.current.recipeRevision===recipe.revision;
+  if(alreadyOpen())return;
+  setQuantityEdit(undefined);
   // StrictMode rehearses effects: reuse initialization rather than abandoning the same live session.
-  if(!initialization.current||initialization.current.recipeId!==recipe.id||initialization.current.revision!==recipe.revision)initialization.current={recipeId:recipe.id,revision:recipe.revision,promise:openSession(!resume&&(!initialization.current||initialization.current.recipeId!==recipe.id),!initialization.current?preparation:undefined)};
+  if(!initialization.current||initialization.current.recipeId!==recipe.id||initialization.current.revision!==recipe.revision){
+   const first=initialization.current?.recipeId!==recipe.id;
+   const promise=first?openSession(!resume,preparation):pending.current.catch(()=>{}).then(()=>{
+    // A Method or template save already advanced this session in the same transaction.
+    const active=currentSession.current;
+    return active?.recipeId===recipe.id&&active.recipeRevision===recipe.revision?active:openSession(false);
+   });
+   initialization.current={recipeId:recipe.id,revision:recipe.revision,promise};
+  }
   const opening=initialization.current.promise;pending.current=opening;
-  opening.then(s=>{if(alive){recipeSnapshot.current=recipe;setSession(s);currentSession.current=s;setAmount(String(s.servings));setError('')}}).catch(()=>{if(alive)setError(t('journalError'))});return()=>{alive=false}},[recipe.id,recipe.revision,catalog.ready]);
- // Recipe-detail Family preparations resume from the stored journal. Meal drafts own
- // their preparation, and concrete-only recipes keep their existing fresh-start behavior.
+  opening.then(s=>{if(alive&&!alreadyOpen()){recipeSnapshot.current=recipe;setSession(s);currentSession.current=s;setAmount(String(s.servings));setError('')}}).catch(()=>{if(alive)setError(t('journalError'))});return()=>{alive=false}},[recipe.id,recipe.revision,catalog.ready]);
+ // Recipe-detail preparations resume from the stored journal. Meal drafts own
+ // their temporary preparation.
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;queueMicrotask(()=>{if(mounted.current||resume)return;void pending.current.catch(()=>{}).then(async()=>{const loaded=await initialization.current?.promise.catch(()=>undefined),active=currentSession.current??loaded;if(!mounted.current&&active)await discardCookingSession(active)}).catch(()=>{})})}},[]);
  useEffect(()=>{
   let disposed=false,requesting=false,lock:WakeLockSentinel|undefined;
@@ -155,7 +166,7 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
  };
  const currentPreparation=(s:CookingSession)=>{
   const actual=effectiveCookingRecipe(recipe,s);
-  return {...actual,lines:livePreparation(actual.lines,pantry,preferences)};
+  return {...actual,lines:livePreparation(actual.lines,pantry,preferences,historicalSource?undefined:i18n.language)};
  };
  const prepareDestination=async()=>{
   mealIntent.current=false;if(saving.current)return;
@@ -223,7 +234,7 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
   void chooseLine({ingredientId:choice.item.id,name:choice.kind==='user'?choice.item.name:referenceName(choice.item,i18n.language),
    quantity,unit,nutrition:personalNutrition(choice,quantity,unit,pref)});
  };
- const requestRemoval=(id:string)=>{const current=currentSession.current;if(!current||busy)return;const at=visibleCookingEntries(current).findIndex(e=>e.id===id),line=cookingJournalLines(recipe,current)[at];if(line)setRemoving({id,name:line.name})};
+ const requestRemoval=(id:string,name:string)=>{if(currentSession.current&&!busy)setRemoving({id,name})};
  const chooseFamilyProduct=(line:Extract<Recipe['lines'][number],{source:'family'}>,id:string,productId:string)=>{
   const current=currentSession.current;if(!current||busy)return;
   const product=familyOptions(line,catalog).find(member=>member.item.id===productId);
@@ -246,6 +257,7 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
     <div className="cooking-journal-columns">
      <section className="journal-method-section">
       <div className="journal-method-heading"><h3><JournalHeading>Method</JournalHeading></h3>{!isBuiltInRecipe(recipe)&&<button type="button" className={'journal-method-edit-trigger'+(methodEdit?' journal-method-confirm':'')} aria-label={t(methodEdit?'journalMethodSave':'journalMethodEdit')} aria-expanded={methodEdit!==undefined} aria-controls="journal-method-input" disabled={busy} onClick={()=>{if(methodEdit){void saveMethod();return}methodScroll.current=body.current?.scrollTop??0;setMethodError('');setMethodEdit({recipe,text:recipe.instructions})}}>{methodEdit?<Check size={16} aria-hidden="true"/>:<Pencil size={14} aria-hidden="true"/>}</button>}</div>
+      <small className="muted">{t('journalFullRecipeYield',{count:recipeYield(viewRecipe)})}</small>
       {methodEdit?<div className="journal-method-editor"><textarea ref={methodInput} id="journal-method-input" autoFocus aria-label={t('journalMethodText')} value={methodEdit.text} disabled={busy} onChange={e=>setMethodEdit({...methodEdit,text:e.target.value})}/>{methodError&&<p role="alert">{methodError}</p>}</div>:<JournalMethod text={viewRecipe.instructions||t('notRecorded')}/>}
      </section>
      <section className="journal-ingredients-section"><div className="journal-method-heading journal-ingredients-heading"><h3><JournalHeading>Ingredients</JournalHeading></h3><button type="button" className="journal-ingredient-add" aria-label={t('ingredientPickerAdd')} disabled={busy} onClick={()=>setPicking('pantry')}><Plus size={16} aria-hidden="true"/></button></div>{!lines.length&&<p className="muted">{t('journalIngredientsEmpty')}</p>}
@@ -257,19 +269,24 @@ export function CookingMode({recipe,recipes,pantry,date,notice,mealSaved,close,p
         const choice=item?userChoice(item):builtin?{kind:'built-in' as const,item:builtin}:null;
         const factors=choice&&l.source!=='batch'?recipeUnitFactors(choice,preferences[l.ingredientId]):new Map<string,number>();
         const options=Array.from(factors.keys()).filter(unit=>convertRecipeLine({...l,quantity},unit,factors)).map(value=>({value,label:labelFor(value)}));
-        const picker=<DraftUnitPicker open={unitMenu===id} setOpen={open=>setUnitMenu(open?id:undefined)} units={{name:l.name,value:l.unit,label:unitLabel,options,fixed:options.length<2,disabled:busy,
-         change:unit=>{if(busy||!currentSession.current)return;try{void commit(changeCookingUnit(viewRecipe,currentSession.current,id,unit,factors))}catch{setError(t('journalQuantityInvalid'))}}}}/>;
         const slot=viewRecipe.lines.find(line=>line.source==='family'&&line.lineId===id);
-        const family:FamilyLine|undefined=slot?.source==='family'&&(l.unit==='g'||l.unit==='mL')?{...slot,unit:l.unit,quantity:l.quantity}:undefined;
-        return <DraftIngredientRow key={id} id={id} name={l.name} cookingRemoval={()=>requestRemoval(id)} onReplace={()=>{setReplacement({id,fingerprint:entries[index].fingerprint});setPicking("pantry")}} disabled={busy||!!picking}><div className={'journal-check-row'+(checked?' is-checked':'')+(quantityEdit===id?' is-editing':'')} key={id} tabIndex={0} role="group" aria-label={l.name} aria-description={t('journalRemoveHint')} aria-keyshortcuts="Delete Shift+F10" onKeyDown={event=>{if(event.target===event.currentTarget&&!busy&&!quantityEdit&&(event.key==="Delete"||event.shiftKey&&event.key==="F10")){event.preventDefault();requestRemoval(id)}}}>
-        <input id={`cooking-check-${id}`} type="checkbox" aria-label={l.name} checked={checked} disabled={busy} onChange={()=>void commit({...session,checked:checked?session.checked.filter(x=>x!==id):[...session.checked,id]})}/>
-        <span>{family?<span className="journal-family-choice"><InlineFamilyChoice cooking line={family} catalog={catalog} selectedId={l.ingredientId||undefined} resolvedName={l.draftFamilyId?undefined:l.name} invalid={invalidSlot===id} choose={productId=>{if(productId!==l.ingredientId)chooseFamilyProduct(family,id,productId)}}/></span>:<span><span className="journal-line-name" role="button" tabIndex={0} aria-label={t("replaceIngredient")+" "+l.name}>{l.name}</span></span>}<small className={'journal-quantity'+(override?' is-overridden':'')}>
+        const displayLine=slot?.source==='family'?slot:l;
+        const rowName=historicalSource?displayLine.name:recipeDisplayName(displayLine,catalog,i18n.language);
+        const slotAmount=slot?.source==='family'&&l.unit!=='g'&&l.unit!=='mL'?convertRecipeLine({...l,quantity},slot.unit,factors):null;
+        const family:FamilyLine|undefined=slot?.source!=='family'?undefined
+         :l.unit==='g'||l.unit==='mL'?{...slot,name:rowName,unit:l.unit,quantity:l.quantity}
+         :slotAmount?{...slot,name:rowName,quantity:slotAmount.quantity}:undefined;
+        const picker=<DraftUnitPicker open={unitMenu===id} setOpen={open=>setUnitMenu(open?id:undefined)} units={{name:rowName,value:l.unit,label:unitLabel,options,fixed:options.length<2,disabled:busy,
+         change:unit=>{if(busy||!currentSession.current)return;try{void commit(changeCookingUnit(viewRecipe,currentSession.current,id,unit,factors))}catch{setError(t('journalQuantityInvalid'))}}}}/>;
+        return <DraftIngredientRow key={id} id={id} name={rowName} cookingRemoval={()=>requestRemoval(id,rowName)} onReplace={()=>{setReplacement({id,fingerprint:entries[index].fingerprint});setPicking("pantry")}} disabled={busy||!!picking}><div className={'journal-check-row'+(checked?' is-checked':'')+(quantityEdit===id?' is-editing':'')} key={id} tabIndex={0} role="group" aria-label={rowName} aria-description={t('journalRemoveHint')} aria-keyshortcuts="Delete Shift+F10" onKeyDown={event=>{if(event.target===event.currentTarget&&!busy&&!quantityEdit&&(event.key==="Delete"||event.shiftKey&&event.key==="F10")){event.preventDefault();requestRemoval(id,rowName)}}}>
+        <input id={`cooking-check-${id}`} type="checkbox" aria-label={rowName} checked={checked} disabled={busy} onChange={()=>void commit({...session,checked:checked?session.checked.filter(x=>x!==id):[...session.checked,id]})}/>
+        <span>{family?<span className="journal-family-choice"><InlineFamilyChoice cooking line={family} catalog={catalog} selectedId={l.ingredientId||undefined} resolvedName={l.draftFamilyId?undefined:l.name} invalid={invalidSlot===id} choose={productId=>{if(productId!==l.ingredientId)chooseFamilyProduct(family,id,productId)}}/></span>:<span><span className="journal-line-name" role="button" tabIndex={0} aria-label={t("replaceIngredient")+" "+rowName}>{rowName}</span></span>}<small className={'journal-quantity'+(override?' is-overridden':'')}>
          <span className="journal-amount-ink" aria-hidden="true"/><span className="journal-quantity-measure" aria-hidden="true"><span className="journal-quantity-value">{displayQuantity}{" "}</span><span className="journal-quantity-unit">{unitLabel}</span></span>
          {quantityEdit===id?<span className="journal-quantity-edit">
-          <JournalQuantityInput autoFocus quantity={inputQuantity} label={t('journalQuantityFor',{name:l.name})}
+          <JournalQuantityInput autoFocus quantity={inputQuantity} label={t('journalQuantityFor',{name:rowName})}
             onCommit={value=>saveQuantity(id,l.unit,value)} onEnd={()=>setQuantityEdit(undefined)}/>
-         </span>:<button type="button" className="journal-quantity-trigger" disabled={busy} aria-label={t('journalQuantityFor',{name:l.name})} title={override?t('journalQuantityOverridden'):t('journalQuantityEdit')} onClick={()=>setQuantityEdit(id)}><span className="journal-quantity-value">{displayQuantity}{" "}</span></button>}
-         {override&&<button type="button" className="journal-quantity-restore" disabled={busy} aria-label={t('journalQuantityRestore',{name:l.name})} onClick={()=>{const current=currentSession.current;if(current)void commit(restoreCookingQuantity(current,id))}}>↶</button>}
+         </span>:<button type="button" className="journal-quantity-trigger" disabled={busy} aria-label={t('journalQuantityFor',{name:rowName})} title={override?t('journalQuantityOverridden'):t('journalQuantityEdit')} onClick={()=>setQuantityEdit(id)}><span className="journal-quantity-value">{displayQuantity}{" "}</span></button>}
+         {override&&<button type="button" className="journal-quantity-restore" disabled={busy} aria-label={t('journalQuantityRestore',{name:rowName})} onClick={()=>{const current=currentSession.current;if(current)void commit(restoreCookingQuantity(current,id))}}>↶</button>}
          <span className="journal-quantity-unit cooking-unit-choice">{picker}</span>
         </small></span>
        </div></DraftIngredientRow>})}

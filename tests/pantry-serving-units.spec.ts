@@ -215,7 +215,7 @@ test('disclosed defaults and relationship editor with safe removal and backup',a
   await restoreAll(JSON.parse(JSON.stringify(backup)));
   return {version:backup.version,preference:JSON.parse((await db.settings.get('ingredientPreference:cocoa'))!.value)};
  });
- expect(await restore()).toMatchObject({version:20,preference:{preferred:'块',units:[{name:'块',quantity:7,amount:33.125},{name:'杯',amount:240}]}});
+ expect(await restore()).toMatchObject({version:21,preference:{preferred:'块',units:[{name:'块',quantity:7,amount:33.125},{name:'杯',amount:240}]}});
  await open();await summary.tap();await unit.locator('.clear-conversion').tap();
  await expect(confirm.locator('.delete-warning')).toContainText('默认食用单位将恢复为 克 (g)');
  await capture(page,'14-delete-default');
@@ -225,11 +225,11 @@ test('disclosed defaults and relationship editor with safe removal and backup',a
  await units.locator('.ingredient-unit-add').tap();await unit.locator('[name=conversionName]').fill('不保存');
  await unit.locator('[name=conversionAmount]').fill('1');await unit.locator('[name=conversionAmount]').press('Enter');
  await ingredient.locator('.form-actions button').first().tap();await expect(ingredient).toHaveCount(0);
- expect(await restore()).toMatchObject({version:20,preference:{preferred:'块',units:[{name:'块',quantity:7,amount:33.125},{name:'杯',amount:240}]}});
+ expect(await restore()).toMatchObject({version:21,preference:{preferred:'块',units:[{name:'块',quantity:7,amount:33.125},{name:'杯',amount:240}]}});
  await open();await summary.tap();await unit.locator('.clear-conversion').tap();await confirm.locator('.delete-destructive').tap();
  await expect(unit).toHaveCount(0);await expect(defaultRow).toContainText('克 (g)');
  await ingredient.locator('.form-actions .primary').tap();await expect(ingredient).toHaveCount(0);
- expect(await restore()).toMatchObject({version:20,preference:{preferred:'g',units:[{name:'杯',amount:240}]}});
+ expect(await restore()).toMatchObject({version:21,preference:{preferred:'g',units:[{name:'杯',amount:240}]}});
 });
 
 test('Cooking resolves a saved serving conversion and keeps the amount equivalent',async({page})=>{

@@ -115,7 +115,7 @@ test('create and resolve a family recipe and save a concrete meal snapshot',asyn
  const setup=page.locator('.cooking-mode .journal-ingredients-section');await setup.locator('.draft-family-trigger').tap();
  await expect(setup.locator('.draft-family-options button')).toHaveCount(2);
  await shot(page,'10-resolution',setup);await setup.locator('.draft-family-options').getByRole('button',{name:'Fage 0% Greek Yogurt',exact:true}).tap();
- const mode=page.locator('.cooking-mode');await expect(mode.locator('.journal-family-choice .journal-line-name')).toHaveText('Fage 0% Greek Yogurt');
+ const mode=page.locator('.cooking-mode');await expect(mode.locator('.journal-family-choice .journal-line-name')).toHaveText('酸奶');
  await expect(mode.locator('.journal-update')).toHaveCount(0);await shot(page,'11-cooking',mode);
  await mode.locator('.draft-family-options').getByRole('button',{name:'Chobani Whole Milk Greek Yogurt',exact:true}).tap();
  await expect(mode.locator('.recipe-nutrition-strip')).toContainText('88 kcal');
@@ -175,7 +175,7 @@ for(const active of [0,1,2])test('Add Meal resolves '+active+' active members an
   await setup.locator('.draft-family-options').getByRole('button',{name:'Chobani Whole Milk Greek Yogurt',exact:true}).tap();
  }
  const mode=page.locator('.cooking-mode'),name=active===1?'Fage 0% Greek Yogurt':'Chobani Whole Milk Greek Yogurt';
- await expect(mode.locator('.journal-family-choice .journal-line-name')).toHaveText(name);
+ await expect(mode.locator('.journal-family-choice .journal-line-name')).toHaveText('Yogurt');
  await mode.locator('.journal-quantity-trigger').first().tap();const amount=mode.locator('.journal-quantity-edit input');
  await amount.fill('125');await amount.press('Enter');await mode.locator('.journal-update').tap();
  await page.locator('.journal-update-confirm .primary').tap();await expect(mode.locator('.journal-update')).toHaveCount(0);
@@ -329,7 +329,7 @@ test('Family slots share the full cooking journal, destination guard and restore
   await expect(journal.locator('textarea')).toHaveValue('未保存的制作步骤');
   expect(await original!.evaluate(node=>node.isConnected)).toBe(true);
   await expect(rows.locator('input:checked')).toHaveCount(2);
-  await expect(rows.first().locator('.journal-family-choice')).toContainText('Fage');
+  await expect(rows.first().locator('.journal-family-choice .journal-line-name')).toHaveText('酸奶');
   await expect(rows.first().locator('.journal-quantity-trigger')).toHaveText('120.1');
   await expect(journal.locator('.journal-serving-stepper input')).toHaveValue('1.5');
   expect(await session()).toEqual(savedSession);
@@ -342,8 +342,12 @@ test('Family slots share the full cooking journal, destination guard and restore
  const restored=await start(reopened,'酸奶碗');
  await expect(restored.locator('.journal-check-row input:checked')).toHaveCount(2);
  await expect(restored.locator('.journal-serving-stepper input')).toHaveValue('1.5');
- await expect(restored.locator('.journal-family-choice .journal-line-name').first()).toContainText('Fage');
- await expect(restored.locator('.journal-family-choice .journal-line-name').last()).toContainText('番茄');
+ await expect(restored.locator('.journal-family-choice .journal-line-name').first()).toHaveText('酸奶');
+ await expect(restored.locator('.journal-family-choice .journal-line-name').last()).toHaveText('牛奶');
+ for(const [index,member] of ['Fage','番茄'].entries()){
+  const choice=restored.locator('.journal-family-choice').nth(index);await choice.locator('.draft-family-trigger').tap();
+  await expect(choice.getByRole('button',{pressed:true})).toHaveText(member);
+ }
  await expect(restored.locator('.journal-quantity-trigger').first()).toHaveText('120.1');
  await expect(restored.locator('.journal-method-section')).toContainText('轻轻拌匀');
 });
@@ -378,15 +382,39 @@ for(const width of [390,320])test('Cooking shows one ingredient name and a compa
  for(const button of await options.getByRole('button').all()){
   const bounds=await button.boundingBox();expect(bounds!.height).toBe(44);expect(bounds!.width).toBeGreaterThanOrEqual(44);
  }
- await options.getByRole('button',{name:'番茄'}).tap();await expect(name).toHaveText('番茄');
+ await options.getByRole('button',{name:'番茄'}).tap();await expect(name).toHaveText('酸奶');
  await expect(check).not.toBeChecked();await expect(options.locator('[aria-pressed=true]')).toHaveText('番茄');
  await capture('03-selected-open');await name.tap();await expect(options).toHaveCount(0);await capture('04-selected');
  const type=(el:Element)=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.color]};
  expect(await name.locator('.journal-line-name').evaluate(type)).toEqual(await normal.locator('.journal-line-name').evaluate(type));
  expect(await family.locator('.journal-quantity').evaluate(type)).toEqual(await normal.locator('.journal-quantity').evaluate(type));
  await check.check();await name.tap();await options.getByRole('button',{name:longName}).tap();await name.tap();
- await expect(check).toBeChecked();await expect(name).toHaveText(longName);
- const label=name.locator('.journal-line-name');expect(await label.evaluate(el=>el.scrollWidth>el.clientWidth&&getComputedStyle(el).textOverflow==='ellipsis')).toBe(true);
+ await expect(check).toBeChecked();await expect(name).toHaveText('酸奶');await expect(normal.locator('.journal-line-name')).toHaveText('菠菜');
+ await name.tap();await expect(options.getByRole('button',{pressed:true})).toHaveText(longName);await name.tap();
  const trigger=await name.boundingBox(),amount=await family.locator('.journal-quantity').boundingBox();
  expect(trigger!.x+trigger!.width).toBeLessThanOrEqual(amount!.x+1);await capture('05-long-name');
+});
+
+test('Milk stays the cooking identity at 150 mL while same-name products remain distinct',async({page})=>{
+ await seed(page,390,'zh');
+ await page.evaluate(async()=>{
+  const d=await import('/src/domain.ts');
+  for(const [id,brand] of [['fage','SUPER NATURAL'],['chobani','Organic Valley']]){
+   await d.db.ingredients.update(id,{name:'whole milk',brand,referenceUnit:'mL'});
+  }
+  await d.db.ingredientFamilies.put({...d.stamp(),id:'milk',name:'牛奶',alternateName:'Milk',memberIds:['fage','chobani'],inUseIds:['fage','chobani']});
+  await d.recipes.put({...d.stamp(),id:'milk-recipe',name:'Milk test',servings:1,instructions:'',stickyNote:'',
+   lines:[{source:'family',familyId:'milk',lineId:'milk-slot',name:'牛奶',quantity:150,unit:'mL'}]});
+ });
+ await page.goto('/#/recipes/milk-recipe');await page.locator('.start-cooking').tap();
+ const mode=page.locator('.cooking-mode'),trigger=mode.getByRole('button',{name:'牛奶',exact:true}),checkbox=mode.getByRole('checkbox',{name:'牛奶'});
+ await checkbox.check();await trigger.tap();
+ for(const [product,calories] of [['SUPER NATURAL','89 kcal'],['Organic Valley','132 kcal']]){
+  const option=mode.getByRole('button',{name:'whole milk / '+product,exact:true});
+  await option.tap();await expect(option).toHaveAttribute('aria-pressed','true');
+  await expect(trigger).toHaveText('牛奶');await expect(checkbox).toBeChecked();
+  await expect(mode.locator('.recipe-nutrition-strip')).toContainText(calories);
+ }
+ await trigger.tap();await expect(mode.locator('.journal-quantity-trigger')).toHaveText('150');
+ await expect(mode.locator('.cooking-unit-choice')).toHaveText('mL');await expect(trigger).toHaveText('牛奶');
 });

@@ -56,12 +56,12 @@
 @media(max-width:360px) { .storage-source-row { grid-template-columns:minmax(0,1fr) 44px; } .storage-source-row > label:first-child { grid-column:1/-1; } .storage-summary { gap:8px; } .add-food-modal .add-food > .source-tabs button { font-size:11px; } }
 
 /* Make a Batch shares Add Meal proportions without changing other storage dialogs. */
-.modal.storage-make-modal { width:min(560px,calc(100% - 16px)); }
+.modal.storage-make-modal { height:min(780px,calc(var(--food-viewport-height,100svh) - max(10px,env(safe-area-inset-top)) - max(10px,env(safe-area-inset-bottom)))); width:min(560px,calc(100% - 16px)); }
 .storage-make-modal > .modal-head { padding:10px 16px; }
 .modal.storage-make-modal > .modal-head h2 { font-size:24px; }
-/* Content-based flex bases avoid a zero-height form in auto-sized native dialogs. */
-.storage-make-modal .storage-make-form { flex:0 1 auto; min-height:0; }
-.storage-make-modal .storage-make-form .storage-make-scroll { flex:0 1 auto; min-height:0; padding:2px 16px 12px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scroll-padding:12px; }
+/* Keep the footer anchored as the review expands and the selected mode changes. */
+.storage-make-modal .storage-make-form { flex:1 1 auto; min-height:0; }
+.storage-make-modal .storage-make-form .storage-make-scroll { flex:1 1 auto; min-height:0; padding:2px 16px 12px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scroll-padding:12px; }
 .storage-make-modal .storage-fields { gap:10px; }
 .storage-make-modal label { font:500 13px/1.5 var(--font-ui); gap:4px; }
 .storage-make-modal :is(input:not([type=range]),select,textarea) { min-height:44px; padding:8px 10px; border:1px solid var(--line); border-radius:5px; font:400 16px/1.4 var(--font-ui); }
@@ -184,3 +184,26 @@
 .batch-journal .batch-note-action,.batch-journal .batch-note-text {display:block;min-width:0;max-width:100%;margin:8px 0 0;padding:5px 0;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start}
 .batch-journal .batch-note-action {min-height:40px;background:none;border:0;color:var(--action);font:14px var(--font-ui)}
 .batch-journal .batch-results textarea {width:100%;margin-top:8px}
+
+.batch-journal .batch-mode-options {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 4px}
+.batch-journal .batch-mode-options button {display:grid;align-content:center;justify-items:start;gap:2px;min-height:49px;min-width:0;padding:5px 9px;border:1px solid var(--line);border-radius:5px;background:transparent;color:var(--ink);text-align:start;box-shadow:none}
+.batch-journal .batch-mode-options button[aria-pressed=true] {background:color-mix(in srgb,var(--action) 8%,transparent);border-color:color-mix(in srgb,var(--action) 65%,var(--line));color:var(--action)}
+.batch-mode-options strong {font:600 14px/1.2 var(--font-ui)}
+.batch-mode-options small,.batch-ratio-help {font:400 12px/1.3 var(--font-ui);color:var(--muted)}
+.batch-journal .batch-results .ingredient-journal-row,.batch-setting {max-width:none;display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;font:500 14px/1.35 var(--font-ui)}
+.batch-setting label {white-space:nowrap}
+.batch-setting-value .journal-serving-stepper {display:grid;grid-template-columns:32px 44px 32px;border:0}
+.batch-setting-value {flex:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.batch-journal .batch-setting-value button,.batch-journal .batch-setting-value input {background:transparent;border:0;border-radius:0;box-shadow:none;text-align:center;padding:0;min-height:40px;font:400 16px var(--font-ui)}
+.batch-journal .batch-setting-value button {width:30px;min-width:0;color:var(--action)}
+.batch-journal .batch-setting-value .journal-serving-stepper input {width:100%;min-width:0;max-width:44px}
+.batch-setting-value>span {color:var(--muted);font:13px var(--font-ui)}
+.batch-ratio-help {display:block;margin:-2px 0 7px}
+.batch-journal .batch-results .storage-batch-previews {border-top:1px solid var(--line);padding-top:10px}
+.batch-journal .batch-review {min-width:0;border-top:1px solid var(--line)}
+.batch-review > summary {min-height:44px;display:flex;justify-content:space-between;align-items:center;list-style:none;cursor:pointer;font:500 15px var(--font-ui)}
+.batch-review > summary::-webkit-details-marker {display:none}
+.batch-review > summary svg {color:var(--muted)}
+.batch-review[open] > summary svg {transform:rotate(180deg)}
+.batch-review .recipe-line.draft-ingredient {padding-block:2px}
+@media(max-width:359px){.batch-journal .batch-mode-options button{padding-inline:6px}.batch-mode-options small{font-size:11px}}

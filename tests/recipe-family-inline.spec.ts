@@ -85,7 +85,7 @@ test('derives template ranges and snapshots actual choices in the meal editor',a
  expect(data.recipe.lines[0]).toMatchObject({source:'family',familyId:'review-yogurt',quantity:100,unit:'g'});
  expect(data.recipe.lines[0]).not.toHaveProperty('nutrition');
  expect(data.logs.map(log=>[log.lines[0].ingredientId,log.nutrition.calories]).sort()).toEqual([[products[0],59],[products[1],88]]);
- expect(data.version).toBe(20);
+ expect(data.version).toBe(21);
 });
 
 test('shows additive ranges for multiple Families and permits saving an unavailable conversion',async({page})=>{

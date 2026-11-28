@@ -1,10 +1,10 @@
 import {db} from './db';
 import {checkPreparedMember,templateFromPreparation} from './family-contract';
-import {recipes,type Recipe} from './domain';
+import {recipes,putRecipeWithStockReferences,type Recipe} from './domain';
 import {effectiveCookingRecipe,normalizedCookingLines,initializeMealPreparation,type MealPreparation} from './cooking-effective';
 import {replaceCookingIngredient,COOKING_PREFIX,reconcileCookingSession,validateJournalRecipe,validateCookingSession,type CookingSession} from './cooking-journal';
 
-export async function openCookingSession(recipe:Recipe,restart=false,preparation?:MealPreparation,resolveSlots?:(s:CookingSession)=>CookingSession){
+export async function openCookingSession(recipe:Recipe,restart=false,preparation?:MealPreparation,resolveSlots?:(s:CookingSession)=>CookingSession,initialServings?:number){
  validateJournalRecipe(recipe);
  return db.transaction('rw',db.settings,db.ingredientFamilies,async()=>{
   const familyIds=new Set(recipe.lines.flatMap(line=>line.source==='family'?[line.familyId]:[]));
@@ -16,6 +16,7 @@ export async function openCookingSession(recipe:Recipe,restart=false,preparation
   let old:CookingSession|undefined;
   if(row&&!restart){old=JSON.parse(row.value);validateCookingSession(old!);if(old!.recipeId!==recipe.id)throw Error('Invalid cooking recipe association')}
   let fresh=reconcileCookingSession(recipe,old);
+  if(old?.status!=='active'&&initialServings!==undefined)fresh={...fresh,servings:initialServings};
   if(familyIds.size)fresh={...fresh,version:4,ingredientChanges:fresh.ingredientChanges??{addedLines:[],removedEntries:[]}};
   let next=preparation?initializeMealPreparation(recipe,fresh,preparation):fresh;
   if(resolveSlots)next=resolveSlots(next);
@@ -43,7 +44,7 @@ export async function updateCookingMethod(recipe:Recipe,session:CookingSession,i
  return commitCookingRecipeUpdate(recipe,session,nextRecipe,{...session,recipeRevision:nextRecipe.revision});
 }
 function commitCookingRecipeUpdate(recipe:Recipe,session:CookingSession,nextRecipe:Recipe,nextSession:CookingSession){
- return db.transaction('rw',recipes,db.settings,db.ingredientFamilies,async()=>{
+ return db.transaction('rw',recipes,db.settings,db.ingredientFamilies,db.foodBatches,async()=>{
   const current=await recipes.get(recipe.id);if(!current||JSON.stringify(current)!==JSON.stringify(recipe))throw Error('Recipe changed; reopen to reload');
   const key=COOKING_PREFIX+recipe.id,row=await db.settings.get(key);if(row?.value!==JSON.stringify(session))throw Error('Preparation changed; reopen to reload');
   for(const line of nextRecipe.lines)if(line.source==='family'){
@@ -54,7 +55,7 @@ function commitCookingRecipeUpdate(recipe:Recipe,session:CookingSession,nextReci
     checkPreparedMember(family,line,product);
    }
   }
-  validateJournalRecipe(nextRecipe);validateCookingSession(nextSession);await recipes.put(nextRecipe);await db.settings.put({key,value:JSON.stringify(nextSession)});return {recipe:nextRecipe,session:nextSession};
+  validateJournalRecipe(nextRecipe);validateCookingSession(nextSession);await putRecipeWithStockReferences(nextRecipe);await db.settings.put({key,value:JSON.stringify(nextSession)});return {recipe:nextRecipe,session:nextSession};
  });
 }
 /** Compare-and-swap prevents another window's progress from being silently overwritten. */

@@ -20,5 +20,5 @@ test('inventory, nutrition snapshots and retry receipts survive reload and a bac
  });await page.reload();
  const after=await page.evaluate(async()=>{
   const d=await import('/src/domain.ts'),{FoodStorage}=await import('/src/food-storage.ts');const snapshot=await d.exportAll();await d.restoreAll(JSON.parse(JSON.stringify(snapshot)));const s=new FoodStorage();const preserved=(await d.exportAll()).tables;const m=(await s.meals.get('browser-meal'))!;await s.deleteMeal({operationId:'browser-delete',mealId:m.id,expectedRevision:m.revision});return{version:snapshot.version,preserved,batch:await s.batches.get('browser-batch'),guard:await d.db.settings.get('storage-synthetic-guard')};
- });expect(after.version).toBe(20);expect(after.preserved).toEqual(before);expect(after.batch!.remainingQuantity).toBe(600);expect(after.batch!.everUsed).toBe(true);expect(after.guard!.value).toBe('Keep');
+ });expect(after.version).toBe(21);expect(after.preserved).toEqual(before);expect(after.batch!.remainingQuantity).toBe(600);expect(after.batch!.everUsed).toBe(true);expect(after.guard!.value).toBe('Keep');
 });

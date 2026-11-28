@@ -35,7 +35,7 @@ for(const width of [390,430])for(const language of ['zh','en'])test('Goal master
     await restoreAll(JSON.parse(JSON.stringify(backup)));
     return {version:backup.version,goal:(backup.tables.goals as import('../src/goal-model').Goal[]).find(row=>row.nutritionOnly)};
    });
-   expect(disabled.version).toBe(20);
+   expect(disabled.version).toBe(21);
    expect(disabled.goal).toMatchObject({nutritionEnabled:false,nutritionGoals:baseline.old.nutritionGoals});
   }
   await page.reload();await openPersonalGoalEditor(page);

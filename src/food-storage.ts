@@ -5,16 +5,16 @@ import Dexie from 'dexie';
 import {ingredientNutrition,ingredientNutritionFactor,scaleNutrition, sumNutrition, type FoodLog, type Nutrition, type Recipe, type RecipeLine} from './domain';
 import {recipeServingLines} from './recipe-nutrition';
 import {
-  FoodStorageError, historicalBasisForLine, basisLineNutrition, allocationNutrition, type HistoricalAllocationBasis, storageClose, storageNutritionEqual, positive, finiteNonnegative, validFoodBatch, validBatchIngredient,
+  FoodStorageError, originalBatchPercentage, percentageFraction, historicalBasisForLine, basisLineNutrition, allocationNutrition, type HistoricalAllocationBasis, storageClose, storageNutritionEqual, positive, finiteNonnegative, validFoodBatch, validBatchIngredient,
   validStorageNutrition, validStorageTransaction, type FoodBatch, type BatchIngredient,
   type StorageTransaction, type StorageTransactionKind, type InventoryMovement,
 } from './food-storage-model';
 
-export type InventoryPortion = {unit: 'g' | 'percent' | 'fraction'; quantity: number};
+export type InventoryPortion = {unit: 'serving' | 'g' | 'percent' | 'fraction'; quantity: number};
 export type BatchIngredientInput = {source: 'pantry'; line: RecipeLine} | {source: 'batch'; batchId: string; portion: InventoryPortion; expectedNutrition?: Nutrition;line?:RecipeLine};
 export interface MakeBatchInput {
   operationId: string; id: string; name: string; preparedOn: string; notes?: string;
-  sourceRecipeId?: string | null; ingredients: BatchIngredientInput[]; cookedYieldGrams: number;
+  sourceRecipeId?: string | null; ingredients: BatchIngredientInput[]; mode?: FoodBatch['mode']; cookedYieldGrams?: number; totalServings?:number;
 }
 export interface StorageMealInput {
   operationId: string; mealId: string; batchId: string; portion: InventoryPortion;
@@ -73,6 +73,10 @@ export function recipeBatchInputs(lines:RecipeLine[]):BatchIngredientInput[]{
 
 export function batchHasInventoryActivity(batch: FoodBatch, history: StorageTransaction[]) {
   return history.filter(t => t.batchIds.includes(batch.id)).some(t => !((t.kind === 'create' || t.kind === 'leftovers') && t.targetBatchId === batch.id || ['metadata','archive','restore'].includes(t.kind) || t.kind === 'edit-origin' && t.mealId === batch.originMealId && t.reason === 'sync'));
+}
+export function canRepartition(b:FoodBatch,history:StorageTransaction[]) {
+  return b.mode==='servings'&&!b.archived&&!b.everUsed&&b.remainingQuantity===b.totalServings&&
+    !batchHasInventoryActivity(b,history.filter(t=>t.kind!=='repartition'));
 }
 export function canCancelBatch(batch: FoodBatch, history: StorageTransaction[]) {
   if(batch.originMealId && batch.ingredients.some(l=>l.source==='batch'))return false;
@@ -152,11 +156,15 @@ export class FoodStorage {
     if (!validFoodBatch(b)) fail('INVALID', 'Invalid batch or non-finite nutrition');
     await this.batches.put(b);
   }
-  private portion(b: FoodBatch, p: InventoryPortion) {
+  private async portion(b: FoodBatch, p: InventoryPortion) {
     if (!p || !positive(p.quantity)) return fail('INVALID', 'Consumption must be finite and positive', b.id);
     if(p.unit==='fraction')return p.quantity/b.fractionPerUnit;
     if (b.mode === 'weight' && p.unit === 'g') return p.quantity;
-    if (b.mode === 'ratio' && p.unit === 'percent' && p.quantity <= 100) return p.quantity === 100 ? b.remainingQuantity : b.remainingQuantity * p.quantity / 100;
+    if (b.mode === 'servings' && p.unit === 'serving') return p.quantity;
+    if (b.mode === 'ratio' && p.unit === 'percent') {
+      const original=originalBatchPercentage(b,await this.transactions.where('targetBatchId').equals(b.id).toArray());
+      if(original || p.quantity<=100)return percentageFraction(p.quantity,b.remainingQuantity,original);
+    }
     return fail('INVALID', 'Unsupported inventory unit or percentage', b.id);
   }
   private async move(b: FoodBatch, delta: number, tx: StorageTransaction, consuming = false) {
@@ -167,7 +175,7 @@ export class FoodStorage {
     let after = before + delta;
     if (after < 0 && !same(after, 0)) fail('OVERDRAW', 'Insufficient inventory', b.id);
     if (after < 0) after = 0;
-    const m: InventoryMovement = {batchId: b.id, mode: b.mode, before, after, fractionPerUnit: b.fractionPerUnit, fractionDelta: (after - before) * b.fractionPerUnit};
+    const m: InventoryMovement = {...(b.mode==='servings'?{batchRevision:b.revision+1}:{}),batchId: b.id, mode: b.mode, before, after, fractionPerUnit: b.fractionPerUnit, fractionDelta: (after - before) * b.fractionPerUnit};
     tx.movements.push(m); tx.batchIds.push(b.id);
     b = changed({...b, remainingQuantity: after, everUsed: b.everUsed || consuming});
     if (after === 0 && !b.archived) {b.archived = true; b.archiveReason = 'exhausted'}
@@ -180,7 +188,7 @@ export class FoodStorage {
     const lines: BatchIngredient[] = [];
     for (const input of inputs) {
       if (input.source === 'batch' && input.portion.quantity===0) {
-        if(input.batchId===targetId)fail('CONFLICT','A batch cannot contain itself',targetId);const source=await this.batch(input.batchId);const snapshot:BatchIngredient={...snapshotMetadata(input.line),source:'batch',ingredientId:source.id,sourceBatchId:source.id,name:input.line?.name??source.name,quantity:0,unit:input.line?.unit??(source.mode==='weight'?'g':'fraction'),sourceFraction:0,nutrition:input.line?.nutrition??zeroNutrition()};if(!validBatchIngredient(snapshot))fail('INVALID','Invalid zero source snapshot');lines.push(snapshot);continue;
+        if(input.batchId===targetId)fail('CONFLICT','A batch cannot contain itself',targetId);const source=await this.batch(input.batchId);const snapshot:BatchIngredient={...snapshotMetadata(input.line),source:'batch',ingredientId:source.id,sourceBatchId:source.id,name:input.line?.name??source.name,quantity:0,unit:input.line?.unit??(source.mode==='weight'?'g':source.mode==='servings'?'serving':'fraction'),sourceFraction:0,nutrition:input.line?.nutrition??zeroNutrition()};if(!validBatchIngredient(snapshot))fail('INVALID','Invalid zero source snapshot');lines.push(snapshot);continue;
       }
       if (input.source === 'pantry') {
         // Do not retain accidental extra fields from a UI draft or a mutable ingredient record.
@@ -191,9 +199,9 @@ export class FoodStorage {
       } else if (input.source === 'batch') {
         if (input.batchId === targetId) fail('CONFLICT', 'A batch cannot contain itself', targetId);
         const source = await this.batch(input.batchId);
-        const quantity = this.portion(source, input.portion), fraction = quantity * source.fractionPerUnit;
+        const quantity = await this.portion(source, input.portion), fraction = quantity * source.fractionPerUnit;
         const stockBasis=await this.stockBasis(source);
-        const line: BatchIngredient = {...(stockBasis?{stockBasis}:{}),...snapshotMetadata(input.line),source: 'batch', ingredientId: source.id, sourceBatchId: source.id, sourceFraction: fraction, name: source.name, quantity, unit: source.mode === 'weight' ? 'g' : 'fraction', nutrition: stockBasis?scaleNutrition(stockBasis.perGram,quantity):scaleNutrition(source.totalNutrition, fraction)};
+        const line: BatchIngredient = {...(stockBasis?{stockBasis}:{}),...snapshotMetadata(input.line),source: 'batch', ingredientId: source.id, sourceBatchId: source.id, sourceFraction: fraction, name: source.name, quantity:source.mode==='servings'&&input.line?input.line.quantity:quantity, unit:source.mode==='servings'?(input.line?.unit??'serving'):source.mode === 'weight' ? 'g' : 'fraction', nutrition: stockBasis?scaleNutrition(stockBasis.perGram,quantity):scaleNutrition(source.totalNutrition, fraction)};
         if(input.expectedNutrition&&!storageNutritionEqual(input.expectedNutrition,line.nutrition))fail('CONFLICT','Source composition changed; explicitly resolve this batch again',source.id);
         if (!validBatchIngredient(line)) fail('INVALID', 'Invalid source batch snapshot');
         await this.move(source, -quantity, tx, true); lines.push(line);
@@ -204,14 +212,16 @@ export class FoodStorage {
   async makeBatch(input: MakeBatchInput) {
     input = structuredClone(input);
     return this.run(input.operationId, 'create', input, async tx => {
-      if (!input.id?.trim() || !positive(input.cookedYieldGrams)) fail('INVALID', 'A positive measured cooked yield and batch ID are required');
+      const mode=input.mode??'weight';
+      const output=mode==='weight'?input.cookedYieldGrams:mode==='servings'?input.totalServings:1;
+      if (!input.id?.trim() || !positive(output) || !['weight','ratio','servings'].includes(mode) || mode!=='weight'&&input.cookedYieldGrams!==undefined || mode!=='servings'&&input.totalServings!==undefined) fail('INVALID', 'A positive measured cooked yield and batch ID are required');
       if (await this.batches.get(input.id)) fail('CONFLICT', 'Batch ID already exists', input.id);
       const ingredients = await this.ingredients(input.ingredients, tx, input.id);
       const batch: FoodBatch = {...stamp(), id: input.id, name: input.name, sourceRecipeId: input.sourceRecipeId ?? null, preparedOn: input.preparedOn, notes: input.notes ?? '', ingredients,
-        totalNutrition: sumNutrition(ingredients.map(lineNutrition)), originalCookedYield: input.cookedYieldGrams, mode: 'weight', remainingQuantity: input.cookedYieldGrams, fractionPerUnit: 1 / input.cookedYieldGrams,
+        totalNutrition: sumNutrition(ingredients.map(lineNutrition)), originalCookedYield: mode==='weight'?output:null, mode, ...(mode==='servings'?{totalServings:output}:{}), remainingQuantity: output, fractionPerUnit: 1/output,
         everUsed: false, archived: false, archiveReason: null, originMealId: null, initialConsumedFraction: 0};
       await this.putBatch(batch); tx.targetBatchId = batch.id; tx.batchIds.push(batch.id);
-      tx.movements.push({batchId: batch.id, mode: 'weight', before: 0, after: batch.remainingQuantity, fractionPerUnit: batch.fractionPerUnit, fractionDelta: 1});
+      tx.movements.push({batchId: batch.id, mode, ...(mode==='servings'?{batchRevision:batch.revision}:{}), before: 0, after: batch.remainingQuantity, fractionPerUnit: batch.fractionPerUnit, fractionDelta: 1});
     });
   }
   async saveMealWithLeftovers(input: LeftoversInput) {
@@ -258,7 +268,7 @@ export class FoodStorage {
       // While editing, the meal's own allocation is available again. Other meals/manual corrections stay intact.
       const available = old?.storageConsumption?.batchId === batch.id && batch.mode === 'ratio'
         ? {...batch, remainingQuantity: batch.remainingQuantity + old.storageConsumption.originalFraction / batch.fractionPerUnit} : batch;
-      const quantity = this.portion(available, input.portion), fraction = quantity * batch.fractionPerUnit;
+      const quantity = await this.portion(available, input.portion), fraction = quantity * batch.fractionPerUnit;
       if (!positive(fraction)) fail('INVALID', 'Consumption fraction must be positive');
       if (old?.storageConsumption?.batchId === batch.id) {
         const oldQuantity = old.storageConsumption.originalFraction / batch.fractionPerUnit;
@@ -276,7 +286,7 @@ export class FoodStorage {
       const nutrition=stockMealNutrition(batch,quantity,fraction,historical,stockBasis?.perGram);
       if (!validStorageNutrition(nutrition)) fail('INVALID', 'Invalid meal nutrition');
       const meal: FoodLog = {...(old ? changed(old) : {...stamp(), id: input.mealId}), date: input.date, category: input.category, name: batch.name,
-        source: 'quick', sourceId: null, quantity, unit: batch.mode === 'weight' ? 'g' : 'fraction', nutrition, baseNutrition: structuredClone(nutrition), consumptionPercent: 100,
+        source: 'quick', sourceId: null, quantity, unit: batch.mode === 'servings' ? 'serving' : batch.mode === 'weight' ? 'g' : 'fraction', nutrition, baseNutrition: structuredClone(nutrition), consumptionPercent: 100,
         lines: stockBasis?[{ingredientId:stockBasis.ingredientId,name:historical?.lines[0]?.name??(await this.database.ingredients.get(stockBasis.ingredientId))!.name,quantity,unit:'g',nutrition}]:historical?.lines??[], cookingNote: input.notes ?? old?.cookingNote ?? '', storageConsumption: {...(stockBasis?{stockBasis}:{}),batchId: batch.id, originalFraction: fraction, transactionId: tx.id}};
       await this.meals.put(meal); tx.mealId = meal.id; tx.targetBatchId = batch.id;
     });
@@ -301,7 +311,7 @@ export class FoodStorage {
         const explicit=sourceReselected||reselectedLines.includes(line.lineId);
         const historical=explicit?undefined:historicalBasisForLine(old,line);
         if(line.quantity===0){if(historical)bases.push(historical);await this.batch(line.sourceBatchId!);lines.push(structuredClone(line));continue}
-        const b=await this.batch(line.sourceBatchId!),fullQuantity=this.portion(b,{unit:line.unit==='g'?'g':'fraction',quantity:line.quantity}),fullFraction=fullQuantity*b.fractionPerUnit,fraction=fullFraction*percent/100;
+        const b=await this.batch(line.sourceBatchId!),fullQuantity=await this.portion(b,{unit:line.unit==='g'?'g':'fraction',quantity:line.quantity}),fullFraction=fullQuantity*b.fractionPerUnit,fraction=fullFraction*percent/100;
         const previousLine=old?.lines.find(l=>l.lineId===line.lineId&&l.sourceBatchId===b.id&&l.unit===line.unit);
         const previousAllocation=old?.recipeAllocations?.find(a=>a.lineId===line.lineId&&a.batchId===b.id);
         const historicalNutrition=previousLine&&previousLine.quantity>0
@@ -317,7 +327,7 @@ export class FoodStorage {
         if(fraction>0&&stockBasis){
           bases.push({...stockBasis,lineId:line.lineId,batchId:b.id,unit:'g',transactionId:tx.id});
         }else if(historical)bases.push(historical);
-        if(fraction>0)allocations.push({...(stockBasis?{stockBasis}:{}),lineId:line.lineId,batchId:b.id,quantity:fullQuantity*percent/100,unit:b.mode==='weight'?'g':'fraction',originalFraction:fraction,transactionId:tx.id,nutrition:scaleNutrition(fullNutrition,percent/100)});
+        if(fraction>0)allocations.push({...(stockBasis?{stockBasis}:{}),lineId:line.lineId,batchId:b.id,quantity:fullQuantity*percent/100,unit:b.mode==='servings'?'serving':b.mode==='weight'?'g':'fraction',originalFraction:fraction,transactionId:tx.id,nutrition:scaleNutrition(fullNutrition,percent/100)});
       }
       const previous=new Map<string,number>(),next=new Map<string,number>();for(const a of old?.recipeAllocations??[])previous.set(a.batchId,(previous.get(a.batchId)??0)+a.originalFraction);for(const a of allocations)next.set(a.batchId,(next.get(a.batchId)??0)+a.originalFraction);
       for(const id of new Set([...previous.keys(),...next.keys()])){const b=await this.batch(id),difference=(next.get(id)??0)-(previous.get(id)??0);if(!same(difference,0))await this.move(b,-difference/b.fractionPerUnit,tx,difference>0);tx.batchIds.push(id)}
@@ -380,6 +390,19 @@ export class FoodStorage {
       tx.reason = 'Unused formula correction; old snapshots retained in the operation request';
     });
   }
+  async repartition(input:{operationId:string;batchId:string;expectedRevision:number;totalServings:number}) {
+    return this.run(input.operationId,'repartition',input,async tx=>{
+      const b=await this.batch(input.batchId);
+      if(b.revision!==input.expectedRevision)fail('CONFLICT','Batch changed',b.id);
+      const history=await this.transactions.where('batchIds').equals(b.id).toArray();
+      if(!canRepartition(b,history))fail('LOCKED','Serving portions cannot change after use or adjustment',b.id);
+      if(!positive(input.totalServings))fail('INVALID','Invalid portion count');
+      const next=changed({...b,totalServings:input.totalServings,remainingQuantity:input.totalServings,fractionPerUnit:1/input.totalServings});
+      await this.putBatch(next);
+      tx.targetBatchId=b.id;tx.batchIds.push(b.id);
+      tx.movements.push({batchId:b.id,batchRevision:next.revision,mode:'servings',before:b.remainingQuantity,after:next.remainingQuantity,fractionPerUnit:next.fractionPerUnit,fractionDelta:0});
+    });
+  }
   async adjustRemaining(input: {operationId: string; batchId: string; expectedRevision: number; quantity: number; reason: string}) {
     input = structuredClone(input);
     return this.run(input.operationId, 'adjust', input, async tx => {
@@ -394,7 +417,7 @@ export class FoodStorage {
     return this.run(input.operationId, 'convert', input, async tx => {
       const b = await this.batch(input.batchId);
       if (b.revision !== input.expectedRevision) fail('CONFLICT', 'Batch changed', b.id);
-      if (b.mode !== 'ratio' || !positive(b.remainingQuantity) || !positive(input.remainingGrams)) fail('INVALID', 'Conversion requires positive remaining ratio inventory and measured grams');
+      if (b.mode !== 'ratio' || !b.originMealId || !positive(b.remainingQuantity) || !positive(input.remainingGrams)) fail('INVALID', 'Conversion requires positive remaining ratio inventory and measured grams');
       const factor = b.remainingQuantity * b.fractionPerUnit / input.remainingGrams;
       await this.putBatch(changed({...b, mode: 'weight', remainingQuantity: input.remainingGrams, fractionPerUnit: factor}));
       tx.batchIds.push(b.id); tx.targetBatchId = b.id;

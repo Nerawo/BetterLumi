@@ -23,7 +23,7 @@ npm.cmd run dev
 - Calculator 支持实时饮食/运动规划、均衡/高蛋白宏量分配和显式应用到当前个人目标，保留历史版本。
 - 营养目标支持每日或周均目标及允许偏差设置。旧运动记录、计划和目标的数据兼容逻辑仍然保留。
 - 补充剂、体重、待办笔记、中文/英文和四套主题均本地持久保存。Today 使用固定的编辑式品牌封面。
-- IndexedDB 使用 Schema 8，Cooking Session 使用 v4。主界面导出 Backup 20，支持导入 Backup 2–20。Backup 20 在原料库存实际分配时保存历史逐克营养基准。Backup 19 可以保存已关闭的营养目标及其原配置。
+- IndexedDB 使用 Schema 8，Cooking Session 使用 v4。主界面导出 Backup 21，支持导入 Backup 2–21。Backup 21 支持按最终分装份数管理成品库存。Backup 20 在原料库存实际分配时保存历史逐克营养基准。Backup 19 可以保存已关闭的营养目标及其原配置。
 
 ## 开发检查
 

@@ -11,7 +11,7 @@ async function setRange(slider:Locator,value:number){await slider.evaluate((inpu
 async function noOverflow(target:Locator){expect(await target.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true)}
 
 test('copies a recipe into a batch, consumes grams and exposes correction/archive/restore/discard with real history',async({page})=>{
- const fixture=await seed(page);await storageTab(page);await page.getByRole('button',{name:'Make a Batch',exact:true}).click();const make=page.locator('.storage-make-modal');await chooseSavedRecipe(make,fixture.recipe.id);await make.locator('[name=batchName]').fill('Prepared rice');await make.locator('.recipe-line input').fill('50');await make.locator('.recipe-line input').blur();await make.locator('[name=cookedYieldGrams]').fill('300');await make.locator('[name=cookedYieldGrams]').blur();await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('300 kcal');await expect(make.locator('.nutrition-strip').last().locator('strong').first()).toHaveText('100 kcal');await make.locator('.form-actions .primary').click();await expect(make).toHaveCount(0);
+ const fixture=await seed(page);await storageTab(page);await page.getByRole('button',{name:'Make a Batch',exact:true}).click();const make=page.locator('.storage-make-modal');await chooseSavedRecipe(make,fixture.recipe.id);await make.locator('[name=batchName]').fill('Prepared rice');await make.locator('.batch-review > summary').click();await make.locator('.recipe-line input').fill('50');await make.locator('.recipe-line input').blur();await make.locator('[name=cookedYieldGrams]').fill('300');await make.locator('[name=cookedYieldGrams]').blur();await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('300 kcal');await expect(make.locator('.nutrition-strip').last().locator('strong').first()).toHaveText('100 kcal');await make.locator('.form-actions .primary').click();await expect(make).toHaveCount(0);
  let state=await page.evaluate(async id=>{const d=await import('/src/domain.ts');return{recipe:await d.recipes.get(id),batch:(await d.db.foodBatches.toArray())[0],meals:await d.foodLogs.count()}},fixture.recipe.id);expect(state.recipe).toEqual(fixture.recipe);expect(state.meals).toBe(0);expect(state.batch.remainingQuantity).toBe(300);const row=page.locator('.storage-list-row');await expect(row).toContainText('300 g');await expect(row.locator('progress')).toHaveAttribute('value','1');
  await row.click();const detail=page.locator('.storage-detail-modal');await expect(detail).toContainText('Formula has not been used');await expect(detail.locator('.storage-ingredient-snapshots')).toContainText('50 g');await detail.getByRole('button',{name:'Record consumption',exact:true}).click();let consumption=page.locator('.storage-meal-form');await consumption.locator('[name=storageGrams]').fill('150');await expect(consumption.locator('.nutrition-strip strong').first()).toHaveText('150 kcal');await consumption.locator('.form-actions .primary').click();await expect(page.locator('.storage-meal-form')).toHaveCount(0);await expect(detail).toContainText('Formula locked');
  await detail.getByRole('button',{name:'Adjust remaining quantity',exact:true}).click();let action=page.locator('.storage-action-modal');await action.locator('input[type=number]').fill('350');await action.locator('input:not([type=number])').fill('Measured actual remainder');await action.locator('.form-actions .primary').click();await expect(action).toHaveCount(0);await expect(detail.locator('.storage-summary')).toContainText('350 g');
@@ -20,7 +20,7 @@ test('copies a recipe into a batch, consumes grams and exposes correction/archiv
 });
 test('makes a batch from scratch with Pantry and stored-food ingredients; cancellation floats through confirmation and returns stock once',async({page})=>{
  const fixture=await seed(page);const source=await page.evaluate(async recipe=>{const d=await import('/src/domain.ts'),s=await import('/src/food-storage.ts');const id=d.stamp().id;await new s.FoodStorage().makeBatch({operationId:d.stamp().id,id,name:'Source sauce',preparedOn:d.localDate(),ingredients:s.copyRecipeForBatch(recipe),cookedYieldGrams:600});return id},fixture.recipe);
- await storageTab(page);await page.getByRole('button',{name:'Make a Batch',exact:true}).click();const make=page.locator('.storage-make-modal');await make.locator('[name=batchName]').fill('Prepared pasta');await make.locator('.ingredient-add-trigger').click();const picker=page.locator('.ingredient-picker-modal');await picker.locator('input[type=search]').fill(fixture.ingredient.name);await picker.locator('[data-ingredient-id="'+fixture.ingredient.id+'"]').click();await expect(picker).toHaveCount(0);await make.locator('.recipe-line input').fill('50');await make.locator('.recipe-line input').blur();await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('300 kcal');await make.locator('.storage-add-source').click();await page.locator('.stored-food-picker .storage-list-row').filter({hasText:'Source sauce'}).click();await make.locator('.recipe-line').filter({hasText:'Source sauce'}).locator('input').fill('200');await make.locator('[name=cookedYieldGrams]').fill('800');expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return(await d.db.foodBatches.get(id))!.remainingQuantity},source)).toBe(600);await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('500 kcal');await make.locator('.form-actions .primary').click();await expect(make).toHaveCount(0);
+ await storageTab(page);await page.getByRole('button',{name:'Make a Batch',exact:true}).click();const make=page.locator('.storage-make-modal');await make.locator('[name=batchName]').fill('Prepared pasta');await make.locator('.batch-review > summary').click();await make.locator('.ingredient-add-trigger').click();const picker=page.locator('.ingredient-picker-modal');await picker.locator('input[type=search]').fill(fixture.ingredient.name);await picker.locator('[data-ingredient-id="'+fixture.ingredient.id+'"]').click();await expect(picker).toHaveCount(0);await make.locator('.recipe-line input').fill('50');await make.locator('.recipe-line input').blur();await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('300 kcal');await make.locator('.storage-add-source').click();await page.locator('.stored-food-picker .storage-list-row').filter({hasText:'Source sauce'}).click();await make.locator('.recipe-line').filter({hasText:'Source sauce'}).locator('input').fill('200');await make.locator('[name=cookedYieldGrams]').fill('800');expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return(await d.db.foodBatches.get(id))!.remainingQuantity},source)).toBe(600);await expect(make.locator('.nutrition-strip').first().locator('strong').first()).toHaveText('500 kcal');await make.locator('.form-actions .primary').click();await expect(make).toHaveCount(0);
  expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return(await d.db.foodBatches.get(id))!.remainingQuantity},source)).toBe(400);await page.locator('.storage-list-row').filter({hasText:'Prepared pasta'}).click();const detail=page.locator('.storage-detail-modal');await detail.getByRole('button',{name:'Cancel preparation',exact:true}).click();const action=page.locator('.storage-action-modal');await action.getByRole('button',{name:'Cancel',exact:true}).click();expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return(await d.db.foodBatches.get(id))!.remainingQuantity},source)).toBe(400);await detail.getByRole('button',{name:'Cancel preparation',exact:true}).click();await action.getByRole('button',{name:'Confirm',exact:true}).click();await expect(detail.locator('.storage-summary')).toContainText('Canceled');await expect(detail.getByRole('button',{name:'Cancel preparation',exact:true})).toHaveCount(0);expect(await page.evaluate(async id=>{const d=await import('/src/domain.ts');return{quantity:(await d.db.foodBatches.get(id))!.remainingQuantity,meals:await d.foodLogs.count()}},source)).toEqual({quantity:600,meals:0});
 });
 test('saves recipe leftovers explicitly, retains storage tab drafts, consumes current ratios, edits/deletes and converts to measured grams',async({page})=>{
@@ -96,4 +96,90 @@ test('legacy stock changes basis only after confirming the Pantry link',async({p
  const data=await page.evaluate(async id=>{const {db}=await import('/src/domain.ts');return {batch:await db.foodBatches.get(id),receipts:await db.inventoryTransactions.count()}},id);
  expect(data.batch).toMatchObject({remainingQuantity:100,totalNutrition:{calories:600},stock:{kind:'pantry-ingredient',ingredientId:ingredient.id}});
  expect(data.receipts).toBe(1);
+});
+
+test('packs cooking output independently and records fractional servings',async({page})=>{
+ const {recipe}=await seed(page);
+ await page.evaluate(async id=>{const d=await import('/src/domain.ts');await d.recipes.update(id,{servings:4})},recipe.id);
+ await page.goto('/recipes/'+recipe.id);
+ await page.locator('.journal-recipe-detail .start-cooking').tap();
+ await page.locator('.journal-add-storage').click();
+ const make=page.locator('.storage-make-modal');
+ await make.getByRole('button',{name:/^Servings/}).click();
+ const packed=make.locator('.batch-results input[type=number]');
+ await expect(packed).toHaveValue('4');
+ await packed.fill('5');
+ await expect(make.locator('.storage-batch-nutrition').first()).toContainText('600 kcal');
+ await expect(make.locator('.storage-batch-nutrition').last()).toContainText('120 kcal');
+ await make.locator('.form-actions .primary').click();
+ await expect(make).toHaveCount(0);
+ await storageTab(page);
+ await page.locator('.storage-list-row').filter({hasText:recipe.name}).click();
+ await page.getByRole('button',{name:'Record consumption',exact:true}).click();
+ const form=page.locator('.storage-meal-form');
+ await form.locator('.storage-actual-amount input').fill('0.5');
+ await expect(form.locator('.nutrition-strip')).toContainText('60 kcal');
+ await form.locator('.form-actions .primary').click();
+ await expect(form).toHaveCount(0);
+ await expect(page.locator('.storage-remaining-emphasis')).toContainText('4.5');
+});
+
+test('legacy leftover edits distinguish the recorded share from a new remaining-stock percentage',async({page})=>{
+ const {recipe}=await seed(page);
+ const ids=await page.evaluate(async recipe=>{
+   const d=await import('/src/domain.ts'),{FoodStorage}=await import('/src/food-storage.ts'),storage=new FoodStorage();
+   const batchId=d.stamp().id,mealId=d.stamp().id;
+   const meal={...d.stamp(),date:d.localDate(),source:'recipe' as const,sourceId:recipe.id,category:'lunch',name:'Origin',quantity:1,unit:'serving',consumptionPercent:25,baseNutrition:recipe.lines[0].nutrition,nutrition:{calories:150,protein:7.5,carbs:15,fat:5},cookingNote:'',lines:recipe.lines};
+   await storage.saveMealWithLeftovers({operationId:d.stamp().id,meal,batchId,saveLeftovers:true});
+   await storage.saveMeal({operationId:d.stamp().id,mealId,batchId,date:meal.date,category:'dinner',portion:{unit:'percent',quantity:50}});
+   const backup=await d.exportAll();backup.version=20;
+   backup.tables.inventoryTransactions.find(tx=>tx.mealId===mealId).request='opaque legacy receipt';
+   await d.restoreAll(backup);return {batchId,mealId};
+ },recipe);
+ const snapshot=()=>page.evaluate(async ids=>{
+   const d=await import('/src/domain.ts');return {meal:await d.foodLogs.get(ids.mealId),batch:await d.db.foodBatches.get(ids.batchId),receipts:await d.db.inventoryTransactions.toArray()};
+ },ids);
+ const before=await snapshot();
+ await page.goto('/today');await page.locator('#today-tab-food').click();
+ const edit=()=>page.locator('.meal-row').filter({hasText:/225\s*kcal/}).locator('.actions button').first().click();
+ const form=page.locator('.storage-meal-form'),amount=form.locator('[name=storageStockPercent]');
+ await edit();await expect(form).toContainText('Recorded: 37.5% of the original batch');await expect(amount).toHaveCount(0);
+ await form.getByRole('button',{name:'Adjust consumed amount'}).click();await expect(amount).toHaveValue('');
+ await amount.fill('25');await form.getByRole('button',{name:'Cancel',exact:true}).click();
+ expect(await snapshot()).toEqual(before);
+ await edit();await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);expect(await snapshot()).toEqual(before);
+ await edit();await form.getByRole('button',{name:'Adjust consumed amount'}).click();await amount.fill('25');
+ await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);
+ const after=await snapshot();expect(after.meal.storageConsumption.originalFraction).toBe(.1875);expect(after.meal.nutrition.calories).toBe(112.5);
+ expect(after.batch.remainingQuantity).toBe(.5625);expect(after.receipts).toHaveLength(before.receipts.length+1);
+ expect(JSON.parse(after.receipts.find(tx=>tx.id===after.meal.storageConsumption.transactionId).request).input.portion.quantity).toBe(25);
+});
+
+test('whole-batch percent preview and saved debits use the original output',async({page})=>{
+ const {recipe}=await seed(page);await storageTab(page);
+ await page.getByRole('button',{name:'Make a Batch',exact:true}).click();
+ const make=page.locator('.storage-make-modal');
+ await chooseSavedRecipe(make,recipe.id);
+ await make.getByRole('button',{name:/^Whole batch/}).click();
+ await expect(make.locator('[name=cookedYieldGrams]')).toHaveCount(0);
+ await expect(make.locator('.storage-batch-nutrition')).toHaveCount(1);
+ await make.locator('.form-actions .primary').click();
+ await expect(make).toHaveCount(0);
+ await page.locator('.storage-list-row').filter({hasText:recipe.name}).click();
+ const detail=page.locator('.storage-detail-modal');
+ for(const [percent,kcal,remaining] of [[25,150,75],[50,300,25]]){
+   await detail.getByRole('button',{name:'Record consumption',exact:true}).click();
+   const form=page.locator('.storage-meal-form');
+   await form.getByLabel('Percentage of original batch',{exact:true}).fill(String(percent));
+   await expect(form.locator('.nutrition-strip strong').first()).toHaveText(kcal+' kcal');
+   await form.locator('.form-actions .primary').click();await expect(form).toHaveCount(0);
+   await expect(detail.locator('.storage-remaining-emphasis')).toContainText(remaining+'%');
+ }
+ await detail.getByRole('button',{name:'Record consumption',exact:true}).click();
+ const form=page.locator('.storage-meal-form');
+ await form.getByLabel('Percentage of original batch',{exact:true}).fill('50');
+ await form.locator('.form-actions .primary').click();
+ await expect(form.getByRole('alert')).toContainText('exceeds available inventory');
+ await form.getByRole('button',{name:'Cancel',exact:true}).click();
+ await expect(detail.locator('.storage-remaining-emphasis')).toContainText('25%');
 });

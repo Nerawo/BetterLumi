@@ -8,6 +8,7 @@ async function open(page:Page,language='en',count=1,mockViewport=false){
 }
 for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`batch compact layout ${width} ${language}`,async({page})=>{
  await page.setViewportSize({width,height:844});await open(page,language);const modal=page.locator('.storage-make-modal');
+ await modal.locator('.batch-review > summary').tap();
  const buttons=await modal.locator('.line-add > button').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return{top:r.top,left:r.left,right:r.right,height:r.height}}));expect(buttons).toHaveLength(2);expect(Math.abs(buttons[0].top-buttons[1].top)).toBeLessThan(1);expect(buttons.every(b=>b.height>=44&&b.left>=0&&b.right<=width)).toBe(true);
  expect(await modal.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await expect(modal.locator('.recipe-line-amounts input').first()).toHaveCSS('border-top-width','0px');expect(await modal.locator('.line-add > button').first().evaluate(el=>getComputedStyle(el).fontSize)).toBe('13px');const input=modal.locator('[name=batchName]');expect(await input.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);await expect(modal.locator('.form-actions .primary')).toBeInViewport();
@@ -15,7 +16,7 @@ for(const width of [320,375,390,430])for(const language of ['zh','en'])test(`bat
  if(width===320)await modal.screenshot({path:`work/screenshots/make-batch-320-${language}.png`});
 });
 test('long batch scrolls internally with fixed header/footer; delayed keyboard and input switching settle inside the form',async({page})=>{
- await open(page,'en',18,true);const modal=page.locator('.storage-make-modal'),body=modal.locator('.storage-make-scroll'),header=modal.locator('.modal-head'),footer=modal.locator('.form-actions');const before={header:await header.boundingBox(),footer:await footer.boundingBox(),y:await page.evaluate(()=>scrollY)};
+ await open(page,'en',18,true);const modal=page.locator('.storage-make-modal'),body=modal.locator('.storage-make-scroll'),header=modal.locator('.modal-head'),footer=modal.locator('.form-actions');await modal.locator('.batch-review > summary').tap();const before={header:await header.boundingBox(),footer:await footer.boundingBox(),y:await page.evaluate(()=>scrollY)};
  expect(await body.evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);await body.evaluate(el=>el.scrollTop=el.scrollHeight);expect(await header.boundingBox()).toEqual(before.header);expect(await footer.boundingBox()).toEqual(before.footer);expect(await page.evaluate(()=>scrollY)).toBe(before.y);
  await modal.locator('[name=cookedYieldGrams]').focus();
  await page.evaluate(async()=>{await new Promise(r=>setTimeout(r,150));Object.assign(window.visualViewport!,{height:350,offsetTop:60});window.visualViewport!.dispatchEvent(new Event('resize'))});

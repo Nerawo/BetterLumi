@@ -1,7 +1,7 @@
 import {familyTagPrefix,saveFamilyTags} from './family-tags';
 import {validateFamilies,checkPreparedMember,templateFromPreparation} from './family-contract';
 import {db, type IngredientFamily} from './db';
-import {recipes,type Recipe,type FamilyLine,type RecipeLine,type PantryItem} from './domain';
+import {recipes,putRecipeWithStockReferences,type Recipe,type FamilyLine,type RecipeLine,type PantryItem} from './domain';
 import {builtInFoods} from './data/builtInFoods';
 import {recipeUnitFactors} from './recipe-draft-units';
 import {personalNutrition,ingredientPreferencePrefix,ingredientPreferenceRows,type IngredientPreference} from './ingredient-preferences';
@@ -75,17 +75,17 @@ export async function deleteFamily(f:IngredientFamily){
  });
 }
 export async function saveFamilyRecipe(recipe:Recipe){
- if(concreteRecipe(recipe)){await recipes.put(recipe);return}
- return db.transaction('rw',recipes,db.ingredientFamilies,db.ingredients,async()=>{
+ if(concreteRecipe(recipe)){await putRecipeWithStockReferences(recipe);return}
+ return db.transaction('rw',recipes,db.ingredientFamilies,db.foodBatches,db.ingredients,async()=>{
   const families=await db.ingredientFamilies.toArray(),items=await db.ingredients.toArray();
   validateFamilies(families,items,[recipe]);
-  await recipes.put(recipe);
+  await putRecipeWithStockReferences(recipe);
  });
 }
 
 export async function saveMealRecipeVersion(original:Recipe|undefined,prepared:Recipe<RecipeLine>,historical:boolean){
- if(!original||concreteRecipe(original)){await recipes.put(prepared);return}
- return db.transaction('rw',recipes,db.ingredientFamilies,db.ingredients,db.settings,async()=>{
+ if(!original||concreteRecipe(original)){await putRecipeWithStockReferences(prepared);return}
+ return db.transaction('rw',recipes,db.ingredientFamilies,db.foodBatches,db.ingredients,db.settings,async()=>{
   const current=await recipes.get(original.id);
   if(!current||current.deletedAt||current.revision!==original.revision)throw Error('familyChanged');
   const products=new Map(prepared.lines.map(l=>[l.lineId,l]));
